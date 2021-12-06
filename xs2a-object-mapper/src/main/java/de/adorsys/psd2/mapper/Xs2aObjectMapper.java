@@ -19,16 +19,16 @@ package de.adorsys.psd2.mapper;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ArrayNode;
 import lombok.AllArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
 
-@Slf4j
 @AllArgsConstructor
 public class Xs2aObjectMapper extends ObjectMapper {
 
@@ -45,34 +45,31 @@ public class Xs2aObjectMapper extends ObjectMapper {
      * @param <T>           type of the field to be extracted
      * @return value of the extracted field, if it was found in the valid JSON
      */
-    public <T> Optional<T> toJsonField(InputStream stream, String fieldName, TypeReference<T> typeReference) {
-        try {
+    public <T> Optional<T> toJsonField(InputStream stream, String fieldName, TypeReference<T> typeReference) throws IOException {
             JsonNode jsonNode = readTree(stream);
             JsonNode fieldNode = jsonNode.get(fieldName);
 
             if (fieldNode == null) {
-                log.info("Couldn't extract field from json, because there is no this field {} at json.", fieldName);
                 return Optional.empty();
             }
-
             T value = readValue(treeAsTokens(fieldNode), typeReference);
             return Optional.ofNullable(value);
-
-        } catch (IOException e) {
-            log.info("Couldn't extract field {} from json: {}", fieldName, e.getMessage());
-        }
-
-        return Optional.empty();
     }
 
-    public List<String> toJsonGetValuesForField(InputStream stream, String fieldName) {
+    public List<String> toJsonGetValuesForField(InputStream stream, String fieldName) throws IOException {
+        JsonNode jsonNode = readTree(stream);
+        return new ArrayList<>(jsonNode.findValuesAsText(fieldName));
+    }
+
+    public List<String> toJsonGetListValuesForField(InputStream stream, String fieldName) throws IOException {
         List<String> values = new ArrayList<>();
-        try {
-            JsonNode jsonNode = readTree(stream);
-            values.addAll(jsonNode.findValuesAsText(fieldName));
-        } catch (IOException e) {
-            log.info("Couldn't extract field {} from json: {}", fieldName, e.getMessage());
-        }
+        ArrayNode arrayNode = (ArrayNode) readTree(stream).get(fieldName);
+            if(arrayNode != null) {
+                Iterator<JsonNode> elements = arrayNode.elements();
+                while(elements.hasNext()) {
+                    values.add(elements.next().asText());
+                }
+            }
         return values;
     }
 

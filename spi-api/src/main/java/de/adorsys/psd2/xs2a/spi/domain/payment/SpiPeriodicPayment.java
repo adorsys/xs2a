@@ -25,6 +25,7 @@ import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @Data
 @EqualsAndHashCode(callSuper = true)
@@ -35,6 +36,7 @@ public class SpiPeriodicPayment extends SpiSinglePayment {
     private PisExecutionRule executionRule;
     private FrequencyCode frequency;
     private PisDayOfExecution dayOfExecution;
+    private List<String> monthsOfExecution;
     private String contentType;
 
     public SpiPeriodicPayment(String paymentProduct) {

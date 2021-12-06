@@ -1,0 +1,15 @@
+= Release notes v.12.3
+
+== Table of Contents
+
+* Clarification is added to license model
+
+* Roadmap updated
+
+== Clarification is added to license model
+
+License related information was updated in README.md file.
+
+== Roadmap updated
+
+Roadmap.adoc was updated

@@ -49,6 +49,7 @@ public class Xs2aToSpiPeriodicPaymentMapper {
         }
         periodic.setFrequency(payment.getFrequency());
         periodic.setDayOfExecution(payment.getDayOfExecution());
+        periodic.setMonthsOfExecution(payment.getMonthsOfExecution());
         periodic.setRequestedExecutionTime(payment.getRequestedExecutionTime());
         periodic.setRequestedExecutionDate(payment.getRequestedExecutionDate());
         periodic.setPsuDataList(xs2aToSpiPsuDataMapper.mapToSpiPsuDataList(payment.getPsuDataList()));

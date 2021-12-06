@@ -89,7 +89,7 @@ class ConsentBodyFieldsValidatorImplTest {
     }
 
     @Test
-    void validate_success() {
+    void validate_success() throws IOException {
         // Given
         when(dateFieldValidator.validateDateFormat(request, Xs2aRequestBodyDateFields.AIS_CONSENT_DATE_FIELDS.getDateFields(), messageError))
             .thenReturn(messageError);
@@ -115,7 +115,7 @@ class ConsentBodyFieldsValidatorImplTest {
 
     @ParameterizedTest
     @MethodSource("paramsForSuccess")
-    void validate_differentAccesses_success(String path, String access) {
+    void validate_differentAccesses_success(String path, String access) throws IOException {
         // Given
         when(dateFieldValidator.validateDateFormat(request, Xs2aRequestBodyDateFields.AIS_CONSENT_DATE_FIELDS.getDateFields(), messageError))
             .thenReturn(messageError);
@@ -146,7 +146,7 @@ class ConsentBodyFieldsValidatorImplTest {
     }
 
     @Test
-    void validate_recurringIndicator_null_error() {
+    void validate_recurringIndicator_null_error() throws IOException {
         when(dateFieldValidator.validateDateFormat(request, Xs2aRequestBodyDateFields.AIS_CONSENT_DATE_FIELDS.getDateFields(), messageError))
             .thenReturn(messageError);
 
@@ -165,7 +165,7 @@ class ConsentBodyFieldsValidatorImplTest {
     }
 
     @Test
-    void validate_validUntil_null_error() {
+    void validate_validUntil_null_error() throws IOException {
         when(dateFieldValidator.validateDateFormat(request, Xs2aRequestBodyDateFields.AIS_CONSENT_DATE_FIELDS.getDateFields(), messageError))
             .thenReturn(messageError);
 
@@ -184,7 +184,7 @@ class ConsentBodyFieldsValidatorImplTest {
     }
 
     @Test
-    void validate_validUntil_inPast_error() {
+    void validate_validUntil_inPast_error() throws IOException {
         when(dateFieldValidator.validateDateFormat(request, Xs2aRequestBodyDateFields.AIS_CONSENT_DATE_FIELDS.getDateFields(), messageError))
             .thenReturn(messageError);
 
@@ -203,7 +203,7 @@ class ConsentBodyFieldsValidatorImplTest {
     }
 
     @Test
-    void validate_frequencyPerDay_null_error() {
+    void validate_frequencyPerDay_null_error() throws IOException {
         when(dateFieldValidator.validateDateFormat(request, Xs2aRequestBodyDateFields.AIS_CONSENT_DATE_FIELDS.getDateFields(), messageError))
             .thenReturn(messageError);
 
@@ -222,7 +222,7 @@ class ConsentBodyFieldsValidatorImplTest {
     }
 
     @Test
-    void validate_frequencyPerDay_is0_error() {
+    void validate_frequencyPerDay_is0_error() throws IOException {
         when(dateFieldValidator.validateDateFormat(request, Xs2aRequestBodyDateFields.AIS_CONSENT_DATE_FIELDS.getDateFields(), messageError))
             .thenReturn(messageError);
 
@@ -240,7 +240,7 @@ class ConsentBodyFieldsValidatorImplTest {
     }
 
     @Test
-    void validate_frequencyPerDay_lessThen1_error() {
+    void validate_frequencyPerDay_lessThen1_error() throws IOException {
         when(dateFieldValidator.validateDateFormat(request, Xs2aRequestBodyDateFields.AIS_CONSENT_DATE_FIELDS.getDateFields(), messageError))
             .thenReturn(messageError);
 
@@ -259,7 +259,7 @@ class ConsentBodyFieldsValidatorImplTest {
 
     @ParameterizedTest
     @MethodSource("paramsForError")
-    void validate_differentAccesses_error(String access, String value) {
+    void validate_differentAccesses_error(String access, String value) throws IOException {
         // Given
         when(dateFieldValidator.validateDateFormat(request, Xs2aRequestBodyDateFields.AIS_CONSENT_DATE_FIELDS.getDateFields(), messageError))
             .thenReturn(messageError);
@@ -288,7 +288,7 @@ class ConsentBodyFieldsValidatorImplTest {
 
     @ParameterizedTest
     @MethodSource("paramsForInvalidType")
-    void validate_invalidType_error(String access) {
+    void validate_invalidType_error(String access) throws IOException {
         // Given
         when(dateFieldValidator.validateDateFormat(request, Xs2aRequestBodyDateFields.AIS_CONSENT_DATE_FIELDS.getDateFields(), messageError))
             .thenReturn(messageError);
@@ -334,7 +334,7 @@ class ConsentBodyFieldsValidatorImplTest {
     }
 
     @Test
-    void validate_validUntilDateWrongValue_wrongFormat_error() {
+    void validate_validUntilDateWrongValue_wrongFormat_error() throws IOException {
         // Given
         when(dateFieldValidator.validateDateFormat(request, Xs2aRequestBodyDateFields.AIS_CONSENT_DATE_FIELDS.getDateFields(), messageError))
             .thenReturn(new MessageError(ErrorType.AIS_400, TppMessageInformation.of(MessageErrorCode.FORMAT_ERROR_WRONG_FORMAT_DATE_FIELD, "validUntil", "ISO_DATE", "YYYY-MM-DD")));
@@ -351,7 +351,7 @@ class ConsentBodyFieldsValidatorImplTest {
     }
 
     @Test
-    void validate_validUntilCorrectValue_success() {
+    void validate_validUntilCorrectValue_success() throws IOException {
         // Given
         when(dateFieldValidator.validateDateFormat(request, Xs2aRequestBodyDateFields.AIS_CONSENT_DATE_FIELDS.getDateFields(), messageError))
             .thenReturn(messageError);

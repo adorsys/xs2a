@@ -41,9 +41,10 @@ import static org.mockito.Mockito.when;
 
 class FieldExtractorTest {
     private static final String FIELD_NAME = "endToEndIdentification";
-    private static final String FIELD_VALUE = "WBG-123456789";
+    private static final String FIELD_VALUE = "RI-123456789";
     private static final String CURRENCY_FIELD_NAME = "currency";
-    private static final String SINGLE_PAYMENT_JSON_PATH = "json/validation/single-payment.json";
+    private static final String MONTHS_OF_EXECUTION_FIELD_NAME = "monthsOfExecution";
+    private static final String PERIODIC_PAYMENT_JSON_PATH = "json/validation/periodic-payment.json";
     private static final MessageError DESERIALIZATION_ERROR =
         new MessageError(ErrorType.PIS_400, TppMessageInformation.of(MessageErrorCode.FORMAT_ERROR_DESERIALIZATION_FAIL));
 
@@ -60,7 +61,7 @@ class FieldExtractorTest {
         messageError = new MessageError(ErrorType.PIS_400);
         fieldExtractor = new FieldExtractor(errorService, xs2aObjectMapper);
         mockRequest = new MockHttpServletRequest();
-        String body = jsonReader.getStringFromFile(SINGLE_PAYMENT_JSON_PATH);
+        String body = jsonReader.getStringFromFile(PERIODIC_PAYMENT_JSON_PATH);
         mockRequest.setContent(body.getBytes(StandardCharsets.UTF_8));
         mockedRequest = Mockito.mock(HttpServletRequest.class);
         when(mockedRequest.getInputStream()).thenThrow(new IOException(""));
@@ -96,8 +97,8 @@ class FieldExtractorTest {
 
     @Test
     void extractList_Success() {
-        List<String> expectedResult = getCurrencyList();
-        List<String> actualResult = fieldExtractor.extractList(mockRequest, CURRENCY_FIELD_NAME, messageError);
+        List<String> expectedResult = getMonthsOfExecutionList();
+        List<String> actualResult = fieldExtractor.extractList(mockRequest, MONTHS_OF_EXECUTION_FIELD_NAME, messageError);
         assertEquals(expectedResult, actualResult);
         assertTrue(messageError.getTppMessages().isEmpty());
     }
@@ -128,5 +129,13 @@ class FieldExtractorTest {
         currencyList.add("EUR");
         currencyList.add("EUR");
         return currencyList;
+    }
+
+    private List<String> getMonthsOfExecutionList() {
+        List<String> monthsList = new ArrayList<>();
+        monthsList.add("1");
+        monthsList.add("2");
+        monthsList.add("3");
+        return monthsList;
     }
 }
