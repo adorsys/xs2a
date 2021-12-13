@@ -16,6 +16,7 @@
 
 package de.adorsys.psd2.xs2a.spi.domain.account;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import de.adorsys.psd2.xs2a.spi.domain.common.SpiAmount;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
@@ -25,6 +26,7 @@ import java.util.List;
 
 @Data
 @RequiredArgsConstructor
+@JsonIgnoreProperties({"bookedTransaction", "pendingTransaction", "informationTransaction"})
 public class SpiTransaction {
     private final String transactionId;
     private final String entryReference;
