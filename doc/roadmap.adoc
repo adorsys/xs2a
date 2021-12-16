@@ -60,6 +60,18 @@ a| * All fixes and updates from v.12.2
 
 a|
 
+|06.12.2021| | 12.3| 13.3| |
+
+a|
+
+a| * Documentation update (clarification to the new license model)
+
+a| * All fixes and updates from v.12.3
+* Added CardAccount to CashAccountType and SpiAccountType
+* Implemented validation for the field monthsOfExecution for Periodic payments
+
+a|
+
 a|
 
 a|
