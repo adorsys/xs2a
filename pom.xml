@@ -191,7 +191,7 @@
         <hamcrest.version>1.3</hamcrest.version>
         <postgresql.version>42.2.4</postgresql.version>
         <mariadb.version>2.3.0</mariadb.version>
-        <h2.version>1.4.200</h2.version>
+        <h2.version>2.0.202</h2.version>
         <snakeyaml.version>1.26</snakeyaml.version>
         <byte-buddy.version>1.9.10</byte-buddy.version>
         <javax.servlet-api.version>4.0.1</javax.servlet-api.version>

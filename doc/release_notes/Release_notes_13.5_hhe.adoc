@@ -1,0 +1,9 @@
+= Release notes v.13.5
+
+== Table of Contents
+
+* Updated h2 version
+
+== Roadmap updated
+
+Updated h2 version from 1.4.200 to 2.0.202.
