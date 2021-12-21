@@ -31,7 +31,9 @@ public class CardTransaction {
     private LocalDate transactionDate;
     private OffsetDateTime acceptorTransactionDateTime;
     private LocalDate bookingDate;
+    private LocalDate valueDate;
     private Xs2aAmount transactionAmount;
+    private Xs2aAmount grandTotalAmount;
     private List<Xs2aExchangeRate> currencyExchange;
     private Xs2aAmount originalAmount;
     private Xs2aAmount markupFee;

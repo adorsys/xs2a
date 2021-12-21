@@ -18,7 +18,7 @@ import java.util.Objects;
  */
 @ApiModel(description = "Card transaction information.")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2021-11-05T12:22:49.487689+02:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2021-11-16T16:54:38.691901+02:00[Europe/Kiev]")
 
 public class CardTransaction   {
   @JsonProperty("cardTransactionId")
@@ -43,7 +43,7 @@ public class CardTransaction   {
   private Amount transactionAmount = null;
 
   @JsonProperty("grandTotalAmount")
-  private Object grandTotalAmount = null;
+  private GrandTotalAmount grandTotalAmount = null;
 
   @JsonProperty("currencyExchange")
   private ReportExchangeRateList currencyExchange = null;
@@ -241,7 +241,7 @@ public class CardTransaction   {
     this.transactionAmount = transactionAmount;
   }
 
-  public CardTransaction grandTotalAmount(Object grandTotalAmount) {
+  public CardTransaction grandTotalAmount(GrandTotalAmount grandTotalAmount) {
     this.grandTotalAmount = grandTotalAmount;
     return this;
   }
@@ -252,14 +252,15 @@ public class CardTransaction   {
   **/
   @ApiModelProperty(value = "")
 
+  @Valid
 
 
   @JsonProperty("grandTotalAmount")
-  public Object getGrandTotalAmount() {
+  public GrandTotalAmount getGrandTotalAmount() {
     return grandTotalAmount;
   }
 
-  public void setGrandTotalAmount(Object grandTotalAmount) {
+  public void setGrandTotalAmount(GrandTotalAmount grandTotalAmount) {
     this.grandTotalAmount = grandTotalAmount;
   }
 

@@ -33,7 +33,9 @@ public class SpiCardTransaction {
     private final LocalDate transactionDate;
     private final OffsetDateTime acceptorTransactionDateTime;
     private final LocalDate bookingDate;
+    private final LocalDate valueDate;
     private final SpiAmount transactionAmount;
+    private final SpiAmount grandTotalAmount;
     private final List<SpiExchangeRate> currencyExchange;
     private final SpiAmount originalAmount;
     private final SpiAmount markupFee;
