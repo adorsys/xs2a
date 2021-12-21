@@ -4969,10 +4969,7 @@ components:
         transactionAmount:
           $ref: "#/components/schemas/amount"
         grandTotalAmount:
-          allOf:
-            - $ref: "#/components/schemas/amount"
-            - description: |
-                Total amount of the instalment including charges, insurance and taxes in addition to the funded amount.
+          $ref: "#/components/schemas/grandTotalAmount"
         currencyExchange:
           $ref: "#/components/schemas/reportExchangeRateList"
         originalAmount:
@@ -5287,6 +5284,24 @@ components:
           "currency": "EUR",
           "amount": "123"
         }
+
+    grandTotalAmount:
+        type: object
+        description: |
+            Total amount of the instalment including charges, insurance and taxes in addition to the funded amount.
+        required:
+            - currency
+            - amount
+        properties:
+            currency:
+                $ref: "#/components/schemas/currencyCode"
+            amount:
+                $ref: "#/components/schemas/amountValue"
+        example:
+          {
+              "currency": "EUR",
+              "amount": "123"
+          }
 
 
     currencyCode:

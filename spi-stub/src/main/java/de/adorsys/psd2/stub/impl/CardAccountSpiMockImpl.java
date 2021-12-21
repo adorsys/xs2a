@@ -28,7 +28,12 @@ import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
-import java.time.*;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.Month;
+import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Currency;
@@ -118,7 +123,9 @@ public class CardAccountSpiMockImpl implements CardAccountSpi {
                                       DATE,
                                       OffsetDateTime.of(DATE, LocalTime.NOON, ZoneOffset.UTC),
                                       DATE,
+                                      DATE.plusDays(1),
                                       new SpiAmount(Currency.getInstance("EUR"), new BigDecimal(200)),
+                                      new SpiAmount(Currency.getInstance("EUR"), new BigDecimal(2)),
                                       new ArrayList<>(),
                                       new SpiAmount(Currency.getInstance("EUR"), new BigDecimal(200)),
                                       new SpiAmount(Currency.getInstance("EUR"), new BigDecimal(200)),

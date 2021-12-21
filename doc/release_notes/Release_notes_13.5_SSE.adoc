@@ -1,0 +1,10 @@
+= Release notes v.13.5
+
+== Table of Contents
+
+* Finalisation of BG yaml file v.1.3.11 implementation
+
+== Finalisation of BG yaml file v.1.3.11 implementation
+
+XS2A completely implemented BG yaml v.1.3.11 changes, new fields of `CardTransaction` model (`valueDate` and `grandTotalAmount`)
+are passed to SPI level (to `SpiCardTransaction` class).
