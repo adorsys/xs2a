@@ -1,0 +1,9 @@
+= Release notes v.12.4
+
+== Table of Contents
+
+* Bumped up version of h2 in-memory DB
+
+== Bumped up version of h2 in-memory DB
+
+From now on, XS2A uses h2 of version 2.0.202
