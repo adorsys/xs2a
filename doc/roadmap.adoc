@@ -72,6 +72,16 @@ a| * All fixes and updates from v.12.3
 
 a|
 
+|20.12.2021| | 12.4| 13.4| |
+
+a|
+
+a| * Documentation update (roadmap)
+
+a| * All updates from v.12.4
+
+a|
+
 a|
 
 a|
