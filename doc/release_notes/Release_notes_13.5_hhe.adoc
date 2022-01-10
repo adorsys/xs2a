@@ -4,6 +4,6 @@
 
 * Updated h2 version
 
-== Roadmap updated
+== Updated h2 version
 
-Updated h2 version from 1.4.200 to 2.0.202.
+Updated h2 version from 1.4.200 to 2.0.206.
