@@ -273,6 +273,37 @@
         <javadoc.sourcepath>src/main/java</javadoc.sourcepath>
     </properties>
 
+    <repositories>
+		<repository>
+			<id>spring-milestones</id>
+			<name>Spring Milestones</name>
+			<url>http://repo.spring.io/milestone</url>
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
+		</repository>
+		<repository>
+			<id>snapshots-repo</id>
+			<url>https://oss.sonatype.org/content/repositories/snapshots</url>
+			<releases>
+				<enabled>false</enabled>
+			</releases>
+			<snapshots>
+				<enabled>true</enabled>
+			</snapshots>
+		</repository>
+		<repository>
+			<id>gitlab-maven</id>
+			<url>https://git.adorsys.de/api/v4/groups/49/-/packages/maven</url>
+			<releases>
+				<enabled>true</enabled>
+			</releases>
+			<snapshots>
+				<enabled>true</enabled>
+			</snapshots>
+		</repository>
+	</repositories>
+
     <dependencyManagement>
         <dependencies>
             <dependency>
@@ -898,16 +929,66 @@ Use it manually to generate javadocs. Don't commit it
                     </plugin>
                 </plugins>
             </build>
+            <distributionManagement>
+                <repository>
+                    <id>sonatype</id>
+                    <url>https://oss.sonatype.org/service/local/staging/deploy/maven2</url>
+                </repository>
+                <snapshotRepository>
+                    <id>sonatype</id>
+                    <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+                </snapshotRepository>
+            </distributionManagement>
         </profile>
+
+        <profile>
+				<id>gitlab-maven</id>
+				<build>
+						<plugins>
+
+								<plugin>
+										<groupId>org.apache.maven.plugins</groupId>
+										<artifactId>maven-source-plugin</artifactId>
+										<version>3.0.1</version>
+										<executions>
+												<execution>
+														<id>attach-sources</id>
+														<goals>
+																<goal>jar-no-fork</goal>
+														</goals>
+												</execution>
+										</executions>
+								</plugin>
+
+								<plugin>
+										<groupId>org.apache.maven.plugins</groupId>
+										<artifactId>maven-javadoc-plugin</artifactId>
+										<configuration>
+												<doclint>none</doclint>
+										</configuration>
+										<executions>
+												<execution>
+														<id>attach-javadocs</id>
+														<phase>package</phase>
+														<goals>
+																<goal>jar</goal>
+														</goals>
+												</execution>
+										</executions>
+								</plugin>
+						</plugins>
+				</build>
+				<distributionManagement>
+						<repository>
+								<id>gitlab-maven</id>
+								<url>https://git.adorsys.de/api/v4/projects/1323/packages/maven</url>
+						</repository>
+						<snapshotRepository>
+								<id>gitlab-maven</id>
+								<url>https://git.adorsys.de/api/v4/projects/1323/packages/maven</url>
+						</snapshotRepository>
+				</distributionManagement>
+		</profile>
     </profiles>
-    <distributionManagement>
-        <repository>
-            <id>sonatype</id>
-            <url>https://oss.sonatype.org/service/local/staging/deploy/maven2</url>
-        </repository>
-        <snapshotRepository>
-            <id>sonatype</id>
-            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
-        </snapshotRepository>
-    </distributionManagement>
+
 </project>
