@@ -25,6 +25,18 @@
             <username>${env.SONATYPE_USERNAME}</username>
             <password>${env.SONATYPE_PASSWORD}</password>
         </server>
+        <server>
+            <!-- privatte artifact repository-->
+            <id>gitlab-maven</id>
+            <configuration>
+                <httpHeaders>
+                <property>
+                    <name>Deploy-Token</name>
+                    <value>${GITLAB_MAVEN_DEPLOY_TOKEN}</value>
+                </property>
+                </httpHeaders>
+            </configuration>
+        </server>
     </servers>
     <profiles>
         <profile>
