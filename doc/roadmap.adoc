@@ -4,7 +4,7 @@ Starting 13th of September 2021 XS2A-core Team is providing development within t
 
 *Stable branch 12.x*
 
-Stable branch will contain bugfixing and possibly necessary changes to support mandatory endpoints defined by Berlin Group NextGenPSD2 Spec 1.3.9 with all Errata files. Will be supported till 14.03.2022
+Stable branch will contain bugfixing and possibly necessary changes to support mandatory endpoints defined by Berlin Group NextGenPSD2 Spec 1.3.9 with all Errata files. Will be supported till 14.06.2022
 
 *Development branch 13.x*
 

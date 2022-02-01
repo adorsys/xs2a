@@ -44,10 +44,10 @@ image::xs2a-version-policy.png[version policy]
 
 If you need additional support, please contact https://adorsys.de/kontakt/[adorsys Team].
 
-==== Mainline 12.x (Planned to be supported till 14.03.2022)
+==== Mainline 12.x (Planned to be supported till 14.06.2022)
 
 Mainline 12.x based on xs2a v.11.11 is released on 13.09.2021. The main goal is to support mandatory requirements of Berlin Group specification 1.3.9 with all Errata files and fix bugs.
-This version will be supported till 14.03.2022.
+This version will be supported till 14.06.2022.
 
 ==== Mainline 10.x (Planned to be supported till 13.09.2021)
 
