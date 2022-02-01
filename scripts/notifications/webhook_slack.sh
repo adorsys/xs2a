@@ -32,10 +32,10 @@ do
   BUILD=$(echo $JSON | jq -r .build.number)
   # remove Build: from build.number
   BUILD=${BUILD//Build:/}
-  #create json element one per argument 
+  #create json element one per argument
   for i in "${!argsArray[@]}"
   do
-    if [[ $i == $item_from_array ]] && [ "$BUILD" != ""null ]; then 
+    if [[ $i == $item_from_array ]] && [ "$BUILD" != ""null ]; then
       PIPELINE_LINK=${argsArray[$i]}
       ONE_STRING_FIELD="{\"type\": \"mrkdwn\",\"text\": \"*$item_from_array:*\n Version: $VERSION \n build: $BUILD\n <$PIPELINE_LINK/pipelines/${BUILD}|Pipeline build link>\"}"
     fi
@@ -49,7 +49,7 @@ done
 #post to slack and check of not ok message then exit with error
 STATUS_CODE=$(curl -sS -X POST -H 'Content-type: application/json' --data "$BASE_JSON" "$SLACK_CHANNEL")
 echo $STATUS_CODE
-if [ "$STATUS_CODE" != "ok" ]; then 
+if [ "$STATUS_CODE" != "ok" ]; then
   exit 1
 else
   exit 0

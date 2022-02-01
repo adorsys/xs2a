@@ -1,0 +1,6 @@
+<component name="CopyrightManager">
+  <copyright>
+    <option name="notice" value="Copyright 2018-&amp;#36;{today.year} adorsys GmbH &amp;amp; Co KG&#10;&#10;This program is free software: you can redistribute it and/or modify it &#10;under the terms of the GNU Affero General Public License as published &#10;by the Free Software Foundation, either version 3 of the License, or (at &#10;your option) any later version. This program is distributed in the hope that&#10;it will be useful, but WITHOUT ANY WARRANTY; without even the implied&#10;warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.&#10;See the GNU Affero General Public License for more details.&#10; &#10;You should have received a copy of the GNU Affero General Public License&#10;along with this program. If not, see https://www.gnu.org/licenses/.&#10;&#10;This project is also available under a separate commercial license. You can&#10;contact us at psd2@adorsys.com." />
+    <option name="myName" value="adorsys - GNU AGPL" />
+  </copyright>
+</component>

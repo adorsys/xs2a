@@ -1,7 +1,7 @@
 <component name="CopyrightManager">
-    <settings default="adorsys - APACHE 2.0">
-        <module2copyright>
-            <element module="All" copyright="adorsys - APACHE 2.0" />
-        </module2copyright>
-    </settings>
+  <settings default="adorsys - GNU AGPL">
+    <module2copyright>
+      <element module="All" copyright="adorsys - GNU AGPL" />
+    </module2copyright>
+  </settings>
 </component>
