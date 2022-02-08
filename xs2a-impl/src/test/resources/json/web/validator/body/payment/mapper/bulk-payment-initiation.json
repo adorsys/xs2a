@@ -33,13 +33,22 @@
         "streetName": "WBG Straße"
       },
       "remittanceInformationUnstructured": "Ref. Number WBG-1234",
+      "remittanceInformationUnstructuredArray": [
+        "Ref. Number WBG-1234"
+      ],
       "ultimateDebtor": "ultimateDebtor",
       "ultimateCreditor": "ultimateCreditor",
       "purposeCode": "CDQC",
-      "remittanceInformationStructured": "Ref Number Merchant",
+      "remittanceInformationStructured": {
+        "reference": "Remittance structured reference",
+        "referenceType": "reference type",
+        "referenceIssuer": "reference issuer"
+      },
       "remittanceInformationStructuredArray": [
         {
-          "reference": "Remittance structured array element reference"
+          "reference": "Remittance structured array element reference",
+          "referenceType": "reference type",
+          "referenceIssuer": "reference issuer"
         }
       ]
     }

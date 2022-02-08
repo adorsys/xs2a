@@ -60,7 +60,10 @@ import java.util.Optional;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class ReadSinglePaymentServiceTest {
@@ -68,7 +71,7 @@ class ReadSinglePaymentServiceTest {
     private static final String END_TO_END_IDENTIFICATION = "PAYMENT_ID";
     private static final String CREDITOR_AGENT = "AAAADEBBXXX";
     private static final String CREDITOR_NAME = "WBG";
-    private static final String REMITTANCE_INFORMATION_UNSTRUCTURED = "Ref Number Merchant";
+    private static final List<String> REMITTANCE_INFORMATION_UNSTRUCTURED_ARRAY = Collections.singletonList("Ref Number Merchant");
     private static final LocalDate REQUESTED_EXECUTION_DATE = LocalDate.now();
     private static final OffsetDateTime REQUESTED_EXECUTION_TIME = OffsetDateTime.now();
     private static final TransactionStatus TRANSACTION_STATUS = TransactionStatus.RCVD;
@@ -238,7 +241,7 @@ class ReadSinglePaymentServiceTest {
         singlePayment.setEndToEndIdentification(END_TO_END_IDENTIFICATION);
         singlePayment.setCreditorAgent(CREDITOR_AGENT);
         singlePayment.setCreditorName(CREDITOR_NAME);
-        singlePayment.setRemittanceInformationUnstructured(REMITTANCE_INFORMATION_UNSTRUCTURED);
+        singlePayment.setRemittanceInformationUnstructuredArray(REMITTANCE_INFORMATION_UNSTRUCTURED_ARRAY);
         singlePayment.setTransactionStatus(TRANSACTION_STATUS);
         singlePayment.setRequestedExecutionDate(REQUESTED_EXECUTION_DATE);
         singlePayment.setRequestedExecutionTime(REQUESTED_EXECUTION_TIME);

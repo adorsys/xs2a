@@ -71,11 +71,17 @@ public class PisPayment {
     @ApiModelProperty(value = "Creditor Address")
     private CmsAddress creditorAddress;
 
-    @ApiModelProperty(value = "remittance information unstructured", example = "Ref. Number TELEKOM-1222")
+    @ApiModelProperty(value = "Remittance information unstructured", example = "Ref. Number TELEKOM-1222")
     private String remittanceInformationUnstructured;
 
-    @ApiModelProperty(value = "remittance information structured")
+    @ApiModelProperty(value = "List of remittance information unstructured", example = "[Ref. Number TELEKOM-1222]")
+    private List<String> remittanceInformationUnstructuredArray;
+
+    @ApiModelProperty(value = "Remittance information structured")
     private CmsRemittance remittanceInformationStructured;
+
+    @ApiModelProperty(value = "List of remittance information structured")
+    private List<CmsRemittance> remittanceInformationStructuredArray;
 
     @ApiModelProperty(value = "Requested execution date", example = "2020-01-01")
     private LocalDate requestedExecutionDate;

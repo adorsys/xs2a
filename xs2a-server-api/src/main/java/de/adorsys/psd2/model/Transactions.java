@@ -18,7 +18,7 @@ import java.util.Objects;
  */
 @ApiModel(description = "Transaction details.")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2021-11-05T12:22:49.487689+02:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-01-31T18:01:42.990584+02:00[Europe/Kiev]")
 
 public class Transactions   {
   @JsonProperty("transactionId")
@@ -88,7 +88,7 @@ public class Transactions   {
   private RemittanceInformationUnstructuredArray remittanceInformationUnstructuredArray = null;
 
   @JsonProperty("remittanceInformationStructured")
-  private String remittanceInformationStructured = null;
+  private RemittanceInformationStructuredMax140 remittanceInformationStructured = null;
 
   @JsonProperty("remittanceInformationStructuredArray")
   private RemittanceInformationStructuredArray remittanceInformationStructuredArray = null;
@@ -609,7 +609,7 @@ public class Transactions   {
     this.remittanceInformationUnstructuredArray = remittanceInformationUnstructuredArray;
   }
 
-  public Transactions remittanceInformationStructured(String remittanceInformationStructured) {
+  public Transactions remittanceInformationStructured(RemittanceInformationStructuredMax140 remittanceInformationStructured) {
     this.remittanceInformationStructured = remittanceInformationStructured;
     return this;
   }
@@ -620,14 +620,15 @@ public class Transactions   {
   **/
   @ApiModelProperty(value = "")
 
-@Size(max=140)
+  @Valid
+
 
   @JsonProperty("remittanceInformationStructured")
-  public String getRemittanceInformationStructured() {
+  public RemittanceInformationStructuredMax140 getRemittanceInformationStructured() {
     return remittanceInformationStructured;
   }
 
-  public void setRemittanceInformationStructured(String remittanceInformationStructured) {
+  public void setRemittanceInformationStructured(RemittanceInformationStructuredMax140 remittanceInformationStructured) {
     this.remittanceInformationStructured = remittanceInformationStructured;
   }
 

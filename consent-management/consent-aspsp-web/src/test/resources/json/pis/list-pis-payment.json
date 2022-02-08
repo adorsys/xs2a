@@ -9,7 +9,14 @@
       },
       "creditorAgent": "agent",
       "creditorName": "name",
-      "remittanceInformationUnstructured": "remittanceInformationUnstructured",
+      "remittanceInformationUnstructuredArray": [ "remittanceInformationUnstructured" ],
+      "remittanceInformationStructuredArray": [
+        {
+          "reference":"reference",
+          "referenceType": "referenceType",
+          "referenceIssuer": "referenceIssuer"
+        }
+      ],
       "paymentType": "payments"
     }
   ],

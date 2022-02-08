@@ -37,7 +37,11 @@
       "ultimateDebtor": "ultimateDebtor",
       "ultimateCreditor": "ultimateCreditor",
       "purposeCode": "CDQC",
-      "remittanceInformationStructured": "Ref Number Merchant"
+      "remittanceInformationStructured": {
+        "reference": "Remittance structured",
+        "referenceType": "Remittance type",
+        "referenceIssuer": "Remittance issuer"
+      }
     }
   ]
 }

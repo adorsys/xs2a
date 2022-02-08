@@ -42,6 +42,11 @@
       "country": "DE"
     },
     "remittanceInformationUnstructured": "Ref. Number TELEKOM-1222",
+    "remittanceInformationStructured": {
+      "reference": "remittanceInformationStructured",
+      "referenceType": "ref type",
+      "referenceIssuer": "ref issuer"
+    },
     "paymentStatus": "RCVD",
     "purposeCode": "",
     "paymentType": "payments"

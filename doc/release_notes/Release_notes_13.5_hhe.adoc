@@ -2,8 +2,8 @@
 
 == Table of Contents
 
-* Updated h2 version
+* Bumped up versions of h2 in-memory DB and PostgreSQL
 
-== Updated h2 version
+== Bumped up versions of h2 in-memory DB and PostgreSQL
 
-Updated h2 version from 1.4.200 to 2.0.206.
+Updated h2 version from 1.4.200 to 2.1.210 and PostgreSQL from 42.2.4 to 42.2.25

@@ -38,8 +38,14 @@
     "amount": "1000.00",
     "currency": "EUR"
   },
-  "remittanceInformationUnstructured": "Ref. Number TELEKOM-1222",
-  "remittanceInformationStructured": "Ref Number Merchant",
+  "remittanceInformationUnstructuredArray": ["Ref. Number TELEKOM-1222"],
+  "remittanceInformationStructuredArray": [
+    {
+      "reference": "Ref Number Merchant",
+      "referenceType": "referenceType",
+      "referenceIssuer": "referenceIssuer"
+    }
+  ],
   "ultimateCreditor": "ultimateCreditor",
   "ultimateDebtor": "ultimateDebtor",
   "purposeCode": "CDQC",

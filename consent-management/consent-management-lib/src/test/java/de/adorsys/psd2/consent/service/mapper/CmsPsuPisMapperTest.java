@@ -19,7 +19,12 @@
 package de.adorsys.psd2.consent.service.mapper;
 
 import de.adorsys.psd2.consent.api.CmsAddress;
-import de.adorsys.psd2.consent.api.pis.*;
+import de.adorsys.psd2.consent.api.pis.CmsAmount;
+import de.adorsys.psd2.consent.api.pis.CmsBasePaymentResponse;
+import de.adorsys.psd2.consent.api.pis.CmsBulkPayment;
+import de.adorsys.psd2.consent.api.pis.CmsPeriodicPayment;
+import de.adorsys.psd2.consent.api.pis.CmsRemittance;
+import de.adorsys.psd2.consent.api.pis.CmsSinglePayment;
 import de.adorsys.psd2.consent.domain.AccountReferenceEntity;
 import de.adorsys.psd2.consent.domain.PsuData;
 import de.adorsys.psd2.consent.domain.TppInfoEntity;
@@ -49,9 +54,16 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.OffsetDateTime;
 import java.time.temporal.ChronoUnit;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Currency;
+import java.util.List;
+import java.util.Locale;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -105,6 +117,7 @@ class CmsPsuPisMapperTest {
     private static final PisExecutionRule EXECUTION_RULE = PisExecutionRule.FOLLOWING;
     private static final String FREEQUENCY = "DAILY";
     private static final PisRemittance REMITTANCE = jsonReader.getObjectFromFile("json/remittance.json", PisRemittance.class);
+    private static final CmsRemittance REMITTANCE_INFO_STRUCTURED = getRemittanceInfoStructured();
     private static final PisPaymentData PIS_PAYMENT_DATA_SINGLE = buildPisPaymentData(PIS_COMMON_PAYMENT_DATA_SINGLE);
     private static final PisPaymentData PIS_PAYMENT_DATA_PERIODIC = buildPisPaymentData(PIS_COMMON_PAYMENT_DATA_PERIODIC);
     private static final PisPaymentData PIS_PAYMENT_DATA_BULK = buildPisPaymentData(PIS_COMMON_PAYMENT_DATA_BULK);
@@ -181,7 +194,7 @@ class CmsPsuPisMapperTest {
         assertEquals(ULTIMATE_DEBTOR, singlePayment.getUltimateDebtor());
         assertEquals(ULTIMATE_CREDITOR, singlePayment.getUltimateCreditor());
         assertEquals(PURPOSE_CODE, singlePayment.getPurposeCode());
-        assertEquals(cmsRemittanceMapper.mapToCmsRemittance(REMITTANCE), singlePayment.getRemittanceInformationStructured());
+        assertEquals(REMITTANCE_INFO_STRUCTURED, singlePayment.getRemittanceInformationStructured());
     }
 
     @Test
@@ -218,7 +231,7 @@ class CmsPsuPisMapperTest {
         assertEquals(ULTIMATE_DEBTOR, periodicPayment.getUltimateDebtor());
         assertEquals(ULTIMATE_CREDITOR, periodicPayment.getUltimateCreditor());
         assertEquals(PURPOSE_CODE, periodicPayment.getPurposeCode());
-        assertEquals(cmsRemittanceMapper.mapToCmsRemittance(REMITTANCE), periodicPayment.getRemittanceInformationStructured());
+        assertEquals(REMITTANCE_INFO_STRUCTURED, periodicPayment.getRemittanceInformationStructured());
     }
 
     @Test
@@ -259,7 +272,16 @@ class CmsPsuPisMapperTest {
         assertEquals(ULTIMATE_DEBTOR, singlePayment.getUltimateDebtor());
         assertEquals(ULTIMATE_CREDITOR, singlePayment.getUltimateCreditor());
         assertEquals(PURPOSE_CODE, singlePayment.getPurposeCode());
-        assertEquals(cmsRemittanceMapper.mapToCmsRemittance(REMITTANCE), singlePayment.getRemittanceInformationStructured());
+        assertEquals(REMITTANCE_INFO_STRUCTURED, singlePayment.getRemittanceInformationStructured());
+    }
+
+
+    private static CmsRemittance getRemittanceInfoStructured() {
+        CmsRemittance cmsRemittance = new CmsRemittance();
+        cmsRemittance.setReference("reference");
+        cmsRemittance.setReferenceType("referenceType");
+        cmsRemittance.setReferenceIssuer("referenceIssuer");
+        return cmsRemittance;
     }
 
     private static PisCommonPaymentData buildPisCommonPaymentData(PaymentType paymentType) {

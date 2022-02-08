@@ -26,6 +26,7 @@ import de.adorsys.psd2.model.PaymentInitiationBulkElementJson;
 import de.adorsys.psd2.xs2a.core.error.ErrorType;
 import de.adorsys.psd2.xs2a.core.error.MessageError;
 import de.adorsys.psd2.xs2a.core.error.MessageErrorCode;
+import de.adorsys.psd2.xs2a.core.pis.Remittance;
 import de.adorsys.psd2.xs2a.core.pis.Xs2aAmount;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import de.adorsys.psd2.xs2a.domain.pis.BulkPayment;
@@ -33,6 +34,7 @@ import de.adorsys.psd2.xs2a.domain.pis.PeriodicPayment;
 import de.adorsys.psd2.xs2a.domain.pis.SinglePayment;
 import de.adorsys.psd2.xs2a.service.profile.AspspProfileServiceWrapper;
 import de.adorsys.psd2.xs2a.web.mapper.PurposeCodeMapper;
+import de.adorsys.psd2.xs2a.web.mapper.RemittanceMapper;
 import de.adorsys.psd2.xs2a.web.validator.ErrorBuildingService;
 import de.adorsys.psd2.xs2a.web.validator.body.AmountValidator;
 import de.adorsys.psd2.xs2a.web.validator.body.FieldLengthValidator;
@@ -54,7 +56,9 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.time.LocalDate;
 import java.util.Collections;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @ExtendWith(MockitoExtension.class)
 class BulkPaymentTypeValidatorImplTest {
@@ -82,13 +86,14 @@ class BulkPaymentTypeValidatorImplTest {
         singlePayment = bulkPayment.getPayments().get(0);
         Xs2aObjectMapper xs2aObjectMapper = new Xs2aObjectMapper();
         PurposeCodeMapper purposeCodeMapper = Mappers.getMapper(PurposeCodeMapper.class);
+        RemittanceMapper remittanceMapper = Mappers.getMapper(RemittanceMapper.class);
         ErrorBuildingService errorBuildingServiceMock = new ErrorBuildingServiceMock(ErrorType.AIS_400);
 
         validationConfig = new DefaultPaymentValidationConfigImpl();
 
         validator = new BulkPaymentTypeValidatorImpl(errorBuildingServiceMock,
                                                      xs2aObjectMapper,
-                                                     new PaymentMapper(xs2aObjectMapper, purposeCodeMapper),
+                                                     new PaymentMapper(xs2aObjectMapper, purposeCodeMapper, remittanceMapper),
                                                      new AmountValidator(errorBuildingServiceMock),
                                                      new IbanValidator(aspspProfileService, errorBuildingServiceMock),
                                                      new CustomPaymentValidationService(),
@@ -257,11 +262,15 @@ class BulkPaymentTypeValidatorImplTest {
 
     @Test
     void doBulkValidation_remittanceInformationStructuredArray_reference_error() {
-        singlePayment.setRemittanceInformationStructuredArray(Collections.singletonList(VALUE_141_LENGTH));
+        Remittance remittance = new Remittance();
+        remittance.setReference(VALUE_141_LENGTH);
+        remittance.setReferenceType("referenceType");
+        remittance.setReferenceIssuer("referenceIssuer");
+        singlePayment.setRemittanceInformationStructuredArray(Collections.singletonList(remittance));
 
         validator.doBulkValidation(bulkPayment, messageError, validationConfig);
         assertEquals(MessageErrorCode.FORMAT_ERROR_OVERSIZE_FIELD, messageError.getTppMessage().getMessageErrorCode());
-        assertArrayEquals(new Object[]{"remittanceInformationStructured", 140}, messageError.getTppMessage().getTextParameters());
+        assertArrayEquals(new Object[]{"reference", 35}, messageError.getTppMessage().getTextParameters());
     }
 
     private BulkPaymentInitiationJson getBulkPaymentInitiationJson() {

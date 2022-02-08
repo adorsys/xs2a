@@ -30,9 +30,15 @@
     "postCode": "90543",
     "streetName": "WBG Straße"
   },
-  "remittanceInformationUnstructured": "Ref. Number TELEKOM-1222",
+  "remittanceInformationUnstructuredArray": ["Ref. Number TELEKOM-1222"],
   "ultimateDebtor": "ultimateDebtor",
   "ultimateCreditor": "ultimateCreditor",
   "purposeCode": "CDQC",
-  "remittanceInformationStructured": "Ref Number Merchant"
+  "remittanceInformationStructuredArray": [
+    {
+      "reference": "Ref Number Merchant",
+      "referenceType": "referenceType",
+      "referenceIssuer": "referenceIssuer"
+    }
+  ]
 }

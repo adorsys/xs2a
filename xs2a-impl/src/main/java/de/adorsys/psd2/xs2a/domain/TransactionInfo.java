@@ -19,6 +19,7 @@
 package de.adorsys.psd2.xs2a.domain;
 
 import de.adorsys.psd2.core.payment.model.PurposeCode;
+import de.adorsys.psd2.xs2a.core.pis.Remittance;
 import de.adorsys.psd2.xs2a.core.profile.AccountReference;
 import lombok.Data;
 
@@ -41,8 +42,7 @@ public class TransactionInfo {
     @Size(max = 140)
     private final String remittanceInformationUnstructured;
     private final List<String> remittanceInformationUnstructuredArray;
-    @Size(max = 140)
-    private final String remittanceInformationStructured;
-    private final List<String> remittanceInformationStructuredArray;
+    private final Remittance remittanceInformationStructured;
+    private final List<Remittance> remittanceInformationStructuredArray;
     private final PurposeCode purposeCode;
 }

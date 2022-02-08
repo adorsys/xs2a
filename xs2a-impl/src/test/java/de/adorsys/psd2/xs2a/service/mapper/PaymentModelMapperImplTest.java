@@ -18,13 +18,18 @@
 
 package de.adorsys.psd2.xs2a.service.mapper;
 
-import de.adorsys.psd2.model.*;
+import de.adorsys.psd2.model.Amount;
+import de.adorsys.psd2.model.BulkPaymentInitiationJson;
+import de.adorsys.psd2.model.FrequencyCode;
+import de.adorsys.psd2.model.PaymentInitiationJson;
+import de.adorsys.psd2.model.PeriodicPaymentInitiationJson;
 import de.adorsys.psd2.xs2a.core.pis.Xs2aAmount;
 import de.adorsys.psd2.xs2a.core.profile.AccountReference;
 import de.adorsys.psd2.xs2a.domain.pis.BulkPayment;
 import de.adorsys.psd2.xs2a.domain.pis.PeriodicPayment;
 import de.adorsys.psd2.xs2a.domain.pis.SinglePayment;
 import de.adorsys.psd2.xs2a.web.mapper.PurposeCodeMapperImpl;
+import de.adorsys.psd2.xs2a.web.mapper.RemittanceMapperImpl;
 import de.adorsys.psd2.xs2a.web.mapper.Xs2aAddressMapperImpl;
 import de.adorsys.xs2a.reader.JsonReader;
 import org.junit.jupiter.api.Test;
@@ -42,7 +47,7 @@ import java.util.stream.Stream;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @ExtendWith(SpringExtension.class)
-@ContextConfiguration(classes = {PaymentModelMapperImpl.class, Xs2aAddressMapperImpl.class, PurposeCodeMapperImpl.class})
+@ContextConfiguration(classes = {PaymentModelMapperImpl.class, Xs2aAddressMapperImpl.class, PurposeCodeMapperImpl.class, RemittanceMapperImpl.class})
 class PaymentModelMapperImplTest {
 
     @Autowired

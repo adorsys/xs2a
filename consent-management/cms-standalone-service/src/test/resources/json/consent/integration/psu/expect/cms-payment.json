@@ -62,10 +62,9 @@
   "requestedExecutionDate": "2020-01-01",
   "ultimateDebtor": "Mueller",
   "remittanceInformationStructured": {
-    "reference": "Ref Number Merchant",
-    "referenceType": "reference type",
-    "referenceIssuer": "reference issuer"
+    "reference": "remittanceInformationStructured",
+    "referenceType": "ref type",
+    "referenceIssuer": "ref issuer"
   },
-  "remittanceInformationStructuredArray": [],
   "paymentType": "payments"
 }

@@ -34,7 +34,7 @@
     "amount": "1000.00",
     "currency": "EUR"
   },
-  "remittanceInformationUnstructured": "Ref. Number TELEKOM-1222",
+  "remittanceInformationUnstructuredArray": ["Ref. Number TELEKOM-1222"],
   "transactionStatus": "ACCP",
   "statusChangeTimestamp": "2019-12-27T12:00:00Z",
   "creationTimestamp": "2019-12-27T14:00:00Z",

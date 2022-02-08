@@ -45,9 +45,17 @@
       "ultimateCreditor": "ultimateCreditor",
       "purposeCode": "CDQC",
       "remittanceInformationUnstructured": "Ref. Number WBG-1234",
-      "remittanceInformationStructured": "remittanceInformationStructured",
+      "remittanceInformationStructured": {
+        "reference": "Remittance structured reference",
+        "referenceType": "reference type",
+        "referenceIssuer": "reference issuer"
+      },
       "remittanceInformationStructuredArray": [
-        "Remittance structured array element reference"
+        {
+          "reference": "Remittance structured array element reference",
+          "referenceType": "reference type",
+          "referenceIssuer": "reference issuer"
+        }
       ],
       "requestedExecutionDate": "2020-02-02"
     }

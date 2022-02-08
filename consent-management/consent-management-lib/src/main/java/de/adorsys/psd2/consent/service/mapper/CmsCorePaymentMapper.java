@@ -101,7 +101,10 @@ public class CmsCorePaymentMapper {
 
     private void setCommonFields(PaymentInitiationJson payment, PisPayment pisPayment) {
         payment.setCreditorAddress(cmsAddressMapper.mapToAddress(pisPayment.getCreditorAddress()));
+        payment.setRemittanceInformationUnstructured(pisPayment.getRemittanceInformationUnstructured());
+        payment.setRemittanceInformationUnstructuredArray(pisPayment.getRemittanceInformationUnstructuredArray());
         payment.setRemittanceInformationStructured(mapToRemittanceInformationStructured(pisPayment.getRemittanceInformationStructured()));
+        payment.setRemittanceInformationStructuredArray(mapToRemittanceInformationStructuredList(pisPayment.getRemittanceInformationStructuredArray()));
         payment.setCreditorAgent(pisPayment.getCreditorAgent());
         payment.setCreditorName(pisPayment.getCreditorName());
         payment.setCreditorAccount(mapToAccountReference(pisPayment.getCreditorAccount()));
@@ -112,21 +115,30 @@ public class CmsCorePaymentMapper {
         amount.setCurrency(mapToCurrency(pisPayment.getCurrency()));
         payment.setInstructedAmount(amount);
         payment.setPurposeCode(PurposeCode.fromValue(pisPayment.getPurposeCode()));
-        payment.setRemittanceInformationUnstructured(pisPayment.getRemittanceInformationUnstructured());
         payment.setUltimateCreditor(pisPayment.getUltimateCreditor());
         payment.setUltimateDebtor(pisPayment.getUltimateDebtor());
     }
 
-    private RemittanceInformationStructured mapToRemittanceInformationStructured(CmsRemittance remittanceInformationStructured) {
-        return Optional.ofNullable(remittanceInformationStructured)
-                   .map(ref -> {
-                       RemittanceInformationStructured informationStructured = new RemittanceInformationStructured();
-                       informationStructured.setReference(ref.getReference());
-                       informationStructured.setReferenceIssuer(ref.getReferenceIssuer());
-                       informationStructured.setReferenceType(ref.getReferenceType());
+    private List<RemittanceInformationStructured> mapToRemittanceInformationStructuredList(List<CmsRemittance> remittanceInformationStructuredArray) {
+        if (CollectionUtils.isEmpty(remittanceInformationStructuredArray)) {
+            return null;
+        }
 
-                       return informationStructured;
-                   }).orElse(null);
+        return remittanceInformationStructuredArray.stream()
+                   .map(this::mapToRemittanceInformationStructured)
+                   .collect(Collectors.toList());
+    }
+
+    private RemittanceInformationStructured mapToRemittanceInformationStructured(CmsRemittance remittance) {
+        if (remittance == null) {
+            return null;
+        }
+
+        RemittanceInformationStructured remittanceInformationStructured = new RemittanceInformationStructured();
+        remittanceInformationStructured.setReference(remittance.getReference());
+        remittanceInformationStructured.setReferenceType(remittance.getReferenceType());
+        remittanceInformationStructured.setReferenceIssuer(remittance.getReferenceIssuer());
+        return remittanceInformationStructured;
     }
 
     private AccountReference mapToAccountReference(de.adorsys.psd2.xs2a.core.profile.AccountReference reference) {

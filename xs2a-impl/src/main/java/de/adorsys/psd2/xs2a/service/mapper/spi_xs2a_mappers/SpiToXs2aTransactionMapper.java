@@ -49,5 +49,9 @@ public interface SpiToXs2aTransactionMapper {
     List<EntryDetails> mapToEntryDetailsList(List<SpiEntryDetails> spiEntryDetails);
 
     @Mapping(target = "purposeCode", expression = "java(PurposeCode.fromValue(spiTransactionInfo.getPurposeCode()))")
+    @Mapping(target = "remittanceInformationUnstructuredArray", source = "remittanceInformationUnstructuredArray")
+    @Mapping(target = "remittanceInformationUnstructured", source = "remittanceInformationUnstructured")
+    @Mapping(target = "remittanceInformationStructuredArray", source = "remittanceInformationStructuredArray")
+    @Mapping(target = "remittanceInformationStructured", source = "remittanceInformationStructured")
     TransactionInfo mapToTransactionInfo(SpiTransactionInfo spiTransactionInfo);
 }

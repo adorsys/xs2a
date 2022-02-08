@@ -21,6 +21,7 @@ package de.adorsys.psd2.consent.web.aspsp.controller;
 import de.adorsys.psd2.consent.api.CmsAddress;
 import de.adorsys.psd2.consent.api.pis.CmsAmount;
 import de.adorsys.psd2.consent.api.pis.CmsBasePaymentResponse;
+import de.adorsys.psd2.consent.api.pis.CmsRemittance;
 import de.adorsys.psd2.consent.api.pis.CmsSinglePayment;
 import de.adorsys.psd2.consent.aspsp.api.PageData;
 import de.adorsys.psd2.consent.aspsp.api.pis.CmsAspspPisExportService;
@@ -45,8 +46,11 @@ import java.time.LocalDate;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Currency;
+import java.util.List;
 
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -145,7 +149,16 @@ class CmsAspspPisExportControllerTest {
         result.setCreditorAgent("agent");
         result.setCreditorName("name");
         result.setCreditorAddress(new CmsAddress());
-        result.setRemittanceInformationUnstructured("remittanceInformationUnstructured");
+        result.setRemittanceInformationUnstructuredArray(Collections.singletonList("remittanceInformationUnstructured"));
+        result.setRemittanceInformationStructuredArray(getRemittanceInfoStructuredArray());
         return result;
+    }
+
+    private List<CmsRemittance> getRemittanceInfoStructuredArray() {
+        CmsRemittance cmsRemittance = new CmsRemittance();
+        cmsRemittance.setReference("reference");
+        cmsRemittance.setReferenceType("referenceType");
+        cmsRemittance.setReferenceIssuer("referenceIssuer");
+        return Collections.singletonList(cmsRemittance);
     }
 }

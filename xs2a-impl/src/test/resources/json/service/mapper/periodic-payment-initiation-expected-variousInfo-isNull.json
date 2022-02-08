@@ -34,7 +34,11 @@
   "ultimateCreditor": "ultimateCreditor" ,
   "purposeCode": "CDQC" ,
   "remittanceInformationUnstructured": "Ref. Number TELEKOM-1222" ,
-  "remittanceInformationStructured": "remittanceInformationStructured" ,
+  "remittanceInformationStructured": {
+    "reference": "Remittance structured reference",
+    "referenceType": "reference type",
+    "referenceIssuer": "reference issuer"
+  },
   "startDate": "2017-03-03" ,
   "endDate": "2018-03-03" ,
   "dayOfExecution": "14",

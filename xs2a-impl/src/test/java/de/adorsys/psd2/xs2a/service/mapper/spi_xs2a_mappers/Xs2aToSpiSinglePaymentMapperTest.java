@@ -21,6 +21,7 @@ package de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers;
 import de.adorsys.psd2.core.payment.model.PurposeCode;
 import de.adorsys.psd2.xs2a.core.domain.address.Xs2aAddress;
 import de.adorsys.psd2.xs2a.core.domain.address.Xs2aCountryCode;
+import de.adorsys.psd2.xs2a.core.pis.Remittance;
 import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
 import de.adorsys.psd2.xs2a.core.pis.Xs2aAmount;
 import de.adorsys.psd2.xs2a.core.profile.AccountReference;
@@ -29,6 +30,7 @@ import de.adorsys.psd2.xs2a.domain.pis.SinglePayment;
 import de.adorsys.psd2.xs2a.spi.domain.account.SpiAccountReference;
 import de.adorsys.psd2.xs2a.spi.domain.common.SpiAmount;
 import de.adorsys.psd2.xs2a.spi.domain.payment.SpiAddress;
+import de.adorsys.psd2.xs2a.spi.domain.payment.SpiRemittance;
 import de.adorsys.psd2.xs2a.spi.domain.payment.SpiSinglePayment;
 import de.adorsys.psd2.xs2a.spi.domain.psu.SpiPsuData;
 import de.adorsys.psd2.xs2a.web.mapper.RemittanceMapper;
@@ -47,7 +49,11 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Currency;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.when;
@@ -63,7 +69,7 @@ class Xs2aToSpiSinglePaymentMapperTest {
     private static final String CRED_ACCOUNT_ID = "2222_creditorAccount";
     private static final String CREDITOR_AGENT = "AAAADEBBXXX";
     private static final String CREDITOR_NAME = "WBG";
-    private static final String REMITTANCE_INFORMATION_UNSTRUCTURED = "Ref Number Merchant";
+    private static final List<String> REMITTANCE_INFORMATION_UNSTRUCTURED_ARRAY = Collections.singletonList("Ref Number Merchant");
     private static final String PAYMENT_PRODUCT = "sepa-credit-transfers";
     private static final String STREET = "Herrnstraße";
     private static final String BUILDING_NUMBER = "123-34";
@@ -84,7 +90,9 @@ class Xs2aToSpiSinglePaymentMapperTest {
     private static final String ULTIMATE_DEBTOR = "ultimate debtor";
     private static final String ULTIMATE_CREDITOR = "ultimate creditor";
     private static final PurposeCode PURPOSE_CODE = PurposeCode.fromValue("BKDF");
-    private static final String REMITTANCE = "reference";
+    private final Remittance REMITTANCE = getRemittance();
+    private final SpiRemittance SPI_REMITTANCE = getSpiRemittance();
+    private final String REFERENCE = "reference";
 
     @InjectMocks
     private Xs2aToSpiSinglePaymentMapper xs2aToSpiSinglePaymentMapper;
@@ -131,7 +139,7 @@ class Xs2aToSpiSinglePaymentMapperTest {
         assertEquals(CREDITOR_AGENT, spiSinglePayment.getCreditorAgent());
         assertEquals(CREDITOR_NAME, spiSinglePayment.getCreditorName());
         assertEquals(buildSpiAddress(), spiSinglePayment.getCreditorAddress());
-        assertEquals(REMITTANCE_INFORMATION_UNSTRUCTURED, spiSinglePayment.getRemittanceInformationUnstructured());
+        assertEquals(REMITTANCE_INFORMATION_UNSTRUCTURED_ARRAY, spiSinglePayment.getRemittanceInformationUnstructuredArray());
         assertEquals(TRANSACTION_STATUS, spiSinglePayment.getPaymentStatus());
         assertEquals(PAYMENT_PRODUCT, spiSinglePayment.getPaymentProduct());
         assertEquals(REQUESTED_EXECUTION_DATE, spiSinglePayment.getRequestedExecutionDate());
@@ -141,8 +149,7 @@ class Xs2aToSpiSinglePaymentMapperTest {
         assertEquals(ULTIMATE_DEBTOR, spiSinglePayment.getUltimateDebtor());
         assertEquals(ULTIMATE_CREDITOR, spiSinglePayment.getUltimateCreditor());
         assertEquals(PURPOSE_CODE, spiSinglePayment.getPurposeCode());
-        assertEquals(REMITTANCE, spiSinglePayment.getRemittanceInformationStructured());
-        assertEquals(Collections.singletonList(REMITTANCE), spiSinglePayment.getRemittanceInformationStructuredArray());
+        assertEquals(Collections.singletonList(SPI_REMITTANCE), spiSinglePayment.getRemittanceInformationStructuredArray());
         assertEquals(singlePayment.getCreationTimestamp(), spiSinglePayment.getCreationTimestamp());
         assertEquals(singlePayment.getContentType(), spiSinglePayment.getContentType());
     }
@@ -158,7 +165,7 @@ class Xs2aToSpiSinglePaymentMapperTest {
         singlePayment.setCreditorAgent(CREDITOR_AGENT);
         singlePayment.setCreditorName(CREDITOR_NAME);
         singlePayment.setCreditorAddress(buildXs2aAddress());
-        singlePayment.setRemittanceInformationUnstructured(REMITTANCE_INFORMATION_UNSTRUCTURED);
+        singlePayment.setRemittanceInformationUnstructuredArray(REMITTANCE_INFORMATION_UNSTRUCTURED_ARRAY);
         singlePayment.setTransactionStatus(TRANSACTION_STATUS);
         singlePayment.setRequestedExecutionDate(REQUESTED_EXECUTION_DATE);
         singlePayment.setRequestedExecutionTime(REQUESTED_EXECUTION_TIME);
@@ -167,7 +174,6 @@ class Xs2aToSpiSinglePaymentMapperTest {
         singlePayment.setUltimateDebtor(ULTIMATE_DEBTOR);
         singlePayment.setUltimateCreditor(ULTIMATE_CREDITOR);
         singlePayment.setPurposeCode(PURPOSE_CODE);
-        singlePayment.setRemittanceInformationStructured(REMITTANCE);
         singlePayment.setRemittanceInformationStructuredArray(Collections.singletonList(REMITTANCE));
         singlePayment.setCreationTimestamp(OffsetDateTime.now());
         singlePayment.setContentType(MediaType.APPLICATION_JSON_VALUE);
@@ -221,5 +227,21 @@ class Xs2aToSpiSinglePaymentMapperTest {
         return SpiPsuData.builder()
                    .psuId(psuId)
                    .build();
+    }
+
+    private Remittance getRemittance() {
+        Remittance remittance = new Remittance();
+        remittance.setReference(REFERENCE);
+        remittance.setReferenceType(null);
+        remittance.setReferenceIssuer(null);
+        return remittance;
+    }
+
+    private SpiRemittance getSpiRemittance() {
+        SpiRemittance remittance = new SpiRemittance();
+        remittance.setReference(REFERENCE);
+        remittance.setReferenceType(null);
+        remittance.setReferenceIssuer(null);
+        return remittance;
     }
 }

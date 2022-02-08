@@ -30,7 +30,12 @@ import de.adorsys.psd2.xs2a.domain.Transactions;
 import de.adorsys.psd2.xs2a.domain.account.Xs2aAdditionalInformationStructured;
 import de.adorsys.psd2.xs2a.domain.account.Xs2aStandingOrderDetails;
 import de.adorsys.psd2.xs2a.domain.account.Xs2aTransactionsReport;
-import de.adorsys.psd2.xs2a.web.mapper.*;
+import de.adorsys.psd2.xs2a.web.mapper.BalanceMapperImpl;
+import de.adorsys.psd2.xs2a.web.mapper.DayOfExecutionMapper;
+import de.adorsys.psd2.xs2a.web.mapper.HrefLinkMapper;
+import de.adorsys.psd2.xs2a.web.mapper.OffsetDateTimeMapper;
+import de.adorsys.psd2.xs2a.web.mapper.PurposeCodeMapperImpl;
+import de.adorsys.psd2.xs2a.web.mapper.RemittanceMapperImpl;
 import de.adorsys.xs2a.reader.JsonReader;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -46,12 +51,14 @@ import java.util.Collections;
 import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = {TransactionModelMapperImpl.class, TestMapperConfiguration.class,
     BalanceMapperImpl.class, ReportExchangeMapperImpl.class, HrefLinkMapper.class, Xs2aObjectMapper.class,
-    DayOfExecutionMapper.class, OffsetDateTimeMapper.class, PurposeCodeMapperImpl.class, AmountModelMapper.class})
+    DayOfExecutionMapper.class, OffsetDateTimeMapper.class, PurposeCodeMapperImpl.class, AmountModelMapper.class, RemittanceMapperImpl.class})
 class TransactionModelMapperTest {
     private static final OffsetDateTime OFFSET_DATE_TIME = OffsetDateTime.now();
     private static final String BYTE_ARRAY_IN_STRING = "000000000000000=";
@@ -277,7 +284,7 @@ class TransactionModelMapperTest {
         standingOrderDetails.setFrequency(frequencyCode);
         additionalInformationStructured.setStandingOrderDetails(standingOrderDetails);
         transactions.setAdditionalInformationStructured(additionalInformationStructured);
-        transactions.setTransactionInfo(new TransactionInfo(null, null, null, null, null, null, null, null, null, null, null, Collections.emptyList(), null));
+        transactions.setTransactionInfo(new TransactionInfo(null, null, null, null, null, null, null, null, null, Collections.emptyList(), null, Collections.emptyList(), null));
         return transactions;
     }
 
@@ -288,7 +295,7 @@ class TransactionModelMapperTest {
         standingOrderDetails.setExecutionRule(executionRule);
         additionalInformationStructured.setStandingOrderDetails(standingOrderDetails);
         transactions.setAdditionalInformationStructured(additionalInformationStructured);
-        transactions.setTransactionInfo(new TransactionInfo(null, null, null, null, null, null, null, null, null, null, null, Collections.emptyList(), null));
+        transactions.setTransactionInfo(new TransactionInfo(null, null, null, null, null, null, null, null,  null, Collections.emptyList(), null, Collections.emptyList(), null));
         return transactions;
     }
 

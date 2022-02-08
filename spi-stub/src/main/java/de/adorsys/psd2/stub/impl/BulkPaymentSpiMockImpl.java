@@ -48,6 +48,7 @@ import java.time.Month;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Currency;
 import java.util.List;
 import java.util.UUID;
@@ -168,7 +169,7 @@ public class BulkPaymentSpiMockImpl implements BulkPaymentSpi {
         payment.setCreditorAgent("FSDFSASGSGF");
         payment.setCreditorName("WBG");
         payment.setCreditorAddress(new SpiAddress("Herrnstraße", "123-34", "Nürnberg", "90431", "DE"));
-        payment.setRemittanceInformationUnstructured("Ref. Number WBG-1234");
+        payment.setRemittanceInformationUnstructuredArray(Collections.singletonList("Ref. Number WBG-1234"));
         payment.setRequestedExecutionDate(LocalDate.of(2020, Month.JANUARY, 1));
         payment.setRequestedExecutionTime(OffsetDateTime.of(2020, 1, 1, 12, 0, 0, 0, ZoneOffset.UTC));
         payment.setPaymentStatus(TransactionStatus.RCVD);

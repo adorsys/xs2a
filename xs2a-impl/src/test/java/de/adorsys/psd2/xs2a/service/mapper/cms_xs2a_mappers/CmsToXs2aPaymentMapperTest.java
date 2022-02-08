@@ -44,7 +44,9 @@ import java.util.Collections;
 import java.util.Currency;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 @ExtendWith(MockitoExtension.class)
 class CmsToXs2aPaymentMapperTest {
@@ -149,8 +151,8 @@ class CmsToXs2aPaymentMapperTest {
         pisPayment.setCreditorAgent(CREDITOR_AGENT);
         pisPayment.setCreditorName(CREDITOR_NAME);
         pisPayment.setCreditorAddress(buildCmsAddress());
-        pisPayment.setRemittanceInformationUnstructured(REMITTANCE_INFORMATION_UNSTRUCTURED);
-        pisPayment.setRemittanceInformationStructured(buildCmsRemittance());
+        pisPayment.setRemittanceInformationUnstructuredArray(Collections.singletonList(REMITTANCE_INFORMATION_UNSTRUCTURED));
+        pisPayment.setRemittanceInformationStructuredArray(Collections.singletonList(buildCmsRemittance()));
         pisPayment.setRequestedExecutionDate(REQUESTED_EXECUTION_DATE);
         pisPayment.setRequestedExecutionTime(REQUESTED_EXECUTION_TIME);
         pisPayment.setUltimateCreditor(ULTIMATE_CREDITOR);

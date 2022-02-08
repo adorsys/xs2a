@@ -19,9 +19,14 @@
 package de.adorsys.psd2.xs2a.web.mapper;
 
 import de.adorsys.psd2.model.RemittanceInformationStructured;
+import de.adorsys.psd2.model.RemittanceInformationStructuredArray;
+import de.adorsys.psd2.model.RemittanceInformationStructuredMax140;
+import de.adorsys.psd2.model.RemittanceInformationUnstructuredArray;
 import de.adorsys.psd2.xs2a.core.pis.Remittance;
 import de.adorsys.psd2.xs2a.spi.domain.payment.SpiRemittance;
 import org.mapstruct.Mapper;
+
+import java.util.List;
 
 @Mapper(componentModel = "spring")
 public interface RemittanceMapper {
@@ -29,7 +34,17 @@ public interface RemittanceMapper {
 
     Remittance mapToRemittance(RemittanceInformationStructured remittanceInformationStructured);
 
-    SpiRemittance mapToSpiRemittance(Remittance remittance);
+    Remittance mapToRemittance(RemittanceInformationStructuredMax140 remittanceInformationStructured);
+
+    List<String> mapToRemittanceUnstructuredList(RemittanceInformationUnstructuredArray remittanceInformationUnstructuredArray);
 
     Remittance mapToRemittance(SpiRemittance spiRemittance);
+
+    List<Remittance> mapToRemittanceArray(List<SpiRemittance> spiRemittanceArray);
+
+    List<Remittance> mapToRemittanceArray(RemittanceInformationStructuredArray remittanceStructuredArray);
+
+    SpiRemittance mapToSpiRemittance(Remittance remittance);
+
+    List<SpiRemittance> mapToSpiRemittanceArray(List<Remittance> remittanceArray);
 }

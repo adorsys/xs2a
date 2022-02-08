@@ -32,5 +32,5 @@
     "amount": "1000.00",
     "currency": "EUR"
   },
-  "remittanceInformationUnstructured": "Ref. Number TELEKOM-1222"
+  "remittanceInformationUnstructuredArray": [ "Ref. Number TELEKOM-1222" ]
 }

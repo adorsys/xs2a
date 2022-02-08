@@ -45,11 +45,15 @@ public interface PaymentValidationConfig {
     ValidationObject getReferenceType();
     ValidationObject getReferenceIssuer();
 
+    ValidationObject getReferenceMax140();
+    ValidationObject getReferenceTypeMax140();
+    ValidationObject getReferenceIssuerMax140();
+
     ValidationObject getExecutionRule();
     ValidationObject getCreditorId();
     ValidationObject getDayOfExecution();
     ValidationObject getMonthsOfExecution();
 
-    ValidationObject getRemittanceInformationStructured();
+    ValidationObject getRemittanceInformationUnstructured();
     ValidationObject getChargeBearer();
 }

@@ -32,7 +32,12 @@ import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.Xs2aToSpiSinglePayme
 import de.adorsys.psd2.xs2a.service.payment.support.mapper.RawToXs2aPaymentMapper;
 import de.adorsys.psd2.xs2a.spi.domain.account.SpiAccountReference;
 import de.adorsys.psd2.xs2a.spi.domain.common.SpiAmount;
-import de.adorsys.psd2.xs2a.spi.domain.payment.*;
+import de.adorsys.psd2.xs2a.spi.domain.payment.SpiAddress;
+import de.adorsys.psd2.xs2a.spi.domain.payment.SpiBulkPayment;
+import de.adorsys.psd2.xs2a.spi.domain.payment.SpiPaymentInfo;
+import de.adorsys.psd2.xs2a.spi.domain.payment.SpiPeriodicPayment;
+import de.adorsys.psd2.xs2a.spi.domain.payment.SpiRemittance;
+import de.adorsys.psd2.xs2a.spi.domain.payment.SpiSinglePayment;
 import de.adorsys.psd2.xs2a.spi.domain.psu.SpiPsuData;
 import de.adorsys.xs2a.reader.JsonReader;
 import org.junit.jupiter.api.Test;
@@ -47,6 +52,7 @@ import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 import java.util.Collections;
 import java.util.Currency;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.when;
@@ -66,7 +72,7 @@ class SpiPaymentMapperTest {
     private static final Currency CURRENCY = Currency.getInstance("EUR");
     private static final SpiAmount INSTRUCTED_AMOUNT = new SpiAmount(CURRENCY, new BigDecimal("1000.00"));
     private static final SpiAddress ADDRESS = new SpiAddress("WBG Straße", "56", "Nürnberg", "90543", "DE");
-    private static final String REMITTANCE_INFORMATION = "Ref. Number TELEKOM-1222";
+    private static final List<String> REMITTANCE_INFORMATION_UNSTRUCTURED_ARRAY = Collections.singletonList("Ref. Number TELEKOM-1222");
 
     @Mock
     private Xs2aToSpiSinglePaymentMapper xs2aToSpiSinglePaymentMapper;
@@ -173,7 +179,7 @@ class SpiPaymentMapperTest {
         singlePayment.setCreditorAgent("BCENECEQ");
         singlePayment.setCreditorName("Telekom");
         singlePayment.setCreditorAddress(ADDRESS);
-        singlePayment.setRemittanceInformationUnstructured(REMITTANCE_INFORMATION);
+        singlePayment.setRemittanceInformationUnstructuredArray(REMITTANCE_INFORMATION_UNSTRUCTURED_ARRAY);
         return singlePayment;
     }
 
@@ -200,7 +206,7 @@ class SpiPaymentMapperTest {
         periodicPayment.setExecutionRule(PisExecutionRule.PRECEDING);
         periodicPayment.setFrequency(FrequencyCode.ANNUAL);
         periodicPayment.setInstructedAmount(INSTRUCTED_AMOUNT);
-        periodicPayment.setRemittanceInformationUnstructured(REMITTANCE_INFORMATION);
+        periodicPayment.setRemittanceInformationUnstructuredArray(REMITTANCE_INFORMATION_UNSTRUCTURED_ARRAY);
         periodicPayment.setStartDate(LocalDate.of(2017, 3, 3));
         periodicPayment.setEndDate(LocalDate.of(2020, 12, 2));
         return periodicPayment;
@@ -229,11 +235,11 @@ class SpiPaymentMapperTest {
         bulkPaymentPart.setCreditorName("WBG");
         bulkPaymentPart.setCreditorAddress(ADDRESS);
         bulkPaymentPart.setEndToEndIdentification(END_TO_END_IDENTIFICATION);
-        bulkPaymentPart.setRemittanceInformationUnstructured(REMITTANCE_INFORMATION);
+        bulkPaymentPart.setRemittanceInformationUnstructuredArray(REMITTANCE_INFORMATION_UNSTRUCTURED_ARRAY);
         bulkPaymentPart.setUltimateDebtor("ultimateDebtor");
         bulkPaymentPart.setUltimateCreditor("ultimateCreditor");
         bulkPaymentPart.setPurposeCode(PurposeCode.CDQC);
-        bulkPaymentPart.setRemittanceInformationStructured("reference");
+        bulkPaymentPart.setRemittanceInformationStructuredArray(getRemittanceInfoStructuredArray());
 
         bulkPayment.setPayments(Collections.singletonList(bulkPaymentPart));
         return bulkPayment;
@@ -248,5 +254,13 @@ class SpiPaymentMapperTest {
         bulkPayment.setStatusChangeTimestamp(STATUS_CHANGE_TIMESTAMP);
         bulkPayment.setCreationTimestamp(CREATION_TIMESTAMP);
         return bulkPayment;
+    }
+
+    private List<SpiRemittance> getRemittanceInfoStructuredArray() {
+        SpiRemittance spiRemittance = new SpiRemittance();
+        spiRemittance.setReference("Ref Number Merchant");
+        spiRemittance.setReferenceType("referenceType");
+        spiRemittance.setReferenceIssuer("referenceIssuer");
+        return Collections.singletonList(spiRemittance);
     }
 }

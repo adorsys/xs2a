@@ -24,12 +24,14 @@ import de.adorsys.psd2.xs2a.core.domain.address.Xs2aAddress;
 import de.adorsys.psd2.xs2a.core.error.ErrorType;
 import de.adorsys.psd2.xs2a.core.error.MessageError;
 import de.adorsys.psd2.xs2a.core.error.MessageErrorCode;
+import de.adorsys.psd2.xs2a.core.pis.Remittance;
 import de.adorsys.psd2.xs2a.core.pis.Xs2aAmount;
 import de.adorsys.psd2.xs2a.core.profile.AccountReference;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import de.adorsys.psd2.xs2a.domain.pis.PeriodicPayment;
 import de.adorsys.psd2.xs2a.service.profile.AspspProfileServiceWrapper;
 import de.adorsys.psd2.xs2a.web.mapper.PurposeCodeMapper;
+import de.adorsys.psd2.xs2a.web.mapper.RemittanceMapper;
 import de.adorsys.psd2.xs2a.web.validator.ErrorBuildingService;
 import de.adorsys.psd2.xs2a.web.validator.body.AmountValidator;
 import de.adorsys.psd2.xs2a.web.validator.body.FieldLengthValidator;
@@ -50,7 +52,9 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.time.LocalDate;
 import java.util.Collections;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @ExtendWith(MockitoExtension.class)
 class PeriodicPaymentTypeValidatorImplTest {
@@ -82,13 +86,14 @@ class PeriodicPaymentTypeValidatorImplTest {
 
         Xs2aObjectMapper xs2aObjectMapper = new ObjectMapperConfig().xs2aObjectMapper();
         PurposeCodeMapper purposeCodeMapper = Mappers.getMapper(PurposeCodeMapper.class);
+        RemittanceMapper remittanceMapper = Mappers.getMapper(RemittanceMapper.class);
         ErrorBuildingService errorBuildingServiceMock = new ErrorBuildingServiceMock(ErrorType.AIS_400);
 
         validationConfig = new DefaultPaymentValidationConfigImpl();
 
         validator = new PeriodicPaymentTypeValidatorImpl(errorBuildingServiceMock,
                                                          xs2aObjectMapper,
-                                                         new PaymentMapper(xs2aObjectMapper, purposeCodeMapper),
+                                                         new PaymentMapper(xs2aObjectMapper, purposeCodeMapper, remittanceMapper),
                                                          new AmountValidator(errorBuildingServiceMock),
                                                          new IbanValidator(aspspProfileService, errorBuildingServiceMock),
                                                          new CustomPaymentValidationService(),
@@ -383,19 +388,23 @@ class PeriodicPaymentTypeValidatorImplTest {
 
     @Test
     void doValidation_remittance_reference_error() {
-        periodicPayment.setRemittanceInformationStructured(VALUE_141_LENGTH);
+        periodicPayment.setRemittanceInformationUnstructuredArray(Collections.singletonList(VALUE_141_LENGTH));
 
         validator.doSingleValidation(periodicPayment, messageError, validationConfig);
         assertEquals(MessageErrorCode.FORMAT_ERROR_OVERSIZE_FIELD, messageError.getTppMessage().getMessageErrorCode());
-        assertArrayEquals(new Object[]{"remittanceInformationStructured", 140}, messageError.getTppMessage().getTextParameters());
+        assertArrayEquals(new Object[]{"remittanceInformationUnstructuredArray", 140}, messageError.getTppMessage().getTextParameters());
     }
 
     @Test
-    void doPeriodicValidation_remittanceInformationStructuredArray_reference_error() {
-        periodicPayment.setRemittanceInformationStructuredArray(Collections.singletonList(VALUE_141_LENGTH));
+    void doPeriodicValidation_remittanceInformationStructuredArray_referenceIssuer_error() {
+        Remittance remittance = new Remittance();
+        remittance.setReference("reference");
+        remittance.setReferenceType("referenceType");
+        remittance.setReferenceIssuer(VALUE_71_LENGTH);
+        periodicPayment.setRemittanceInformationStructuredArray(Collections.singletonList(remittance));
 
         validator.doPeriodicValidation(periodicPayment, messageError, validationConfig);
         assertEquals(MessageErrorCode.FORMAT_ERROR_OVERSIZE_FIELD, messageError.getTppMessage().getMessageErrorCode());
-        assertArrayEquals(new Object[]{"remittanceInformationStructured", 140}, messageError.getTppMessage().getTextParameters());
+        assertArrayEquals(new Object[]{"referenceIssuer", 35}, messageError.getTppMessage().getTextParameters());
     }
 }

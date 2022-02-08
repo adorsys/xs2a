@@ -41,6 +41,7 @@ public class PaymentInitiationJson {
     private PurposeCode purposeCode;
     private ChargeBearer chargeBearer;
     private String remittanceInformationUnstructured;
+    private List<String> remittanceInformationUnstructuredArray;
     private RemittanceInformationStructured remittanceInformationStructured;
     private List<RemittanceInformationStructured> remittanceInformationStructuredArray;
     private LocalDate requestedExecutionDate;

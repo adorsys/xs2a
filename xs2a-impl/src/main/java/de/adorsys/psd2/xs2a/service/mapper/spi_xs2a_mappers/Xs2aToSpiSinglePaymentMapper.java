@@ -21,6 +21,7 @@ package de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers;
 import de.adorsys.psd2.model.ChargeBearer;
 import de.adorsys.psd2.xs2a.domain.pis.SinglePayment;
 import de.adorsys.psd2.xs2a.spi.domain.payment.SpiSinglePayment;
+import de.adorsys.psd2.xs2a.web.mapper.RemittanceMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -33,6 +34,7 @@ public class Xs2aToSpiSinglePaymentMapper {
     private final Xs2aToSpiAddressMapper xs2aToSpiAddressMapper;
     private final Xs2aToSpiAccountReferenceMapper xs2aToSpiAccountReferenceMapper;
     private final Xs2aToSpiPsuDataMapper xs2aToSpiPsuDataMapper;
+    private final RemittanceMapper remittanceMapper;
 
     public SpiSinglePayment mapToSpiSinglePayment(SinglePayment payment, String paymentProduct) {
         SpiSinglePayment single = new SpiSinglePayment(paymentProduct);
@@ -48,7 +50,6 @@ public class Xs2aToSpiSinglePaymentMapper {
         single.setCreditorAgent(payment.getCreditorAgent());
         single.setCreditorName(payment.getCreditorName());
         single.setCreditorAddress(xs2aToSpiAddressMapper.mapToSpiAddress(payment.getCreditorAddress()));
-        single.setRemittanceInformationUnstructured(payment.getRemittanceInformationUnstructured());
         single.setRequestedExecutionTime(payment.getRequestedExecutionTime());
         single.setRequestedExecutionDate(payment.getRequestedExecutionDate());
         single.setPsuDataList(xs2aToSpiPsuDataMapper.mapToSpiPsuDataList(payment.getPsuDataList()));
@@ -56,8 +57,10 @@ public class Xs2aToSpiSinglePaymentMapper {
         single.setUltimateDebtor(payment.getUltimateDebtor());
         single.setUltimateCreditor(payment.getUltimateCreditor());
         single.setPurposeCode(payment.getPurposeCode());
-        single.setRemittanceInformationStructured(payment.getRemittanceInformationStructured());
-        single.setRemittanceInformationStructuredArray(payment.getRemittanceInformationStructuredArray());
+        single.setRemittanceInformationUnstructured(payment.getRemittanceInformationUnstructured());
+        single.setRemittanceInformationUnstructuredArray(payment.getRemittanceInformationUnstructuredArray());
+        single.setRemittanceInformationStructured(remittanceMapper.mapToSpiRemittance(payment.getRemittanceInformationStructured()));
+        single.setRemittanceInformationStructuredArray(remittanceMapper.mapToSpiRemittanceArray(payment.getRemittanceInformationStructuredArray()));
         single.setCreationTimestamp(payment.getCreationTimestamp());
         single.setContentType(payment.getContentType());
         single.setDebtorName(payment.getDebtorName());
