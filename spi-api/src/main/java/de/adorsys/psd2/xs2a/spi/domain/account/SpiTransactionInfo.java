@@ -18,6 +18,7 @@
 
 package de.adorsys.psd2.xs2a.spi.domain.account;
 
+import de.adorsys.psd2.xs2a.spi.domain.payment.SpiRemittance;
 import lombok.Data;
 
 import java.util.List;
@@ -34,7 +35,7 @@ public class SpiTransactionInfo {
     private final String ultimateDebtor;
     private final String remittanceInformationUnstructured;
     private final List<String> remittanceInformationUnstructuredArray;
-    private final String remittanceInformationStructured;
-    private final List<String> remittanceInformationStructuredArray;
+    private final SpiRemittance remittanceInformationStructured;
+    private final List<SpiRemittance> remittanceInformationStructuredArray;
     private final String purposeCode;
 }

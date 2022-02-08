@@ -26,6 +26,7 @@ import de.adorsys.psd2.xs2a.spi.domain.SpiAspspConsentDataProvider;
 import de.adorsys.psd2.xs2a.spi.domain.SpiContextData;
 import de.adorsys.psd2.xs2a.spi.domain.account.*;
 import de.adorsys.psd2.xs2a.spi.domain.common.SpiAmount;
+import de.adorsys.psd2.xs2a.spi.domain.payment.SpiRemittance;
 import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponse;
 import de.adorsys.psd2.xs2a.spi.service.AccountSpi;
 import de.adorsys.xs2a.reader.JsonReader;
@@ -39,7 +40,11 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.Month;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Currency;
+import java.util.Date;
+import java.util.List;
 
 @Slf4j
 @Service
@@ -186,10 +191,10 @@ public class AccountSpiMockImpl implements AccountSpi {
                                       "creditorAgent", "ultimateCreditor",
                                       "debtorName", buildSpiAccountReference(),
                                       "debtorAgent", "ultimateDebtor",
-                                      "remittanceInformationUnstructured",
+                                      "remittance unstructured",
                                       Collections.singletonList("remittanceInformationUnstructuredArray"),
-                                      "remittanceInformationStructured",
-                                      Collections.singletonList("remittanceInformationStructuredArray"),
+                                      getTestSpiRemittance(),
+                                      Collections.singletonList(getTestSpiRemittance()),
                                       "CDCB");
     }
 
@@ -219,5 +224,13 @@ public class AccountSpiMockImpl implements AccountSpi {
             "http://localhost:8089/v1/accounts/account-id/transactions?pageIndex=1&itemsPerPage=20",
             "http://localhost:8089/v1/accounts/account-id/transactions?pageIndex=7&itemsPerPage=20"
         );
+    }
+
+    private SpiRemittance getTestSpiRemittance() {
+        SpiRemittance spiRemittance = new SpiRemittance();
+        spiRemittance.setReference("reference");
+        spiRemittance.setReferenceType("referenceType");
+        spiRemittance.setReferenceIssuer("referenceIssuer");
+        return spiRemittance;
     }
 }

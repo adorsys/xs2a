@@ -21,7 +21,12 @@ package de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers;
 import de.adorsys.psd2.core.payment.model.PurposeCode;
 import de.adorsys.psd2.xs2a.core.domain.address.Xs2aAddress;
 import de.adorsys.psd2.xs2a.core.domain.address.Xs2aCountryCode;
-import de.adorsys.psd2.xs2a.core.pis.*;
+import de.adorsys.psd2.xs2a.core.pis.FrequencyCode;
+import de.adorsys.psd2.xs2a.core.pis.PisDayOfExecution;
+import de.adorsys.psd2.xs2a.core.pis.PisExecutionRule;
+import de.adorsys.psd2.xs2a.core.pis.Remittance;
+import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
+import de.adorsys.psd2.xs2a.core.pis.Xs2aAmount;
 import de.adorsys.psd2.xs2a.core.profile.AccountReference;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.domain.pis.PeriodicPayment;
@@ -29,6 +34,7 @@ import de.adorsys.psd2.xs2a.spi.domain.account.SpiAccountReference;
 import de.adorsys.psd2.xs2a.spi.domain.common.SpiAmount;
 import de.adorsys.psd2.xs2a.spi.domain.payment.SpiAddress;
 import de.adorsys.psd2.xs2a.spi.domain.payment.SpiPeriodicPayment;
+import de.adorsys.psd2.xs2a.spi.domain.payment.SpiRemittance;
 import de.adorsys.psd2.xs2a.spi.domain.psu.SpiPsuData;
 import de.adorsys.psd2.xs2a.web.mapper.RemittanceMapper;
 import org.junit.jupiter.api.BeforeEach;
@@ -46,7 +52,11 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Currency;
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
@@ -85,7 +95,9 @@ class Xs2aToSpiPeriodicPaymentMapperTest {
     private static final String ULTIMATE_DEBTOR = "ultimate debtor";
     private static final String ULTIMATE_CREDITOR = "ultimate creditor";
     private static final PurposeCode PURPOSE_CODE = PurposeCode.fromValue("BKDF");
-    private static final String REMITTANCE = "reference";
+    private final Remittance REMITTANCE = getRemittance();
+    private final SpiRemittance SPI_REMITTANCE = getSpiRemittance();
+    private final String REFERENCE = "reference";
 
     @InjectMocks
     private Xs2aToSpiPeriodicPaymentMapper xs2aToSpiPaymentInfoMapper;
@@ -143,7 +155,7 @@ class Xs2aToSpiPeriodicPaymentMapperTest {
         spiPeriodicPayment.setCreditorAgent(CREDITOR_AGENT);
         spiPeriodicPayment.setCreditorName(CREDITOR_NAME);
         spiPeriodicPayment.setCreditorAddress(buildSpiAddress());
-        spiPeriodicPayment.setRemittanceInformationUnstructured(REMITTANCE_INFORMATION_UNSTRUCTURED);
+        spiPeriodicPayment.setRemittanceInformationUnstructuredArray(Collections.singletonList(REMITTANCE_INFORMATION_UNSTRUCTURED));
         spiPeriodicPayment.setPaymentStatus(TRANSACTION_STATUS);
         spiPeriodicPayment.setPaymentProduct(PAYMENT_PRODUCT);
         spiPeriodicPayment.setRequestedExecutionDate(REQUESTED_EXECUTION_DATE);
@@ -153,8 +165,7 @@ class Xs2aToSpiPeriodicPaymentMapperTest {
         spiPeriodicPayment.setUltimateDebtor(ULTIMATE_DEBTOR);
         spiPeriodicPayment.setUltimateCreditor(ULTIMATE_CREDITOR);
         spiPeriodicPayment.setPurposeCode(PURPOSE_CODE);
-        spiPeriodicPayment.setRemittanceInformationStructured(REMITTANCE);
-        spiPeriodicPayment.setRemittanceInformationStructuredArray(Collections.singletonList(REMITTANCE));
+        spiPeriodicPayment.setRemittanceInformationStructuredArray(Collections.singletonList(SPI_REMITTANCE));
         spiPeriodicPayment.setCreationTimestamp(periodicPayment.getCreationTimestamp());
         spiPeriodicPayment.setContentType(MediaType.APPLICATION_JSON_VALUE);
         return spiPeriodicPayment;
@@ -176,7 +187,7 @@ class Xs2aToSpiPeriodicPaymentMapperTest {
         periodicPayment.setCreditorAgent(CREDITOR_AGENT);
         periodicPayment.setCreditorName(CREDITOR_NAME);
         periodicPayment.setCreditorAddress(buildXs2aAddress());
-        periodicPayment.setRemittanceInformationUnstructured(REMITTANCE_INFORMATION_UNSTRUCTURED);
+        periodicPayment.setRemittanceInformationUnstructuredArray(Collections.singletonList(REMITTANCE_INFORMATION_UNSTRUCTURED));
         periodicPayment.setTransactionStatus(TRANSACTION_STATUS);
         periodicPayment.setRequestedExecutionDate(REQUESTED_EXECUTION_DATE);
         periodicPayment.setRequestedExecutionTime(REQUESTED_EXECUTION_TIME);
@@ -185,7 +196,6 @@ class Xs2aToSpiPeriodicPaymentMapperTest {
         periodicPayment.setUltimateDebtor(ULTIMATE_DEBTOR);
         periodicPayment.setUltimateCreditor(ULTIMATE_CREDITOR);
         periodicPayment.setPurposeCode(PURPOSE_CODE);
-        periodicPayment.setRemittanceInformationStructured(REMITTANCE);
         periodicPayment.setRemittanceInformationStructuredArray(Collections.singletonList(REMITTANCE));
         periodicPayment.setCreationTimestamp(OffsetDateTime.now());
         periodicPayment.setContentType(MediaType.APPLICATION_JSON_VALUE);
@@ -233,5 +243,21 @@ class Xs2aToSpiPeriodicPaymentMapperTest {
 
     private SpiPsuData buildSpiPsu(String psuId) {
         return SpiPsuData.builder().psuId(psuId).build();
+    }
+
+    private Remittance getRemittance() {
+        Remittance remittance = new Remittance();
+        remittance.setReference(REFERENCE);
+        remittance.setReferenceType(null);
+        remittance.setReferenceIssuer(null);
+        return remittance;
+    }
+
+    private SpiRemittance getSpiRemittance() {
+        SpiRemittance remittance = new SpiRemittance();
+        remittance.setReference(REFERENCE);
+        remittance.setReferenceType(null);
+        remittance.setReferenceIssuer(null);
+        return remittance;
     }
 }

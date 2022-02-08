@@ -45,7 +45,6 @@ public class SpiSinglePayment implements SpiPayment {
     private String creditorId;
     private String creditorName;
     private SpiAddress creditorAddress;
-    private String remittanceInformationUnstructured;
     private TransactionStatus paymentStatus;
     protected String paymentProduct;
     private LocalDate requestedExecutionDate;
@@ -55,8 +54,10 @@ public class SpiSinglePayment implements SpiPayment {
     private String ultimateDebtor;
     private String ultimateCreditor;
     private PurposeCode purposeCode;
-    private String remittanceInformationStructured;
-    private List<String> remittanceInformationStructuredArray;
+    private String remittanceInformationUnstructured;
+    private List<String> remittanceInformationUnstructuredArray;
+    private SpiRemittance remittanceInformationStructured;
+    private List<SpiRemittance> remittanceInformationStructuredArray;
     private OffsetDateTime creationTimestamp;
     private String contentType;
     private String debtorName;

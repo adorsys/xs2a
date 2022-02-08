@@ -46,13 +46,17 @@
       "pan": "2222"
     },
     "ultimateDebtor": "Vasisualiy",
-    "remittanceInformationUnstructured": "remittance unstructured",
-    "remittanceInformationUnstructuredArray": [
-      "remittance unstructured array element"
-    ],
-    "remittanceInformationStructured": "Ref Number Merchant",
+    "remittanceInformationStructured": {
+      "reference": "Remittance structured array element reference",
+      "referenceType": "Remittance type",
+      "referenceIssuer": "Remittance issuer"
+    },
     "remittanceInformationStructuredArray": [
-      "Remittance structured array element reference"
+      {
+        "reference": "Remittance structured array element reference",
+        "referenceType": "Remittance type",
+        "referenceIssuer": "Remittance issuer"
+      }
     ],
     "purposeCode": "BKDF"
   },
@@ -118,9 +122,17 @@
         "remittanceInformationUnstructuredArray": [
           "remittanceInformationUnstructuredArray"
         ],
-        "remittanceInformationStructured": "remittanceInformationStructured",
+        "remittanceInformationStructured": {
+          "reference": "Remittance structured array element reference",
+          "referenceType": "Remittance type",
+          "referenceIssuer": "Remittance issuer"
+        },
         "remittanceInformationStructuredArray": [
-          "Remittance structured array element reference"
+          {
+            "reference": "Remittance structured array element reference",
+            "referenceType": "Remittance type",
+            "referenceIssuer": "Remittance issuer"
+          }
         ],
         "purposeCode": "CDCB"
       }

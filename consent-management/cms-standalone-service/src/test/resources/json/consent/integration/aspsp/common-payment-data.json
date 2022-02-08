@@ -46,7 +46,10 @@
         "country": "DE"
       },
       "purposeCode": "",
-      "remittanceInformationUnstructured": "Ref. Number TELEKOM-1222"
+      "remittanceInformationUnstructured": "Ref. Number TELEKOM-1222",
+      "remittanceInformationStructured": {
+        "reference": "remmittanceInfoStructured"
+      }
     }
   ],
   "creationTimestamp": "2019-08-22T11:00:00Z",

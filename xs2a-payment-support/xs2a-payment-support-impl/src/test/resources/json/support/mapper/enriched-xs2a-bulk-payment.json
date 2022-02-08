@@ -40,7 +40,11 @@
       "ultimateDebtor": "ultimateDebtor",
       "ultimateCreditor": "ultimateCreditor",
       "purposeCode": "CDQC",
-      "remittanceInformationStructured": "Ref Number Merchant",
+      "remittanceInformationStructured": {
+        "reference": "Remittance structured",
+        "referenceType": "Remittance type",
+        "referenceIssuer": "Remittance issuer"
+      },
       "transactionStatus": "ACCP",
       "statusChangeTimestamp": "2019-12-27T12:00:00Z"
     }

@@ -19,12 +19,18 @@
 package de.adorsys.psd2.xs2a.service.mapper;
 
 import de.adorsys.psd2.model.*;
+import de.adorsys.psd2.xs2a.core.pis.Remittance;
 import de.adorsys.psd2.xs2a.domain.TransactionInfo;
 import de.adorsys.psd2.xs2a.domain.Transactions;
 import de.adorsys.psd2.xs2a.domain.account.Xs2aAccountReport;
 import de.adorsys.psd2.xs2a.domain.account.Xs2aTransactionsReport;
 import de.adorsys.psd2.xs2a.service.profile.AspspProfileServiceWrapper;
-import de.adorsys.psd2.xs2a.web.mapper.*;
+import de.adorsys.psd2.xs2a.web.mapper.BalanceMapper;
+import de.adorsys.psd2.xs2a.web.mapper.DayOfExecutionMapper;
+import de.adorsys.psd2.xs2a.web.mapper.HrefLinkMapper;
+import de.adorsys.psd2.xs2a.web.mapper.PurposeCodeMapper;
+import de.adorsys.psd2.xs2a.web.mapper.RemittanceMapper;
+import de.adorsys.psd2.xs2a.web.mapper.Xs2aAddressMapper;
 import org.apache.commons.collections4.CollectionUtils;
 import org.jetbrains.annotations.Nullable;
 import org.mapstruct.Mapper;
@@ -39,7 +45,7 @@ import java.util.stream.Collectors;
     AmountModelMapper.class, PurposeCodeMapper.class,
     Xs2aAddressMapper.class, AspspProfileServiceWrapper.class,
     ReportExchangeMapper.class, BalanceMapper.class,
-    DayOfExecutionMapper.class})
+    DayOfExecutionMapper.class, RemittanceMapper.class})
 public abstract class TransactionModelMapper {
     @Autowired
     protected ReportExchangeMapper reportExchangeMapper;
@@ -49,6 +55,8 @@ public abstract class TransactionModelMapper {
     protected BalanceMapper balanceMapper;
     @Autowired
     protected DayOfExecutionMapper dayOfExecutionMapper;
+    @Autowired
+    protected RemittanceMapper remittanceMapper;
 
     @Mapping(target = "_links", ignore = true)
     @Mapping(target = "links", expression = "java(hrefLinkMapper.mapToLinksMap(accountReport.getLinks()))")
@@ -79,8 +87,8 @@ public abstract class TransactionModelMapper {
     @Mapping(target = "debtorAgent", source = "transactionInfo.debtorAgent")
     @Mapping(target = "ultimateDebtor", source = "transactionInfo.ultimateDebtor")
     @Mapping(target = "remittanceInformationUnstructured", source = "transactionInfo.remittanceInformationUnstructured")
-    @Mapping(target = "remittanceInformationUnstructuredArray", source = "transactionInfo.remittanceInformationUnstructuredArray")
-    @Mapping(target = "remittanceInformationStructured", source = "transactionInfo.remittanceInformationStructured")
+    @Mapping(target = "remittanceInformationUnstructuredArray", source = "transactionInfo")
+    @Mapping(target = "remittanceInformationStructured", source = "transactionInfo")
     @Mapping(target = "remittanceInformationStructuredArray", expression = "java(mapToRemittanceInformationStructuredArray(transactions.getTransactionInfo()))")
     @Mapping(target = "purposeCode", source = "transactionInfo.purposeCode")
     public abstract de.adorsys.psd2.model.Transactions mapToTransactions(Transactions transactions);
@@ -94,9 +102,9 @@ public abstract class TransactionModelMapper {
     @Mapping(target = "debtorAgent", source = "transactionInfo.debtorAgent")
     @Mapping(target = "ultimateDebtor", source = "transactionInfo.ultimateDebtor")
     @Mapping(target = "remittanceInformationUnstructured", source = "transactionInfo.remittanceInformationUnstructured")
-    @Mapping(target = "remittanceInformationUnstructuredArray", source = "transactionInfo.remittanceInformationUnstructuredArray")
-    @Mapping(target = "remittanceInformationStructured", expression = "java(mapToRemittanceInformationStructured(entryDetails.getTransactionInfo()))")
-    @Mapping(target = "remittanceInformationStructuredArray", expression = "java(mapToRemittanceInformationStructuredArray(entryDetails.getTransactionInfo()))")
+    @Mapping(target = "remittanceInformationUnstructuredArray", source = "transactionInfo")
+    @Mapping(target = "remittanceInformationStructured", source = "transactionInfo")
+    @Mapping(target = "remittanceInformationStructuredArray", source = "transactionInfo")
     @Mapping(target = "purposeCode", source = "transactionInfo.purposeCode")
     public abstract de.adorsys.psd2.model.EntryDetailsElement mapToEntryDetailsElement(de.adorsys.psd2.xs2a.domain.EntryDetails entryDetails);
 
@@ -105,6 +113,31 @@ public abstract class TransactionModelMapper {
         inlineResponse2001.setTransactionsDetails(mapToTransactions(transactions));
         return inlineResponse2001;
     }
+
+    protected RemittanceInformationStructuredMax140 mapToRemittanceInformationStructuredMax140(TransactionInfo transactionInfo) {
+        if (transactionInfo == null || transactionInfo.getRemittanceInformationStructured() == null) {
+            return null;
+        }
+        Remittance remittanceInformationStructured = transactionInfo.getRemittanceInformationStructured();
+        RemittanceInformationStructuredMax140 structuredMax140 = new RemittanceInformationStructuredMax140();
+        structuredMax140.setReference(remittanceInformationStructured.getReference());
+        structuredMax140.setReferenceType(remittanceInformationStructured.getReferenceType());
+        structuredMax140.setReferenceIssuer(remittanceInformationStructured.getReferenceIssuer());
+        return structuredMax140;
+    }
+
+    protected RemittanceInformationStructured mapToRemittanceInformationStructured(TransactionInfo transactionInfo) {
+        if (transactionInfo == null || transactionInfo.getRemittanceInformationStructured() == null) {
+            return null;
+        }
+        Remittance remittanceInformationStructured = transactionInfo.getRemittanceInformationStructured();
+        RemittanceInformationStructured structured = new RemittanceInformationStructured();
+        structured.setReference(remittanceInformationStructured.getReference());
+        structured.setReferenceType(remittanceInformationStructured.getReferenceType());
+        structured.setReferenceIssuer(remittanceInformationStructured.getReferenceIssuer());
+        return structured;
+    }
+
 
     protected @Nullable TransactionList mapToTransactionList(@Nullable List<Transactions> transactions) {
         if (CollectionUtils.isEmpty(transactions)) {
@@ -120,25 +153,38 @@ public abstract class TransactionModelMapper {
         return transactionList;
     }
 
-    protected RemittanceInformationStructuredArray mapToRemittanceInformationStructuredArray(TransactionInfo transactionInfo) {
+    protected RemittanceInformationUnstructuredArray mapToRemittanceInformationUnstructuredArray(TransactionInfo transactionInfo) {
+        if (transactionInfo == null || CollectionUtils.isEmpty(transactionInfo.getRemittanceInformationUnstructuredArray())) {
+            return null;
+        }
 
+        RemittanceInformationUnstructuredArray remittanceUnstructuredArray = new RemittanceInformationUnstructuredArray();
+        remittanceUnstructuredArray.addAll(transactionInfo.getRemittanceInformationUnstructuredArray());
+        return remittanceUnstructuredArray;
+    }
+
+    protected RemittanceInformationStructuredArray mapToRemittanceInformationStructuredArray(TransactionInfo transactionInfo) {
         if (transactionInfo == null || CollectionUtils.isEmpty(transactionInfo.getRemittanceInformationStructuredArray())) {
             return null;
         }
 
         List<RemittanceInformationStructured> remittanceInfoStructuredList = transactionInfo.getRemittanceInformationStructuredArray().stream()
-                                                                                 .map(s -> new RemittanceInformationStructured().reference(s))
+                                                                                 .map(this::mapToRemittanceInformationStructured)
                                                                                  .collect(Collectors.toList());
         RemittanceInformationStructuredArray remittanceInfoStructuredArray = new RemittanceInformationStructuredArray();
         remittanceInfoStructuredArray.addAll(remittanceInfoStructuredList);
         return remittanceInfoStructuredArray;
     }
 
-    protected RemittanceInformationStructured mapToRemittanceInformationStructured(TransactionInfo transactionInfo) {
-        if (transactionInfo == null || transactionInfo.getRemittanceInformationStructured() == null) {
+    protected RemittanceInformationStructured mapToRemittanceInformationStructured(Remittance remittance) {
+        if (remittance == null) {
             return null;
         }
-        return new RemittanceInformationStructured().reference(transactionInfo.getRemittanceInformationStructured());
+        RemittanceInformationStructured remittanceInformationStructured = new RemittanceInformationStructured();
+        remittanceInformationStructured.setReference(remittance.getReference());
+        remittanceInformationStructured.setReferenceType(remittance.getReferenceType());
+        remittanceInformationStructured.setReferenceIssuer(remittance.getReferenceIssuer());
+        return remittanceInformationStructured;
     }
 
     @Mapping(target = "currency", expression = "java(mapToCurrency(value.getCurrency()))")

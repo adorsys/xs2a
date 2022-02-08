@@ -34,10 +34,7 @@ import org.mapstruct.MappingTarget;
 
 import java.time.LocalDate;
 import java.time.OffsetDateTime;
-import java.util.Collections;
-import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Mapper(componentModel = "spring",
     uses = {Xs2aAddressMapper.class, RemittanceMapper.class, PurposeCodeMapper.class},
@@ -45,7 +42,6 @@ import java.util.stream.Collectors;
 public interface PaymentModelMapper {
 
     @Mapping(target = "dayOfExecution", expression = "java(mapDayOfExecution(paymentRequest.getDayOfExecution()))")
-    @Mapping(target = "remittanceInformationStructuredArray", expression = "java(mapToRemittanceInformationStructuredString(paymentRequest.getRemittanceInformationStructuredArray()))")
     PeriodicPayment mapToXs2aPayment(PeriodicPaymentInitiationJson paymentRequest);
 
     SinglePayment mapToXs2aPayment(PaymentInitiationJson paymentRequest);
@@ -77,12 +73,5 @@ public interface PaymentModelMapper {
             return pisDayOfExecutionOptional.orElse(null);
         }
         return null;
-    }
-
-    default List<String> mapToRemittanceInformationStructuredString(RemittanceInformationStructuredArray value) {
-        if (value == null) {
-            return Collections.emptyList();
-        }
-        return value.stream().map(RemittanceInformationStructured::getReference).collect(Collectors.toList());
     }
 }

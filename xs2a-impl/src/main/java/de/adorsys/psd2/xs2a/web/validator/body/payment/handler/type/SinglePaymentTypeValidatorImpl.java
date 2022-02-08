@@ -22,6 +22,7 @@ import de.adorsys.psd2.mapper.Xs2aObjectMapper;
 import de.adorsys.psd2.xs2a.core.domain.TppMessageInformation;
 import de.adorsys.psd2.xs2a.core.domain.address.Xs2aAddress;
 import de.adorsys.psd2.xs2a.core.error.MessageError;
+import de.adorsys.psd2.xs2a.core.pis.Remittance;
 import de.adorsys.psd2.xs2a.core.pis.Xs2aAmount;
 import de.adorsys.psd2.xs2a.core.profile.AccountReference;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
@@ -126,7 +127,11 @@ public class SinglePaymentTypeValidatorImpl extends AbstractBodyValidatorImpl im
         checkFieldForMaxLength(singlePayment.getUltimateCreditor(), "ultimateCreditor", validationConfig.getUltimateDebtor(), messageError);
         checkFieldForMaxLength(singlePayment.getInstructionIdentification(), "instructionIdentification", validationConfig.getInstructionIdentification(), messageError);
         checkFieldForMaxLength(singlePayment.getDebtorName(), "debtorName", validationConfig.getDebtorName(), messageError);
-        checkFieldForMaxLength(singlePayment.getRemittanceInformationStructured(), "remittanceInformationStructured", validationConfig.getRemittanceInformationStructured(), messageError);
+        checkFieldForMaxLength(singlePayment.getRemittanceInformationUnstructured(), "remittanceInformationUnstructured", validationConfig.getRemittanceInformationUnstructured(), messageError);
+        if (CollectionUtils.isNotEmpty(singlePayment.getRemittanceInformationUnstructuredArray())) {
+            singlePayment.getRemittanceInformationUnstructuredArray().forEach(r -> checkFieldForMaxLength(r, "remittanceInformationUnstructuredArray", validationConfig.getRemittanceInformationUnstructured(), messageError));
+        }
+        validateRemittanceInformationStructuredMax140(singlePayment.getRemittanceInformationStructured(), messageError, validationConfig);
         validateRemittanceInformationStructuredArray(singlePayment.getRemittanceInformationStructuredArray(), messageError, validationConfig);
         customPaymentValidationService.performCustomSingleValidation(singlePayment, messageError, validationConfig);
     }
@@ -176,9 +181,21 @@ public class SinglePaymentTypeValidatorImpl extends AbstractBodyValidatorImpl im
         return string.replaceAll("[^a-zA-Z0-9]", "");
     }
 
-    private void validateRemittanceInformationStructuredArray(List<String> remittanceList, MessageError messageError, PaymentValidationConfig validationConfig) {
+    private void validateRemittanceInformationStructuredArray(List<Remittance> remittanceList, MessageError messageError, PaymentValidationConfig validationConfig) {
         if (CollectionUtils.isNotEmpty(remittanceList)) {
-            remittanceList.forEach(remittance -> checkFieldForMaxLength(remittance, "remittanceInformationStructured", validationConfig.getRemittanceInformationStructured(), messageError));
+            remittanceList.forEach(remittance -> {
+                checkFieldForMaxLength(remittance.getReference(), "reference", validationConfig.getReference(), messageError);
+                checkFieldForMaxLength(remittance.getReferenceType(), "referenceType", validationConfig.getReferenceType(), messageError);
+                checkFieldForMaxLength(remittance.getReferenceIssuer(), "referenceIssuer", validationConfig.getReferenceIssuer(), messageError);
+            });
+        }
+    }
+
+    private void validateRemittanceInformationStructuredMax140(Remittance remittance, MessageError messageError, PaymentValidationConfig validationConfig) {
+        if (remittance != null) {
+                checkFieldForMaxLength(remittance.getReference(), "reference", validationConfig.getReferenceMax140(), messageError);
+                checkFieldForMaxLength(remittance.getReferenceType(), "referenceType", validationConfig.getReferenceTypeMax140(), messageError);
+                checkFieldForMaxLength(remittance.getReferenceIssuer(), "referenceIssuer", validationConfig.getReferenceIssuerMax140(), messageError);
         }
     }
 

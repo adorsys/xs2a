@@ -1,19 +1,17 @@
 /*
- * Copyright 2018-2022 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
- * This program is free software: you can redistribute it and/or modify it
- * under the terms of the GNU Affero General Public License as published
- * by the Free Software Foundation, either version 3 of the License, or (at
- * your option) any later version. This program is distributed in the hope that
- * it will be useful, but WITHOUT ANY WARRANTY; without even the implied
- * warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the GNU Affero General Public License for more details.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- * You should have received a copy of the GNU Affero General Public License
- * along with this program. If not, see https://www.gnu.org/licenses/.
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
- * This project is also available under a separate commercial license. You can
- * contact us at psd2@adorsys.com.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 package de.adorsys.psd2.xs2a.web.validator.body.payment.mapper;
@@ -24,30 +22,36 @@ import de.adorsys.psd2.xs2a.core.domain.address.Xs2aAddress;
 import de.adorsys.psd2.xs2a.core.domain.address.Xs2aCountryCode;
 import de.adorsys.psd2.xs2a.core.pis.PisDayOfExecution;
 import de.adorsys.psd2.xs2a.core.pis.PisExecutionRule;
+import de.adorsys.psd2.xs2a.core.pis.Remittance;
 import de.adorsys.psd2.xs2a.core.pis.Xs2aAmount;
 import de.adorsys.psd2.xs2a.core.profile.AccountReference;
 import de.adorsys.psd2.xs2a.domain.pis.BulkPayment;
 import de.adorsys.psd2.xs2a.domain.pis.PeriodicPayment;
 import de.adorsys.psd2.xs2a.domain.pis.SinglePayment;
 import de.adorsys.psd2.xs2a.web.mapper.PurposeCodeMapper;
+import de.adorsys.psd2.xs2a.web.mapper.RemittanceMapper;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Currency;
+import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Component
 public class PaymentMapper {
-
-    private Xs2aObjectMapper xs2aObjectMapper;
-    private PurposeCodeMapper purposeCodeMapper;
+    private final Xs2aObjectMapper xs2aObjectMapper;
+    private final PurposeCodeMapper purposeCodeMapper;
+    private final RemittanceMapper remittanceMapper;
 
     @Autowired
-    public PaymentMapper(Xs2aObjectMapper xs2aObjectMapper, PurposeCodeMapper purposeCodeMapper) {
+    public PaymentMapper(Xs2aObjectMapper xs2aObjectMapper, PurposeCodeMapper purposeCodeMapper, RemittanceMapper remittanceMapper) {
         this.xs2aObjectMapper = xs2aObjectMapper;
         this.purposeCodeMapper = purposeCodeMapper;
+        this.remittanceMapper = remittanceMapper;
     }
 
     public SinglePayment mapToSinglePayment(Object body) {
@@ -78,12 +82,13 @@ public class PaymentMapper {
         payment.setCreditorName(paymentRequest.getCreditorName());
         payment.setCreditorAddress(mapToXs2aAddress(paymentRequest.getCreditorAddress()));
         payment.setRemittanceInformationUnstructured(paymentRequest.getRemittanceInformationUnstructured());
+        payment.setRemittanceInformationUnstructuredArray(paymentRequest.getRemittanceInformationUnstructuredArray());
+        payment.setRemittanceInformationStructured(remittanceMapper.mapToRemittance(paymentRequest.getRemittanceInformationStructured()));
+        payment.setRemittanceInformationStructuredArray(mapToRemittanceArray(paymentRequest.getRemittanceInformationStructuredArray()));
         payment.setRequestedExecutionDate(paymentRequest.getRequestedExecutionDate());
         payment.setUltimateDebtor(paymentRequest.getUltimateDebtor());
         payment.setUltimateCreditor(paymentRequest.getUltimateCreditor());
         payment.setPurposeCode(purposeCodeMapper.mapToPurposeCode(paymentRequest.getPurposeCode()));
-        payment.setRemittanceInformationStructured(paymentRequest.getRemittanceInformationStructured());
-        payment.setRemittanceInformationStructuredArray(mapToRemittanceInformationStructuredArrayString(paymentRequest.getRemittanceInformationStructuredArray()));
         payment.setInstructionIdentification(paymentRequest.getInstructionIdentification());
         payment.setDebtorName(paymentRequest.getDebtorName());
         payment.setChargeBearer(paymentRequest.getChargeBearer());
@@ -102,7 +107,6 @@ public class PaymentMapper {
         payment.setCreditorId(paymentRequest.getCreditorId());
         payment.setCreditorName(paymentRequest.getCreditorName());
         payment.setCreditorAddress(mapToXs2aAddress(paymentRequest.getCreditorAddress()));
-        payment.setRemittanceInformationUnstructured(paymentRequest.getRemittanceInformationUnstructured());
 
         payment.setStartDate(paymentRequest.getStartDate());
         payment.setExecutionRule(mapToPisExecutionRule(paymentRequest.getExecutionRule()).orElse(null));
@@ -113,8 +117,10 @@ public class PaymentMapper {
         payment.setUltimateDebtor(paymentRequest.getUltimateDebtor());
         payment.setUltimateCreditor(paymentRequest.getUltimateCreditor());
         payment.setPurposeCode(purposeCodeMapper.mapToPurposeCode(paymentRequest.getPurposeCode()));
-        payment.setRemittanceInformationStructured(paymentRequest.getRemittanceInformationStructured());
-        payment.setRemittanceInformationStructuredArray(mapToRemittanceInformationStructuredArrayString(paymentRequest.getRemittanceInformationStructuredArray()));
+        payment.setRemittanceInformationUnstructured(paymentRequest.getRemittanceInformationUnstructured());
+        payment.setRemittanceInformationUnstructuredArray(paymentRequest.getRemittanceInformationUnstructuredArray());
+        payment.setRemittanceInformationStructured(remittanceMapper.mapToRemittance(paymentRequest.getRemittanceInformationStructured()));
+        payment.setRemittanceInformationStructuredArray(mapToRemittanceArray(paymentRequest.getRemittanceInformationStructuredArray()));
         payment.setInstructionIdentification(paymentRequest.getInstructionIdentification());
         payment.setDebtorName(paymentRequest.getDebtorName());
 
@@ -206,13 +212,14 @@ public class PaymentMapper {
                        payment.setCreditorAgent(p.getCreditorAgent());
                        payment.setCreditorName(p.getCreditorName());
                        payment.setCreditorAddress(mapToXs2aAddress(p.getCreditorAddress()));
-                       payment.setRemittanceInformationUnstructured(p.getRemittanceInformationUnstructured());
                        payment.setRequestedExecutionTime(paymentRequest.getRequestedExecutionTime());
                        payment.setUltimateDebtor(p.getUltimateDebtor());
                        payment.setUltimateCreditor(p.getUltimateCreditor());
                        payment.setPurposeCode(purposeCodeMapper.mapToPurposeCode(p.getPurposeCode()));
-                       payment.setRemittanceInformationStructured(p.getRemittanceInformationStructured());
-                       payment.setRemittanceInformationStructuredArray(mapToRemittanceInformationStructuredArrayString(p.getRemittanceInformationStructuredArray()));
+                       payment.setRemittanceInformationUnstructured(p.getRemittanceInformationUnstructured());
+                       payment.setRemittanceInformationUnstructuredArray(p.getRemittanceInformationUnstructuredArray());
+                       payment.setRemittanceInformationStructured(remittanceMapper.mapToRemittance(p.getRemittanceInformationStructured()));
+                       payment.setRemittanceInformationStructuredArray(mapToRemittanceArray(p.getRemittanceInformationStructuredArray()));
                        payment.setInstructionIdentification(p.getInstructionIdentification());
                        payment.setDebtorName(p.getDebtorName());
                        payment.setChargeBearer(p.getChargeBearer());
@@ -222,13 +229,13 @@ public class PaymentMapper {
                    .collect(Collectors.toList());
     }
 
-    private List<String> mapToRemittanceInformationStructuredArrayString(RemittanceInformationStructuredArray remittanceInformationStructuredArray) {
+    private List<Remittance> mapToRemittanceArray(RemittanceInformationStructuredArray remittanceInformationStructuredArray) {
         if (CollectionUtils.isEmpty(remittanceInformationStructuredArray)) {
-            return Collections.emptyList();
+            return null;
         }
 
         return remittanceInformationStructuredArray.stream()
-                   .map(RemittanceInformationStructured::getReference)
+                   .map(remittanceMapper::mapToRemittance)
                    .collect(Collectors.toList());
     }
 }

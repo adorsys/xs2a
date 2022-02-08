@@ -36,9 +36,20 @@
     "currency": "EUR"
   },
   "remittanceInformationUnstructured": "Ref. Number TELEKOM-1222",
-  "remittanceInformationStructured": "Ref Number Merchant",
+  "remittanceInformationUnstructuredArray": [
+    "Ref. Number TELEKOM-1222"
+  ],
+  "remittanceInformationStructured": {
+    "reference": "Remittance structured reference",
+    "referenceType": "reference type",
+    "referenceIssuer": "reference issuer"
+  },
   "remittanceInformationStructuredArray": [
-    "Remittance structured array element reference"
+    {
+      "reference": "Remittance structured array element reference",
+      "referenceType": "reference type",
+      "referenceIssuer": "reference issuer"
+    }
   ],
   "ultimateCreditor": "ultimateCreditor",
   "ultimateDebtor": "ultimateDebtor",

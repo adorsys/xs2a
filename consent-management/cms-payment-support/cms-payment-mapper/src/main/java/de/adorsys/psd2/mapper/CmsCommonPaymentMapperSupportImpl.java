@@ -30,7 +30,6 @@ import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.math.BigDecimal;
-import java.util.Collections;
 import java.util.Currency;
 import java.util.List;
 import java.util.Optional;
@@ -86,6 +85,9 @@ public class CmsCommonPaymentMapperSupportImpl implements CmsCommonPaymentMapper
         periodicPayment.setCreditorName(periodicPaymentInitiationJson.getCreditorName());
         periodicPayment.setCreditorAddress(mapToCmsAddress(periodicPaymentInitiationJson.getCreditorAddress()));
         periodicPayment.setRemittanceInformationUnstructured(periodicPaymentInitiationJson.getRemittanceInformationUnstructured());
+        periodicPayment.setRemittanceInformationUnstructuredArray(periodicPaymentInitiationJson.getRemittanceInformationUnstructuredArray());
+        periodicPayment.setRemittanceInformationStructured(mapToCmsRemittance(periodicPaymentInitiationJson.getRemittanceInformationStructured()));
+        periodicPayment.setRemittanceInformationStructuredArray(mapToCmsRemittanceList(periodicPaymentInitiationJson.getRemittanceInformationStructuredArray()));
         periodicPayment.setDayOfExecution(mapToPisDayOfExecution(periodicPaymentInitiationJson.getDayOfExecution()));
         periodicPayment.setStartDate(periodicPaymentInitiationJson.getStartDate());
         periodicPayment.setEndDate(periodicPaymentInitiationJson.getEndDate());
@@ -94,7 +96,6 @@ public class CmsCommonPaymentMapperSupportImpl implements CmsCommonPaymentMapper
         periodicPayment.setUltimateDebtor(periodicPaymentInitiationJson.getUltimateDebtor());
         periodicPayment.setUltimateCreditor(periodicPaymentInitiationJson.getUltimateCreditor());
         periodicPayment.setPurposeCode(mapToPurposeCode(periodicPaymentInitiationJson.getPurposeCode()));
-        periodicPayment.setRemittanceInformationStructured(mapToCmsRemittance(periodicPaymentInitiationJson.getRemittanceInformationStructured()));
         periodicPayment.setTppBrandLoggingInformation(cmsCommonPayment.getTppBrandLoggingInformation());
         periodicPayment.setRemittanceInformationStructuredArray(mapToCmsRemittanceList(periodicPaymentInitiationJson.getRemittanceInformationStructuredArray()));
 
@@ -133,15 +134,16 @@ public class CmsCommonPaymentMapperSupportImpl implements CmsCommonPaymentMapper
         singlePayment.setCreditorAgent(paymentInitiationJson.getCreditorAgent());
         singlePayment.setCreditorName(paymentInitiationJson.getCreditorName());
         singlePayment.setCreditorAddress(mapToCmsAddress(paymentInitiationJson.getCreditorAddress()));
-        singlePayment.setRemittanceInformationUnstructured(paymentInitiationJson.getRemittanceInformationUnstructured());
         singlePayment.setRequestedExecutionDate(paymentInitiationJson.getRequestedExecutionDate());
         singlePayment.setPaymentStatus(cmsCommonPayment.getTransactionStatus());
         singlePayment.setUltimateDebtor(paymentInitiationJson.getUltimateDebtor());
         singlePayment.setUltimateCreditor(paymentInitiationJson.getUltimateCreditor());
         singlePayment.setPurposeCode(mapToPurposeCode(paymentInitiationJson.getPurposeCode()));
+        singlePayment.setRemittanceInformationUnstructured(paymentInitiationJson.getRemittanceInformationUnstructured());
+        singlePayment.setRemittanceInformationUnstructuredArray(paymentInitiationJson.getRemittanceInformationUnstructuredArray());
         singlePayment.setRemittanceInformationStructured(mapToCmsRemittance(paymentInitiationJson.getRemittanceInformationStructured()));
-        singlePayment.setTppBrandLoggingInformation(cmsCommonPayment.getTppBrandLoggingInformation());
         singlePayment.setRemittanceInformationStructuredArray(mapToCmsRemittanceList(paymentInitiationJson.getRemittanceInformationStructuredArray()));
+        singlePayment.setTppBrandLoggingInformation(cmsCommonPayment.getTppBrandLoggingInformation());
         singlePayment.setChargeBearer(Optional.ofNullable(paymentInitiationJson.getChargeBearer())
                                           .map(ChargeBearer::toString)
                                           .orElse(null));
@@ -181,7 +183,7 @@ public class CmsCommonPaymentMapperSupportImpl implements CmsCommonPaymentMapper
 
     private List<CmsRemittance> mapToCmsRemittanceList(List<RemittanceInformationStructured> remittanceInformationStructuredArray) {
         if (CollectionUtils.isEmpty(remittanceInformationStructuredArray)) {
-            return Collections.emptyList();
+            return null;
         }
 
         return remittanceInformationStructuredArray.stream()

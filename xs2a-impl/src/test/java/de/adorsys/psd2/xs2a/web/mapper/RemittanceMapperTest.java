@@ -19,11 +19,16 @@
 package de.adorsys.psd2.xs2a.web.mapper;
 
 import de.adorsys.psd2.model.RemittanceInformationStructured;
+import de.adorsys.psd2.model.RemittanceInformationStructuredArray;
+import de.adorsys.psd2.model.RemittanceInformationStructuredMax140;
+import de.adorsys.psd2.model.RemittanceInformationUnstructuredArray;
 import de.adorsys.psd2.xs2a.core.pis.Remittance;
 import de.adorsys.psd2.xs2a.spi.domain.payment.SpiRemittance;
 import de.adorsys.xs2a.reader.JsonReader;
 import org.junit.jupiter.api.Test;
 import org.mapstruct.factory.Mappers;
+
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -75,6 +80,76 @@ class RemittanceMapperTest {
     }
 
     @Test
+    void mapToToRemittanceFromRemittance140_null() {
+        Remittance remittance = remittanceMapper.mapToRemittance((RemittanceInformationStructuredMax140) null);
+        assertNull(remittance);
+    }
+
+    @Test
+    void mapToToRemittanceFromRemittance140() {
+        RemittanceInformationStructuredMax140 remittanceInformationStructuredMax140 = getRemittanceFromFile(RemittanceInformationStructuredMax140.class);
+        Remittance remittance = remittanceMapper.mapToRemittance(remittanceInformationStructuredMax140);
+        Remittance expectedRemittance = getRemittanceFromFile(Remittance.class);
+        assertEquals(expectedRemittance, remittance);
+    }
+
+    @Test
+    void mapToRemittanceUnstructuredList_null() {
+        List<String> remittances = remittanceMapper.mapToRemittanceUnstructuredList(null);
+        assertNull(remittances);
+    }
+
+    @Test
+    void mapToRemittanceUnstructuredList() {
+        RemittanceInformationUnstructuredArray remittances = getRemittanceUnstructuredArray();
+        List<String> expected = List.of("remittance1", "remittance2");
+        List<String> actual = remittanceMapper.mapToRemittanceUnstructuredList(remittances);
+        assertEquals(actual, expected);
+    }
+
+    @Test
+    void mapToRemittanceArray_null() {
+        List<Remittance> remittances = remittanceMapper.mapToRemittanceArray((List<SpiRemittance>) null);
+        assertNull(remittances);
+    }
+
+    @Test
+    void mapToRemittanceArray() {
+        List<SpiRemittance> remittances = getRemittanceStructuredArray(SpiRemittance.class);
+        List<Remittance> expected = List.of(getRemittanceFromFile(Remittance.class), getRemittanceFromFile(Remittance.class));
+        List<Remittance> actual = remittanceMapper.mapToRemittanceArray(remittances);
+        assertEquals(actual, expected);
+    }
+
+    @Test
+    void mapToRemittanceArrayRemittanceInfoUnstructured_null() {
+        List<Remittance> remittances = remittanceMapper.mapToRemittanceArray((RemittanceInformationStructuredArray) null);
+        assertNull(remittances);
+    }
+
+    @Test
+    void mapToRemittanceArrayRemittanceInfoUnstructured() {
+        RemittanceInformationStructuredArray remittances = getRemittanceStructuredArray();
+        List<Remittance> expected = List.of(getRemittanceFromFile(Remittance.class), getRemittanceFromFile(Remittance.class));
+        List<Remittance> actual = remittanceMapper.mapToRemittanceArray(remittances);
+        assertEquals(actual, expected);
+    }
+
+    @Test
+    void mapToSpiRemittanceArray_null() {
+        List<SpiRemittance> remittances = remittanceMapper.mapToSpiRemittanceArray((List<Remittance>) null);
+        assertNull(remittances);
+    }
+
+    @Test
+    void mapToSpiRemittanceArray() {
+        List<Remittance> remittances = getRemittanceStructuredArray(Remittance.class);
+        List<SpiRemittance> expected = List.of(getRemittanceFromFile(SpiRemittance.class), getRemittanceFromFile(SpiRemittance.class));
+        List<SpiRemittance> actual = remittanceMapper.mapToSpiRemittanceArray(remittances);
+        assertEquals(actual, expected);
+    }
+
+    @Test
     void mapToSpiRemitance() {
         Remittance remittance = getRemittanceFromFile(Remittance.class);
         SpiRemittance spiRemittance = remittanceMapper.mapToSpiRemittance(remittance);
@@ -92,5 +167,23 @@ class RemittanceMapperTest {
 
     private <R> R getRemittanceFromFile(Class<R> clazz) {
         return jsonReader.getObjectFromFile("json/service/mapper/remittance.json", clazz);
+    }
+
+    private RemittanceInformationUnstructuredArray getRemittanceUnstructuredArray() {
+        RemittanceInformationUnstructuredArray remittanceInformationUnstructuredArray = new RemittanceInformationUnstructuredArray();
+        remittanceInformationUnstructuredArray.add("remittance1");
+        remittanceInformationUnstructuredArray.add("remittance2");
+        return remittanceInformationUnstructuredArray;
+    }
+
+    private RemittanceInformationStructuredArray getRemittanceStructuredArray() {
+        RemittanceInformationStructuredArray remittanceInformationStructuredArray = new RemittanceInformationStructuredArray();
+        remittanceInformationStructuredArray.add(getRemittanceFromFile(RemittanceInformationStructured.class));
+        remittanceInformationStructuredArray.add(getRemittanceFromFile(RemittanceInformationStructured.class));
+        return remittanceInformationStructuredArray;
+    }
+
+    private <R> List<R> getRemittanceStructuredArray(Class<R> clazz) {
+        return List.of(getRemittanceFromFile(clazz), getRemittanceFromFile(clazz));
     }
 }

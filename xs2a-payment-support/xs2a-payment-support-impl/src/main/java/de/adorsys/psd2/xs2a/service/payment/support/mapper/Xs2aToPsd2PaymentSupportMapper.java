@@ -21,6 +21,7 @@ package de.adorsys.psd2.xs2a.service.payment.support.mapper;
 import de.adorsys.psd2.model.*;
 import de.adorsys.psd2.xs2a.core.domain.address.Xs2aCountryCode;
 import de.adorsys.psd2.xs2a.core.pis.PisDayOfExecution;
+import de.adorsys.psd2.xs2a.core.pis.Remittance;
 import de.adorsys.psd2.xs2a.domain.pis.BulkPayment;
 import de.adorsys.psd2.xs2a.domain.pis.PeriodicPayment;
 import de.adorsys.psd2.xs2a.domain.pis.SinglePayment;
@@ -59,26 +60,29 @@ public interface Xs2aToPsd2PaymentSupportMapper {
                    : DayOfExecution.fromValue(dayOfExecution.toString());
     }
 
-    default RemittanceInformationStructuredArray mapToRemittanceInformationStructuredArray(List<String> remittanceInformationStructuredArray) {
+    default RemittanceInformationStructuredArray mapToRemittanceInformationStructuredArray(List<Remittance> remittanceInformationStructuredArray) {
         if (CollectionUtils.isEmpty(remittanceInformationStructuredArray)) {
             return null;
         }
 
         List<RemittanceInformationStructured> remittanceInfoStructuredList = remittanceInformationStructuredArray.stream()
-                                                                                 .map(s -> new RemittanceInformationStructured().reference(s))
+                                                                                 .map(s -> new RemittanceInformationStructured()
+                                                                                               .reference(s.getReference())
+                                                                                               .referenceIssuer(s.getReferenceIssuer())
+                                                                                               .referenceType(s.getReferenceType()))
                                                                                  .collect(Collectors.toList());
         RemittanceInformationStructuredArray remittanceInfoStructuredArray = new RemittanceInformationStructuredArray();
         remittanceInfoStructuredArray.addAll(remittanceInfoStructuredList);
         return remittanceInfoStructuredArray;
     }
 
-    default OtherType mapToOtherType(String other){
+    default OtherType mapToOtherType(String other) {
         return other == null
                    ? null
                    : new OtherType().identification(other);
     }
 
-    default String mapToCurrency(Currency value){
+    default String mapToCurrency(Currency value) {
         return value == null
                    ? null
                    : value.getCurrencyCode();

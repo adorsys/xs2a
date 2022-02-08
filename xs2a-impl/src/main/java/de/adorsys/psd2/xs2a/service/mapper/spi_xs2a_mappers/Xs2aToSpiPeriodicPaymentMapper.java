@@ -20,6 +20,7 @@ package de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers;
 
 import de.adorsys.psd2.xs2a.domain.pis.PeriodicPayment;
 import de.adorsys.psd2.xs2a.spi.domain.payment.SpiPeriodicPayment;
+import de.adorsys.psd2.xs2a.web.mapper.RemittanceMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -30,6 +31,7 @@ public class Xs2aToSpiPeriodicPaymentMapper {
     private final Xs2aToSpiAddressMapper xs2aToSpiAddressMapper;
     private final Xs2aToSpiAccountReferenceMapper xs2aToSpiAccountReferenceMapper;
     private final Xs2aToSpiPsuDataMapper xs2aToSpiPsuDataMapper;
+    private final RemittanceMapper remittanceMapper;
 
     public SpiPeriodicPayment mapToSpiPeriodicPayment(PeriodicPayment payment, String paymentProduct) {
         SpiPeriodicPayment periodic = new SpiPeriodicPayment(paymentProduct);
@@ -42,7 +44,6 @@ public class Xs2aToSpiPeriodicPaymentMapper {
         periodic.setCreditorAgent(payment.getCreditorAgent());
         periodic.setCreditorName(payment.getCreditorName());
         periodic.setCreditorAddress(xs2aToSpiAddressMapper.mapToSpiAddress(payment.getCreditorAddress()));
-        periodic.setRemittanceInformationUnstructured(payment.getRemittanceInformationUnstructured());
         periodic.setStartDate(payment.getStartDate());
         periodic.setEndDate(payment.getEndDate());
         periodic.setExecutionRule(payment.getExecutionRule());
@@ -59,8 +60,10 @@ public class Xs2aToSpiPeriodicPaymentMapper {
         periodic.setUltimateDebtor(payment.getUltimateDebtor());
         periodic.setUltimateCreditor(payment.getUltimateCreditor());
         periodic.setPurposeCode(payment.getPurposeCode());
-        periodic.setRemittanceInformationStructured(payment.getRemittanceInformationStructured());
-        periodic.setRemittanceInformationStructuredArray(payment.getRemittanceInformationStructuredArray());
+        periodic.setRemittanceInformationUnstructured(payment.getRemittanceInformationUnstructured());
+        periodic.setRemittanceInformationUnstructuredArray(payment.getRemittanceInformationUnstructuredArray());
+        periodic.setRemittanceInformationStructured(remittanceMapper.mapToSpiRemittance(payment.getRemittanceInformationStructured()));
+        periodic.setRemittanceInformationStructuredArray(remittanceMapper.mapToSpiRemittanceArray(payment.getRemittanceInformationStructuredArray()));
         periodic.setCreationTimestamp(payment.getCreationTimestamp());
         periodic.setContentType(payment.getContentType());
         periodic.setDebtorName(payment.getDebtorName());

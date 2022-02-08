@@ -22,6 +22,12 @@
     "streetName": "WBG Straße"
   },
   "remittanceInformationUnstructured": "Ref. Number TELEKOM-1222",
+  "remittanceInformationUnstructuredArray": ["Ref. Number TELEKOM-1222"],
+  "remittanceInformationStructured": {
+    "reference": "Ref Number Merchant",
+    "referenceType": "Ref type",
+    "referenceIssuer": "Ref issuer"
+  },
   "startDate": "2020-01-01",
   "endDate": "2020-02-01",
   "executionRule": "preceding",

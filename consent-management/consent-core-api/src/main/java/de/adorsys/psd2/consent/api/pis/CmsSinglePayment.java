@@ -43,13 +43,14 @@ public class CmsSinglePayment extends BaseCmsPayment {
     private String creditorAgent;
     private String creditorName;
     private CmsAddress creditorAddress;
-    private String remittanceInformationUnstructured;
     private TransactionStatus paymentStatus;
     private LocalDate requestedExecutionDate;
     private OffsetDateTime requestedExecutionTime;
     private String ultimateDebtor;
     private String ultimateCreditor;
     private String purposeCode;
+    private String remittanceInformationUnstructured;
+    private List<String> remittanceInformationUnstructuredArray;
     private CmsRemittance remittanceInformationStructured;
     private List<CmsRemittance> remittanceInformationStructuredArray;
     private String chargeBearer;
