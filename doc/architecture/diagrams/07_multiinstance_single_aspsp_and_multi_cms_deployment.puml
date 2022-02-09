@@ -42,8 +42,8 @@ node Database {
     database ConsentDB
 }
 
-xs2a_0 <.. lb_1 : "HTTP/REST"
-xs2a_1 <.. lb_1 : "HTTP/REST"
+xs2a_0 ..> lb_1 : "HTTP/REST"
+xs2a_1 ..> lb_1 : "HTTP/REST"
 ASPSPProfile <..... cms_0 : "  HTTP/REST     "
 ASPSPProfile <..... cms_1 : "  HTTP/REST    "
 
