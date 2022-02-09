@@ -30,11 +30,11 @@ node "Gateway" as balancer {
     interface "Load balancer" as lb_1
 }
 
-node "Consent \nManagement \nSystem, instance 0" {
+node "Consent \nManagement \nSystem, instance M" {
     artifact CMS as cms_0
 }
 
-node "Consent \nManagement \nSystem, instance  M" {
+node "Consent \nManagement \nSystem, instance  0" {
     artifact CMS as cms_1
 }
 
