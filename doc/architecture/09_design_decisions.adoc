@@ -69,4 +69,30 @@ Decryption is solved in CMS library and contains of several steps:
 image::09_AspspConsentData_Decryption.png[AspspConsentData Decryption, title="AspspConsentData Decryption", align="center"]
 
 
+Stick to a Tech-Stack Commonly Found in Banks::
+We try to be conservative in our tech choice. To reduce friction we use technologies that our potential
+customers know and can handle.
++
+Right now we use:
 
+* Base technologies:
+- Java 11
+- Spring Boot, Spring Data, Spring WebMVC
+- Hibernate
+- Mapstruct
+- Jackson
+- Maven
+- Gitlab/Github
+- PostgreSQL
+- Liquibase
+- Lombok
+- Postman
+- Docker
+
+* Tests:
+- Mockito
+- AssertJ
+
+* Other:
+- PMD Checkstyle
+- SonarLint
