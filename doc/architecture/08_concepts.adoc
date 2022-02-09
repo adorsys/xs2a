@@ -6,27 +6,27 @@
 
 
 
-=== Embeddable services
-
-_<explanation>_
-
-
-
-=== Multi-tenancy for CMS Database
-
-_<explanation>_
-
-
-
-=== Database schema migrations
-
-_<explanation>_
+//=== Embeddable services
+//
+//_<explanation>_
+//
+//
+//
+//=== Multi-tenancy for CMS Database
+//
+//_<explanation>_
+//
+//
+//
+//=== Database schema migrations
+//
+//_<explanation>_
 
 
 === Event API structure
 
 Event functionality is extracted in separate module. There are `event-service-xs2a-api` and `event-service-aspsp-api` services are presented.
-Currently event module is a part of CMS and connects with XS2A using REST API. All events are stored to the database.
+Currently, event module is a part of CMS and connects with XS2A using REST API. All events are stored to the database.
 
 image::08_XS2A_HTTP_Event_Service.png[Event workflow using HTTP, title="Event workflow using HTTP", align="center"]
 

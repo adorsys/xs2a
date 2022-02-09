@@ -6,7 +6,7 @@
 
 
 One of the main goals is to make this project adaptable to environment of customer.
-Therefore we provide a set of Java libraries dependent on spring framework.
+Therefore we provide a set of Java libraries dependent on Spring framework.
 The decision of the ways to include these libraries and how to deploy is on the integration project (SPI Development).
 
 Nevertheless we highlight some major scenarios how we see the possible deployment of the application.
@@ -16,16 +16,16 @@ Nevertheless we highlight some major scenarios how we see the possible deploymen
 
 image::07_multiservice_deployment.png[Multiservice deployment, title="Multiservice deployment", align="center"]
 
-Motivation::
-
-_<explanation in text form>_
-
-Quality and/or Performance Features::
-
-_<explanation in text form>_
-
-Mapping of Building Blocks to Infrastructure::
-_<description of the mapping>_
+//Motivation::
+//
+//_<explanation in text form>_
+//
+//Quality and/or Performance Features::
+//
+//_<explanation in text form>_
+//
+//Mapping of Building Blocks to Infrastructure::
+//_<description of the mapping>_
 
 === Infrastructure Level 2 - Multiservice deployment
 
@@ -47,6 +47,12 @@ image::07_allinone_deployment.png[Single service deployment, title="Single servi
 
 === Infrastructure Level 1 - Multiple instances deployment with one database
 
-image::07_multiinstance_deployment.png[Multiple instances deployment, title="Multiple instances deployment", align="center"]
+NOTE: The number of instances is extendable, system supports horizontal scaling.
+
+image::07_multiinstance_embedded_deployment.png[Multiple embedded instances deployment, title="Multiple embedded instances deployment", align="center"]
+
+image::07_multiinstance_single_aspsp_deployment.png[Multiple instances deployment with single ASPSP profile, title="Multiple instances deployment, single ASPSP profile", align="center"]
+
+image::07_multiinstance_single_aspsp_and_multi_cms_deployment.png[Multiple instances deployment with single ASPSP profile and CMS, title="Multiple instances deployment, single ASPSP profile and CMS", align="center"]
 
 

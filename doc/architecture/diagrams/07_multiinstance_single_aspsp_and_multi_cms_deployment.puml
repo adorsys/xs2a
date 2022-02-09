@@ -1,0 +1,56 @@
+@startuml
+
+actor TPP
+
+node "API Gateway" as node_gw {
+    interface "Load balancer" as lb_0
+}
+
+TPP .> lb_0: "HTTP/TLS                "
+
+node "ASPSP profile" {
+    artifact ASPSPProfile
+}
+
+node "XS2A-Service, \n instance N" {
+    artifact XS2AService as xs2a_0
+
+lb_0 .> xs2a_0 : "HTTP         \n(XS2A API)      "
+xs2a_0 ....> ASPSPProfile: "HTTP/REST"
+}
+
+node "XS2A-Service, \n instance 0" {
+    artifact XS2AService as xs2a_1
+
+lb_0 ..> xs2a_1 : "HTTP       \n(XS2A API)      "
+xs2a_1 ....> ASPSPProfile: "HTTP/REST"
+}
+
+node "Gateway" as balancer {
+    interface "Load balancer" as lb_1
+}
+
+node "Consent \nManagement \nSystem, instance 0" {
+    artifact CMS as cms_0
+}
+
+node "Consent \nManagement \nSystem, instance  M" {
+    artifact CMS as cms_1
+}
+
+node Database {
+    database ConsentDB
+}
+
+xs2a_0 <.. lb_1 : "HTTP/REST"
+xs2a_1 <.. lb_1 : "HTTP/REST"
+ASPSPProfile <..... cms_0 : "  HTTP/REST     "
+ASPSPProfile <..... cms_1 : "  HTTP/REST    "
+
+lb_1 ..> cms_0 : "HTTP/REST"
+lb_1 ..> cms_1 : "HTTP/REST"
+
+cms_0 ..> ConsentDB: "  JDBC  "
+cms_1 ..> ConsentDB: " JDBC      "
+
+@enduml
