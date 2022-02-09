@@ -30,12 +30,12 @@ image::L00-Context.png[Business Context diagram, title="Business Context Diagram
 |===
 
 
-=== Technical Context
-
-
-**<Diagram or Table>**
-
-**<optionally: Explanation of technical interfaces>**
-
-**<Mapping Input/Output to Channels>**
+//=== Technical Context
+//
+//
+//**<Diagram or Table>**
+//
+//**<optionally: Explanation of technical interfaces>**
+//
+//**<Mapping Input/Output to Channels>**
 

@@ -39,51 +39,51 @@ toc::[]
 // numbering from here on
 :numbered:
 
-<<<<
+<<<
 // 1. Introduction and Goals
 include::01_introduction_and_goals.adoc[]
 
-<<<<
+<<<
 // 2. Architecture Constraints
-include::02_architecture_constraints.adoc[]
+//include::02_architecture_constraints.adoc[]
 
-<<<<
+<<<
 // 3. System Scope and Context
 include::03_system_scope_and_context.adoc[]
 
-<<<<
+<<<
 // 4. Solution Strategy
-include::04_solution_strategy.adoc[]
+//include::04_solution_strategy.adoc[]
 
-<<<<
+<<<
 // 5. Building Block View
 include::05_building_block_view.adoc[]
 
-<<<<
+<<<
 // 6. Runtime View
-include::06_runtime_view.adoc[]
+//include::06_runtime_view.adoc[]
 
-<<<<
+<<<
 // 7. Deployment View
 include::07_deployment_view.adoc[]
 
-<<<<
+<<<
 // 8. Concepts
 include::08_concepts.adoc[]
 
-<<<<
+<<<
 // 9. Design Decisions
 include::09_design_decisions.adoc[]
 
-<<<<
+<<<
 // 10. Quality Scenarios
-include::10_quality_scenarios.adoc[]
+//include::10_quality_scenarios.adoc[]
 
-<<<<
+<<<
 // 11. Technical Risks
-include::11_technical_risks.adoc[]
+//include::11_technical_risks.adoc[]
 
-<<<<
+<<<
 // 12. Glossary
 include::12_glossary.adoc[]
 

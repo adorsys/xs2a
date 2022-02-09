@@ -42,12 +42,20 @@ providing capabilities to interoperate with TPP by defined XS2A Standard Interfa
 === Stakeholders
 
 
-
-[options="header",cols="1,2,2"]
+[cols="1,2,3", options="header"]
 |===
-|Role/Name|Contact|Expectations
-| _<Role-1>_ | _<Contact-1>_ | _<Expectation-1>_
-| _<Role-2>_ | _<Contact-2>_ | _<Expectation-2>_
+| Name                | Role              | Contact
+
+|Thilo Rottach        | CEO               | thilo.rottach@adorsys.com
+
+| Denys Golubiev      | Architect         | denys.golubiev@adorsys.com
+
+| Gatis Kalnins       | Product Manager   | gatis.kalnins@adorsys.com
+
+| Andre Achtstaetter  | Sales             | andre.achtstaetter@adorsys.com
+
+| Maisoora Bichoo     | Delivery Manager  | maisoora.bichoo@adorsys.com
+
 |===
 
 
