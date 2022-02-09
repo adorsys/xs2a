@@ -5,7 +5,7 @@
 
 ## Licensing model change to dual license: AGPL v.3 or commercial license
 
-**Attention: this open-source project will change its licensing model as of 01.01.2022!**
+**Attention: this open-source project has changed its licensing model since 01.01.2022!**
 
 Constantly evolving and extending scope, production traffic and support in open banking
 world call for high maintenance and service investments on our part.
