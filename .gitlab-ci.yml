@@ -27,6 +27,7 @@ variables:
   DOCKER_IMAGE_NAME_ASPSP_PROFILE: "xs2a-aspsp-profile"
   # DOCKER_IMAGE_NAME_XS2A: "xs2a-service"
   DOCKER_IMAGE_NAME_CERTIFICATE_GENERATOR: "xs2a-certificate-generator"
+  DOCKER_IMAGE_NAME_JMETER_TEST: "xs2a-performance-test"
 
   ###########################
   # Public Dockerhub Images #
@@ -92,10 +93,12 @@ variables:
     - docker build -t "${DOCKERHUB_REGISTRY}/${DOCKERHUB_NAMESPACE}/${DOCKER_IMAGE_NAME_CMS_MANAGEMENT}:${DOCKER_TAG}" consent-management/cms-standalone-service
     - docker build -t "${DOCKERHUB_REGISTRY}/${DOCKERHUB_NAMESPACE}/${DOCKER_IMAGE_NAME_ASPSP_PROFILE}:${DOCKER_TAG}" aspsp-profile/aspsp-profile-server
     - docker build -t "${DOCKERHUB_REGISTRY}/${DOCKERHUB_NAMESPACE}/${DOCKER_IMAGE_NAME_CERTIFICATE_GENERATOR}:${DOCKER_TAG}" certificate-generator
+    - docker build -t "${DOCKERHUB_REGISTRY}/${DOCKERHUB_NAMESPACE}/${DOCKER_IMAGE_NAME_JMETER_TEST}:${DOCKER_TAG}" performance-test
     - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
     - docker push "${DOCKERHUB_REGISTRY}/${DOCKERHUB_NAMESPACE}/${DOCKER_IMAGE_NAME_CMS_MANAGEMENT}:${DOCKER_TAG}"
     - docker push "${DOCKERHUB_REGISTRY}/${DOCKERHUB_NAMESPACE}/${DOCKER_IMAGE_NAME_ASPSP_PROFILE}:${DOCKER_TAG}"
     - docker push "${DOCKERHUB_REGISTRY}/${DOCKERHUB_NAMESPACE}/${DOCKER_IMAGE_NAME_CERTIFICATE_GENERATOR}:${DOCKER_TAG}"
+    - docker push "${DOCKERHUB_REGISTRY}/${DOCKERHUB_NAMESPACE}/${DOCKER_IMAGE_NAME_JMETER_TEST}:${DOCKER_TAG}"
     - docker logout
 
 # release java artifact privately
@@ -304,6 +307,19 @@ Test:AsciiDoc:
   script:
     - make pages
 
+Test:Performance:
+  stage: "Test"
+  only:
+    - feature/13.x/sus_performance_test
+  image:
+    name: gitlab-registry.adorsys.de/adorsys/xs2a/aspsp-xs2a/xs2a-performance-test:develop
+    entrypoint: [""]
+  script:
+    - jmeter -n -t ./performance-test/jmeter-test/test-plan.jmx -l ./performance-test/jmeter-test/resultLog.jtl -e -o ./performance-test/jmeter-test/report
+  artifacts:
+    paths:
+      - "./performance-test/jmeter-test/report"
+
 ###########
 # develop #
 ###########
@@ -314,6 +330,7 @@ build_dockerhub_image_develop_private:
     - schedules
   only:
     - develop
+    - feature/13.x/sus_performance_test
   variables:
     DOCKER_TAG: develop
     DOCKERHUB_REGISTRY: gitlab-registry.adorsys.de
