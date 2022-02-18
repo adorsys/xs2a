@@ -310,7 +310,7 @@ Test:AsciiDoc:
 Test:Performance:
   stage: "Test"
   only:
-    - feature/13.x/sus_performance_test
+    - develop
   image:
     name: gitlab-registry.adorsys.de/adorsys/xs2a/aspsp-xs2a/xs2a-performance-test:develop
     entrypoint: [""]
@@ -330,7 +330,6 @@ build_dockerhub_image_develop_private:
     - schedules
   only:
     - develop
-    - feature/13.x/sus_performance_test
   variables:
     DOCKER_TAG: develop
     DOCKERHUB_REGISTRY: gitlab-registry.adorsys.de
