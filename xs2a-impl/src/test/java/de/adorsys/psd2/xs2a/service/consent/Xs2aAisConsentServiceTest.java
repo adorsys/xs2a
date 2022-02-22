@@ -35,6 +35,7 @@ import de.adorsys.psd2.logger.context.LoggingContextService;
 import de.adorsys.psd2.xs2a.core.authorisation.AuthorisationType;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
 import de.adorsys.psd2.xs2a.core.consent.ConsentTppInformation;
+import de.adorsys.psd2.xs2a.core.consent.ConsentType;
 import de.adorsys.psd2.xs2a.core.consent.TerminateOldConsentsRequest;
 import de.adorsys.psd2.xs2a.core.profile.NotificationSupportedMode;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
@@ -166,6 +167,7 @@ class Xs2aAisConsentServiceTest {
     @Test
     void getAccountConsentById_success() {
         // Given
+        CMS_CONSENT.setConsentType(ConsentType.AIS);
         when(consentServiceEncrypted.getConsentById(CONSENT_ID))
             .thenReturn(CmsResponse.<CmsConsent>builder().payload(CMS_CONSENT).build());
         when(aisConsentMapper.mapToAisConsent(CMS_CONSENT))
@@ -176,6 +178,21 @@ class Xs2aAisConsentServiceTest {
 
         // Then
         assertThat(actualResponse).isPresent().contains(aisConsent);
+    }
+
+    @Test
+    void getAccountConsentById_wrongConsentType() {
+        // Given
+        CMS_CONSENT.setConsentType(ConsentType.PIIS_TPP);
+        when(consentServiceEncrypted.getConsentById(CONSENT_ID))
+            .thenReturn(CmsResponse.<CmsConsent>builder().payload(CMS_CONSENT).build());
+
+        // When
+        Optional<AisConsent> actualResponse = xs2aAisConsentService.getAccountConsentById(CONSENT_ID);
+
+        // Then
+        assertThat(actualResponse).isEmpty();
+        verifyNoInteractions(aisConsentMapper);
     }
 
     @Test

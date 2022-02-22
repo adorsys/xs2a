@@ -30,6 +30,7 @@ import de.adorsys.psd2.core.data.AccountAccess;
 import de.adorsys.psd2.core.data.piis.v1.PiisConsent;
 import de.adorsys.psd2.logger.context.LoggingContextService;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
+import de.adorsys.psd2.xs2a.core.consent.ConsentType;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
 import de.adorsys.psd2.xs2a.domain.Xs2aResponse;
@@ -50,7 +51,9 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.util.Optional;
 
 import static de.adorsys.psd2.consent.api.CmsError.LOGICAL_ERROR;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -59,14 +62,13 @@ class Xs2aPiisConsentServiceTest {
     private static final String CONSENT_ID = "consent ID";
     private static final String AUTHORISATION_ID = "a01562ea-19ff-4b5a-8188-c45d85bfa20a";
     private static final PsuIdData PSU_ID_DATA = new PsuIdData(CORRECT_PSU_ID, null, null, null, null);
+    private static final CmsConsent CMS_CONSENT = new CmsConsent();
     private final TppInfo tppInfo = buildTppInfo();
 
     @InjectMocks
     private Xs2aPiisConsentService xs2aPiisConsentService;
     @Mock
     private Xs2aPiisConsentMapper xs2aPiisConsentMapper;
-    @Mock
-    private CmsConsent cmsConsent;
     @Mock
     private PiisConsent piisConsent;
     @Mock
@@ -93,12 +95,12 @@ class Xs2aPiisConsentServiceTest {
         //Given
         CreatePiisConsentRequest request = new CreatePiisConsentRequest(null, null, null, null, null);
         when(xs2aPiisConsentMapper.mapToCmsConsent(request, PSU_ID_DATA, tppInfo))
-            .thenReturn(cmsConsent);
-        when(cmsCreateConsentResponseService.getCmsCreateConsentResponse(cmsConsent)).thenReturn(Xs2aResponse.<CmsCreateConsentResponse>builder()
-                                                                                                     .payload(new CmsCreateConsentResponse(CONSENT_ID, cmsConsent))
+            .thenReturn(CMS_CONSENT);
+        when(cmsCreateConsentResponseService.getCmsCreateConsentResponse(CMS_CONSENT)).thenReturn(Xs2aResponse.<CmsCreateConsentResponse>builder()
+                                                                                                     .payload(new CmsCreateConsentResponse(CONSENT_ID, CMS_CONSENT))
                                                                                                      .build());
 
-        when(xs2aPiisConsentMapper.mapToPiisConsent(cmsConsent))
+        when(xs2aPiisConsentMapper.mapToPiisConsent(CMS_CONSENT))
             .thenReturn(piisConsent);
 
         //When
@@ -116,8 +118,8 @@ class Xs2aPiisConsentServiceTest {
         //Given
         CreatePiisConsentRequest request = new CreatePiisConsentRequest(null, null, null, null, null);
         when(xs2aPiisConsentMapper.mapToCmsConsent(request, PSU_ID_DATA, tppInfo))
-            .thenReturn(cmsConsent);
-        when(cmsCreateConsentResponseService.getCmsCreateConsentResponse(cmsConsent)).thenReturn(Xs2aResponse.<CmsCreateConsentResponse>builder()
+            .thenReturn(CMS_CONSENT);
+        when(cmsCreateConsentResponseService.getCmsCreateConsentResponse(CMS_CONSENT)).thenReturn(Xs2aResponse.<CmsCreateConsentResponse>builder()
                                                                                                      .build());
 
         //When
@@ -132,8 +134,8 @@ class Xs2aPiisConsentServiceTest {
         //Given
         CreatePiisConsentRequest request = new CreatePiisConsentRequest(null, null, null, null, null);
         when(xs2aPiisConsentMapper.mapToCmsConsent(request, PSU_ID_DATA, tppInfo))
-            .thenReturn(cmsConsent);
-        when(cmsCreateConsentResponseService.getCmsCreateConsentResponse(cmsConsent)).thenReturn(Xs2aResponse.<CmsCreateConsentResponse>builder()
+            .thenReturn(CMS_CONSENT);
+        when(cmsCreateConsentResponseService.getCmsCreateConsentResponse(CMS_CONSENT)).thenReturn(Xs2aResponse.<CmsCreateConsentResponse>builder()
                                                                                                      .build());
 
         //When
@@ -146,15 +148,29 @@ class Xs2aPiisConsentServiceTest {
     @Test
     void getPiisConsentById_success() {
         //Given
+        CMS_CONSENT.setConsentType(ConsentType.PIIS_TPP);
         when(consentService.getConsentById(CONSENT_ID))
-            .thenReturn(CmsResponse.<CmsConsent>builder().payload(cmsConsent).build());
-        when(xs2aPiisConsentMapper.mapToPiisConsent(cmsConsent))
+            .thenReturn(CmsResponse.<CmsConsent>builder().payload(CMS_CONSENT).build());
+        when(xs2aPiisConsentMapper.mapToPiisConsent(CMS_CONSENT))
             .thenReturn(piisConsent);
         //When
         Optional<PiisConsent> piisConsentById = xs2aPiisConsentService.getPiisConsentById(CONSENT_ID);
         //Then
         assertTrue(piisConsentById.isPresent());
         assertEquals(piisConsent, piisConsentById.get());
+    }
+
+    @Test
+    void getPiisConsentById_wrongConsentType() {
+        //Given
+        CMS_CONSENT.setConsentType(ConsentType.AIS);
+        when(consentService.getConsentById(CONSENT_ID))
+            .thenReturn(CmsResponse.<CmsConsent>builder().payload(CMS_CONSENT).build());
+        //When
+        Optional<PiisConsent> piisConsentById = xs2aPiisConsentService.getPiisConsentById(CONSENT_ID);
+        //Then
+        assertTrue(piisConsentById.isEmpty());
+        verifyNoInteractions(xs2aPiisConsentMapper);
     }
 
     @Test

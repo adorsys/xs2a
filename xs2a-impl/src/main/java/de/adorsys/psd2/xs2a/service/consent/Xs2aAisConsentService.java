@@ -33,6 +33,7 @@ import de.adorsys.psd2.core.data.ais.AisConsent;
 import de.adorsys.psd2.logger.context.LoggingContextService;
 import de.adorsys.psd2.xs2a.core.authorisation.AuthorisationType;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
+import de.adorsys.psd2.xs2a.core.consent.ConsentType;
 import de.adorsys.psd2.xs2a.core.consent.TerminateOldConsentsRequest;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
@@ -104,8 +105,14 @@ public class Xs2aAisConsentService {
             log.info("Get consent by id failed due to CMS problems");
             return Optional.empty();
         }
+        CmsConsent payload = consentById.getPayload();
 
-        return Optional.ofNullable(aisConsentMapper.mapToAisConsent(consentById.getPayload()));
+        if (payload.getConsentType() == ConsentType.AIS) {
+            return Optional.ofNullable(aisConsentMapper.mapToAisConsent(payload));
+        }
+
+        log.info("Requested consent is not of ConsentType.AIS, consentId=" + consentId);
+        return Optional.empty();
     }
 
     /**
