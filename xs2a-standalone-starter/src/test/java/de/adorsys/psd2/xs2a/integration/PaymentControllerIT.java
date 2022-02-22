@@ -155,8 +155,6 @@ class PaymentControllerIT {
             .willReturn(CmsResponse.<Boolean>builder()
                             .payload(false)
                             .build());
-        given(eventServiceEncrypted.recordEvent(any(EventBO.class)))
-            .willReturn(true);
 
         given(pisCommonPaymentServiceEncrypted.getPsuDataListByPaymentId(any()))
             .willReturn(CmsResponse.<List<PsuIdData>>builder()

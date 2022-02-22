@@ -38,5 +38,5 @@ public interface EventApi {
     @ApiResponses(value = {
         @ApiResponse(code = 200, message = "OK"),
         @ApiResponse(code = 400, message = "Bad Request")})
-    ResponseEntity<Boolean> recordEvent(@RequestBody EventBO event);
+    ResponseEntity<Void> recordEvent(@RequestBody EventBO event);
 }

@@ -1,19 +1,17 @@
 /*
- * Copyright 2018-2022 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
- * This program is free software: you can redistribute it and/or modify it
- * under the terms of the GNU Affero General Public License as published
- * by the Free Software Foundation, either version 3 of the License, or (at
- * your option) any later version. This program is distributed in the hope that
- * it will be useful, but WITHOUT ANY WARRANTY; without even the implied
- * warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the GNU Affero General Public License for more details.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- * You should have received a copy of the GNU Affero General Public License
- * along with this program. If not, see https://www.gnu.org/licenses/.
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
- * This project is also available under a separate commercial license. You can
- * contact us at psd2@adorsys.com.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 package de.adorsys.psd2.xs2a.service.event;
@@ -79,7 +77,7 @@ class Xs2aEventServiceTest {
     void setUp() {
         psuIdData = jsonReader.getObjectFromFile("json/service/event/psu-id-data.json", PsuIdDataBO.class);
 
-        when(eventService.recordEvent(eventCaptor.capture())).thenReturn(true);
+//        verify(eventService, times(1)).recordEvent(eventCaptor.capture());
         when(requestProviderService.getRequestData()).thenReturn(buildRequestData());
         when(tppService.getTppInfo()).thenReturn(buildTppInfo());
     }
@@ -92,7 +90,7 @@ class Xs2aEventServiceTest {
         xs2aEventService.recordConsentTppRequest(CONSENT_ID, EVENT_TYPE, "body");
 
         // Then
-        verify(eventService, times(1)).recordEvent(any(EventBO.class));
+        verify(eventService, times(1)).recordEvent(eventCaptor.capture());
         EventBO capturedEvent = eventCaptor.getValue();
         assertThat(capturedEvent.getTimestamp()).isNotNull();
         assertThat(capturedEvent.getEventOrigin()).isEqualTo(EventOrigin.TPP);
@@ -113,7 +111,7 @@ class Xs2aEventServiceTest {
         xs2aEventService.recordConsentTppRequest(CONSENT_ID, EVENT_TYPE);
 
         // Then
-        verify(eventService, times(1)).recordEvent(any(EventBO.class));
+        verify(eventService, times(1)).recordEvent(eventCaptor.capture());
         EventBO capturedEvent = eventCaptor.getValue();
         assertThat(capturedEvent.getTimestamp()).isNotNull();
         assertThat(capturedEvent.getEventOrigin()).isEqualTo(EventOrigin.TPP);
@@ -134,7 +132,7 @@ class Xs2aEventServiceTest {
         xs2aEventService.recordPisTppRequest(PAYMENT_ID, EVENT_TYPE, BODY);
 
         // Then
-        verify(eventService, times(1)).recordEvent(any(EventBO.class));
+        verify(eventService, times(1)).recordEvent(eventCaptor.capture());
         EventBO capturedEvent = eventCaptor.getValue();
         assertThat(capturedEvent.getTimestamp()).isNotNull();
         assertThat(capturedEvent.getEventOrigin()).isEqualTo(EventOrigin.TPP);
@@ -155,7 +153,7 @@ class Xs2aEventServiceTest {
         xs2aEventService.recordPisTppRequest(PAYMENT_ID, EVENT_TYPE);
 
         // Then
-        verify(eventService, times(1)).recordEvent(any(EventBO.class));
+        verify(eventService, times(1)).recordEvent(eventCaptor.capture());
         EventBO capturedEvent = eventCaptor.getValue();
         assertThat(capturedEvent.getTimestamp()).isNotNull();
         assertThat(capturedEvent.getEventOrigin()).isEqualTo(EventOrigin.TPP);
@@ -176,7 +174,7 @@ class Xs2aEventServiceTest {
         xs2aEventService.recordTppRequest(EVENT_TYPE, BODY);
 
         // Then
-        verify(eventService, times(1)).recordEvent(any(EventBO.class));
+        verify(eventService, times(1)).recordEvent(eventCaptor.capture());
         EventBO capturedEvent = eventCaptor.getValue();
         assertThat(capturedEvent.getTimestamp()).isNotNull();
         assertThat(capturedEvent.getEventOrigin()).isEqualTo(EventOrigin.TPP);
@@ -197,7 +195,7 @@ class Xs2aEventServiceTest {
         xs2aEventService.recordTppRequest(EVENT_TYPE);
 
         // Then
-        verify(eventService, times(1)).recordEvent(any(EventBO.class));
+        verify(eventService, times(1)).recordEvent(eventCaptor.capture());
         EventBO capturedEvent = eventCaptor.getValue();
         assertThat(capturedEvent.getTimestamp()).isNotNull();
         assertThat(capturedEvent.getEventOrigin()).isEqualTo(EventOrigin.TPP);

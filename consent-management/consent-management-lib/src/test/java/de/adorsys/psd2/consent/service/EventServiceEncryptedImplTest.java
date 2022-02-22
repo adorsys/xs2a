@@ -33,7 +33,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.util.Optional;
 import java.util.UUID;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -74,13 +74,11 @@ class EventServiceEncryptedImplTest {
         // Given
         when(securityDataService.decryptId(ENCRYPTED_PAYMENT_ID)).thenReturn(Optional.of(DECRYPTED_PAYMENT_ID));
         when(securityDataService.decryptId(ENCRYPTED_CONSENT_ID)).thenReturn(Optional.of(DECRYPTED_CONSENT_ID));
-        when(eventService.recordEvent(decryptedEvent)).thenReturn(true);
 
         // When
-        boolean actual = eventServiceEncryptedImpl.recordEvent(event);
+        eventServiceEncryptedImpl.recordEvent(event);
 
         // Then
-        assertTrue(actual);
         verify(eventService, times(1)).recordEvent(decryptedEvent);
     }
 
@@ -89,13 +87,11 @@ class EventServiceEncryptedImplTest {
         // Given
         when(securityDataService.decryptId(ENCRYPTED_PAYMENT_ID)).thenReturn(Optional.of(DECRYPTED_PAYMENT_ID));
         when(securityDataService.decryptId(ENCRYPTED_CONSENT_ID)).thenReturn(Optional.of(DECRYPTED_CONSENT_ID));
-        when(eventService.recordEvent(decryptedEvent)).thenReturn(false);
 
         // When
-        boolean actual = eventServiceEncryptedImpl.recordEvent(event);
+        eventServiceEncryptedImpl.recordEvent(event);
 
         // Then
-        assertFalse(actual);
         verify(eventService, times(1)).recordEvent(decryptedEvent);
     }
 
@@ -105,13 +101,11 @@ class EventServiceEncryptedImplTest {
         EventBO event = buildEvent(UNDECRYPTABLE_CONSENT_ID, UNDECRYPTABLE_PAYMENT_ID);
         when(securityDataService.decryptId(UNDECRYPTABLE_PAYMENT_ID)).thenReturn(Optional.empty());
         when(securityDataService.decryptId(UNDECRYPTABLE_CONSENT_ID)).thenReturn(Optional.empty());
-        when(eventService.recordEvent(buildEvent())).thenReturn(false);
 
         // When
-        boolean actual = eventServiceEncryptedImpl.recordEvent(event);
+        eventServiceEncryptedImpl.recordEvent(event);
 
         // Then
-        assertFalse(actual);
         verify(eventService, times(1)).recordEvent(buildEvent());
     }
 
@@ -121,13 +115,11 @@ class EventServiceEncryptedImplTest {
         ArgumentCaptor<EventBO> argumentCaptor = ArgumentCaptor.forClass(EventBO.class);
         when(securityDataService.decryptId(ENCRYPTED_PAYMENT_ID)).thenReturn(Optional.of(DECRYPTED_PAYMENT_ID));
         when(securityDataService.decryptId(ENCRYPTED_CONSENT_ID)).thenReturn(Optional.of(DECRYPTED_CONSENT_ID));
-        when(eventService.recordEvent(argumentCaptor.capture())).thenReturn(true);
 
         // When
-        boolean actual = eventServiceEncryptedImpl.recordEvent(event);
+        eventServiceEncryptedImpl.recordEvent(event);
 
         // Then
-        assertTrue(actual);
         verify(eventService).recordEvent(argumentCaptor.capture());
         verify(eventService, times(1)).recordEvent(decryptedEvent);
         assertEquals(decryptedEvent, argumentCaptor.getValue());

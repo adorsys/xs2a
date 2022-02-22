@@ -138,10 +138,7 @@ public class Xs2aEventService {
     }
 
     private void recordEventInCms(EventBO event) {
-        boolean recorded = eventService.recordEvent(event);
-        if (!recorded) {
-            log.info("TPP ID: [{}]. Couldn't record event from TPP request: {}", event.getTppAuthorisationNumber(), event);
-        }
+        eventService.recordEvent(event);
     }
 
     private EventBO buildTppEvent(EventType eventType, Object body) {

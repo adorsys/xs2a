@@ -31,7 +31,6 @@ import de.adorsys.psd2.consent.api.service.PisCommonPaymentServiceEncrypted;
 import de.adorsys.psd2.consent.api.service.TppService;
 import de.adorsys.psd2.consent.api.service.TppStopListService;
 import de.adorsys.psd2.event.service.Xs2aEventServiceEncrypted;
-import de.adorsys.psd2.event.service.model.EventBO;
 import de.adorsys.psd2.starter.Xs2aStandaloneStarter;
 import de.adorsys.psd2.xs2a.config.CorsConfigurationProperties;
 import de.adorsys.psd2.xs2a.config.WebConfig;
@@ -140,8 +139,8 @@ class PaymentStartCancellationAuthorisationIT {
         httpHeadersExplicit.add("TPP-Nok-Redirect-URI", TPP_NOK_REDIRECT_URI);
 
         given(tppStopListService.checkIfTppBlocked(TppInfoBuilder.getTppInfo(), null)).willReturn(CmsResponse.<Boolean>builder()
-                                                                                                .payload(false)
-                                                                                                .build());
+                                                                                                      .payload(false)
+                                                                                                      .build());
         given(aspspProfileService.getAspspSettings(null)).willReturn(AspspSettingsBuilder.buildAspspSettings());
         given(tppService.updateTppInfo(any(TppInfo.class)))
             .willReturn(CmsResponse.<Boolean>builder()
@@ -152,7 +151,6 @@ class PaymentStartCancellationAuthorisationIT {
     @Test
     void startPaymentCancellationAuthorisation_success() throws Exception {
         //Given
-        given(eventServiceEncrypted.recordEvent(any(EventBO.class))).willReturn(true);
         given(pisCommonPaymentServiceEncrypted.getCommonPaymentById(PAYMENT_ID))
             .willReturn(CmsResponse.<PisCommonPaymentResponse>builder()
                             .payload(buildPisCommonPaymentResponse())

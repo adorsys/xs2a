@@ -174,7 +174,6 @@ class PaymentStartAuthorisationIT {
         //Given
         String request = IOUtils.resourceToString(AUTH_REQ, UTF_8);
 
-        given(eventServiceEncrypted.recordEvent(any(EventBO.class))).willReturn(true);
         given(pisCommonPaymentServiceEncrypted.getCommonPaymentById(PAYMENT_ID))
             .willReturn(CmsResponse.<PisCommonPaymentResponse>builder()
                             .payload(buildPisCommonPaymentResponse())

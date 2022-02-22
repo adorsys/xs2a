@@ -33,7 +33,6 @@ import de.adorsys.psd2.consent.api.service.AuthorisationServiceEncrypted;
 import de.adorsys.psd2.consent.api.service.ConsentServiceEncrypted;
 import de.adorsys.psd2.consent.api.service.TppStopListService;
 import de.adorsys.psd2.event.service.Xs2aEventServiceEncrypted;
-import de.adorsys.psd2.event.service.model.EventBO;
 import de.adorsys.psd2.mapper.Xs2aObjectMapper;
 import de.adorsys.psd2.starter.Xs2aStandaloneStarter;
 import de.adorsys.psd2.stub.impl.AisConsentSpiMockImpl;
@@ -48,6 +47,7 @@ import de.adorsys.psd2.xs2a.core.sca.AuthorisationScaApproachResponse;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import de.adorsys.psd2.xs2a.core.service.validator.ValidationResult;
 import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
+import de.adorsys.psd2.xs2a.domain.account.SupportedAccountReferenceField;
 import de.adorsys.psd2.xs2a.exception.GlobalExceptionHandlerController;
 import de.adorsys.psd2.xs2a.integration.builder.AspspSettingsBuilder;
 import de.adorsys.psd2.xs2a.integration.builder.TppInfoBuilder;
@@ -373,10 +373,6 @@ class ServiceUnavailableIT {
             buildCmsResponse(false),
             throwException);
         givenReturnOrThrowException(
-            eventServiceEncrypted.recordEvent(any(EventBO.class)),
-            true,
-            throwException);
-        givenReturnOrThrowException(
             aspspDataService.readAspspConsentData(any(String.class)),
             Optional.of(new AspspConsentData(null, ENCRYPT_CONSENT_ID)),
             throwException);
@@ -393,6 +389,8 @@ class ServiceUnavailableIT {
         givenReturnOrThrowException(aspspProfileServiceWrapper.isPsuInInitialRequestMandated(), false, throwException);
         givenReturnOrThrowException(aspspProfileServiceWrapper.isTppSignatureRequired(), false, throwException);
         givenReturnOrThrowException(aspspProfileServiceWrapper.isCheckTppRolesFromCertificateSupported(), false, throwException);
+        givenReturnOrThrowException(aspspProfileServiceWrapper.getSupportedAccountReferenceFields(), Collections.singletonList(SupportedAccountReferenceField.IBAN), throwException);
+
     }
 
     private void makePreparationsConnector(boolean throwException) {

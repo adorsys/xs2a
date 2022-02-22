@@ -37,7 +37,7 @@ public class EventServiceEncryptedImpl implements Xs2aEventServiceEncrypted {
 
     @Override
     @Transactional
-    public boolean recordEvent(@NotNull EventBO event) {
+    public void recordEvent(@NotNull EventBO event) {
         String decryptedConsentId = decryptId(event.getConsentId());
         String decryptedPaymentId = decryptId(event.getPaymentId());
 
@@ -54,7 +54,7 @@ public class EventServiceEncryptedImpl implements Xs2aEventServiceEncrypted {
                                      .internalRequestId(event.getInternalRequestId())
                                      .instanceId(event.getInstanceId())
                                      .build();
-        return eventService.recordEvent(decryptedEvent);
+        eventService.recordEvent(decryptedEvent);
     }
 
     private String decryptId(String id) {
