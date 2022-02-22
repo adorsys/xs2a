@@ -30,7 +30,6 @@ import de.adorsys.psd2.core.data.AccountAccess;
 import de.adorsys.psd2.core.data.ais.AisConsentData;
 import de.adorsys.psd2.core.mapper.ConsentDataMapper;
 import de.adorsys.psd2.event.service.Xs2aEventServiceEncrypted;
-import de.adorsys.psd2.event.service.model.EventBO;
 import de.adorsys.psd2.starter.Xs2aStandaloneStarter;
 import de.adorsys.psd2.xs2a.config.CorsConfigurationProperties;
 import de.adorsys.psd2.xs2a.config.WebConfig;
@@ -157,8 +156,6 @@ class UpdatePsuDataForConsentIT {
 
     @Test
     void updatePsuData_success() throws Exception {
-        given(eventServiceEncrypted.recordEvent(any(EventBO.class)))
-            .willReturn(true);
         Authorisation authorizationResponse = new Authorisation();
         authorizationResponse.setAuthorisationId(AUTHORISATION_ID);
         authorizationResponse.setScaStatus(ScaStatus.PSUIDENTIFIED);
@@ -220,8 +217,6 @@ class UpdatePsuDataForConsentIT {
 
     @Test
     void updatePsuData_wrongAuthorisationId() throws Exception {
-        given(eventServiceEncrypted.recordEvent(any(EventBO.class)))
-            .willReturn(true);
         given(authorisationServiceEncrypted.getAuthorisationById(WRONG_AUTHORISATION_ID))
             .willReturn(CmsResponse.<Authorisation>builder()
                             .payload(new Authorisation())

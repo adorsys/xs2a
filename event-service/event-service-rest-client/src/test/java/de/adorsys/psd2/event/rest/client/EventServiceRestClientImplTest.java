@@ -27,7 +27,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -50,12 +49,10 @@ class EventServiceRestClientImplTest {
 
         when(eventRemoteUrls.createEvent()).thenReturn(CREATE_URL);
         when(consentRestTemplate.postForEntity(CREATE_URL, event, Boolean.class)).thenReturn(responseEntity);
-        when(responseEntity.getBody()).thenReturn(true);
 
-        assertTrue(eventServiceRestClient.recordEvent(event));
+        eventServiceRestClient.recordEvent(event);
 
         verify(eventRemoteUrls, times(1)).createEvent();
         verify(consentRestTemplate, times(1)).postForEntity(CREATE_URL, event, Boolean.class);
-        verify(responseEntity, times(1)).getBody();
     }
 }

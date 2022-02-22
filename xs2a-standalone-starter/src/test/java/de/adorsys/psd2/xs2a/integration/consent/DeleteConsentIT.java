@@ -28,7 +28,6 @@ import de.adorsys.psd2.consent.api.service.TppStopListService;
 import de.adorsys.psd2.core.data.ais.AisConsentData;
 import de.adorsys.psd2.core.mapper.ConsentDataMapper;
 import de.adorsys.psd2.event.service.Xs2aEventServiceEncrypted;
-import de.adorsys.psd2.event.service.model.EventBO;
 import de.adorsys.psd2.starter.Xs2aStandaloneStarter;
 import de.adorsys.psd2.xs2a.config.CorsConfigurationProperties;
 import de.adorsys.psd2.xs2a.config.WebConfig;
@@ -126,8 +125,6 @@ class DeleteConsentIT {
             .willReturn(CmsResponse.<Boolean>builder()
                             .payload(false)
                             .build());
-        given(eventServiceEncrypted.recordEvent(any(EventBO.class)))
-            .willReturn(true);
         given(tppService.updateTppInfo(any(TppInfo.class)))
             .willReturn(CmsResponse.<Boolean>builder()
                             .payload(true)

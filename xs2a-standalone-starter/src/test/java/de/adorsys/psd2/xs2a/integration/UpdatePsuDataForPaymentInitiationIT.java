@@ -28,7 +28,6 @@ import de.adorsys.psd2.consent.api.service.PisCommonPaymentServiceEncrypted;
 import de.adorsys.psd2.consent.api.service.TppService;
 import de.adorsys.psd2.consent.api.service.TppStopListService;
 import de.adorsys.psd2.event.service.Xs2aEventServiceEncrypted;
-import de.adorsys.psd2.event.service.model.EventBO;
 import de.adorsys.psd2.starter.Xs2aStandaloneStarter;
 import de.adorsys.psd2.xs2a.config.CorsConfigurationProperties;
 import de.adorsys.psd2.xs2a.config.WebConfig;
@@ -154,7 +153,6 @@ class UpdatePsuDataForPaymentInitiationIT {
 
     @Test
     void updatePsuData_success() throws Exception {
-        given(eventServiceEncrypted.recordEvent(any(EventBO.class))).willReturn(true);
         given(pisCommonPaymentServiceEncrypted.getCommonPaymentById(ENCRYPT_PAYMENT_ID))
             .willReturn(CmsResponse.<PisCommonPaymentResponse>builder()
                             .payload(buildPisCommonPaymentResponse(AUTHORISATION_ID))
@@ -212,7 +210,6 @@ class UpdatePsuDataForPaymentInitiationIT {
 
     @Test
     void updatePsuData_wrongAuthorisationId() throws Exception {
-        given(eventServiceEncrypted.recordEvent(any(EventBO.class))).willReturn(true);
 
         given(pisCommonPaymentServiceEncrypted.getCommonPaymentById(ENCRYPT_PAYMENT_ID))
             .willReturn(CmsResponse.<PisCommonPaymentResponse>builder()

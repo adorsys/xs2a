@@ -22,7 +22,6 @@ import de.adorsys.psd2.consent.api.EventApi;
 import de.adorsys.psd2.event.service.Xs2aEventServiceEncrypted;
 import de.adorsys.psd2.event.service.model.EventBO;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -32,7 +31,9 @@ public class EventController implements EventApi {
     private final Xs2aEventServiceEncrypted eventService;
 
     @Override
-    public ResponseEntity<Boolean> recordEvent(EventBO event) {
-        return new ResponseEntity<>(eventService.recordEvent(event), HttpStatus.OK);
+    public ResponseEntity<Void> recordEvent(EventBO event) {
+         eventService.recordEvent(event);
+
+         return ResponseEntity.ok().build();
     }
 }

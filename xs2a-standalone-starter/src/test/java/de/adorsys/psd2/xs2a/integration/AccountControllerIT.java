@@ -158,8 +158,6 @@ class AccountControllerIT {
             .willReturn(CmsResponse.<Boolean>builder()
                             .payload(false)
                             .build());
-        given(eventServiceEncrypted.recordEvent(any(EventBO.class)))
-            .willReturn(true);
         given(consentServiceEncrypted.getConsentById(CONSENT_ID)).willReturn(CmsResponse.<CmsConsent>builder()
                                                                                  .payload(cmsConsent)
                                                                                  .build());

@@ -259,8 +259,6 @@ class InitiatePaymentsSuccessfulIT {
             .willReturn(CmsResponse.<Boolean>builder()
                             .payload(false)
                             .build());
-        given(eventServiceEncrypted.recordEvent(any(EventBO.class)))
-            .willReturn(true);
         given(consentRestTemplate.postForEntity(anyString(), any(EventBO.class), eq(Boolean.class)))
             .willReturn(new ResponseEntity<>(true, HttpStatus.OK));
 

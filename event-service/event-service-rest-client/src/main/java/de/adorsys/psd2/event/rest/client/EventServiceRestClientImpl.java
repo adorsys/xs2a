@@ -34,7 +34,7 @@ public class EventServiceRestClientImpl implements Xs2aEventServiceEncrypted {
     private final EventRemoteUrls eventRemoteUrls;
 
     @Override
-    public boolean recordEvent(@NotNull EventBO event) {
-        return consentRestTemplate.postForEntity(eventRemoteUrls.createEvent(), event, Boolean.class).getBody();
+    public void recordEvent(@NotNull EventBO event) {
+        consentRestTemplate.postForEntity(eventRemoteUrls.createEvent(), event, Boolean.class);
     }
 }

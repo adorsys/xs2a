@@ -93,7 +93,7 @@ public abstract class CustomPaymentTestParent {
     @MockBean
     protected AuthorisationServiceEncrypted authorisationServiceEncrypted;
     @MockBean
-    protected  PisCommonPaymentServiceEncrypted pisCommonPaymentServiceEncrypted;
+    protected PisCommonPaymentServiceEncrypted pisCommonPaymentServiceEncrypted;
     @MockBean
     protected CommonPaymentSpi commonPaymentSpi;
     @MockBean
@@ -144,8 +144,6 @@ public abstract class CustomPaymentTestParent {
             .willReturn(CmsResponse.<Boolean>builder()
                             .payload(false)
                             .build());
-        given(eventServiceEncrypted.recordEvent(any(EventBO.class)))
-            .willReturn(true);
         given(consentRestTemplate.postForEntity(anyString(), any(EventBO.class), eq(Boolean.class)))
             .willReturn(new ResponseEntity<>(true, HttpStatus.OK));
 

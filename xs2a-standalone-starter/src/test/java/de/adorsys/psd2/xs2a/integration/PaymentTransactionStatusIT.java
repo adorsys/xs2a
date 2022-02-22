@@ -27,7 +27,6 @@ import de.adorsys.psd2.consent.api.service.TppService;
 import de.adorsys.psd2.consent.api.service.TppStopListService;
 import de.adorsys.psd2.consent.api.service.UpdatePaymentAfterSpiServiceEncrypted;
 import de.adorsys.psd2.event.service.Xs2aEventServiceEncrypted;
-import de.adorsys.psd2.event.service.model.EventBO;
 import de.adorsys.psd2.starter.Xs2aStandaloneStarter;
 import de.adorsys.psd2.xs2a.config.CorsConfigurationProperties;
 import de.adorsys.psd2.xs2a.config.WebConfig;
@@ -139,8 +138,6 @@ class PaymentTransactionStatusIT {
             .thenReturn(CmsResponse.<Boolean>builder()
                             .payload(false)
                             .build());
-        when(eventServiceEncrypted.recordEvent(any(EventBO.class)))
-            .thenReturn(true);
         when(updatePaymentStatusAfterSpiServiceEncrypted.updatePaymentStatus(eq(ENCRYPTED_PAYMENT_ID), any(TransactionStatus.class)))
             .thenReturn(CmsResponse.<Boolean>builder()
                             .payload(true)

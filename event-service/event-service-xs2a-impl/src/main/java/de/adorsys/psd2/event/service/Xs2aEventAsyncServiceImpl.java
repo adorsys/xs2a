@@ -18,14 +18,28 @@
 
 package de.adorsys.psd2.event.service;
 
+import de.adorsys.psd2.event.persist.EventRepository;
+import de.adorsys.psd2.event.persist.model.EventPO;
+import de.adorsys.psd2.event.service.mapper.Xs2aEventBOMapper;
 import de.adorsys.psd2.event.service.model.EventBO;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
+import org.springframework.scheduling.annotation.Async;
+import org.springframework.stereotype.Service;
 
-public interface Xs2aEventServiceBase {
-    /**
-     * Records new Event in the CMS
-     *
-     * @param event Event to be recorded
-     */
-    void recordEvent(@NotNull EventBO event);
+@Slf4j
+@Service
+@RequiredArgsConstructor
+public class Xs2aEventAsyncServiceImpl {
+
+    private final EventRepository eventRepository;
+    private final Xs2aEventBOMapper eventBOMapper;
+
+    @Async("threadPoolTaskExecutor")
+    public void recordEventAsync(@NotNull EventBO eventBO) {
+        EventPO eventPO = eventBOMapper.toEventPO(eventBO);
+        eventRepository.save(eventPO);
+    }
+
 }
