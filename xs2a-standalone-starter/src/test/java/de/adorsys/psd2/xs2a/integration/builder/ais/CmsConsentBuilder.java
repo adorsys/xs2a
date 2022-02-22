@@ -32,6 +32,7 @@ import de.adorsys.psd2.xs2a.core.authorisation.AuthorisationTemplate;
 import de.adorsys.psd2.xs2a.core.authorisation.AuthorisationType;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
 import de.adorsys.psd2.xs2a.core.consent.ConsentTppInformation;
+import de.adorsys.psd2.xs2a.core.consent.ConsentType;
 import de.adorsys.psd2.xs2a.core.profile.AccountReference;
 import de.adorsys.psd2.xs2a.core.profile.AdditionalInformationAccess;
 import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
@@ -49,7 +50,11 @@ import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 import java.time.OffsetDateTime;
-import java.util.*;
+import java.util.Collections;
+import java.util.Currency;
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 import static org.apache.commons.io.IOUtils.resourceToString;
@@ -63,7 +68,7 @@ public class CmsConsentBuilder {
     private static final ConsentDataMapper consentDataMapper = new ConsentDataMapper();
 
     public static CmsConsent buildCmsConsent(String jsonPath, ScaApproach scaApproach, String encryptConsentId, Xs2aObjectMapper mapper, Authorisation authorisation) throws IOException {
-        Consents createConsentRequest = mapper.readValue(resourceToString(jsonPath, UTF_8), new TypeReference<Consents>() {
+        Consents createConsentRequest = mapper.readValue(resourceToString(jsonPath, UTF_8), new TypeReference<>() {
         });
         return buildCmsConsent(createConsentRequest, encryptConsentId, scaApproach, authorisation);
     }
@@ -86,6 +91,7 @@ public class CmsConsentBuilder {
                             CmsConsent cmsConsent = new CmsConsent();
                             cmsConsent.setConsentData(bytes);
                             cmsConsent.setId(consentId);
+                            cmsConsent.setConsentType(ConsentType.AIS);
                             cmsConsent.setRecurringIndicator(BooleanUtils.toBoolean(cr.getRecurringIndicator()));
                             cmsConsent.setValidUntil(cr.getValidUntil());
                             cmsConsent.setFrequencyPerDay(cr.getFrequencyPerDay());
