@@ -41,18 +41,18 @@ class EventServiceRestClientImplTest {
     @Mock
     private EventRemoteUrls eventRemoteUrls;
     @Mock
-    private ResponseEntity<Boolean> responseEntity;
+    private ResponseEntity<Void> responseEntity;
 
     @Test
     void recordEvent() {
         EventBO event = EventBO.builder().build();
 
         when(eventRemoteUrls.createEvent()).thenReturn(CREATE_URL);
-        when(consentRestTemplate.postForEntity(CREATE_URL, event, Boolean.class)).thenReturn(responseEntity);
+        when(consentRestTemplate.postForEntity(CREATE_URL, event, Void.class)).thenReturn(responseEntity);
 
         eventServiceRestClient.recordEvent(event);
 
         verify(eventRemoteUrls, times(1)).createEvent();
-        verify(consentRestTemplate, times(1)).postForEntity(CREATE_URL, event, Boolean.class);
+        verify(consentRestTemplate, times(1)).postForEntity(CREATE_URL, event, Void.class);
     }
 }
