@@ -21,11 +21,13 @@ package de.adorsys.psd2.event.rest.client;
 import de.adorsys.psd2.event.service.Xs2aEventServiceEncrypted;
 import de.adorsys.psd2.event.service.model.EventBO;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class EventServiceRestClientImpl implements Xs2aEventServiceEncrypted {
@@ -35,6 +37,7 @@ public class EventServiceRestClientImpl implements Xs2aEventServiceEncrypted {
 
     @Override
     public void recordEvent(@NotNull EventBO event) {
+        log.info("Event recording...");
         consentRestTemplate.postForEntity(eventRemoteUrls.createEvent(), event, Void.class);
     }
 }
