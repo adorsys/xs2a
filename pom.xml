@@ -180,7 +180,7 @@
         <bcpkix-jdk15on.version>1.61</bcpkix-jdk15on.version>
         <slf4j-api.version>1.7.25</slf4j-api.version>
         <freemarker.version>2.3.28</freemarker.version>
-        <liquibase.version>3.6.2</liquibase.version>
+        <liquibase.version>4.8.0</liquibase.version>
         <commons-validator.version>1.7</commons-validator.version>
         <swagger.annotations.version>1.5.20</swagger.annotations.version>
         <jetbrains.annotations.version>15.0</jetbrains.annotations.version>
