@@ -28,6 +28,7 @@ import de.adorsys.psd2.core.data.AccountAccess;
 import de.adorsys.psd2.core.data.piis.v1.PiisConsent;
 import de.adorsys.psd2.logger.context.LoggingContextService;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
+import de.adorsys.psd2.xs2a.core.consent.ConsentType;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
 import de.adorsys.psd2.xs2a.domain.Xs2aResponse;
@@ -79,9 +80,13 @@ public class Xs2aPiisConsentService {
             log.info("Get consent by id failed due to CMS problems");
             return Optional.empty();
         }
+        CmsConsent payload = consentById.getPayload();
 
-        PiisConsent piisConsent = xs2aPiisConsentMapper.mapToPiisConsent(consentById.getPayload());
-        return Optional.ofNullable(piisConsent);
+        if (payload.getConsentType() == ConsentType.PIIS_TPP) {
+            return Optional.ofNullable(xs2aPiisConsentMapper.mapToPiisConsent(payload));
+        }
+        log.info("Requested consent is not of ConsentType.PIIS_TPP, consentId=" + consentId);
+        return Optional.empty();
     }
 
     public void updateConsentStatus(String consentId, ConsentStatus consentStatus) {

@@ -21,6 +21,7 @@ import de.adorsys.psd2.consent.api.ais.CmsConsent;
 import de.adorsys.psd2.consent.api.service.PiisConsentService;
 import de.adorsys.psd2.core.data.piis.v1.PiisConsent;
 import de.adorsys.psd2.event.core.model.EventType;
+import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
 import de.adorsys.psd2.xs2a.core.domain.ErrorHolder;
 import de.adorsys.psd2.xs2a.core.domain.TppMessageInformation;
 import de.adorsys.psd2.xs2a.core.error.ErrorType;
@@ -29,6 +30,7 @@ import de.adorsys.psd2.xs2a.core.error.MessageErrorCode;
 import de.adorsys.psd2.xs2a.core.mapper.ServiceType;
 import de.adorsys.psd2.xs2a.core.profile.AccountReference;
 import de.adorsys.psd2.xs2a.core.profile.AccountReferenceSelector;
+import de.adorsys.psd2.xs2a.core.profile.AccountReferenceType;
 import de.adorsys.psd2.xs2a.core.profile.PiisConsentSupported;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.domain.ResponseObject;
@@ -62,6 +64,7 @@ import org.springframework.stereotype.Service;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import static de.adorsys.psd2.xs2a.core.domain.TppMessageInformation.of;
@@ -93,50 +96,82 @@ public class FundsConfirmationService {
      * @param request Contains the requested balanceAmount in order to compare with the available balanceAmount in the account
      * @return Response with the result 'true' if there are enough funds in the account, 'false' otherwise
      */
-    public ResponseObject<FundsConfirmationResponse> fundsConfirmation(FundsConfirmationRequest request) {
+    public ResponseObject<FundsConfirmationResponse> fundsConfirmation(FundsConfirmationRequest request) {//NOPMD
         xs2aEventService.recordTppRequest(EventType.FUNDS_CONFIRMATION_REQUEST_RECEIVED, request);
 
         PiisConsent consent = null;
+        String consentId;
         PiisConsentSupported piisConsentSupported = profileService.getPiisConsentSupported();
-        if (piisConsentSupported == PiisConsentSupported.ASPSP_CONSENT_SUPPORTED) {
-            AccountReference accountReference = request.getPsuAccount();
-            PiisConsentValidationResult validationResult = validateAccountReference(accountReference);
 
-            if (validationResult.hasError()) {
-                ErrorHolder errorHolder = validationResult.getErrorHolder();
-                log.info("Check availability of funds validation failed: {}", errorHolder);
+        switch(piisConsentSupported) {
+            case NOT_SUPPORTED:
                 return ResponseObject.<FundsConfirmationResponse>builder()
-                           .fail(new MessageError(errorHolder))
+                           .fail(ErrorType.PIIS_406, of(MessageErrorCode.SERVICE_NOT_SUPPORTED))
                            .build();
-            }
 
-            consent = validationResult.getConsent();
-        } else if (piisConsentSupported == PiisConsentSupported.TPP_CONSENT_SUPPORTED) {
-            String consentId = request.getConsentId();
-            if (StringUtils.isNotEmpty(consentId)) {
-                Optional<PiisConsent> piisConsentOptional = xs2aPiisConsentService.getPiisConsentById(consentId);
+            case ASPSP_CONSENT_SUPPORTED:
+                PiisConsentValidationResult validationResult = validateAccountReferenceAndConsentId(request);
 
-                if (piisConsentOptional.isEmpty()) {
-                    log.info("Consent-ID: [{}]. Get PIIS consent failed: initial consent not found by id", consentId);
+                if (validationResult.hasError()) {
+                    ErrorHolder errorHolder = validationResult.getErrorHolder();
+                    log.info("Check availability of funds validation failed: {}", errorHolder);
                     return ResponseObject.<FundsConfirmationResponse>builder()
-                               .fail(ErrorType.PIIS_403, of(MessageErrorCode.CONSENT_UNKNOWN_403))
+                               .fail(new MessageError(errorHolder))
                                .build();
                 }
 
-                consent = piisConsentOptional.get();
+                consent = validationResult.getConsent();
+                consentId = consent.getId();
+                break;
+
+            case TPP_CONSENT_SUPPORTED:
+                consentId = request.getConsentId();
+                if (StringUtils.isNotEmpty(consentId)) {
+                    Optional<PiisConsent> piisConsentOptional = xs2aPiisConsentService.getPiisConsentById(consentId);
+
+                    if (piisConsentOptional.isEmpty()) {
+                        log.info("Consent-ID: [{}]. Get PIIS consent failed: initial consent not found by id", consentId);
+                        return ResponseObject.<FundsConfirmationResponse>builder()
+                                   .fail(ErrorType.PIIS_403, of(MessageErrorCode.CONSENT_UNKNOWN_403))
+                                   .build();
+                    }
+
+                    consent = piisConsentOptional.get();
+                    if (consent.getTppAccountAccesses() != null
+                            && !isAccountReferencePresentInAccounts(request, consent.getTppAccountAccesses().getAccounts())) {
+                        return ResponseObject.<FundsConfirmationResponse>builder()
+                                   .fail(PIIS_400, of(MessageErrorCode.NO_PIIS_ACTIVATION))
+                                   .build();
+                    }
+                }
+                break;
+            default:
+                throw new IllegalArgumentException("Unknown piisConsentSupported type: " + piisConsentSupported);
+        }
+
+        SpiAspspConsentDataProvider aspspConsentDataProvider = null;
+        if (consent != null) {
+            if (consent.getConsentStatus() != ConsentStatus.VALID) {
+                log.info("Consent-ID: [{}]. Get PIIS consent failed: consent status is non valid", consentId);
+                return ResponseObject.<FundsConfirmationResponse>builder()
+                           .fail(ErrorType.PIIS_401, of(MessageErrorCode.CONSENT_INVALID))
+                           .build();
             }
+            // We don't transfer provider to the SPI level if there is no PIIS consent. Both PIIS consent and the provider
+            // parameters are marked as @Nullable in SPI.
+            aspspConsentDataProvider = aspspConsentDataProviderFactory.getSpiAspspDataProviderFor(consentId);
+
         }
 
         PsuIdData psuIdData = requestProviderService.getPsuIdData();
         log.info("Corresponding PSU-ID {} was provided from request.", psuIdData);
 
-        // We don't transfer provider to the SPI level if there is no PIIS consent. Both PIIS consent and the provider
-        // parameters are marked as @Nullable in SPI.
-        SpiAspspConsentDataProvider aspspConsentDataProvider =
-            consent != null ? aspspConsentDataProviderFactory.getSpiAspspDataProviderFor(consent.getId()) : null;
-
         FundsConfirmationResponse response = executeRequest(psuIdData, consent, request, aspspConsentDataProvider);
 
+        return processCoFResponse(response);
+    }
+
+    private ResponseObject<FundsConfirmationResponse> processCoFResponse(FundsConfirmationResponse response) {
         if (response.hasError()) {
             ErrorHolder errorHolder = response.getErrorHolder();
             return ResponseObject.<FundsConfirmationResponse>builder()
@@ -149,11 +184,51 @@ public class FundsConfirmationService {
                    .build();
     }
 
-    private PiisConsentValidationResult validateAccountReference(AccountReference accountReference) {
+    private boolean isAccountReferencePresentInAccounts(FundsConfirmationRequest request, List<AccountReference> accounts) {
+        AccountReferenceSelector usedAccountReferenceSelector = request.getPsuAccount().getUsedAccountReferenceSelector();
+        AccountReferenceType accountReferenceType = usedAccountReferenceSelector.getAccountReferenceType();
+        Function<AccountReference, String> accountFunction;
+        switch (accountReferenceType) {
+            case IBAN:
+                accountFunction = AccountReference::getIban;
+                break;
+            case BBAN:
+                accountFunction = AccountReference::getBban;
+                break;
+            case PAN:
+                accountFunction = AccountReference::getPan;
+                break;
+            case MSISDN:
+                accountFunction = AccountReference::getMsisdn;
+                break;
+            case MASKED_PAN:
+                accountFunction = AccountReference::getMaskedPan;
+                break;
+            default:
+                return false;
+        }
+        String accountValue = usedAccountReferenceSelector.getAccountValue();
+        return accounts.stream()
+                   .map(accountFunction)
+                   .anyMatch(accountValue::equals);
+    }
+
+
+    private PiisConsentValidationResult validateAccountReferenceAndConsentId(FundsConfirmationRequest request) {
+
+        if (request.getConsentId() != null) {
+            log.info("Check availability of funds failed, Consent-ID should not be present in request in case of ASPSP PIIS consent supported [{}].",
+                     request);
+            return new PiisConsentValidationResult(ErrorHolder.builder(PIIS_400)
+                                                       .tppMessages(TppMessageInformation.of(FORMAT_ERROR))
+                                                       .build());
+        }
+        AccountReference accountReference = request.getPsuAccount();
+
         AccountReferenceSelector selector = accountReference.getUsedAccountReferenceSelector();
 
         if (selector == null) {
-            log.info("Check availability of funds failed, because while validate account reference no account identifier found in the request [{}].",
+            log.info("Check availability of funds failed, no account identifier found in the request during validation [{}].",
                      accountReference);
             return new PiisConsentValidationResult(ErrorHolder.builder(PIIS_400)
                                                        .tppMessages(TppMessageInformation.of(FORMAT_ERROR))

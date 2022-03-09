@@ -9,7 +9,7 @@ Stable branch will contain bugfixing and possibly necessary changes to support m
 *Development branch 13.x*
 
 Development branch is oriented on implementation of new features and optional endpoints.
-No backward compatibility with 12.x is guaranteed. Will be released as Stable version 12.x on 14.03.2022
+No backward compatibility with 12.x is guaranteed. Will be released as Stable version 14.x on 14.06.2022
 
 [cols="5*.<"]
 |====
