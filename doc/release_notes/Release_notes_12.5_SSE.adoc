@@ -2,8 +2,15 @@
 
 == Table of Contents
 
-* Bumped up version of h2 in-memory DB
+* Fixed PIIS flow
+* Bumped dependency versions
 
-== Bumped up version of h2 in-memory DB
+== Fixed PIIS flow
 
-From now on, XS2A uses h2 of version 2.0.206
+PIIS flow was fixed to handle properly funds confirmation requests for both types of PIIS consents (ASPSP and TPP), fixed TPP PIIS flow in case of multiaccount PSU,
+added validation of proper consent type in AIS and PIIS services to prevent usage of PIIS Consent-ID in AIS flow and vise versa,
+added proper error response in case of unsupported PIIS service. Postman environment variables and tests were updated.
+
+== Bumped dependency versions
+
+Version of hibernate-core was bumped up to 5.4.24.Final, h2 - to 2.1.210 and PostgreSQL - to 42.3.3

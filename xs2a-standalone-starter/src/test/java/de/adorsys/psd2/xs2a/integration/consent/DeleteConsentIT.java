@@ -34,6 +34,7 @@ import de.adorsys.psd2.xs2a.config.Xs2aEndpointPathConstant;
 import de.adorsys.psd2.xs2a.config.Xs2aInterfaceConfig;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
 import de.adorsys.psd2.xs2a.core.consent.ConsentTppInformation;
+import de.adorsys.psd2.xs2a.core.consent.ConsentType;
 import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
 import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
 import de.adorsys.psd2.xs2a.integration.builder.AspspSettingsBuilder;
@@ -198,6 +199,7 @@ class DeleteConsentIT {
         tppInformation.setTppInfo(tppInfo);
         consent.setTppInformation(tppInformation);
         consent.setConsentData(consentDataMapper.getBytesFromConsentData(aisConsentData));
+        consent.setConsentType(ConsentType.AIS);
         return consent;
     }
 }

@@ -35,6 +35,7 @@ import de.adorsys.psd2.xs2a.config.Xs2aEndpointPathConstant;
 import de.adorsys.psd2.xs2a.config.Xs2aInterfaceConfig;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
 import de.adorsys.psd2.xs2a.core.consent.ConsentTppInformation;
+import de.adorsys.psd2.xs2a.core.consent.ConsentType;
 import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
 import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
 import de.adorsys.psd2.xs2a.domain.CashAccountType;
@@ -77,10 +78,19 @@ import org.springframework.web.client.RestTemplate;
 
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Currency;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.anyList;
+import static org.mockito.Mockito.anyString;
+import static org.mockito.Mockito.eq;
+import static org.mockito.Mockito.notNull;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -105,6 +115,7 @@ class AccountControllerIT {
     private static final Charset UTF_8 = StandardCharsets.UTF_8;
     private static final String ACCESS_EXCEEDED_JSON_PATH = "/json/account/res/AccessExceededResponse.json";
     private static final UUID X_REQUEST_ID = UUID.randomUUID();
+    private final CmsConsent cmsConsent = new CmsConsent();
 
     private final JsonReader jsonReader = new JsonReader();
 
@@ -140,6 +151,7 @@ class AccountControllerIT {
     @BeforeEach
     void init() {
         // common actions for all tests
+        cmsConsent.setConsentType(ConsentType.AIS);
         given(aspspProfileService.getAspspSettings(null))
             .willReturn(AspspSettingsBuilder.buildAspspSettings());
         given(aspspProfileService.getScaApproaches(null))
@@ -151,7 +163,7 @@ class AccountControllerIT {
         given(eventServiceEncrypted.recordEvent(any(EventBO.class)))
             .willReturn(true);
         given(consentServiceEncrypted.getConsentById(CONSENT_ID)).willReturn(CmsResponse.<CmsConsent>builder()
-                                                                                 .payload(new CmsConsent())
+                                                                                 .payload(cmsConsent)
                                                                                  .build());
         given(consentRestTemplate.postForEntity(anyString(), any(EventBO.class), eq(Boolean.class)))
             .willReturn(new ResponseEntity<>(true, HttpStatus.OK));
@@ -206,7 +218,7 @@ class AccountControllerIT {
     void getAccountList_WithoutPsuIpAddressWithNoUsageCounter_ShouldFail() throws Exception {
         // Given
         AisConsent aisConsent = buildAccountConsent(Collections.singletonMap("/v1/accounts", 0));
-        given(xs2aAisConsentMapper.mapToAisConsent(new CmsConsent())).willReturn(aisConsent);
+        given(xs2aAisConsentMapper.mapToAisConsent(cmsConsent)).willReturn(aisConsent);
 
         MockHttpServletRequestBuilder requestBuilder = get(UrlBuilder.buildGetAccountList());
         requestBuilder.headers(httpHeadersWithoutPsuIpAddress);
@@ -346,6 +358,7 @@ class AccountControllerIT {
 
     private CmsConsent buildAisAccountConsent(Map<String, Integer> usageCounter) {
         CmsConsent cmsConsent = new CmsConsent();
+        cmsConsent.setConsentType(ConsentType.AIS);
         cmsConsent.setUsages(usageCounter);
         return cmsConsent;
     }
