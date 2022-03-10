@@ -28,7 +28,6 @@ import de.adorsys.psd2.core.data.AccountAccess;
 import de.adorsys.psd2.core.data.ais.AisConsentData;
 import de.adorsys.psd2.core.mapper.ConsentDataMapper;
 import de.adorsys.psd2.event.service.Xs2aEventServiceEncrypted;
-import de.adorsys.psd2.event.service.model.EventBO;
 import de.adorsys.psd2.starter.Xs2aStandaloneStarter;
 import de.adorsys.psd2.xs2a.config.CorsConfigurationProperties;
 import de.adorsys.psd2.xs2a.config.WebConfig;
@@ -40,6 +39,7 @@ import de.adorsys.psd2.xs2a.core.authorisation.AuthorisationTemplate;
 import de.adorsys.psd2.xs2a.core.authorisation.AuthorisationType;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
 import de.adorsys.psd2.xs2a.core.consent.ConsentTppInformation;
+import de.adorsys.psd2.xs2a.core.consent.ConsentType;
 import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.sca.AuthorisationScaApproachResponse;
@@ -78,7 +78,10 @@ import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilde
 
 import java.util.Collections;
 
-import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyList;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
@@ -151,8 +154,6 @@ class UpdatePsuDataForConsentIT {
 
     @Test
     void updatePsuData_success() throws Exception {
-        given(eventServiceEncrypted.recordEvent(any(EventBO.class)))
-            .willReturn(true);
         Authorisation authorizationResponse = new Authorisation();
         authorizationResponse.setAuthorisationId(AUTHORISATION_ID);
         authorizationResponse.setScaStatus(ScaStatus.PSUIDENTIFIED);
@@ -214,8 +215,6 @@ class UpdatePsuDataForConsentIT {
 
     @Test
     void updatePsuData_wrongAuthorisationId() throws Exception {
-        given(eventServiceEncrypted.recordEvent(any(EventBO.class)))
-            .willReturn(true);
         given(authorisationServiceEncrypted.getAuthorisationById(WRONG_AUTHORISATION_ID))
             .willReturn(CmsResponse.<Authorisation>builder()
                             .payload(new Authorisation())
@@ -247,6 +246,7 @@ class UpdatePsuDataForConsentIT {
 
         CmsConsent cmsConsent = new CmsConsent();
         cmsConsent.setConsentData(bytes);
+        cmsConsent.setConsentType(ConsentType.AIS);
         cmsConsent.setAuthorisations(Collections.singletonList(authorisation));
         cmsConsent.setTppInformation(consentTppInformation);
         cmsConsent.setConsentStatus(ConsentStatus.VALID);

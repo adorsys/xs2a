@@ -6,4 +6,4 @@
 
 == Updated h2 version
 
-Updated h2 version from 1.4.200 to 2.0.206.
+Updated h2 version to 2.1.210 and PostgreSQL to 42.3.3
