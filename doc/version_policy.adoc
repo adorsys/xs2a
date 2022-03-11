@@ -17,8 +17,6 @@ To keep it simple:
 * We use *even* major version to mark *stable* support mainlines (`2.x`, `4.x`, `6.x` etc)
 * We use *odd* major version to mark *development* mainlines (`1.x`, `3.x`, `5.x` etc)
 
-Normally new development version is released every two weeks, however this is not a strict rule, rather our willingness.
-
 https://adorsys.de/kontakt/[adorsys Team] guarantees general support of this XS2A library at least till 14.06.2022.
 
 [discrete]
