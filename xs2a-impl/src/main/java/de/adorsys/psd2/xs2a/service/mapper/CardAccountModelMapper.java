@@ -20,9 +20,15 @@ package de.adorsys.psd2.xs2a.service.mapper;
 
 import de.adorsys.psd2.aspsp.profile.domain.MulticurrencyAccountLevel;
 import de.adorsys.psd2.model.*;
+import de.adorsys.psd2.xs2a.core.profile.AccountReference;
 import de.adorsys.psd2.xs2a.domain.Xs2aBalance;
 import de.adorsys.psd2.xs2a.domain.Xs2aExchangeRate;
-import de.adorsys.psd2.xs2a.domain.account.*;
+import de.adorsys.psd2.xs2a.domain.account.Xs2aBalancesReport;
+import de.adorsys.psd2.xs2a.domain.account.Xs2aCardAccountDetails;
+import de.adorsys.psd2.xs2a.domain.account.Xs2aCardAccountDetailsHolder;
+import de.adorsys.psd2.xs2a.domain.account.Xs2aCardAccountListHolder;
+import de.adorsys.psd2.xs2a.domain.account.Xs2aCardAccountReport;
+import de.adorsys.psd2.xs2a.domain.account.Xs2aCardTransactionsReport;
 import de.adorsys.psd2.xs2a.service.profile.AspspProfileServiceWrapper;
 import de.adorsys.psd2.xs2a.web.mapper.HrefLinkMapper;
 import de.adorsys.psd2.xs2a.web.mapper.PurposeCodeMapper;
@@ -98,10 +104,6 @@ public abstract class CardAccountModelMapper {
     @Mapping(target = "currencyExchange", expression = "java(mapToReportExchanges(transactions.getCurrencyExchange()))")
     public abstract CardTransaction mapToCardTransaction(de.adorsys.psd2.xs2a.domain.CardTransaction transactions);
 
-    @Mapping(target = "currency", source = "currency.currencyCode")
-    @Mapping(target = "other", expression = "java(mapToOtherType(xs2aAccountReference.getOther()))")
-    public abstract de.adorsys.psd2.model.AccountReference mapToCardAccount(de.adorsys.psd2.xs2a.core.profile.AccountReference xs2aAccountReference);
-
     protected OffsetDateTime mapToOffsetDateTime(LocalDateTime localDateTime) {
         if (localDateTime == null) {
             return null;
@@ -163,14 +165,18 @@ public abstract class CardAccountModelMapper {
                    .orElseGet(this::getMulticurrencyRepresentationOrNull);
     }
 
+    @Mapping(target = "currency", expression = "java(mapToAccountDetailsCurrency(xs2aAccountReference.getCurrency()))")
+    @Mapping(target = "other", expression = "java(mapToOtherType(xs2aAccountReference.getOther()))")
+    public abstract de.adorsys.psd2.model.AccountReference mapToCardAccount(AccountReference xs2aAccountReference);
+
+    private String getMulticurrencyRepresentationOrNull() {
+        return MULTICURRENCY_ACCOUNT_AGGREGATION_LEVELS.contains(aspspProfileServiceWrapper.getMulticurrencyAccountLevel()) ? "XXX" : null;
+    }
+
     protected OtherType mapToOtherType(String other){
         return other == null
                    ? null
                    : new OtherType().identification(other);
-    }
-
-    private String getMulticurrencyRepresentationOrNull() {
-        return MULTICURRENCY_ACCOUNT_AGGREGATION_LEVELS.contains(aspspProfileServiceWrapper.getMulticurrencyAccountLevel()) ? "XXX" : null;
     }
 }
 
