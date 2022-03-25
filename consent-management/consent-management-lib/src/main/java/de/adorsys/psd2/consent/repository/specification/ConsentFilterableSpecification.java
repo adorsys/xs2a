@@ -37,7 +37,9 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static de.adorsys.psd2.consent.repository.specification.EntityAttribute.*;
-import static de.adorsys.psd2.consent.repository.specification.EntityAttributeSpecificationProvider.*;
+import static de.adorsys.psd2.consent.repository.specification.EntityAttributeSpecificationProvider.provideSpecificationForEntityAttributeInList;
+import static de.adorsys.psd2.consent.repository.specification.EntityAttributeSpecificationProvider.provideSpecificationForJoinedEntityAttribute;
+import static de.adorsys.psd2.consent.repository.specification.EntityAttributeSpecificationProvider.provideSpecificationForJoinedEntityAttributeIn;
 
 @RequiredArgsConstructor
 public abstract class ConsentFilterableSpecification {
@@ -74,14 +76,12 @@ public abstract class ConsentFilterableSpecification {
                                                                                           @Nullable PsuIdData psuIdData,
                                                                                           @Nullable String instanceId,
                                                                                           @Nullable String additionalTppInfo) {
-        return (root, query, cb) -> {
-            root.joinList(ASPSP_ACCOUNT_ACCESSES_ATTRIBUTE);
-            return Optional.ofNullable(consentSpecification.byTppIdAndCreationPeriodAndPsuIdDataAndInstanceId(tppAuthorisationNumber, createDateFrom, createDateTo, psuIdData, instanceId))
+        return (root, query, cb) ->
+                   Optional.ofNullable(consentSpecification.byTppIdAndCreationPeriodAndPsuIdDataAndInstanceId(tppAuthorisationNumber, createDateFrom, createDateTo, psuIdData, instanceId))
                        .map(s -> s.and(byConsentType()))
                        .map(s -> s.and(byAdditionalTppInfo(additionalTppInfo)))
                        .map(s -> s.toPredicate(root, query, cb))
                        .orElse(null);
-        };
     }
 
     public Specification<ConsentEntity> byPsuDataInListAndInstanceIdAndAdditionalTppInfo(PsuIdData psuIdData, String instanceId,
@@ -143,15 +143,12 @@ public abstract class ConsentFilterableSpecification {
                                                                                                       @Nullable LocalDate createDateTo,
                                                                                                       @Nullable String instanceId,
                                                                                                       @Nullable String additionalTppInfo) {
-        return (root, query, cb) -> {
-            root.joinList(ASPSP_ACCOUNT_ACCESSES_ATTRIBUTE);
-            return Optional.ofNullable(commonSpecification
-                                    .byPsuIdDataAndCreationPeriodAndInstanceId(psuIdData, createDateFrom, createDateTo, instanceId))
-                .map(s -> s.and(byConsentType()))
-                .map(s -> s.and(byAdditionalTppInfo(additionalTppInfo)))
-                .map(s -> s.toPredicate(root, query, cb))
-                .orElse(null);
-        };
+        return (root, query, cb) ->
+                   Optional.ofNullable(commonSpecification.byPsuIdDataAndCreationPeriodAndInstanceId(psuIdData, createDateFrom, createDateTo, instanceId))
+                       .map(s -> s.and(byConsentType()))
+                       .map(s -> s.and(byAdditionalTppInfo(additionalTppInfo)))
+                       .map(s -> s.toPredicate(root, query, cb))
+                       .orElse(null);
     }
 
     /**
