@@ -1,0 +1,30 @@
+= Release notes v.12.5
+
+== Table of Contents
+
+* Fixed PIIS flow
+
+* Bumped dependency versions
+
+* Fixed bug in CMS consent export flow
+
+* Fixed bug in CardAccountModelMapper, postman tests updated
+
+== Fixed PIIS flow
+
+PIIS flow was fixed to handle properly funds confirmation requests for both types of PIIS consents (ASPSP and TPP), fixed TPP PIIS flow in case of multiaccount PSU,
+added validation of proper consent type in AIS and PIIS services to prevent usage of PIIS Consent-ID in AIS flow and vise versa,
+added proper error response in case of unsupported PIIS service. Postman environment variables and tests were updated.
+
+== Bumped dependency versions
+
+Version of hibernate-core was bumped up to 5.4.24.Final, h2 - to 2.1.210, PostgreSQL - to 42.3.3, liquibase - to 4.8.0
+
+== Fixed bug in CMS consent export flow
+
+Added fix for correct response from CMS consents export endpoints
+
+== Fixed bug in CardAccountModelMapper
+
+Added fix for proper mapping of multicurrency accounts
+
