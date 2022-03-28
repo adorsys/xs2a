@@ -23,7 +23,7 @@
     <parent>
         <artifactId>cms-payment-support</artifactId>
         <groupId>de.adorsys.psd2</groupId>
-        <version>13.5</version>
+        <version>13.6-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
