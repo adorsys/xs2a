@@ -25,8 +25,9 @@ import springfox.documentation.swagger.web.SwaggerResource;
 
 @Component
 public class SwaggerResourceBuilder {
-    private static final String DEFAULT_PSD2_API_LOCATION = "/psd2-api_1.3.8_2020-11-06v1.yaml";
+    private static final String DEFAULT_PSD2_API_LOCATION = "/psd2-api_v1.3.11-2021-10-01v1.yaml";
     private static final String DEFAULT_PSD2_API_FUNDS_CONFIRMATION_LOCATION = "/psd2-confirmation-of-funds-consent-2.0-20190607.yaml";
+    private static final String DEFAULT_PSD2_API_TRUSTED_BENEFICIARIES_LOCATION = "/psd2-trusted_beneficiaries_v1.0.0_20200519v1.yaml";
 
     @Value("${xs2a.swagger.psd2.api.location:}")
     private String customPsd2ApiLocation;
@@ -43,6 +44,14 @@ public class SwaggerResourceBuilder {
         SwaggerResource swaggerResource = new SwaggerResource();
         swaggerResource.setLocation(DEFAULT_PSD2_API_FUNDS_CONFIRMATION_LOCATION);
         swaggerResource.setName("Berlin Group PSD2 Funds confirmation API v2");
+        swaggerResource.setSwaggerVersion("2.0");
+        return swaggerResource;
+    }
+
+    public SwaggerResource buildTrustedBeneficiariesApiV1() {
+        SwaggerResource swaggerResource = new SwaggerResource();
+        swaggerResource.setLocation(DEFAULT_PSD2_API_TRUSTED_BENEFICIARIES_LOCATION);
+        swaggerResource.setName("Berlin Group PSD2 Trusted beneficiaries API v1");
         swaggerResource.setSwaggerVersion("2.0");
         return swaggerResource;
     }

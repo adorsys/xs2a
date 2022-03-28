@@ -7,14 +7,20 @@
   },
   {
     "name": "Berlin Group PSD2 API v1",
-    "url": "/psd2-api_1.3.8_2020-11-06v1.yaml",
+    "url": "/psd2-api_v1.3.11-2021-10-01v1.yaml",
     "swaggerVersion": "2.0",
-    "location": "/psd2-api_1.3.8_2020-11-06v1.yaml"
+    "location": "/psd2-api_v1.3.11-2021-10-01v1.yaml"
   },
   {
     "name": "Berlin Group PSD2 Funds confirmation API v2",
     "url": "/psd2-confirmation-of-funds-consent-2.0-20190607.yaml",
     "swaggerVersion": "2.0",
     "location": "/psd2-confirmation-of-funds-consent-2.0-20190607.yaml"
+  },
+  {
+    "name": "Berlin Group PSD2 Trusted beneficiaries API v1",
+    "url": "/psd2-trusted_beneficiaries_v1.0.0_20200519v1.yaml",
+    "swaggerVersion": "2.0",
+    "location": "/psd2-trusted_beneficiaries_v1.0.0_20200519v1.yaml"
   }
 ]

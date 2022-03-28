@@ -59,6 +59,7 @@ public class SwaggerConfig {
             List<SwaggerResource> resources = new ArrayList<>(defaultResourcesProvider.get());
             resources.add(swaggerResourceBuilder.buildPSD2ApiV1());
             resources.add(swaggerResourceBuilder.buildFundsConfirmationApiV2());
+            resources.add(swaggerResourceBuilder.buildTrustedBeneficiariesApiV1());
             return resources;
         };
     }

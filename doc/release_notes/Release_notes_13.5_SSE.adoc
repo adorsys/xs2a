@@ -10,7 +10,7 @@
 
 * Bumped dependency versions
 
-* Fixed bug in CardAccountModelMapper, postman tests updated
+* Fixed bug in CardAccountModelMapper
 
 * Fixed bug in CMS AIS export flow
 
@@ -33,10 +33,10 @@ added proper error response in case of unsupported PIIS service. Postman environ
 
 Version of hibernate-core was bumped up to 5.4.24.Final, liquibase - to 4.8.0
 
-== Fixed bug in CardAccountModelMapper, postman tests updated
+== Fixed bug in CardAccountModelMapper
 
-Added fix for proper mapping of multicurrency accounts, postman tests updated
+Added fix for proper mapping of multicurrency accounts
 
 == Fixed bug in CMS AIS export flow
 
-Added fix for correct response from consents CMS export endpoints
+Added fix for correct response from CMS consent export endpoints
