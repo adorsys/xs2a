@@ -307,18 +307,18 @@ Test:AsciiDoc:
   script:
     - make pages
 
-Test:Performance:
-  stage: "Test"
-  only:
-    - develop
-  image:
-    name: gitlab-registry.adorsys.de/adorsys/xs2a/aspsp-xs2a/xs2a-performance-test:develop
-    entrypoint: [""]
-  script:
-    - jmeter -n -t ./performance-test/jmeter-test/test-plan.jmx -l ./performance-test/jmeter-test/resultLog.jtl -e -o ./performance-test/jmeter-test/report
-  artifacts:
-    paths:
-      - "./performance-test/jmeter-test/report"
+# Test:Performance:
+#   stage: "Test"
+#   only:
+#     - develop
+#   image:
+#     name: gitlab-registry.adorsys.de/adorsys/xs2a/aspsp-xs2a/xs2a-performance-test:develop
+#     entrypoint: [""]
+#   script:
+#     - jmeter -n -t ./performance-test/jmeter-test/test-plan.jmx -l ./performance-test/jmeter-test/resultLog.jtl -e -o ./performance-test/jmeter-test/report
+#   artifacts:
+#     paths:
+#       - "./performance-test/jmeter-test/report"
 
 ###########
 # develop #
