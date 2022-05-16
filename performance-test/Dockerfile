@@ -1,38 +1,24 @@
-FROM alpine:3.12
+FROM alpine:latest
 
-MAINTAINER Sunil<sus@adorsys.com>
+WORKDIR /jmeter
+COPY . /jmeter
 
-ARG JMETER_VERSION="5.4.3"
-ENV JMETER_HOME /opt/apache-jmeter-${JMETER_VERSION}
-ENV	JMETER_BIN	${JMETER_HOME}/bin
-ENV	JMETER_DOWNLOAD_URL  https://archive.apache.org/dist/jmeter/binaries/apache-jmeter-${JMETER_VERSION}.tgz
+RUN apk add --no-cache \
+	openjdk8-jre
 
-# Install extra packages
-# Set TimeZone
-ARG TZ="Europe/Amsterdam"
-ENV TZ ${TZ}
-RUN    apk update \
-	&& apk upgrade \
-	&& apk add ca-certificates \
-	&& update-ca-certificates \
-	&& apk add --update openjdk8-jre tzdata curl unzip bash \
-	&& apk add --no-cache nss \
-	&& rm -rf /var/cache/apk/* \
-	&& mkdir -p /tmp/dependencies  \
-	&& curl -L --silent ${JMETER_DOWNLOAD_URL} >  /tmp/dependencies/apache-jmeter-${JMETER_VERSION}.tgz  \
-	&& mkdir -p /opt  \
-	&& tar -xzf /tmp/dependencies/apache-jmeter-${JMETER_VERSION}.tgz -C /opt  \
-	&& rm -rf /tmp/dependencies
+ARG jmeterVersion
+ENV JMETER_VERSION ${jmeterVersion}
+ENV JMETER_HOME apache-jmeter-${JMETER_VERSION}
+ENV JMETER_BIN ${JMETER_HOME}/bin
+RUN wget -O /jmeter/apache-jmeter.tgz "http://mirror.its.dal.ca/apache/jmeter/binaries/apache-jmeter-5.4.3.tgz" \
+	&& tar xvzf apache-jmeter.tgz
 
-# TODO: plugins (later)
-# && unzip -oq "/tmp/dependencies/JMeterPlugins-*.zip" -d $JMETER_HOME
+ENV testDir /jmeter/test
+RUN sed -i "s|user.properties=user.properties|user.properties=${testDir}/user.properties|g; \
+	    s|#javascript.use_rhino=false|javascript.use_rhino=true|g" ${JMETER_BIN}/jmeter.properties
 
-# Set global PATH such that "jmeter" command is found
-ENV PATH $PATH:$JMETER_BIN
+RUN chmod +x ./entrypoint.sh
 
-# Entrypoint has same signature as "jmeter" command
-COPY entrypoint.sh /
+COPY entrypoint.sh /entrypoint.sh
 
-WORKDIR	${JMETER_HOME}
-
-ENTRYPOINT ["/entrypoint.sh"]
+CMD /bin/sh ./entrypoint.sh

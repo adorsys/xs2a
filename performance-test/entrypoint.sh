@@ -1,40 +1,8 @@
 #!/bin/bash
-# Basically runs jmeter, assuming the PATH is set to point to JMeter bin-dir (see Dockerfile)
-#
-# This script expects the standdard JMeter command parameters.
-#
+export PATH=$PATH:${JMETER_BIN}
 
-# Install jmeter plugins available on /plugins volume
-if [ -d /plugins ]
-then
-    for plugin in /plugins/*.jar; do
-        cp $plugin $(pwd)/lib/ext
-    done;
-fi
+current_time=$(date "+%Y-%m-%d_%H-%M")
+mkdir -p test/reports/Report_$current_time
 
-# Execute JMeter command
-set -e
-freeMem=`awk '/MemFree/ { print int($2/1024) }' /proc/meminfo`
-s=$(($freeMem/10*8))
-x=$(($freeMem/10*8))
-n=$(($freeMem/10*2))
-export JVM_ARGS="-Xmn${n}m -Xms${s}m -Xmx${x}m"
-
-echo "START Running Jmeter on `date`"
-echo "JVM_ARGS=${JVM_ARGS}"
-echo "jmeter args=$@"
-
-# Keep entrypoint simple: we must pass the standard JMeter arguments
-EXTRA_ARGS=-Dlog4j2.formatMsgNoLookups=true
-echo "jmeter ALL ARGS=${EXTRA_ARGS} $@"
-jmeter ${EXTRA_ARGS} $@
-
-echo "END Running Jmeter on `date`"
-
-#     -n \
-#    -t "/tests/${TEST_DIR}/${TEST_PLAN}.jmx" \
-#    -l "/tests/${TEST_DIR}/${TEST_PLAN}.jtl"
-# exec tail -f jmeter.log
-#    -D "java.rmi.server.hostname=${IP}" \
-#    -D "client.rmi.localport=${RMI_PORT}" \
-#  -R $REMOTE_HOSTS
+jmeter -n -t test/${JMETER_TEST_FILE} -l test/reports/Report_$current_time/LogReport.jtl -e -o test/reports/Report_$current_time -Jhost=${XS2A_URL} -Jthreads=${JMETER_THREADS} -Jinfluxdburl=${INFLUX_DB_URL} -Jinfluxreportname=${INFLUX_REPORT_NAME} -Jloop=${JMETER_LOOP} -Jinfluxdbusername=${INFLUX_DB_USERNAME} -Jinfluxdbpassword={INFLUX_DB_PASSWORD} -JinfluxDBDatabase={INFLUX_DB_DATABASE}
+ 
