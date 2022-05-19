@@ -6,4 +6,4 @@
 
 == Bumped dependency version
 
-Version of spring-boot-starter-web was bumped up to 2.5.12.
+Version of spring-boot-starter-web was bumped up to 2.5.12, bcpkix-jdk15on up to 1.70.
