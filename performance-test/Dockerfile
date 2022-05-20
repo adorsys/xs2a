@@ -6,7 +6,7 @@ COPY . /jmeter
 RUN apk add --no-cache \
 	openjdk8-jre
 
-ARG jmeterVersion
+ARG jmeterVersion=5.4.3
 ENV JMETER_VERSION ${jmeterVersion}
 ENV JMETER_HOME apache-jmeter-${JMETER_VERSION}
 ENV JMETER_BIN ${JMETER_HOME}/bin
