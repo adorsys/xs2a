@@ -2,8 +2,8 @@
 
 == Table of Contents
 
-* Bumped dependency version
+* Bumped dependency versions
 
-== Bumped dependency version
+== Bumped dependency versions
 
 Version of spring-boot-starter-web was bumped up to 2.5.12, bcpkix-jdk15on up to 1.70.
