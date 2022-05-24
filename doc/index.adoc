@@ -111,8 +111,3 @@ This endpoint is not directly related to credit cards as such, but the financial
 xref:XS2A. Details of realisation/Funds Confirmation Service.adoc[PIIS Consent]
 
 Functionality allows PSU to Establish Funds Confirmation Consent to TPP throuhg XS2A interface.
-
-== For future
-
-Future development is planned according to xref:roadmap.adoc[Roadmap]
-
