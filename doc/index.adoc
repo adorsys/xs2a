@@ -112,13 +112,3 @@ xref:XS2A. Details of realisation/Funds Confirmation Service.adoc[PIIS Consent]
 
 Functionality allows PSU to Establish Funds Confirmation Consent to TPP throuhg XS2A interface.
 
-== For future
-
-=== Signing Basket
-This optional function (grouping several transactions for authorising it with one SCA method) might be offered by the ASPSP. PIS or AIS transactions can be added to the Signing Basket.
-Implemented as XS2A extended (Commercial) service.
-
-=== Multiple Consents
-This optional function of Multiple Consents allows TPP to submit several recurring consent requests for the same PSU.
-Implemented as XS2A extended (Commercial) service.
-
