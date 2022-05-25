@@ -3,6 +3,17 @@
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=adorsys_xs2a&metric=alert_status)](https://sonarcloud.io/dashboard?id=adorsys_xs2a)
 [![Coverage](https://sonarcloud.io/api/project_badges/measure?project=adorsys_xs2a&metric=coverage)](https://sonarcloud.io/dashboard?id=adorsys_xs2a)
 
+## Changes in OSS release policy
+
+For the time being, version 13.4 will be the current try-out version of XS2A that adorsys publishes on GitHub.
+With PSD2 standards and our solutions having grown to maturity in production, company’s continuous investment in development and maintenance
+of XS2A projects forces us to focus on our commercial engagements.
+We are committed to continuous active development of our XS2A solutions to ensure constant adherence to the latest Berlin Group 
+specifications to support OpenFinance initiatives.
+Existing published versions will remain available under their respective open source licenses.
+If you are a user of our XS2A solutions and would like to either start or extend cooperation with us, we would be glad to provide 
+you with the latest versions of XS2A and support you in its implementation. For that or any other inquiries please contact us under psd2@adorsys.com.
+
 ## Licensing model change to dual license: AGPL v.3 or commercial license
 
 **Attention: this open-source project has changed its licensing model since 01.01.2022!**
