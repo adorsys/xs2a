@@ -17,7 +17,7 @@
           <boolProp name="LoopController.continue_forever">false</boolProp>
           <stringProp name="LoopController.loops">${__P(loop,1)}</stringProp>
         </elementProp>
-        <stringProp name="ThreadGroup.num_threads">${__P(threads,1)}</stringProp>
+        <stringProp name="ThreadGroup.num_threads">${__P(thread,10)}</stringProp>
         <stringProp name="ThreadGroup.ramp_time">${__P(rampUp,1)}</stringProp>
         <boolProp name="ThreadGroup.scheduler">false</boolProp>
         <stringProp name="ThreadGroup.duration"></stringProp>
@@ -326,7 +326,7 @@
       <hashTree/>
       <ConfigTestElement guiclass="PropertyControlGui" testclass="ConfigTestElement" testname="Property Display" enabled="true"/>
       <hashTree/>
-      <ResultCollector guiclass="ViewResultsFullVisualizer" testclass="ResultCollector" testname="View Results Tree" enabled="true">
+      <ResultCollector guiclass="ViewResultsFullVisualizer" testclass="ResultCollector" testname="View Results Tree" enabled="false">
         <boolProp name="ResultCollector.error_logging">false</boolProp>
         <objProp>
           <name>saveConfig</name>
@@ -405,7 +405,7 @@
           <collectionProp name="Arguments.arguments">
             <elementProp name="testName" elementType="Argument">
               <stringProp name="Argument.name">testName</stringProp>
-              <stringProp name="Argument.value">${__P(influxreportname,PIS-Test)}</stringProp>
+              <stringProp name="Argument.value">${__P(influxreporttest,PIS-Test)}</stringProp>
               <stringProp name="Argument.metadata">=</stringProp>
             </elementProp>
             <elementProp name="nodeName" elementType="Argument">
@@ -415,7 +415,7 @@
             </elementProp>
             <elementProp name="runId" elementType="Argument">
               <stringProp name="Argument.name">runId</stringProp>
-              <stringProp name="Argument.value">${__P(influxreportname,TestPhase)}</stringProp>
+              <stringProp name="Argument.value">${__P(influxreportname,TestPhase-PIS)}</stringProp>
               <stringProp name="Argument.metadata">=</stringProp>
             </elementProp>
             <elementProp name="influxDBHost" elementType="Argument">
@@ -463,8 +463,8 @@
               <stringProp name="Argument.value">true</stringProp>
               <stringProp name="Argument.metadata">=</stringProp>
             </elementProp>
-            <elementProp name="influ xdbMetricsSender" elementType="Argument">
-              <stringProp name="Argument.name">influ xdbMetricsSender</stringProp>
+            <elementProp name="influxdbMetricsSender" elementType="Argument">
+              <stringProp name="Argument.name">influxdbMetricsSender</stringProp>
               <stringProp name="Argument.value">org.apache.jmeter.visualizers.backend.influxdb.HttpMetricsSender</stringProp>
               <stringProp name="Argument.metadata">=</stringProp>
             </elementProp>
