@@ -1,24 +1,43 @@
-FROM alpine:latest
-
+FROM ubuntu:18.04
+# Step 1
 WORKDIR /jmeter
 COPY . /jmeter
 
-RUN apk add --no-cache \
-	openjdk8-jre
-
-ARG jmeterVersion=5.4.3
-ENV JMETER_VERSION ${jmeterVersion}
-ENV JMETER_HOME apache-jmeter-${JMETER_VERSION}
+# Step 2
+ARG JMETER_VERSION="5.4.3"
+ENV JMETER_HOME /jmeter/apache-jmeter-${JMETER_VERSION}
+ENV JMETER_LIB_FOLDER ${JMETER_HOME}/lib/
+ENV JMETER_PLUGINS_FOLDER ${JMETER_LIB_FOLDER}ext/
 ENV JMETER_BIN ${JMETER_HOME}/bin
-RUN wget -O /jmeter/apache-jmeter.tgz "http://mirror.its.dal.ca/apache/jmeter/binaries/apache-jmeter-5.4.3.tgz" \
-	&& tar xvzf apache-jmeter.tgz
 
-ENV testDir /jmeter/test
-RUN sed -i "s|user.properties=user.properties|user.properties=${testDir}/user.properties|g; \
-	    s|#javascript.use_rhino=false|javascript.use_rhino=true|g" ${JMETER_BIN}/jmeter.properties
+# Step 3:
+WORKDIR ${JMETER_HOME}
+RUN  apt-get -y update \
+&& apt-get install -y wget gnupg curl
 
-RUN chmod +x ./entrypoint.sh
+# Step 4:
+# Download Apache JMeter
+RUN wget http://mirror.its.dal.ca/apache/jmeter/binaries/apache-jmeter-${JMETER_VERSION}.tgz
+RUN tar -xzf apache-jmeter-${JMETER_VERSION}.tgz
+RUN mv apache-jmeter-${JMETER_VERSION}/* /jmeter/apache-jmeter-${JMETER_VERSION}
+RUN rm -r /jmeter/apache-jmeter-${JMETER_VERSION}/apache-jmeter-${JMETER_VERSION}
 
-COPY entrypoint.sh /entrypoint.sh
+# Step 5:
+RUN wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key add - \
+&& apt-get update \
+&& apt-get install -y --no-install-recommends \
+git \
+openjdk-8-jre-headless
 
-CMD /bin/sh ./entrypoint.sh
+# Step 6:
+# Download JMeter Plugins manager and move it to lib/ext folder
+WORKDIR ${JMETER_PLUGINS_FOLDER}
+RUN wget https://github.com/sfakrudeen78/JMeter-InfluxDB-Writer/releases/download/v-1.2.2/JMeter-InfluxDB-Writer-plugin-1.2.2.jar
+
+# Step 7:
+WORKDIR /jmeter
+
+# Step 8:
+RUN chmod +x entrypoint.sh
+COPY entrypoint.sh entrypoint.sh
+CMD /bin/sh entrypoint.sh

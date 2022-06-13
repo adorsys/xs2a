@@ -17,7 +17,7 @@
           <boolProp name="LoopController.continue_forever">false</boolProp>
           <stringProp name="LoopController.loops">${__P(loop,1)}</stringProp>
         </elementProp>
-        <stringProp name="ThreadGroup.num_threads">${__P(threads,1)}</stringProp>
+        <stringProp name="ThreadGroup.num_threads">${__P(thread,10)}</stringProp>
         <stringProp name="ThreadGroup.ramp_time">${__P(rampUp,1)}</stringProp>
         <boolProp name="ThreadGroup.scheduler">false</boolProp>
         <stringProp name="ThreadGroup.duration"></stringProp>
@@ -263,58 +263,6 @@
         </UserParameters>
         <hashTree/>
       </hashTree>
-      <Arguments guiclass="ArgumentsPanel" testclass="Arguments" testname="Test Data" enabled="false">
-        <collectionProp name="Arguments.arguments">
-          <elementProp name="payment-service" elementType="Argument">
-            <stringProp name="Argument.name">payment-service</stringProp>
-            <stringProp name="Argument.value">payments</stringProp>
-            <stringProp name="Argument.metadata">=</stringProp>
-          </elementProp>
-          <elementProp name="payment-product" elementType="Argument">
-            <stringProp name="Argument.name">payment-product</stringProp>
-            <stringProp name="Argument.value">sepa-credit-transfers</stringProp>
-            <stringProp name="Argument.metadata">=</stringProp>
-          </elementProp>
-          <elementProp name="paymentId" elementType="Argument">
-            <stringProp name="Argument.name">paymentId</stringProp>
-            <stringProp name="Argument.value">4Q4JIsOfeQkb86NKnwqgFVuklp2LL2GNCu7K1kLyJvloa2II40xD83h5KYJ5fNNQwBvnuE3tWR8pLDedzphEo8z9MpaJIQIH3NJX8IHgetw=_=_psGLvQpt9Q</stringProp>
-            <stringProp name="Argument.metadata">=</stringProp>
-          </elementProp>
-          <elementProp name="paymentAuthorisationId" elementType="Argument">
-            <stringProp name="Argument.name">paymentAuthorisationId</stringProp>
-            <stringProp name="Argument.value">b779820f-3af8-4ea8-a3ba-0a5b61ae724d</stringProp>
-            <stringProp name="Argument.metadata">=</stringProp>
-          </elementProp>
-          <elementProp name="D_consentId" elementType="Argument">
-            <stringProp name="Argument.name">D_consentId</stringProp>
-            <stringProp name="Argument.value">b1650d2ef6ab5358bf0aad8bc18b1e9a</stringProp>
-            <stringProp name="Argument.metadata">=</stringProp>
-          </elementProp>
-          <elementProp name="D_consentAuthorisationId" elementType="Argument">
-            <stringProp name="Argument.name">D_consentAuthorisationId</stringProp>
-            <stringProp name="Argument.value">da8eb110-d1fe-40c5-b7bb-a921a48ab08a</stringProp>
-            <stringProp name="Argument.metadata">=</stringProp>
-          </elementProp>
-          <elementProp name="D_consentAccountId" elementType="Argument">
-            <stringProp name="Argument.name">D_consentAccountId</stringProp>
-            <stringProp name="Argument.value">293f136e-94e0-445e-a7ed-72cf98229eb7</stringProp>
-            <stringProp name="Argument.metadata">=</stringProp>
-          </elementProp>
-          <elementProp name="ThreadsLoopCount" elementType="Argument">
-            <stringProp name="Argument.name">ThreadsLoopCount</stringProp>
-            <stringProp name="Argument.value">1</stringProp>
-            <stringProp name="Argument.metadata">=</stringProp>
-            <stringProp name="Argument.desc">600</stringProp>
-          </elementProp>
-          <elementProp name="ThreadsCount" elementType="Argument">
-            <stringProp name="Argument.name">ThreadsCount</stringProp>
-            <stringProp name="Argument.value">2</stringProp>
-            <stringProp name="Argument.metadata">=</stringProp>
-            <stringProp name="Argument.desc">100</stringProp>
-          </elementProp>
-        </collectionProp>
-      </Arguments>
-      <hashTree/>
       <ConfigTestElement guiclass="HttpDefaultsGui" testclass="ConfigTestElement" testname="HTTP Request Defaults" enabled="true">
         <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="User Defined Variables" enabled="true">
           <collectionProp name="Arguments.arguments"/>
@@ -329,9 +277,7 @@
         <stringProp name="HTTPSampler.response_timeout"></stringProp>
       </ConfigTestElement>
       <hashTree/>
-      <ConfigTestElement guiclass="PropertyControlGui" testclass="ConfigTestElement" testname="Property Display" enabled="false"/>
-      <hashTree/>
-      <ResultCollector guiclass="ViewResultsFullVisualizer" testclass="ResultCollector" testname="View Results Tree" enabled="true">
+      <ResultCollector guiclass="ViewResultsFullVisualizer" testclass="ResultCollector" testname="View Results Tree" enabled="false">
         <boolProp name="ResultCollector.error_logging">false</boolProp>
         <objProp>
           <name>saveConfig</name>
@@ -410,7 +356,7 @@
           <collectionProp name="Arguments.arguments">
             <elementProp name="testName" elementType="Argument">
               <stringProp name="Argument.name">testName</stringProp>
-              <stringProp name="Argument.value">${__P(influxreportname,PIIS-Test)}</stringProp>
+              <stringProp name="Argument.value">${__P(influxreporttest,PIIS-Test)}</stringProp>
               <stringProp name="Argument.metadata">=</stringProp>
             </elementProp>
             <elementProp name="nodeName" elementType="Argument">
@@ -420,7 +366,7 @@
             </elementProp>
             <elementProp name="runId" elementType="Argument">
               <stringProp name="Argument.name">runId</stringProp>
-              <stringProp name="Argument.value">${__P(influxreportname,TestPhase)}</stringProp>
+              <stringProp name="Argument.value">${__P(influxreportname,TestPhase-PIIS)}</stringProp>
               <stringProp name="Argument.metadata">=</stringProp>
             </elementProp>
             <elementProp name="influxDBHost" elementType="Argument">
@@ -468,8 +414,8 @@
               <stringProp name="Argument.value">true</stringProp>
               <stringProp name="Argument.metadata">=</stringProp>
             </elementProp>
-            <elementProp name="influ xdbMetricsSender" elementType="Argument">
-              <stringProp name="Argument.name">influ xdbMetricsSender</stringProp>
+            <elementProp name="influxdbMetricsSender" elementType="Argument">
+              <stringProp name="Argument.name">influxdbMetricsSender</stringProp>
               <stringProp name="Argument.value">org.apache.jmeter.visualizers.backend.influxdb.HttpMetricsSender</stringProp>
               <stringProp name="Argument.metadata">=</stringProp>
             </elementProp>
