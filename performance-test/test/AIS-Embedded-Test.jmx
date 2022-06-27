@@ -17,7 +17,7 @@
           <boolProp name="LoopController.continue_forever">false</boolProp>
           <stringProp name="LoopController.loops">${__P(loop,1)}</stringProp>
         </elementProp>
-        <stringProp name="ThreadGroup.num_threads">${__P(threads,10)}</stringProp>
+        <stringProp name="ThreadGroup.num_threads">${__P(threads,50)}</stringProp>
         <stringProp name="ThreadGroup.ramp_time">${__P(rampUp,1)}</stringProp>
         <boolProp name="ThreadGroup.scheduler">false</boolProp>
         <stringProp name="ThreadGroup.duration">${__P(duration,1)}</stringProp>
@@ -195,7 +195,7 @@
           <stringProp name="HTTPSampler.response_timeout"></stringProp>
         </HTTPSamplerProxy>
         <hashTree>
-          <JSONPostProcessor guiclass="JSONPostProcessorGui" testclass="JSONPostProcessor" testname="Get Consent ID" enabled="true">
+          <JSONPostProcessor guiclass="JSONPostProcessorGui" testclass="JSONPostProcessor" testname="Get Resource ID" enabled="true">
             <stringProp name="JSONPostProcessor.referenceNames">resource_id_${random-Para}</stringProp>
             <stringProp name="JSONPostProcessor.jsonPathExprs">$.accounts[0].resourceId</stringProp>
             <stringProp name="JSONPostProcessor.match_numbers">0</stringProp>
@@ -309,20 +309,6 @@
           <boolProp name="UserParameters.per_iteration">true</boolProp>
         </UserParameters>
         <hashTree/>
-        <DebugSampler guiclass="TestBeanGUI" testclass="DebugSampler" testname="Debug Sampler" enabled="false">
-          <boolProp name="displayJMeterProperties">true</boolProp>
-          <boolProp name="displayJMeterVariables">true</boolProp>
-          <boolProp name="displaySystemProperties">true</boolProp>
-        </DebugSampler>
-        <hashTree/>
-        <JSR223Sampler guiclass="TestBeanGUI" testclass="JSR223Sampler" testname="JSR223 Sampler" enabled="false">
-          <stringProp name="cacheKey">true</stringProp>
-          <stringProp name="filename"></stringProp>
-          <stringProp name="parameters"></stringProp>
-          <stringProp name="script"></stringProp>
-          <stringProp name="scriptLanguage">groovy</stringProp>
-        </JSR223Sampler>
-        <hashTree/>
       </hashTree>
       <Arguments guiclass="ArgumentsPanel" testclass="Arguments" testname="Test Data" enabled="true">
         <collectionProp name="Arguments.arguments">
@@ -363,7 +349,7 @@
         <stringProp name="HTTPSampler.response_timeout"></stringProp>
       </ConfigTestElement>
       <hashTree/>
-      <ResultCollector guiclass="ViewResultsFullVisualizer" testclass="ResultCollector" testname="View Results Tree" enabled="false">
+      <ResultCollector guiclass="ViewResultsFullVisualizer" testclass="ResultCollector" testname="View Results Tree" enabled="true">
         <boolProp name="ResultCollector.error_logging">false</boolProp>
         <objProp>
           <name>saveConfig</name>
@@ -442,7 +428,7 @@
           <collectionProp name="Arguments.arguments">
             <elementProp name="testName" elementType="Argument">
               <stringProp name="Argument.name">testName</stringProp>
-              <stringProp name="Argument.value">${__P(influxreporttest,AIS-Test)}</stringProp>
+              <stringProp name="Argument.value">${__P(influxtestname,AIS-Test)}</stringProp>
               <stringProp name="Argument.metadata">=</stringProp>
             </elementProp>
             <elementProp name="nodeName" elementType="Argument">
@@ -462,7 +448,7 @@
             </elementProp>
             <elementProp name="influxDBPort" elementType="Argument">
               <stringProp name="Argument.name">influxDBPort</stringProp>
-              <stringProp name="Argument.value">8086</stringProp>
+              <stringProp name="Argument.value">${__P(influxdbport,8086)}</stringProp>
               <stringProp name="Argument.metadata">=</stringProp>
             </elementProp>
             <elementProp name="influxDBUser" elementType="Argument">
@@ -477,7 +463,7 @@
             </elementProp>
             <elementProp name="influxDBDatabase" elementType="Argument">
               <stringProp name="Argument.name">influxDBDatabase</stringProp>
-              <stringProp name="Argument.value">${__P(influxDBDatabase,performance_tests)}</stringProp>
+              <stringProp name="Argument.value">${__P(influxdbdatabasename,performance_tests)}</stringProp>
               <stringProp name="Argument.metadata">=</stringProp>
             </elementProp>
             <elementProp name="retentionPolicy" elementType="Argument">

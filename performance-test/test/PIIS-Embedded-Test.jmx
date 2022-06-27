@@ -17,7 +17,7 @@
           <boolProp name="LoopController.continue_forever">false</boolProp>
           <stringProp name="LoopController.loops">${__P(loop,1)}</stringProp>
         </elementProp>
-        <stringProp name="ThreadGroup.num_threads">${__P(thread,10)}</stringProp>
+        <stringProp name="ThreadGroup.num_threads">${__P(threads,50)}</stringProp>
         <stringProp name="ThreadGroup.ramp_time">${__P(rampUp,1)}</stringProp>
         <boolProp name="ThreadGroup.scheduler">false</boolProp>
         <stringProp name="ThreadGroup.duration"></stringProp>
@@ -217,7 +217,7 @@
             </elementProp>
             <elementProp name="" elementType="Header">
               <stringProp name="Header.name">Consent-ID</stringProp>
-              <stringProp name="Header.value">${__V(consent_id_${random-Para})}}</stringProp>
+              <stringProp name="Header.value">${__V(consent_id_${random-Para})}</stringProp>
             </elementProp>
             <elementProp name="" elementType="Header">
               <stringProp name="Header.name">Instance-ID</stringProp>
@@ -267,7 +267,7 @@
         <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="User Defined Variables" enabled="true">
           <collectionProp name="Arguments.arguments"/>
         </elementProp>
-        <stringProp name="HTTPSampler.domain">${__P(host,dev-xs2a-connector.cloud.adorsys.de)}</stringProp>
+        <stringProp name="HTTPSampler.domain">${__P(host,perf-tests-xs2a-connector.cloud.adorsys.de)}</stringProp>
         <stringProp name="HTTPSampler.port"></stringProp>
         <stringProp name="HTTPSampler.protocol">${__P(protocol,https)}</stringProp>
         <stringProp name="HTTPSampler.contentEncoding">UTF-8</stringProp>
@@ -277,7 +277,7 @@
         <stringProp name="HTTPSampler.response_timeout"></stringProp>
       </ConfigTestElement>
       <hashTree/>
-      <ResultCollector guiclass="ViewResultsFullVisualizer" testclass="ResultCollector" testname="View Results Tree" enabled="false">
+      <ResultCollector guiclass="ViewResultsFullVisualizer" testclass="ResultCollector" testname="View Results Tree" enabled="true">
         <boolProp name="ResultCollector.error_logging">false</boolProp>
         <objProp>
           <name>saveConfig</name>
@@ -356,7 +356,7 @@
           <collectionProp name="Arguments.arguments">
             <elementProp name="testName" elementType="Argument">
               <stringProp name="Argument.name">testName</stringProp>
-              <stringProp name="Argument.value">${__P(influxreporttest,PIIS-Test)}</stringProp>
+              <stringProp name="Argument.value">${__P(influxtestname,PIIS-Test)}</stringProp>
               <stringProp name="Argument.metadata">=</stringProp>
             </elementProp>
             <elementProp name="nodeName" elementType="Argument">
@@ -376,7 +376,7 @@
             </elementProp>
             <elementProp name="influxDBPort" elementType="Argument">
               <stringProp name="Argument.name">influxDBPort</stringProp>
-              <stringProp name="Argument.value">8086</stringProp>
+              <stringProp name="Argument.value">${__P(influxdbport,8086)}</stringProp>
               <stringProp name="Argument.metadata">=</stringProp>
             </elementProp>
             <elementProp name="influxDBUser" elementType="Argument">
@@ -391,7 +391,7 @@
             </elementProp>
             <elementProp name="influxDBDatabase" elementType="Argument">
               <stringProp name="Argument.name">influxDBDatabase</stringProp>
-              <stringProp name="Argument.value">${__P(influxDBDatabase,performance_tests)}</stringProp>
+              <stringProp name="Argument.value">${__P(influxdbdatabasename,performance_tests)}</stringProp>
               <stringProp name="Argument.metadata">=</stringProp>
             </elementProp>
             <elementProp name="retentionPolicy" elementType="Argument">

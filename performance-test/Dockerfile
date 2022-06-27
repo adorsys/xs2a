@@ -35,6 +35,7 @@ WORKDIR ${JMETER_PLUGINS_FOLDER}
 RUN wget https://github.com/sfakrudeen78/JMeter-InfluxDB-Writer/releases/download/v-1.2.2/JMeter-InfluxDB-Writer-plugin-1.2.2.jar
 
 # Step 7:
+RUN mkdir -m 777 -p /jmeter/temp
 WORKDIR /jmeter
 
 # Step 8:
