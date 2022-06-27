@@ -17,7 +17,7 @@
           <boolProp name="LoopController.continue_forever">false</boolProp>
           <stringProp name="LoopController.loops">${__P(loop,1)}</stringProp>
         </elementProp>
-        <stringProp name="ThreadGroup.num_threads">${__P(thread,10)}</stringProp>
+        <stringProp name="ThreadGroup.num_threads">${__P(threads,50)}</stringProp>
         <stringProp name="ThreadGroup.ramp_time">${__P(rampUp,1)}</stringProp>
         <boolProp name="ThreadGroup.scheduler">false</boolProp>
         <stringProp name="ThreadGroup.duration"></stringProp>
@@ -76,10 +76,10 @@
           <stringProp name="HTTPSampler.response_timeout"></stringProp>
         </HTTPSamplerProxy>
         <hashTree>
-          <JSONPostProcessor guiclass="JSONPostProcessorGui" testclass="JSONPostProcessor" testname="JSON Extractor" enabled="true">
+          <JSONPostProcessor guiclass="JSONPostProcessorGui" testclass="JSONPostProcessor" testname="Get Payment ID" enabled="true">
             <stringProp name="JSONPostProcessor.referenceNames">payment_Id_${random-Para}</stringProp>
             <stringProp name="JSONPostProcessor.jsonPathExprs">$.paymentId</stringProp>
-            <stringProp name="JSONPostProcessor.match_numbers">1</stringProp>
+            <stringProp name="JSONPostProcessor.match_numbers">0</stringProp>
             <stringProp name="JSONPostProcessor.defaultValues">PAYMENT_ID_NOT_FOUND</stringProp>
             <stringProp name="Scope.variable"></stringProp>
           </JSONPostProcessor>
@@ -105,7 +105,7 @@
           <stringProp name="HTTPSampler.response_timeout"></stringProp>
         </HTTPSamplerProxy>
         <hashTree>
-          <JSONPostProcessor guiclass="JSONPostProcessorGui" testclass="JSONPostProcessor" testname="JSON Extractor" enabled="true">
+          <JSONPostProcessor guiclass="JSONPostProcessorGui" testclass="JSONPostProcessor" testname="Get Authorrization ID" enabled="true">
             <stringProp name="JSONPostProcessor.referenceNames">authorisation_Id_${random-Para}</stringProp>
             <stringProp name="JSONPostProcessor.jsonPathExprs">$.authorisationId</stringProp>
             <stringProp name="JSONPostProcessor.match_numbers">1</stringProp>
@@ -263,12 +263,6 @@
           <boolProp name="UserParameters.per_iteration">true</boolProp>
         </UserParameters>
         <hashTree/>
-        <DebugSampler guiclass="TestBeanGUI" testclass="DebugSampler" testname="Debug Sampler" enabled="false">
-          <boolProp name="displayJMeterProperties">false</boolProp>
-          <boolProp name="displayJMeterVariables">true</boolProp>
-          <boolProp name="displaySystemProperties">false</boolProp>
-        </DebugSampler>
-        <hashTree/>
       </hashTree>
       <Arguments guiclass="ArgumentsPanel" testclass="Arguments" testname="Test Data" enabled="true">
         <collectionProp name="Arguments.arguments">
@@ -314,7 +308,7 @@
         <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="User Defined Variables" enabled="true">
           <collectionProp name="Arguments.arguments"/>
         </elementProp>
-        <stringProp name="HTTPSampler.domain">${__P(host,dev-xs2a-connector.cloud.adorsys.de)}</stringProp>
+        <stringProp name="HTTPSampler.domain">${__P(host,perf-tests-xs2a-connector.cloud.adorsys.de)}</stringProp>
         <stringProp name="HTTPSampler.port"></stringProp>
         <stringProp name="HTTPSampler.protocol">${__P(protocol,https)}</stringProp>
         <stringProp name="HTTPSampler.contentEncoding">UTF-8</stringProp>
@@ -326,7 +320,7 @@
       <hashTree/>
       <ConfigTestElement guiclass="PropertyControlGui" testclass="ConfigTestElement" testname="Property Display" enabled="true"/>
       <hashTree/>
-      <ResultCollector guiclass="ViewResultsFullVisualizer" testclass="ResultCollector" testname="View Results Tree" enabled="false">
+      <ResultCollector guiclass="ViewResultsFullVisualizer" testclass="ResultCollector" testname="View Results Tree" enabled="true">
         <boolProp name="ResultCollector.error_logging">false</boolProp>
         <objProp>
           <name>saveConfig</name>
@@ -405,7 +399,7 @@
           <collectionProp name="Arguments.arguments">
             <elementProp name="testName" elementType="Argument">
               <stringProp name="Argument.name">testName</stringProp>
-              <stringProp name="Argument.value">${__P(influxreporttest,PIS-Test)}</stringProp>
+              <stringProp name="Argument.value">${__P(influxtestname,PIS-Test)}</stringProp>
               <stringProp name="Argument.metadata">=</stringProp>
             </elementProp>
             <elementProp name="nodeName" elementType="Argument">
@@ -425,7 +419,7 @@
             </elementProp>
             <elementProp name="influxDBPort" elementType="Argument">
               <stringProp name="Argument.name">influxDBPort</stringProp>
-              <stringProp name="Argument.value">8086</stringProp>
+              <stringProp name="Argument.value">${__P(influxdbport,8086)}</stringProp>
               <stringProp name="Argument.metadata">=</stringProp>
             </elementProp>
             <elementProp name="influxDBUser" elementType="Argument">
@@ -440,7 +434,7 @@
             </elementProp>
             <elementProp name="influxDBDatabase" elementType="Argument">
               <stringProp name="Argument.name">influxDBDatabase</stringProp>
-              <stringProp name="Argument.value">${__P(influxDBDatabase,performance_tests)}</stringProp>
+              <stringProp name="Argument.value">${__P(influxdbdatabasename,performance_tests)}</stringProp>
               <stringProp name="Argument.metadata">=</stringProp>
             </elementProp>
             <elementProp name="retentionPolicy" elementType="Argument">
