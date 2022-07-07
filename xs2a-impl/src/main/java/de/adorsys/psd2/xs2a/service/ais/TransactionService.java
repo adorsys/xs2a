@@ -34,13 +34,22 @@ import de.adorsys.psd2.xs2a.domain.HrefType;
 import de.adorsys.psd2.xs2a.domain.Links;
 import de.adorsys.psd2.xs2a.domain.ResponseObject;
 import de.adorsys.psd2.xs2a.domain.Transactions;
-import de.adorsys.psd2.xs2a.domain.account.*;
+import de.adorsys.psd2.xs2a.domain.account.Xs2aAccountReport;
+import de.adorsys.psd2.xs2a.domain.account.Xs2aTransactionParameters;
+import de.adorsys.psd2.xs2a.domain.account.Xs2aTransactionsDownloadResponse;
+import de.adorsys.psd2.xs2a.domain.account.Xs2aTransactionsReport;
+import de.adorsys.psd2.xs2a.domain.account.Xs2aTransactionsReportByPeriodRequest;
 import de.adorsys.psd2.xs2a.service.TppService;
 import de.adorsys.psd2.xs2a.service.consent.Xs2aAccountService;
 import de.adorsys.psd2.xs2a.service.consent.Xs2aAisConsentService;
 import de.adorsys.psd2.xs2a.service.event.Xs2aEventService;
 import de.adorsys.psd2.xs2a.service.mapper.cms_xs2a_mappers.Xs2aAisConsentMapper;
-import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.*;
+import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiErrorMapper;
+import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiToXs2aAccountReferenceMapper;
+import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiToXs2aBalanceMapper;
+import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiToXs2aDownloadTransactionsMapper;
+import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiToXs2aTransactionMapper;
+import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiTransactionListToXs2aAccountReportMapper;
 import de.adorsys.psd2.xs2a.service.profile.AspspProfileServiceWrapper;
 import de.adorsys.psd2.xs2a.service.spi.SpiAspspConsentDataProviderFactory;
 import de.adorsys.psd2.xs2a.service.validator.ValueValidatorService;
@@ -50,7 +59,12 @@ import de.adorsys.psd2.xs2a.service.validator.ais.account.GetTransactionsReportV
 import de.adorsys.psd2.xs2a.service.validator.ais.account.dto.CommonAccountTransactionsRequestObject;
 import de.adorsys.psd2.xs2a.service.validator.ais.account.dto.DownloadTransactionListRequestObject;
 import de.adorsys.psd2.xs2a.service.validator.ais.account.dto.TransactionsReportByPeriodObject;
-import de.adorsys.psd2.xs2a.spi.domain.account.*;
+import de.adorsys.psd2.xs2a.spi.domain.account.SpiAccountReference;
+import de.adorsys.psd2.xs2a.spi.domain.account.SpiTransaction;
+import de.adorsys.psd2.xs2a.spi.domain.account.SpiTransactionLinks;
+import de.adorsys.psd2.xs2a.spi.domain.account.SpiTransactionReport;
+import de.adorsys.psd2.xs2a.spi.domain.account.SpiTransactionReportParameters;
+import de.adorsys.psd2.xs2a.spi.domain.account.SpiTransactionsDownloadResponse;
 import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponse;
 import de.adorsys.psd2.xs2a.spi.service.AccountSpi;
 import lombok.AllArgsConstructor;
@@ -66,7 +80,6 @@ import java.util.stream.Collectors;
 
 import static de.adorsys.psd2.xs2a.core.error.ErrorType.AIS_400;
 import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.*;
-
 @Slf4j
 @Service
 @AllArgsConstructor
@@ -401,8 +414,7 @@ public class TransactionService {
         Xs2aAccountReport report = transactionsToAccountReportMapper
                                        .mapToXs2aAccountReport(request.getBookingStatus(),
                                                                spiTransactionReport.getTransactions(),
-                                                               spiTransactionReport.getTransactionsRaw())
-                                       .orElse(null);
+                                                               spiTransactionReport.getTransactionsRaw());
 
         Xs2aTransactionsReport transactionsReport = getXs2aTransactionsReport(report,
                                                                               getRequestedAccountReference(aisConsent, request.getAccountId()),

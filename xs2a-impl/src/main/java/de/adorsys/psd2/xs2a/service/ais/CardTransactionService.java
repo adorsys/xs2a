@@ -63,7 +63,9 @@ import java.util.List;
 import java.util.Optional;
 
 import static de.adorsys.psd2.xs2a.core.error.ErrorType.AIS_400;
-import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.*;
+import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.CONSENT_UNKNOWN_400;
+import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.REQUESTED_FORMATS_INVALID;
+import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.SERVICE_NOT_SUPPORTED;
 
 @Slf4j
 @Service
@@ -212,8 +214,7 @@ public class CardTransactionService {
         Xs2aCardAccountReport report = cardTransactionListToXs2aAccountReportMapper
                                            .mapToXs2aCardAccountReport(request.getBookingStatus(),
                                                                        spiTransactionReport.getCardTransactions(),
-                                                                       spiTransactionReport.getTransactionsRaw())
-                                           .orElse(null);
+                                                                       spiTransactionReport.getTransactionsRaw());
 
         Xs2aCardTransactionsReport cardTransactionsReport = getXs2aCardTransactionsReport(report,
                                                                                           filterAccountReference(accountConsent.getAccess().getTransactions(), request.getAccountId()),

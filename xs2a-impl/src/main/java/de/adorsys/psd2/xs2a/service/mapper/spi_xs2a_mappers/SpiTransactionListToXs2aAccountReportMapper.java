@@ -30,7 +30,6 @@ import org.springframework.stereotype.Component;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
@@ -43,17 +42,14 @@ public class SpiTransactionListToXs2aAccountReportMapper {
 
     private final SpiToXs2aTransactionMapper toXs2aTransactionMapper;
 
-    public Optional<Xs2aAccountReport> mapToXs2aAccountReport(BookingStatus bookingStatus, List<SpiTransaction> spiTransactions, byte[] rawTransactionsResponse) {
+    public Xs2aAccountReport mapToXs2aAccountReport(BookingStatus bookingStatus, List<SpiTransaction> spiTransactions, byte[] rawTransactionsResponse) {
         if (ArrayUtils.isNotEmpty(rawTransactionsResponse)) {
-            return Optional.of(new Xs2aAccountReport(null, null, null, rawTransactionsResponse));
-        }
-        if (CollectionUtils.isEmpty(spiTransactions)) {
-            return Optional.empty();
+            return new Xs2aAccountReport(null, null, null, rawTransactionsResponse);
         }
 
-        List<Transactions> booked = Collections.emptyList();
-        List<Transactions> pending = Collections.emptyList();
-        List<Transactions> information = Collections.emptyList();
+        List<Transactions> booked = null;
+        List<Transactions> pending = null;
+        List<Transactions> information = null;
 
         switch (bookingStatus) {
             case INFORMATION:
@@ -77,11 +73,14 @@ public class SpiTransactionListToXs2aAccountReportMapper {
             default:
                 throw new IllegalArgumentException("This Booking Status is not supported: " + bookingStatus);
         }
-        return Optional.of(new Xs2aAccountReport(booked, pending, information, null));
+        return new Xs2aAccountReport(booked, pending, information, null);
     }
 
     @NotNull
     private List<Transactions> filterTransaction(List<SpiTransaction> spiTransactions, Predicate<SpiTransaction> predicate) {
+        if (CollectionUtils.isEmpty(spiTransactions)) {
+            return Collections.emptyList();
+        }
         return spiTransactions
                    .stream()
                    .filter(predicate)

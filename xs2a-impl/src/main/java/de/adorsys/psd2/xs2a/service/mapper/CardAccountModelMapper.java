@@ -134,15 +134,18 @@ public abstract class CardAccountModelMapper {
     }
 
     protected @Nullable CardTransactionList mapToCardTransactionList(@Nullable List<de.adorsys.psd2.xs2a.domain.CardTransaction> transactions) {
-        if (CollectionUtils.isEmpty(transactions)) {
+        if (transactions == null) {
             return null;
+        }
+        CardTransactionList transactionList = new CardTransactionList();
+        if (transactions.isEmpty()) {
+            return transactionList;
         }
 
         List<CardTransaction> transactionDetails = transactions.stream()
                                                        .map(this::mapToCardTransaction)
                                                        .collect(Collectors.toList());
 
-        CardTransactionList transactionList = new CardTransactionList();
         transactionList.addAll(transactionDetails);
         return transactionList;
     }

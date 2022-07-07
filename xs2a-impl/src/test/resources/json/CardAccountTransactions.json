@@ -3,7 +3,6 @@
     "cardTransactionId": "ERbI5GiJQEAuTkb1SNE63A",
     "terminalId": "terminalId",
     "transactionDate": "2020-01-27",
-    "bookingDate": "2020-01-27",
     "transactionAmount": {
       "currency": "EUR",
       "amount": "30000.00"
@@ -35,7 +34,6 @@
     "cardTransactionId": "rYdcmCvXRt4k75RRUOANV0",
     "terminalId": "terminalId",
     "transactionDate": "2020-01-24",
-    "bookingDate": "2020-01-24",
     "transactionAmount": {
       "currency": "EUR",
       "amount": "30000.00"
@@ -67,7 +65,6 @@
     "cardTransactionId": "ujOf0BMYRMkuKKLDbIhwDI",
     "terminalId": "terminalId",
     "transactionDate": "2020-01-21",
-    "bookingDate": "2020-01-21",
     "transactionAmount": {
       "currency": "EUR",
       "amount": "30000.00"
@@ -99,7 +96,6 @@
     "cardTransactionId": "SDNQVvEpQw8vncheVbJG-Y",
     "terminalId": "terminalId",
     "transactionDate": "2020-01-21",
-    "bookingDate": "2020-01-21",
     "transactionAmount": {
       "currency": "EUR",
       "amount": "30000.00"
@@ -131,7 +127,6 @@
     "cardTransactionId": "RW078EuIT_0pkffmTPG7tE",
     "terminalId": "terminalId",
     "transactionDate": "2020-01-21",
-    "bookingDate": "2020-01-21",
     "transactionAmount": {
       "currency": "EUR",
       "amount": "30000.00"

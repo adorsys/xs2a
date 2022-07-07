@@ -47,7 +47,12 @@ import de.adorsys.psd2.xs2a.service.consent.Xs2aAccountService;
 import de.adorsys.psd2.xs2a.service.consent.Xs2aAisConsentService;
 import de.adorsys.psd2.xs2a.service.event.Xs2aEventService;
 import de.adorsys.psd2.xs2a.service.mapper.cms_xs2a_mappers.Xs2aAisConsentMapper;
-import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.*;
+import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiErrorMapper;
+import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiToXs2aAccountReferenceMapper;
+import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiToXs2aBalanceMapper;
+import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiToXs2aDownloadTransactionsMapper;
+import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiToXs2aTransactionMapper;
+import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiTransactionListToXs2aAccountReportMapper;
 import de.adorsys.psd2.xs2a.service.profile.AspspProfileServiceWrapper;
 import de.adorsys.psd2.xs2a.service.spi.SpiAspspConsentDataProviderFactory;
 import de.adorsys.psd2.xs2a.service.validator.ValueValidatorService;
@@ -59,7 +64,12 @@ import de.adorsys.psd2.xs2a.service.validator.ais.account.dto.DownloadTransactio
 import de.adorsys.psd2.xs2a.service.validator.ais.account.dto.TransactionsReportByPeriodObject;
 import de.adorsys.psd2.xs2a.spi.domain.SpiAspspConsentDataProvider;
 import de.adorsys.psd2.xs2a.spi.domain.SpiContextData;
-import de.adorsys.psd2.xs2a.spi.domain.account.*;
+import de.adorsys.psd2.xs2a.spi.domain.account.SpiAccountConsent;
+import de.adorsys.psd2.xs2a.spi.domain.account.SpiAccountReference;
+import de.adorsys.psd2.xs2a.spi.domain.account.SpiTransaction;
+import de.adorsys.psd2.xs2a.spi.domain.account.SpiTransactionReport;
+import de.adorsys.psd2.xs2a.spi.domain.account.SpiTransactionReportParameters;
+import de.adorsys.psd2.xs2a.spi.domain.account.SpiTransactionsDownloadResponse;
 import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponse;
 import de.adorsys.psd2.xs2a.spi.service.AccountSpi;
 import de.adorsys.psd2.xs2a.util.reader.TestSpiDataProvider;
@@ -80,14 +90,21 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.time.LocalDate;
 import java.time.OffsetDateTime;
-import java.util.*;
+import java.util.Base64;
+import java.util.Collections;
+import java.util.Currency;
+import java.util.Optional;
+import java.util.UUID;
 
 import static de.adorsys.psd2.xs2a.core.domain.TppMessageInformation.of;
 import static de.adorsys.psd2.xs2a.core.error.ErrorType.AIS_400;
 import static de.adorsys.psd2.xs2a.core.error.ErrorType.AIS_401;
 import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.*;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -313,7 +330,7 @@ class TransactionServiceTest {
         Xs2aAccountReport xs2aAccountReport = new Xs2aAccountReport(Collections.emptyList(), Collections.emptyList(), Collections.emptyList(), null);
 
         when(transactionsToAccountReportMapper.mapToXs2aAccountReport(BookingStatus.BOTH, Collections.emptyList(), null))
-            .thenReturn(Optional.of(xs2aAccountReport));
+            .thenReturn(xs2aAccountReport);
         when(referenceMapper.mapToXs2aAccountReference(spiAccountReference))
             .thenReturn(XS2A_ACCOUNT_REFERENCE);
         when(consentMapper.mapToSpiAccountConsent(any()))
@@ -357,7 +374,7 @@ class TransactionServiceTest {
         Xs2aAccountReport xs2aAccountReport = new Xs2aAccountReport(Collections.emptyList(), Collections.emptyList(), Collections.emptyList(), null);
 
         when(transactionsToAccountReportMapper.mapToXs2aAccountReport(BookingStatus.INFORMATION, Collections.singletonList(testSpiTransaction), null))
-            .thenReturn(Optional.of(xs2aAccountReport));
+            .thenReturn(xs2aAccountReport);
         when(referenceMapper.mapToXs2aAccountReference(spiAccountReference))
             .thenReturn(XS2A_ACCOUNT_REFERENCE);
         when(consentMapper.mapToSpiAccountConsent(any()))
@@ -430,7 +447,7 @@ class TransactionServiceTest {
         Xs2aAccountReport xs2aAccountReport = new Xs2aAccountReport(Collections.emptyList(), Collections.emptyList(), Collections.emptyList(), null);
 
         when(transactionsToAccountReportMapper.mapToXs2aAccountReport(BookingStatus.BOTH, Collections.emptyList(), null))
-            .thenReturn(Optional.of(xs2aAccountReport));
+            .thenReturn(xs2aAccountReport);
         when(referenceMapper.mapToXs2aAccountReference(SPI_ACCOUNT_REFERENCE_GLOBAL))
             .thenReturn(XS2A_ACCOUNT_REFERENCE);
         when(balanceMapper.mapToXs2aBalanceList(Collections.emptyList()))
@@ -472,7 +489,7 @@ class TransactionServiceTest {
 
         Xs2aAccountReport xs2aAccountReport = new Xs2aAccountReport(Collections.singletonList(transactions), Collections.emptyList(), Collections.emptyList(), null);
         when(transactionsToAccountReportMapper.mapToXs2aAccountReport(BookingStatus.BOTH, Collections.singletonList(spiTransaction), null))
-            .thenReturn(Optional.of(xs2aAccountReport));
+            .thenReturn(xs2aAccountReport);
         when(referenceMapper.mapToXs2aAccountReference(spiAccountReference))
             .thenReturn(XS2A_ACCOUNT_REFERENCE);
         when(consentMapper.mapToSpiAccountConsent(any()))
@@ -509,7 +526,7 @@ class TransactionServiceTest {
             .thenReturn(buildSuccessSpiResponse(transactionReportWithoutTransactions));
 
         when(transactionsToAccountReportMapper.mapToXs2aAccountReport(BookingStatus.BOTH, null, null))
-            .thenReturn(Optional.empty());
+            .thenReturn(null);
         when(referenceMapper.mapToXs2aAccountReference(spiAccountReference))
             .thenReturn(XS2A_ACCOUNT_REFERENCE);
         when(consentMapper.mapToSpiAccountConsent(any()))
@@ -545,7 +562,7 @@ class TransactionServiceTest {
             .thenReturn(buildSuccessSpiResponse(SPI_TRANSACTION_REPORT));
         Xs2aAccountReport xs2aAccountReport = new Xs2aAccountReport(Collections.emptyList(), Collections.emptyList(), Collections.emptyList(), null);
         when(transactionsToAccountReportMapper.mapToXs2aAccountReport(BookingStatus.BOTH, Collections.emptyList(), null))
-            .thenReturn(Optional.of(xs2aAccountReport));
+            .thenReturn(xs2aAccountReport);
         when(referenceMapper.mapToXs2aAccountReference(spiAccountReference))
             .thenReturn(XS2A_ACCOUNT_REFERENCE);
         when(balanceMapper.mapToXs2aBalanceList(Collections.emptyList()))
@@ -596,7 +613,7 @@ class TransactionServiceTest {
             .thenReturn(buildSuccessSpiResponse(SPI_TRANSACTION_REPORT));
         Xs2aAccountReport xs2aAccountReport = new Xs2aAccountReport(Collections.emptyList(), Collections.emptyList(), Collections.emptyList(), null);
         when(transactionsToAccountReportMapper.mapToXs2aAccountReport(BookingStatus.BOTH, Collections.emptyList(), null))
-            .thenReturn(Optional.of(xs2aAccountReport));
+            .thenReturn(xs2aAccountReport);
         when(referenceMapper.mapToXs2aAccountReference(spiAccountReference))
             .thenReturn(XS2A_ACCOUNT_REFERENCE);
         when(balanceMapper.mapToXs2aBalanceList(Collections.emptyList()))

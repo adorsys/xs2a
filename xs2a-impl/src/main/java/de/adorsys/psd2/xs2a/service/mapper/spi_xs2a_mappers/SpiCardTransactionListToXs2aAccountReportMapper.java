@@ -30,7 +30,6 @@ import org.springframework.stereotype.Component;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
@@ -42,35 +41,37 @@ public class SpiCardTransactionListToXs2aAccountReportMapper {
 
     private final SpiToXs2aCardTransactionMapper toXs2aCardTransactionMapper;
 
-    public Optional<Xs2aCardAccountReport> mapToXs2aCardAccountReport(BookingStatus bookingStatus, List<SpiCardTransaction> spiCardTransactions, byte[] rawTransactionsResponse) {
+    public Xs2aCardAccountReport mapToXs2aCardAccountReport(BookingStatus bookingStatus, List<SpiCardTransaction> spiCardTransactions, byte[] rawTransactionsResponse) {
         if (ArrayUtils.isNotEmpty(rawTransactionsResponse)) {
-            return Optional.of(new Xs2aCardAccountReport(null, null, null, rawTransactionsResponse));
-        }
-        if (CollectionUtils.isEmpty(spiCardTransactions)) {
-            return Optional.empty();
+            return new Xs2aCardAccountReport(null, null, null, rawTransactionsResponse);
         }
 
-        if (bookingStatus == BookingStatus.INFORMATION) {
-            return Optional.of(new Xs2aCardAccountReport(null, null, toXs2aCardTransactionMapper.mapToXs2aCardTransactionList(spiCardTransactions), null));
+        List<CardTransaction> booked = null;
+        List<CardTransaction> pending = null;
+
+        switch (bookingStatus) {
+            case BOOKED:
+                booked = filterTransaction(spiCardTransactions, BOOKED_PREDICATE);
+                break;
+            case PENDING:
+                pending = filterTransaction(spiCardTransactions, PENDING_PREDICATE);
+                break;
+            case BOTH:
+                booked = filterTransaction(spiCardTransactions, BOOKED_PREDICATE);
+                pending = filterTransaction(spiCardTransactions, PENDING_PREDICATE);
+                break;
+            default:
+                throw new IllegalArgumentException("This Booking Status is not supported: " + bookingStatus);
         }
 
-        List<CardTransaction> booked = Collections.emptyList();
-        List<CardTransaction> pending = Collections.emptyList();
-
-
-        if (bookingStatus != BookingStatus.PENDING) {
-            booked = filterTransaction(spiCardTransactions, BOOKED_PREDICATE);
-        }
-
-        if (bookingStatus != BookingStatus.BOOKED) {
-            pending = filterTransaction(spiCardTransactions, PENDING_PREDICATE);
-        }
-
-        return Optional.of(new Xs2aCardAccountReport(booked, pending, null, null));
+        return new Xs2aCardAccountReport(booked, pending, null, null);
     }
 
     @NotNull
     private List<CardTransaction> filterTransaction(List<SpiCardTransaction> spiTransactions, Predicate<SpiCardTransaction> predicate) {
+        if (CollectionUtils.isEmpty(spiTransactions)) {
+            return Collections.emptyList();
+        }
         return spiTransactions
                    .stream()
                    .filter(predicate)

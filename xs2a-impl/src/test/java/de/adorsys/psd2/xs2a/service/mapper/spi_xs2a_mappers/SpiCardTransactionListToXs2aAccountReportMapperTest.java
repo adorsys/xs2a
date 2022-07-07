@@ -31,9 +31,10 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = {SpiCardTransactionListToXs2aAccountReportMapper.class, SpiToXs2aCardTransactionMapperImpl.class,
@@ -54,11 +55,13 @@ class SpiCardTransactionListToXs2aAccountReportMapperTest {
         Xs2aCardAccountReport expectedXs2aCardAccountReport = jsonReader.getObjectFromFile("json/Xs2aCardAccountReport.json", Xs2aCardAccountReport.class);
 
         //When
-        Optional<Xs2aCardAccountReport> xs2aCardAccountReport = spiCardTransactionListToXs2aAccountReportMapper.mapToXs2aCardAccountReport(bookingStatus, spiCardTransactions, null);
+        Xs2aCardAccountReport xs2aCardAccountReport = spiCardTransactionListToXs2aAccountReportMapper.mapToXs2aCardAccountReport(bookingStatus, spiCardTransactions, null);
 
         //Then
-        assertTrue(xs2aCardAccountReport.isPresent());
-        assertEquals(expectedXs2aCardAccountReport, xs2aCardAccountReport.get());
+        assertNotNull(xs2aCardAccountReport);
+        assertThat(xs2aCardAccountReport.getBooked()).isNotEmpty();
+        assertThat(xs2aCardAccountReport.getPending()).isNotEmpty();
+        assertEquals(expectedXs2aCardAccountReport, xs2aCardAccountReport);
     }
 
     @Test
@@ -67,38 +70,39 @@ class SpiCardTransactionListToXs2aAccountReportMapperTest {
         byte[] rawData = "some raw data".getBytes();
         Xs2aCardAccountReport expectedReport= new Xs2aCardAccountReport(null, null, null, rawData);
         //When
-        Optional<Xs2aCardAccountReport> xs2aCardAccountReport = spiCardTransactionListToXs2aAccountReportMapper.mapToXs2aCardAccountReport(BookingStatus.BOTH, Collections.emptyList(), rawData);
+        Xs2aCardAccountReport xs2aCardAccountReport = spiCardTransactionListToXs2aAccountReportMapper.mapToXs2aCardAccountReport(BookingStatus.BOTH, Collections.emptyList(), rawData);
 
         //Then
-        assertTrue(xs2aCardAccountReport.isPresent());
-        assertEquals(expectedReport, xs2aCardAccountReport.get());
+        assertThat(xs2aCardAccountReport).isNotNull();
+        assertEquals(expectedReport, xs2aCardAccountReport);
     }
 
     @Test
     void mapToXs2aCardAccountReport_emptyTransactions() {
         //Given
         //When
-        Optional<Xs2aCardAccountReport> xs2aCardAccountReport = spiCardTransactionListToXs2aAccountReportMapper.mapToXs2aCardAccountReport(BookingStatus.BOTH, Collections.emptyList(), null);
+        Xs2aCardAccountReport xs2aCardAccountReport = spiCardTransactionListToXs2aAccountReportMapper.mapToXs2aCardAccountReport(BookingStatus.BOTH, Collections.emptyList(), null);
 
         //Then
-        assertFalse(xs2aCardAccountReport.isPresent());
+        assertNotNull(xs2aCardAccountReport);
+        assertThat(xs2aCardAccountReport.getBooked()).isEmpty();
+        assertThat(xs2aCardAccountReport.getPending()).isEmpty();
     }
 
     @Test
-    void mapToXs2aCardAccountReport_bookingStatusInformation() {
+    void mapToXs2aCardAccountReport_bookingStatusPending() {
         //Given
-        BookingStatus bookingStatus = BookingStatus.INFORMATION;
+        BookingStatus bookingStatus = BookingStatus.PENDING;
 
         List<SpiCardTransaction> spiCardTransactions = jsonReader.getObjectFromFile("json/SpiCardTransactions.json", new TypeReference<>() {
         });
-        Xs2aCardAccountReport expectedXs2aCardAccountReport = jsonReader.getObjectFromFile("json/Xs2aCardAccountReport_information.json", Xs2aCardAccountReport.class);
-        System.out.println("expectedXs2aCardAccountReport = " + expectedXs2aCardAccountReport);
+        Xs2aCardAccountReport expectedXs2aCardAccountReport = jsonReader.getObjectFromFile("json/Xs2aCardAccountReport_pending.json", Xs2aCardAccountReport.class);
 
         //When
-        Optional<Xs2aCardAccountReport> xs2aCardAccountReport = spiCardTransactionListToXs2aAccountReportMapper.mapToXs2aCardAccountReport(bookingStatus, spiCardTransactions, null);
+        Xs2aCardAccountReport xs2aCardAccountReport = spiCardTransactionListToXs2aAccountReportMapper.mapToXs2aCardAccountReport(bookingStatus, spiCardTransactions, null);
 
         //Then
-        assertTrue(xs2aCardAccountReport.isPresent());
-        assertEquals(expectedXs2aCardAccountReport, xs2aCardAccountReport.get());
+        assertThat(xs2aCardAccountReport).isNotNull();
+        assertEquals(expectedXs2aCardAccountReport, xs2aCardAccountReport);
     }
 }
