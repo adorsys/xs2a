@@ -55,7 +55,11 @@ import de.adorsys.psd2.xs2a.service.validator.ais.account.GetCardTransactionsRep
 import de.adorsys.psd2.xs2a.service.validator.ais.account.dto.CardTransactionsReportByPeriodObject;
 import de.adorsys.psd2.xs2a.spi.domain.SpiAspspConsentDataProvider;
 import de.adorsys.psd2.xs2a.spi.domain.SpiContextData;
-import de.adorsys.psd2.xs2a.spi.domain.account.*;
+import de.adorsys.psd2.xs2a.spi.domain.account.SpiAccountConsent;
+import de.adorsys.psd2.xs2a.spi.domain.account.SpiAccountReference;
+import de.adorsys.psd2.xs2a.spi.domain.account.SpiCardTransactionReport;
+import de.adorsys.psd2.xs2a.spi.domain.account.SpiTransactionReport;
+import de.adorsys.psd2.xs2a.spi.domain.account.SpiTransactionReportParameters;
 import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponse;
 import de.adorsys.psd2.xs2a.spi.service.CardAccountSpi;
 import de.adorsys.psd2.xs2a.util.reader.TestSpiDataProvider;
@@ -85,7 +89,9 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class CardTransactionServiceTest {
@@ -268,7 +274,7 @@ class CardTransactionServiceTest {
         Xs2aCardAccountReport xs2aAccountReport = new Xs2aCardAccountReport(Collections.emptyList(), Collections.emptyList(), Collections.emptyList(), null);
 
         when(spiCardTransactionListToXs2aAccountReportMapper.mapToXs2aCardAccountReport(BookingStatus.BOTH, Collections.emptyList(), null))
-            .thenReturn(Optional.of(xs2aAccountReport));
+            .thenReturn(xs2aAccountReport);
         when(consentMapper.mapToSpiAccountConsent(any()))
             .thenReturn(SPI_ACCOUNT_CONSENT);
 
@@ -313,7 +319,7 @@ class CardTransactionServiceTest {
         Xs2aCardAccountReport xs2aAccountReport = new Xs2aCardAccountReport(Collections.emptyList(), Collections.emptyList(), Collections.emptyList(), null);
 
         when(spiCardTransactionListToXs2aAccountReportMapper.mapToXs2aCardAccountReport(BookingStatus.BOTH, Collections.emptyList(), null))
-            .thenReturn(Optional.of(xs2aAccountReport));
+            .thenReturn(xs2aAccountReport);
         when(balanceMapper.mapToXs2aBalanceList(Collections.emptyList()))
             .thenReturn(Collections.emptyList());
         when(consentMapper.mapToSpiAccountConsent(any()))
@@ -355,7 +361,7 @@ class CardTransactionServiceTest {
         Xs2aCardAccountReport xs2aAccountReport = new Xs2aCardAccountReport(Collections.emptyList(), Collections.emptyList(), Collections.emptyList(), null);
 
         when(spiCardTransactionListToXs2aAccountReportMapper.mapToXs2aCardAccountReport(BookingStatus.BOTH, Collections.emptyList(), null))
-            .thenReturn(Optional.of(xs2aAccountReport));
+            .thenReturn(xs2aAccountReport);
         when(balanceMapper.mapToXs2aBalanceList(Collections.emptyList()))
             .thenReturn(Collections.emptyList());
         when(consentMapper.mapToSpiAccountConsent(any()))
@@ -388,7 +394,7 @@ class CardTransactionServiceTest {
             .thenReturn(buildSuccessSpiResponse(SPI_CARD_TRANSACTION_REPORT));
         Xs2aCardAccountReport xs2aAccountReport = new Xs2aCardAccountReport(Collections.emptyList(), Collections.emptyList(), Collections.emptyList(), null);
         when(spiCardTransactionListToXs2aAccountReportMapper.mapToXs2aCardAccountReport(BookingStatus.BOTH, Collections.emptyList(), null))
-            .thenReturn(Optional.of(xs2aAccountReport));
+            .thenReturn(xs2aAccountReport);
         when(balanceMapper.mapToXs2aBalanceList(Collections.emptyList()))
             .thenReturn(Collections.emptyList());
         when(consentMapper.mapToSpiAccountConsent(any()))
@@ -430,7 +436,7 @@ class CardTransactionServiceTest {
             .thenReturn(buildSuccessSpiResponse(SPI_CARD_TRANSACTION_REPORT));
         Xs2aCardAccountReport xs2aAccountReport = new Xs2aCardAccountReport(Collections.emptyList(), Collections.emptyList(), Collections.emptyList(), null);
         when(spiCardTransactionListToXs2aAccountReportMapper.mapToXs2aCardAccountReport(BookingStatus.BOTH, Collections.emptyList(), null))
-            .thenReturn(Optional.of(xs2aAccountReport));
+            .thenReturn(xs2aAccountReport);
         when(balanceMapper.mapToXs2aBalanceList(Collections.emptyList()))
             .thenReturn(Collections.emptyList());
         when(consentMapper.mapToSpiAccountConsent(any()))

@@ -2,7 +2,6 @@
   "cardTransactionId": "ERbI5GiJQEAuTkb1SNE63A",
   "terminalId": "terminalId",
   "transactionDate": "2020-01-27",
-  "bookingDate": "2020-01-27",
   "transactionAmount": {
     "currency": "EUR",
     "amount": "30000.00"

@@ -140,15 +140,19 @@ public abstract class TransactionModelMapper {
 
 
     protected @Nullable TransactionList mapToTransactionList(@Nullable List<Transactions> transactions) {
-        if (CollectionUtils.isEmpty(transactions)) {
+        if (transactions == null) {
             return null;
+        }
+
+        TransactionList transactionList = new TransactionList();
+        if (transactions.isEmpty()) {
+            return transactionList;
         }
 
         List<de.adorsys.psd2.model.Transactions> transactionDetails = transactions.stream()
                                                                           .map(this::mapToTransactions)
                                                                           .collect(Collectors.toList());
 
-        TransactionList transactionList = new TransactionList();
         transactionList.addAll(transactionDetails);
         return transactionList;
     }
