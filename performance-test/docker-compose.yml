@@ -1,0 +1,20 @@
+
+# Docker compose file for local testing
+version: "3"
+services:
+  perf-test:
+    image: gitlab-registry.adorsys.de/adorsys/xs2a/aspsp-xs2a/xs2a-performance-tests:develop
+    environment:
+      JMETER_TEST_FILE: AIS-Embedded-Test.jmx
+      JMETER_THREADS: 1
+      JMETER_LOOP: 3
+      JMETER_TEST_NAME: AIS-Embedded-Test
+      INFLUX_DB_URL: host.docker.internal #host.docker.internal uses for localhost conenction for MacOS
+      INFLUX_DB_PORT: 8086
+      INFLUX_REPORT_NAME: "Phase1_AIS_100_EmptyDB"
+      INFLUX_DB_DATABASE: performance_tests
+      INFLUX_DB_PASSWORD: "some_password"
+      INFLUX_DB_USERNAME: some_user
+      DEBUG_LEVEL: ERROR
+      XS2A_URL:  some_xs2a_hostname # example: perf-tests-xs2a-connector.cloud.adorsys.de
+      XS2A_PROTOCOL: https

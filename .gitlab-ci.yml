@@ -27,7 +27,7 @@ variables:
   DOCKER_IMAGE_NAME_ASPSP_PROFILE: "xs2a-aspsp-profile"
   # DOCKER_IMAGE_NAME_XS2A: "xs2a-service"
   DOCKER_IMAGE_NAME_CERTIFICATE_GENERATOR: "xs2a-certificate-generator"
-  DOCKER_IMAGE_NAME_JMETER_TEST: "xs2a-performance-test"
+  DOCKER_IMAGE_NAME_JMETER_TEST: "xs2a-performance-tests"
 
   ###########################
   # Public Dockerhub Images #
@@ -93,7 +93,7 @@ variables:
     - docker build -t "${DOCKERHUB_REGISTRY}/${DOCKERHUB_NAMESPACE}/${DOCKER_IMAGE_NAME_CMS_MANAGEMENT}:${DOCKER_TAG}" consent-management/cms-standalone-service
     - docker build -t "${DOCKERHUB_REGISTRY}/${DOCKERHUB_NAMESPACE}/${DOCKER_IMAGE_NAME_ASPSP_PROFILE}:${DOCKER_TAG}" aspsp-profile/aspsp-profile-server
     - docker build -t "${DOCKERHUB_REGISTRY}/${DOCKERHUB_NAMESPACE}/${DOCKER_IMAGE_NAME_CERTIFICATE_GENERATOR}:${DOCKER_TAG}" certificate-generator
-    - docker build -t "${DOCKERHUB_REGISTRY}/${DOCKERHUB_NAMESPACE}/${DOCKER_IMAGE_NAME_JMETER_TEST}:${DOCKER_TAG}" performance-test
+    - docker build -t  "${DOCKERHUB_REGISTRY}/${DOCKERHUB_NAMESPACE}/${DOCKER_IMAGE_NAME_JMETER_TEST}:${DOCKER_TAG}" --build-arg build-date=$(date -u +"%Y-%m-%dT%H:%M:%SZ") performance-test
     - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
     - docker push "${DOCKERHUB_REGISTRY}/${DOCKERHUB_NAMESPACE}/${DOCKER_IMAGE_NAME_CMS_MANAGEMENT}:${DOCKER_TAG}"
     - docker push "${DOCKERHUB_REGISTRY}/${DOCKERHUB_NAMESPACE}/${DOCKER_IMAGE_NAME_ASPSP_PROFILE}:${DOCKER_TAG}"
