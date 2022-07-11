@@ -1,44 +1,39 @@
-FROM ubuntu:18.04
-# Step 1
-WORKDIR /jmeter
-COPY . /jmeter
+FROM openjdk:17.0.2-oraclelinux8
 
-# Step 2
-ARG JMETER_VERSION="5.4.3"
-ENV JMETER_HOME /jmeter/apache-jmeter-${JMETER_VERSION}
-ENV JMETER_LIB_FOLDER ${JMETER_HOME}/lib/
-ENV JMETER_PLUGINS_FOLDER ${JMETER_LIB_FOLDER}ext/
+ARG BUILD_DATE="2022-07-01"
+# Labels
+LABEL org.label-schema.version="0.0.1" \
+      org.label-schema.vendor="adorsys GmbH & Co. KG" \
+      org.label-schema.name="xs2a-performance-tests" \
+      org.label-schema.description="This service run performance tests on XS2A connector" \
+      org.label-schema.build-date=${BUILD_DATE}
+
+
+# Env Variables
+ARG JMETER_VERSION="5.5"
+ENV JMETER_HOME /opt/jmeter/apache-jmeter-${JMETER_VERSION}
+ENV JMETER_LIB_FOLDER ${JMETER_HOME}/lib
+ENV JMETER_PLUGINS_FOLDER ${JMETER_LIB_FOLDER}/ext/
 ENV JMETER_BIN ${JMETER_HOME}/bin
+ENV DEBUG_LEVEL="INFO"
 
-# Step 3:
-WORKDIR ${JMETER_HOME}
-RUN  apt-get -y update \
-&& apt-get install -y wget gnupg curl
 
-# Step 4:
-# Download Apache JMeter
-RUN wget http://mirror.its.dal.ca/apache/jmeter/binaries/apache-jmeter-${JMETER_VERSION}.tgz
-RUN tar -xzf apache-jmeter-${JMETER_VERSION}.tgz
-RUN mv apache-jmeter-${JMETER_VERSION}/* /jmeter/apache-jmeter-${JMETER_VERSION}
-RUN rm -r /jmeter/apache-jmeter-${JMETER_VERSION}/apache-jmeter-${JMETER_VERSION}
+RUN microdnf update -y  && microdnf install -y \
+    wget \
+    curl \
+    && microdnf clean all
 
-# Step 5:
-RUN wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key add - \
-&& apt-get update \
-&& apt-get install -y --no-install-recommends \
-git \
-openjdk-8-jre-headless
+WORKDIR /opt/jmeter
 
-# Step 6:
-# Download JMeter Plugins manager and move it to lib/ext folder
-WORKDIR ${JMETER_PLUGINS_FOLDER}
-RUN wget https://github.com/sfakrudeen78/JMeter-InfluxDB-Writer/releases/download/v-1.2.2/JMeter-InfluxDB-Writer-plugin-1.2.2.jar
+RUN mkdir -p ${JMETER_HOME} ${JMETER_PLUGINS_FOLDER} \
+    && curl -sL https://mirror.its.dal.ca/apache/jmeter/binaries/apache-jmeter-${JMETER_VERSION}.tgz | tar -xz \
+    && curl -sL https://github.com/sfakrudeen78/JMeter-InfluxDB-Writer/releases/download/v-1.2.2/JMeter-InfluxDB-Writer-plugin-1.2.2.jar \
+    --output ${JMETER_PLUGINS_FOLDER}/JMeter-InfluxDB-Writer-plugin-1.2.2.jar
 
-# Step 7:
-RUN mkdir -m 777 -p /jmeter/temp
-WORKDIR /jmeter
 
-# Step 8:
-RUN chmod +x entrypoint.sh
-COPY entrypoint.sh entrypoint.sh
-CMD /bin/sh entrypoint.sh
+RUN mkdir -m 777 -p temp test/reports
+COPY ./test ./test
+COPY  entrypoint.sh ./
+USER 10000
+
+ENTRYPOINT ["./entrypoint.sh"]
