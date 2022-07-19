@@ -373,17 +373,31 @@ class FundsConfirmationServiceTest {
     @Test
     void fundsConfirmation_serviceNotSupported() {
         // Given
+        AccountReference accountReference = getAccountReference(SECOND_ACCOUNT_REFERENCE_TYPE, IBAN, CURRENCY);
+        when(xs2aToSpiFundsConfirmationRequestMapper.mapToSpiFundsConfirmationRequest(buildFundsConfirmationRequest(accountReference, null)))
+            .thenReturn(buildSpiFundsConfirmationRequest());
+        when(requestProviderService.getPsuIdData())
+            .thenReturn(PSU_ID_DATA);
+        when(spiContextDataProvider.provideWithPsuIdData(PSU_ID_DATA))
+            .thenReturn(SPI_CONTEXT_DATA);
+        when(spiToXs2aFundsConfirmationMapper.mapToFundsConfirmationResponse(buildSpiFundsConfirmationResponse()))
+            .thenReturn(buildFundsConfirmationResponse());
         when(aspspProfileServiceWrapper.getPiisConsentSupported())
             .thenReturn(PiisConsentSupported.NOT_SUPPORTED);
+        when(fundsConfirmationSpi.performFundsSufficientCheck(any(), any(), any(), any()))
+            .thenReturn(buildSuccessSpiResponse());
+        when(xs2aToSpiPiisConsentMapper.mapToSpiPiisConsent(any()))
+            .thenReturn(null);
+
+        ArgumentCaptor<EventType> argumentCaptor = ArgumentCaptor.forClass(EventType.class);
+        FundsConfirmationRequest request = buildFundsConfirmationRequest(accountReference, null);
 
         // When
-        ResponseObject<FundsConfirmationResponse> response = fundsConfirmationService.fundsConfirmation(buildFundsConfirmationRequest(null, CONSENT_ID));
+        fundsConfirmationService.fundsConfirmation(request);
 
         // Then
-        assertThat(response.hasError()).isTrue();
-        assertThat(response.getBody()).isNull();
-        assertThat(response.getError().getErrorType()).isEqualTo(ErrorType.PIIS_406);
-        assertThat(response.getError().getTppMessage().getMessageErrorCode()).isEqualTo(MessageErrorCode.SERVICE_NOT_SUPPORTED);
+        verify(xs2aEventService, times(1)).recordTppRequest(argumentCaptor.capture(), any());
+        assertThat(argumentCaptor.getValue()).isEqualTo(EventType.FUNDS_CONFIRMATION_REQUEST_RECEIVED);
     }
 
     private FundsConfirmationRequest buildFundsConfirmationRequest(AccountReference accountReference, String consentId) {

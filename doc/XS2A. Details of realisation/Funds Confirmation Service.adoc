@@ -14,13 +14,14 @@ The overall confirmation of funds service is separated in two phases:
 
 The first part is not mandated to be offered by the XS2A interface, since this could also be an online banking function or even a paper based consent process.
 
-Parameter *"piisConsentSupported"* in the ASPSP-Profile defines which model of PIIS Consent ASPSP supports:
+* Parameter *"piisConsentSupported"* in the ASPSP-Profile defines which model of PIIS Consent ASPSP supports:
 
-* *NOT_SUPPORTED*;
+** *NOT_SUPPORTED* (No need to create PIIS consent in CMS for availability of funds check,
+Confirmation of Funds request is being passed to SPI level as is (no consent validation is performed by XS2A) and ASPSP is responsible for proper handling of such a request);
 
-* *TPP_CONSENT_SUPPORTED* (Establish PIIS Consent through XS2A interface);
+** *TPP_CONSENT_SUPPORTED* (Establish PIIS Consent through XS2A interface);
 
-* *ASPSP_CONSENT_SUPPORTED* (ASPSP stores PIIS consent in CMS and Funds Confirmation request is validated according to this consent);
+** *ASPSP_CONSENT_SUPPORTED* (ASPSP creates PIIS consent in CMS and Confirmation of Funds request is validated according to this consent);
 
 * If TPP has no Valid PIIS Consent and tries to request Funds Confirmation, then response contains *HTTP code  400 "NO_PIIS_ACTIVATION"*;
 * When parameter *"piisConsentSupported"* in the ASPSP-Profile set to *ASPSP_CONSENT_SUPPORTED* and PIIS Consent is stored in CMS without TPP-Authorisation-Number,
