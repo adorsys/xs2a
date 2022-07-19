@@ -102,14 +102,10 @@ public class FundsConfirmationService {
         xs2aEventService.recordTppRequest(EventType.FUNDS_CONFIRMATION_REQUEST_RECEIVED, request);
 
         PiisConsent consent = null;
-        String consentId;
+        String consentId = null;
         PiisConsentSupported piisConsentSupported = profileService.getPiisConsentSupported();
 
         switch(piisConsentSupported) {
-            case NOT_SUPPORTED:
-                return ResponseObject.<FundsConfirmationResponse>builder()
-                           .fail(ErrorType.PIIS_406, of(MessageErrorCode.SERVICE_NOT_SUPPORTED))
-                           .build();
 
             case ASPSP_CONSENT_SUPPORTED:
                 PiisConsentValidationResult validationResult = validateAccountReferenceAndConsentId(request);
@@ -148,7 +144,6 @@ public class FundsConfirmationService {
                 }
                 break;
             default:
-                throw new IllegalArgumentException("Unknown piisConsentSupported type: " + piisConsentSupported);
         }
 
         SpiAspspConsentDataProvider aspspConsentDataProvider = null;

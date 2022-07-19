@@ -8,6 +8,8 @@
 
 * Changed response body for Get transactions list request
 
+* Changed logic for Confirmation of Funds requests
+
 == Bumped dependency versions
 
 Versions of dependencies were updated:
@@ -29,5 +31,11 @@ From this release, the application uses OpenAPI 3.0 in XS2A, ASPSP Profile and C
 
 == Changed response body for Get transactions list request
 
-From now on, response body contains `transactions` object with empty transaction lists for requested `transactionStatus`
+From now on, response body contains `transactions` object with empty transaction lists for requested `bookingStatus`
 in case of non found transactions for the requested period.
+
+== Changed logic for Confirmation of Funds requests
+
+From now on Confirmation of Funds requests are being passed to SPI level as is in case of
+`"piisConsentSupported": "NOT_SUPPORTED"` in ASPSP profile. In this case ASPSP is responsible for
+proper handling of such a request and no consent validation is performed by XS2A.

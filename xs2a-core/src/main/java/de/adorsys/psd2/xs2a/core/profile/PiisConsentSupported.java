@@ -19,5 +19,16 @@
 package de.adorsys.psd2.xs2a.core.profile;
 
 public enum PiisConsentSupported {
-    NOT_SUPPORTED, TPP_CONSENT_SUPPORTED, ASPSP_CONSENT_SUPPORTED
+    /**
+     * - NOT_SUPPORTED (by default) means that there is no need to create PIIS consent in CMS for availability of funds check,
+     * Confirmation of Funds request is being passed to SPI level as is and ASPSP is responsible for proper handling of
+     * such a request(no consent validation is performed by XS2A);
+     * <p>
+     * - TPP_CONSENT_SUPPORTED Establish PIIS Consent through XS2A interface;
+     * <p>
+     * - ASPSP_CONSENT_SUPPORTED means that ASPSP creates PIIS consent in CMS and Confirmation of Funds request is validated according to this consent
+     */
+    NOT_SUPPORTED,
+    TPP_CONSENT_SUPPORTED,
+    ASPSP_CONSENT_SUPPORTED
 }
