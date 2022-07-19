@@ -1,8 +1,7 @@
 package de.adorsys.psd2.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import org.springframework.validation.annotation.Validated;
 
 import javax.validation.constraints.NotNull;
@@ -12,9 +11,10 @@ import java.util.Objects;
 /**
  * Structured remittance information.
  */
-@ApiModel(description = "Structured remittance information. ")
+@Schema(description = "Structured remittance information. ")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2021-11-05T12:22:49.487689+02:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-05-06T13:00:42.214155+03:00[Europe/Kiev]")
+
 
 public class RemittanceInformationStructured   {
   @JsonProperty("reference")
@@ -34,14 +34,11 @@ public class RemittanceInformationStructured   {
   /**
    * Get reference
    * @return reference
-  **/
-  @ApiModelProperty(required = true, value = "")
-  @NotNull
+   **/
+  @Schema(required = true, description = "")
+      @NotNull
 
-@Size(max=35)
-
-  @JsonProperty("reference")
-  public String getReference() {
+  @Size(max=35)   public String getReference() {
     return reference;
   }
 
@@ -57,13 +54,10 @@ public class RemittanceInformationStructured   {
   /**
    * Get referenceType
    * @return referenceType
-  **/
-  @ApiModelProperty(value = "")
+   **/
+  @Schema(description = "")
 
-@Size(max=35)
-
-  @JsonProperty("referenceType")
-  public String getReferenceType() {
+  @Size(max=35)   public String getReferenceType() {
     return referenceType;
   }
 
@@ -79,13 +73,10 @@ public class RemittanceInformationStructured   {
   /**
    * Get referenceIssuer
    * @return referenceIssuer
-  **/
-  @ApiModelProperty(value = "")
+   **/
+  @Schema(description = "")
 
-@Size(max=35)
-
-  @JsonProperty("referenceIssuer")
-  public String getReferenceIssuer() {
+  @Size(max=35)   public String getReferenceIssuer() {
     return referenceIssuer;
   }
 
@@ -101,10 +92,11 @@ public class RemittanceInformationStructured   {
     }
     if (o == null || getClass() != o.getClass()) {
       return false;
-}    RemittanceInformationStructured remittanceInformationStructured = (RemittanceInformationStructured) o;
+    }
+    RemittanceInformationStructured remittanceInformationStructured = (RemittanceInformationStructured) o;
     return Objects.equals(this.reference, remittanceInformationStructured.reference) &&
-    Objects.equals(this.referenceType, remittanceInformationStructured.referenceType) &&
-    Objects.equals(this.referenceIssuer, remittanceInformationStructured.referenceIssuer);
+        Objects.equals(this.referenceType, remittanceInformationStructured.referenceType) &&
+        Objects.equals(this.referenceIssuer, remittanceInformationStructured.referenceIssuer);
   }
 
   @Override
@@ -135,4 +127,3 @@ public class RemittanceInformationStructured   {
     return o.toString().replace("\n", "\n    ");
   }
 }
-

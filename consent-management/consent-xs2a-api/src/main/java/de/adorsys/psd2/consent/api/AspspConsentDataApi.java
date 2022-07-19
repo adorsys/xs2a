@@ -19,50 +19,54 @@
 package de.adorsys.psd2.consent.api;
 
 import de.adorsys.psd2.consent.api.config.InternalCmsXs2aApiTagName;
-import io.swagger.annotations.*;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RequestMapping(path = "api/v1/aspsp-consent-data/consents/{consent-id}")
-@Api(value = "api/v1/aspsp-consent-data", tags = InternalCmsXs2aApiTagName.ASPSP_CONSENT_DATA)
+@Tag(name = InternalCmsXs2aApiTagName.ASPSP_CONSENT_DATA, description = "Provides access to consent management system for AspspDataConsent")
 public interface AspspConsentDataApi {
 
     @GetMapping
-    @ApiOperation(value = "Get aspsp consent data identified by given consent id / payment id.")
+    @Operation(description = "Get ASPSP consent data identified by given consent ID / payment ID")
     @ApiResponses(value = {
-        @ApiResponse(code = 200, message = "OK"),
-        @ApiResponse(code = 404, message = "Not Found")})
+        @ApiResponse(responseCode = "200", description = "OK"),
+        @ApiResponse(responseCode = "404", description = "Not Found")})
     ResponseEntity<CmsAspspConsentDataBase64> getAspspConsentData(
-        @ApiParam(
+        @Parameter(
             name = "consent-id",
-            value = "The account consent identification assigned to the created account consent / payment identification assigned to the created payment.",
+            description = "The account consent identification assigned to the created account consent / payment identification assigned to the created payment",
             example = "CxymMkwtykFtTeQuH1jrcoOyzcqCcwNCt5193Gfn33mqqcAy_xw2KPwMd5y6Xxe1EwE0BTNRHeyM0FI90wh0hA==_=_bS6p6XvTWI",
             required = true)
         @PathVariable("consent-id") String encryptedConsentId);
 
     @PutMapping
-    @ApiOperation(value = "Update aspsp consent data identified by given consent id / payment id.")
+    @Operation(description = "Update ASPSP consent data identified by given consent ID / payment ID")
     @ApiResponses(value = {
-        @ApiResponse(code = 200, message = "OK"),
-        @ApiResponse(code = 404, message = "Not Found")})
+        @ApiResponse(responseCode = "200", description = "OK"),
+        @ApiResponse(responseCode = "404", description = "Not Found")})
     ResponseEntity<Boolean> updateAspspConsentData(
-        @ApiParam(
+        @Parameter(
             name = "consent-id",
-            value = "The account consent identification assigned to the created account consent / payment identification assigned to the created payment.",
+            description = "The account consent identification assigned to the created account consent / payment identification assigned to the created payment",
             example = "CxymMkwtykFtTeQuH1jrcoOyzcqCcwNCt5193Gfn33mqqcAy_xw2KPwMd5y6Xxe1EwE0BTNRHeyM0FI90wh0hA==_=_bS6p6XvTWI",
             required = true)
         @PathVariable("consent-id") String encryptedConsentId,
         @RequestBody CmsAspspConsentDataBase64 request);
 
     @DeleteMapping
-    @ApiOperation(value = "Delete aspsp consent data identified by given consent id / payment id.")
+    @Operation(description = "Delete ASPSP consent data identified by given consent ID / payment ID")
     @ApiResponses(value = {
-        @ApiResponse(code = 204, message = "No Content"),
-        @ApiResponse(code = 404, message = "Not Found")})
+        @ApiResponse(responseCode = "204", description = "No Content"),
+        @ApiResponse(responseCode = "404", description = "Not Found")})
     ResponseEntity<Boolean> deleteAspspConsentData(
-        @ApiParam(
+        @Parameter(
             name = "consent-id",
-            value = "The account consent identification assigned to the created account consent / payment identification assigned to the created payment.",
+            description = "The account consent identification assigned to the created account consent / payment identification assigned to the created payment",
             example = "CxymMkwtykFtTeQuH1jrcoOyzcqCcwNCt5193Gfn33mqqcAy_xw2KPwMd5y6Xxe1EwE0BTNRHeyM0FI90wh0hA==_=_bS6p6XvTWI",
             required = true)
         @PathVariable("consent-id") String encryptedConsentId);

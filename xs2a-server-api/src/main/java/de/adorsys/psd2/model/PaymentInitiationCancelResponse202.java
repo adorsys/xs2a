@@ -1,8 +1,7 @@
 package de.adorsys.psd2.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import org.springframework.validation.annotation.Validated;
 
 import javax.validation.Valid;
@@ -16,9 +15,10 @@ import java.util.Objects;
 /**
  * Body of the response for a successful cancel payment request.
  */
-@ApiModel(description = "Body of the response for a successful cancel payment request.")
+@Schema(description = "Body of the response for a successful cancel payment request.")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2021-11-05T12:22:49.487689+02:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-05-06T13:00:42.214155+03:00[Europe/Kiev]")
+
 
 public class PaymentInitiationCancelResponse202   {
   @JsonProperty("transactionStatus")
@@ -54,15 +54,12 @@ public class PaymentInitiationCancelResponse202   {
   /**
    * Get transactionStatus
    * @return transactionStatus
-  **/
-  @ApiModelProperty(required = true, value = "")
-  @NotNull
+   **/
+  @Schema(required = true, description = "")
+      @NotNull
 
-  @Valid
-
-
-  @JsonProperty("transactionStatus")
-  public TransactionStatus getTransactionStatus() {
+    @Valid
+    public TransactionStatus getTransactionStatus() {
     return transactionStatus;
   }
 
@@ -78,14 +75,11 @@ public class PaymentInitiationCancelResponse202   {
   /**
    * Get scaMethods
    * @return scaMethods
-  **/
-  @ApiModelProperty(value = "")
+   **/
+  @Schema(description = "")
 
-  @Valid
-
-
-  @JsonProperty("scaMethods")
-  public ScaMethods getScaMethods() {
+    @Valid
+    public ScaMethods getScaMethods() {
     return scaMethods;
   }
 
@@ -101,14 +95,11 @@ public class PaymentInitiationCancelResponse202   {
   /**
    * Get chosenScaMethod
    * @return chosenScaMethod
-  **/
-  @ApiModelProperty(value = "")
+   **/
+  @Schema(description = "")
 
-  @Valid
-
-
-  @JsonProperty("chosenScaMethod")
-  public ChosenScaMethod getChosenScaMethod() {
+    @Valid
+    public ChosenScaMethod getChosenScaMethod() {
     return chosenScaMethod;
   }
 
@@ -124,14 +115,11 @@ public class PaymentInitiationCancelResponse202   {
   /**
    * Get challengeData
    * @return challengeData
-  **/
-  @ApiModelProperty(value = "")
+   **/
+  @Schema(description = "")
 
-  @Valid
-
-
-  @JsonProperty("challengeData")
-  public ChallengeData getChallengeData() {
+    @Valid
+    public ChallengeData getChallengeData() {
     return challengeData;
   }
 
@@ -147,18 +135,15 @@ public class PaymentInitiationCancelResponse202   {
   /**
    * Get _links
    * @return _links
-  **/
-  @ApiModelProperty(value = "")
+   **/
+  @Schema(description = "")
 
-  @Valid
-
-
-  @JsonProperty("_links")
-  public Map getLinks() {
+    @Valid
+    public Map getLinks() {
     return _links;
   }
 
-  public void setLinks(Map _links) {
+  public void setLinks(LinksPaymentInitiationCancel _links) {
     this._links = _links;
   }
 
@@ -178,14 +163,10 @@ public class PaymentInitiationCancelResponse202   {
   /**
    * Get tppMessages
    * @return tppMessages
-  **/
-  @ApiModelProperty(value = "")
-
-  @Valid
-
-
-  @JsonProperty("tppMessages")
-  public List<TppMessageGeneric> getTppMessages() {
+   **/
+  @Schema(description = "")
+      @Valid
+    public List<TppMessageGeneric> getTppMessages() {
     return tppMessages;
   }
 
@@ -201,14 +182,11 @@ public class PaymentInitiationCancelResponse202   {
   /**
    * Get scaStatus
    * @return scaStatus
-  **/
-  @ApiModelProperty(value = "")
+   **/
+  @Schema(description = "")
 
-  @Valid
-
-
-  @JsonProperty("scaStatus")
-  public ScaStatus getScaStatus() {
+    @Valid
+    public ScaStatus getScaStatus() {
     return scaStatus;
   }
 
@@ -222,15 +200,12 @@ public class PaymentInitiationCancelResponse202   {
   }
 
   /**
-   * Get psuMessage
+   * Text to be displayed to the PSU.
    * @return psuMessage
-  **/
-  @ApiModelProperty(value = "")
+   **/
+  @Schema(description = "Text to be displayed to the PSU.")
 
-@Size(max=500)
-
-  @JsonProperty("psuMessage")
-  public String getPsuMessage() {
+  @Size(max=500)   public String getPsuMessage() {
     return psuMessage;
   }
 
@@ -246,15 +221,16 @@ public class PaymentInitiationCancelResponse202   {
     }
     if (o == null || getClass() != o.getClass()) {
       return false;
-}    PaymentInitiationCancelResponse202 paymentInitiationCancelResponse202 = (PaymentInitiationCancelResponse202) o;
+    }
+    PaymentInitiationCancelResponse202 paymentInitiationCancelResponse202 = (PaymentInitiationCancelResponse202) o;
     return Objects.equals(this.transactionStatus, paymentInitiationCancelResponse202.transactionStatus) &&
-    Objects.equals(this.scaMethods, paymentInitiationCancelResponse202.scaMethods) &&
-    Objects.equals(this.chosenScaMethod, paymentInitiationCancelResponse202.chosenScaMethod) &&
-    Objects.equals(this.challengeData, paymentInitiationCancelResponse202.challengeData) &&
-    Objects.equals(this._links, paymentInitiationCancelResponse202._links) &&
-    Objects.equals(this.tppMessages, paymentInitiationCancelResponse202.tppMessages) &&
-    Objects.equals(this.scaStatus, paymentInitiationCancelResponse202.scaStatus) &&
-    Objects.equals(this.psuMessage, paymentInitiationCancelResponse202.psuMessage);
+        Objects.equals(this.scaMethods, paymentInitiationCancelResponse202.scaMethods) &&
+        Objects.equals(this.chosenScaMethod, paymentInitiationCancelResponse202.chosenScaMethod) &&
+        Objects.equals(this.challengeData, paymentInitiationCancelResponse202.challengeData) &&
+        Objects.equals(this._links, paymentInitiationCancelResponse202._links) &&
+        Objects.equals(this.tppMessages, paymentInitiationCancelResponse202.tppMessages) &&
+        Objects.equals(this.scaStatus, paymentInitiationCancelResponse202.scaStatus) &&
+        Objects.equals(this.psuMessage, paymentInitiationCancelResponse202.psuMessage);
   }
 
   @Override
@@ -290,4 +266,3 @@ public class PaymentInitiationCancelResponse202   {
     return o.toString().replace("\n", "\n    ");
   }
 }
-

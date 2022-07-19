@@ -2,15 +2,32 @@
 
 == Table of Contents
 
-* Bumped dependency version
+* Bumped dependency versions
+
+* Migrated project to OpenAPI 3.0
 
 * Changed response body for Get transactions list request
 
-== Bumped dependency version
+== Bumped dependency versions
 
-Version of gson was bumped up to 2.8.9.
+Versions of dependencies were updated:
+
+- spring was bumped to 5.3.19;
+- spring-boot - to 2.7.0;
+- jackson - to 2.3.12;
+- byte-buddy - to 1.12.10;
+- swagger-annotations - to 2.2.0;
+- liquibase - to 4.9.0;
+- slf4j-api - to 1.7.36;
+- hibernate - to 5.6.8.Final;
+- hibernate-validator - to 6.0.13.Final;
+- gson - to 2.8.9.
+
+== Migrated project to OpenAPI 3.0
+
+From this release, the application uses OpenAPI 3.0 in XS2A, ASPSP Profile and CMS.
 
 == Changed response body for Get transactions list request
 
 From now on, response body contains `transactions` object with empty transaction lists for requested `transactionStatus`
-in case of non found transactions for the requested period
+in case of non found transactions for the requested period.

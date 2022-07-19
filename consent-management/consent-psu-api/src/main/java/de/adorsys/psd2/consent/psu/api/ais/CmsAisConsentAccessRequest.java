@@ -19,7 +19,7 @@
 package de.adorsys.psd2.consent.psu.api.ais;
 
 import de.adorsys.psd2.consent.api.ais.AisAccountAccess;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Value;
 
 import java.time.LocalDate;
@@ -27,12 +27,12 @@ import java.time.LocalDate;
 @Value
 public class CmsAisConsentAccessRequest {
     private AisAccountAccess accountAccess;
-    @ApiModelProperty(dataType = "Date", example = "2019-12-31")
+    @Schema(type = "Date", example = "2019-12-31")
     private LocalDate validUntil;
-    @ApiModelProperty(example = "4")
+    @Schema(example = "4")
     private int frequencyPerDay;
-    @ApiModelProperty(example = "true")
+    @Schema(example = "true")
     private Boolean combinedServiceIndicator;
-    @ApiModelProperty(example = "true")
+    @Schema(example = "true")
     private Boolean recurringIndicator;
 }

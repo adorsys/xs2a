@@ -18,8 +18,7 @@
 
 package de.adorsys.psd2.consent.domain.payment;
 
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -27,7 +26,7 @@ import javax.persistence.*;
 
 @Data
 @Entity(name = "pis_address")
-@ApiModel(description = "Pis address", value = "Pis address")
+@Schema(description = "Pis address", name = "PIS address")
 @NoArgsConstructor
 public class PisAddress {
     @Id
@@ -36,20 +35,20 @@ public class PisAddress {
     @SequenceGenerator(name = "pis_address_generator", sequenceName = "pis_address_id_seq", allocationSize = 1)
     private Long id;
 
-    @ApiModelProperty(value = "Street", example = "Herrnstraße")
+    @Schema(description = "Street", example = "Herrnstraße")
     private String street;
 
     @Column(name = "building_number")
-    @ApiModelProperty(value = "Building number", example = "123-34")
+    @Schema(description = "Building number", example = "123-34")
     private String buildingNumber;
 
-    @ApiModelProperty(value = "City", example = "Nürnberg")
+    @Schema(description = "City", example = "Nürnberg")
     private String city;
 
     @Column(name = "postal_code")
-    @ApiModelProperty(value = "Postal code", example = "90431")
+    @Schema(description = "Postal code", example = "90431")
     private String postalCode;
 
-    @ApiModelProperty(value = "Country")
+    @Schema(description = "Country")
     private String country;
 }

@@ -26,8 +26,9 @@ management:
   endpoints:
     web:
       cors:
-        allow-credentials: true
-        allowed-origins: "*"
+        allow-credentials: false
         allowed-headers: Access-Control-Allow-Headers, Content-Type, Origin, X-Requested-With, Cookie
         allowed-methods: GET,POST,PUT,DELETE,OPTIONS,PATCH
         max-age: 3600
+        allowed-origin-patterns: "*"
+#TODO

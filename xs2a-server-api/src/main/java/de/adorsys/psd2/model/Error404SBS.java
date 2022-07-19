@@ -1,8 +1,7 @@
 package de.adorsys.psd2.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import org.springframework.validation.annotation.Validated;
 
 import javax.validation.Valid;
@@ -10,15 +9,15 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 
 /**
  * Standardised definition of reporting error information according to [RFC7807]  in case of a HTTP error code 404 for signing baskets.
  */
-@ApiModel(description = "Standardised definition of reporting error information according to [RFC7807]  in case of a HTTP error code 404 for signing baskets. ")
+@Schema(description = "Standardised definition of reporting error information according to [RFC7807]  in case of a HTTP error code 404 for signing baskets. ")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2021-11-05T12:22:49.487689+02:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-05-06T13:00:42.214155+03:00[Europe/Kiev]")
+
 
 public class Error404SBS   {
   @JsonProperty("type")
@@ -38,7 +37,7 @@ public class Error404SBS   {
   private List<Error404SBSAdditionalErrors> additionalErrors = null;
 
   @JsonProperty("_links")
-  private Map _links = null;
+  private LinksAll _links = null;
 
   public Error404SBS type(String type) {
     this.type = type;
@@ -48,14 +47,11 @@ public class Error404SBS   {
   /**
    * A URI reference [RFC3986] that identifies the problem type.  Remark For Future: These URI will be provided by NextGenPSD2 in future.
    * @return type
-  **/
-  @ApiModelProperty(required = true, value = "A URI reference [RFC3986] that identifies the problem type.  Remark For Future: These URI will be provided by NextGenPSD2 in future. ")
-  @NotNull
+   **/
+  @Schema(required = true, description = "A URI reference [RFC3986] that identifies the problem type.  Remark For Future: These URI will be provided by NextGenPSD2 in future. ")
+      @NotNull
 
-@Size(max=70)
-
-  @JsonProperty("type")
-  public String getType() {
+  @Size(max=70)   public String getType() {
     return type;
   }
 
@@ -71,13 +67,10 @@ public class Error404SBS   {
   /**
    * Short human readable description of error type.  Could be in local language.  To be provided by ASPSPs.
    * @return title
-  **/
-  @ApiModelProperty(value = "Short human readable description of error type.  Could be in local language.  To be provided by ASPSPs. ")
+   **/
+  @Schema(description = "Short human readable description of error type.  Could be in local language.  To be provided by ASPSPs. ")
 
-@Size(max=70)
-
-  @JsonProperty("title")
-  public String getTitle() {
+  @Size(max=70)   public String getTitle() {
     return title;
   }
 
@@ -93,13 +86,10 @@ public class Error404SBS   {
   /**
    * Detailed human readable text specific to this instance of the error.  XPath might be used to point to the issue generating the error in addition. Remark for Future: In future, a dedicated field might be introduced for the XPath.
    * @return detail
-  **/
-  @ApiModelProperty(value = "Detailed human readable text specific to this instance of the error.  XPath might be used to point to the issue generating the error in addition. Remark for Future: In future, a dedicated field might be introduced for the XPath. ")
+   **/
+  @Schema(description = "Detailed human readable text specific to this instance of the error.  XPath might be used to point to the issue generating the error in addition. Remark for Future: In future, a dedicated field might be introduced for the XPath. ")
 
-@Size(max=500)
-
-  @JsonProperty("detail")
-  public String getDetail() {
+  @Size(max=500)   public String getDetail() {
     return detail;
   }
 
@@ -113,16 +103,13 @@ public class Error404SBS   {
   }
 
   /**
-   * Get code
+   * Message codes defined for signing baskets for HTTP Error code 404 (NOT FOUND).
    * @return code
-  **/
-  @ApiModelProperty(required = true, value = "")
-  @NotNull
+   **/
+  @Schema(required = true, description = "Message codes defined for signing baskets for HTTP Error code 404 (NOT FOUND).")
+      @NotNull
 
-
-
-  @JsonProperty("code")
-  public String getCode() {
+    public String getCode() {
     return code;
   }
 
@@ -146,14 +133,10 @@ public class Error404SBS   {
   /**
    * Array of Error Information Blocks.  Might be used if more than one error is to be communicated
    * @return additionalErrors
-  **/
-  @ApiModelProperty(value = "Array of Error Information Blocks.  Might be used if more than one error is to be communicated ")
-
-  @Valid
-
-
-  @JsonProperty("additionalErrors")
-  public List<Error404SBSAdditionalErrors> getAdditionalErrors() {
+   **/
+  @Schema(description = "Array of Error Information Blocks.  Might be used if more than one error is to be communicated ")
+      @Valid
+    public List<Error404SBSAdditionalErrors> getAdditionalErrors() {
     return additionalErrors;
   }
 
@@ -161,7 +144,7 @@ public class Error404SBS   {
     this.additionalErrors = additionalErrors;
   }
 
-  public Error404SBS _links(Map _links) {
+  public Error404SBS _links(LinksAll _links) {
     this._links = _links;
     return this;
   }
@@ -169,18 +152,15 @@ public class Error404SBS   {
   /**
    * Get _links
    * @return _links
-  **/
-  @ApiModelProperty(value = "")
+   **/
+  @Schema(description = "")
 
-  @Valid
-
-
-  @JsonProperty("_links")
-  public Map getLinks() {
+    @Valid
+    public LinksAll getLinks() {
     return _links;
   }
 
-  public void setLinks(Map _links) {
+  public void setLinks(LinksAll _links) {
     this._links = _links;
   }
 
@@ -192,13 +172,14 @@ public class Error404SBS   {
     }
     if (o == null || getClass() != o.getClass()) {
       return false;
-}    Error404SBS error404SBS = (Error404SBS) o;
+    }
+    Error404SBS error404SBS = (Error404SBS) o;
     return Objects.equals(this.type, error404SBS.type) &&
-    Objects.equals(this.title, error404SBS.title) &&
-    Objects.equals(this.detail, error404SBS.detail) &&
-    Objects.equals(this.code, error404SBS.code) &&
-    Objects.equals(this.additionalErrors, error404SBS.additionalErrors) &&
-    Objects.equals(this._links, error404SBS._links);
+        Objects.equals(this.title, error404SBS.title) &&
+        Objects.equals(this.detail, error404SBS.detail) &&
+        Objects.equals(this.code, error404SBS.code) &&
+        Objects.equals(this.additionalErrors, error404SBS.additionalErrors) &&
+        Objects.equals(this._links, error404SBS._links);
   }
 
   @Override
@@ -232,4 +213,3 @@ public class Error404SBS   {
     return o.toString().replace("\n", "\n    ");
   }
 }
-

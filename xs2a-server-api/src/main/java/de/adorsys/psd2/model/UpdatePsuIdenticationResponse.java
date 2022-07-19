@@ -1,8 +1,7 @@
 package de.adorsys.psd2.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import org.springframework.validation.annotation.Validated;
 
 import javax.validation.Valid;
@@ -14,11 +13,12 @@ import java.util.Objects;
 /**
  * Body of the JSON response for a successful update PSU identification request.
  */
-@ApiModel(description = "Body of the JSON response for a successful update PSU identification request.")
+@Schema(description = "Body of the JSON response for a successful update PSU identification request.")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2021-11-05T12:22:49.487689+02:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-05-06T13:00:42.214155+03:00[Europe/Kiev]")
 
-public class UpdatePsuIdenticationResponse   {
+
+public class UpdatePsuIdenticationResponse {
   @JsonProperty("transactionFees")
   private Amount transactionFees = null;
 
@@ -51,14 +51,11 @@ public class UpdatePsuIdenticationResponse   {
   /**
    * Get transactionFees
    * @return transactionFees
-  **/
-  @ApiModelProperty(value = "")
+   **/
+  @Schema(description = "")
 
-  @Valid
-
-
-  @JsonProperty("transactionFees")
-  public Amount getTransactionFees() {
+    @Valid
+    public Amount getTransactionFees() {
     return transactionFees;
   }
 
@@ -74,14 +71,11 @@ public class UpdatePsuIdenticationResponse   {
   /**
    * Get currencyConversionFees
    * @return currencyConversionFees
-  **/
-  @ApiModelProperty(value = "")
+   **/
+  @Schema(description = "")
 
-  @Valid
-
-
-  @JsonProperty("currencyConversionFees")
-  public Amount getCurrencyConversionFees() {
+    @Valid
+    public Amount getCurrencyConversionFees() {
     return currencyConversionFees;
   }
 
@@ -97,14 +91,11 @@ public class UpdatePsuIdenticationResponse   {
   /**
    * Get estimatedTotalAmount
    * @return estimatedTotalAmount
-  **/
-  @ApiModelProperty(value = "")
+   **/
+  @Schema(description = "")
 
-  @Valid
-
-
-  @JsonProperty("estimatedTotalAmount")
-  public Amount getEstimatedTotalAmount() {
+    @Valid
+    public Amount getEstimatedTotalAmount() {
     return estimatedTotalAmount;
   }
 
@@ -120,14 +111,11 @@ public class UpdatePsuIdenticationResponse   {
   /**
    * Get estimatedInterbankSettlementAmount
    * @return estimatedInterbankSettlementAmount
-  **/
-  @ApiModelProperty(value = "")
+   **/
+  @Schema(description = "")
 
-  @Valid
-
-
-  @JsonProperty("estimatedInterbankSettlementAmount")
-  public Amount getEstimatedInterbankSettlementAmount() {
+    @Valid
+    public Amount getEstimatedInterbankSettlementAmount() {
     return estimatedInterbankSettlementAmount;
   }
 
@@ -143,14 +131,11 @@ public class UpdatePsuIdenticationResponse   {
   /**
    * Get scaMethods
    * @return scaMethods
-  **/
-  @ApiModelProperty(value = "")
+   **/
+  @Schema(description = "")
 
-  @Valid
-
-
-  @JsonProperty("scaMethods")
-  public ScaMethods getScaMethods() {
+    @Valid
+    public ScaMethods getScaMethods() {
     return scaMethods;
   }
 
@@ -158,7 +143,7 @@ public class UpdatePsuIdenticationResponse   {
     this.scaMethods = scaMethods;
   }
 
-  public UpdatePsuIdenticationResponse _links(Map _links) {
+  public UpdatePsuIdenticationResponse _links(LinksUpdatePsuIdentification _links) {
     this._links = _links;
     return this;
   }
@@ -166,15 +151,12 @@ public class UpdatePsuIdenticationResponse   {
   /**
    * Get _links
    * @return _links
-  **/
-  @ApiModelProperty(required = true, value = "")
-  @NotNull
+   **/
+  @Schema(required = true, description = "")
+      @NotNull
 
-  @Valid
-
-
-  @JsonProperty("_links")
-  public Map getLinks() {
+    @Valid
+    public Map getLinks() {
     return _links;
   }
 
@@ -190,15 +172,12 @@ public class UpdatePsuIdenticationResponse   {
   /**
    * Get scaStatus
    * @return scaStatus
-  **/
-  @ApiModelProperty(required = true, value = "")
-  @NotNull
+   **/
+  @Schema(required = true, description = "")
+      @NotNull
 
-  @Valid
-
-
-  @JsonProperty("scaStatus")
-  public ScaStatus getScaStatus() {
+    @Valid
+    public ScaStatus getScaStatus() {
     return scaStatus;
   }
 
@@ -212,15 +191,12 @@ public class UpdatePsuIdenticationResponse   {
   }
 
   /**
-   * Get psuMessage
+   * Text to be displayed to the PSU.
    * @return psuMessage
-  **/
-  @ApiModelProperty(value = "")
+   **/
+  @Schema(description = "Text to be displayed to the PSU.")
 
-@Size(max=500)
-
-  @JsonProperty("psuMessage")
-  public String getPsuMessage() {
+  @Size(max=500)   public String getPsuMessage() {
     return psuMessage;
   }
 
@@ -236,15 +212,16 @@ public class UpdatePsuIdenticationResponse   {
     }
     if (o == null || getClass() != o.getClass()) {
       return false;
-}    UpdatePsuIdenticationResponse updatePsuIdenticationResponse = (UpdatePsuIdenticationResponse) o;
+    }
+    UpdatePsuIdenticationResponse updatePsuIdenticationResponse = (UpdatePsuIdenticationResponse) o;
     return Objects.equals(this.transactionFees, updatePsuIdenticationResponse.transactionFees) &&
-    Objects.equals(this.currencyConversionFees, updatePsuIdenticationResponse.currencyConversionFees) &&
-    Objects.equals(this.estimatedTotalAmount, updatePsuIdenticationResponse.estimatedTotalAmount) &&
-    Objects.equals(this.estimatedInterbankSettlementAmount, updatePsuIdenticationResponse.estimatedInterbankSettlementAmount) &&
-    Objects.equals(this.scaMethods, updatePsuIdenticationResponse.scaMethods) &&
-    Objects.equals(this._links, updatePsuIdenticationResponse._links) &&
-    Objects.equals(this.scaStatus, updatePsuIdenticationResponse.scaStatus) &&
-    Objects.equals(this.psuMessage, updatePsuIdenticationResponse.psuMessage);
+        Objects.equals(this.currencyConversionFees, updatePsuIdenticationResponse.currencyConversionFees) &&
+        Objects.equals(this.estimatedTotalAmount, updatePsuIdenticationResponse.estimatedTotalAmount) &&
+        Objects.equals(this.estimatedInterbankSettlementAmount, updatePsuIdenticationResponse.estimatedInterbankSettlementAmount) &&
+        Objects.equals(this.scaMethods, updatePsuIdenticationResponse.scaMethods) &&
+        Objects.equals(this._links, updatePsuIdenticationResponse._links) &&
+        Objects.equals(this.scaStatus, updatePsuIdenticationResponse.scaStatus) &&
+        Objects.equals(this.psuMessage, updatePsuIdenticationResponse.psuMessage);
   }
 
   @Override
@@ -280,4 +257,3 @@ public class UpdatePsuIdenticationResponse   {
     return o.toString().replace("\n", "\n    ");
   }
 }
-

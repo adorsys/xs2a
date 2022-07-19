@@ -1,6 +1,6 @@
 package de.adorsys.psd2.model;
 
-import io.swagger.annotations.ApiModel;
+import io.swagger.v3.oas.annotations.media.Schema;
 import org.springframework.validation.annotation.Validated;
 
 import java.util.ArrayList;
@@ -9,9 +9,10 @@ import java.util.Objects;
 /**
  * Array of structured remittance information.
  */
-@ApiModel(description = "Array of structured remittance information. ")
+@Schema(description = "Array of structured remittance information. ")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2021-11-05T12:22:49.487689+02:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-05-06T13:00:42.214155+03:00[Europe/Kiev]")
+
 
 public class RemittanceInformationStructuredArray extends ArrayList<RemittanceInformationStructured>  {
 
@@ -22,11 +23,7 @@ public class RemittanceInformationStructuredArray extends ArrayList<RemittanceIn
     }
     if (o == null || getClass() != o.getClass()) {
       return false;
-}
-    if (!super.equals(o)) {
-    return false;
     }
-
     return true;
   }
 
@@ -55,4 +52,3 @@ public class RemittanceInformationStructuredArray extends ArrayList<RemittanceIn
     return o.toString().replace("\n", "\n    ");
   }
 }
-

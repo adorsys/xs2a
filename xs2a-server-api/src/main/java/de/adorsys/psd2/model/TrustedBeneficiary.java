@@ -1,9 +1,9 @@
 package de.adorsys.psd2.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import org.springframework.validation.annotation.Validated;
+
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
@@ -13,9 +13,10 @@ import java.util.Objects;
 /**
  * Trusted Beneficiary
  */
-@ApiModel(description = "Trusted Beneficiary")
+@Schema(description = "Trusted Beneficiary")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2021-05-24T13:41:46.273636+03:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-05-06T12:59:08.054254+03:00[Europe/Kiev]")
+
 
 public class TrustedBeneficiary   {
   @JsonProperty("trustedBeneficiaryId")
@@ -48,16 +49,13 @@ public class TrustedBeneficiary   {
   }
 
   /**
-   * Get trustedBeneficiaryId
+   * Resource identification of the list entry.
    * @return trustedBeneficiaryId
-  **/
-  @ApiModelProperty(required = true, value = "")
-  @NotNull
+   **/
+  @Schema(example = "74a55404-4ad0-4432-bcf4-93fb94b81e94", required = true, description = "Resource identification of the list entry. ")
+      @NotNull
 
-@Pattern(regexp="[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}")
-
-  @JsonProperty("trustedBeneficiaryId")
-  public String getTrustedBeneficiaryId() {
+  @Pattern(regexp="[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}")   public String getTrustedBeneficiaryId() {
     return trustedBeneficiaryId;
   }
 
@@ -73,14 +71,11 @@ public class TrustedBeneficiary   {
   /**
    * Get debtorAccount
    * @return debtorAccount
-  **/
-  @ApiModelProperty(value = "")
+   **/
+  @Schema(description = "")
 
-  @Valid
-
-
-  @JsonProperty("debtorAccount")
-  public AccountReference getDebtorAccount() {
+    @Valid
+    public AccountReference getDebtorAccount() {
     return debtorAccount;
   }
 
@@ -96,15 +91,12 @@ public class TrustedBeneficiary   {
   /**
    * Get creditorAccount
    * @return creditorAccount
-  **/
-  @ApiModelProperty(required = true, value = "")
-  @NotNull
+   **/
+  @Schema(required = true, description = "")
+      @NotNull
 
-  @Valid
-
-
-  @JsonProperty("creditorAccount")
-  public AccountReference getCreditorAccount() {
+    @Valid
+    public AccountReference getCreditorAccount() {
     return creditorAccount;
   }
 
@@ -118,15 +110,12 @@ public class TrustedBeneficiary   {
   }
 
   /**
-   * Get creditorAgent
+   * BICFI
    * @return creditorAgent
-  **/
-  @ApiModelProperty(value = "")
+   **/
+  @Schema(example = "AAAADEBBXXX", description = "BICFI ")
 
-@Pattern(regexp="[A-Z]{6,6}[A-Z2-9][A-NP-Z0-9]([A-Z0-9]{3,3}){0,1}")
-
-  @JsonProperty("creditorAgent")
-  public String getCreditorAgent() {
+  @Pattern(regexp="[A-Z]{6,6}[A-Z2-9][A-NP-Z0-9]([A-Z0-9]{3,3}){0,1}")   public String getCreditorAgent() {
     return creditorAgent;
   }
 
@@ -140,16 +129,13 @@ public class TrustedBeneficiary   {
   }
 
   /**
-   * Get creditorName
+   * Creditor name.
    * @return creditorName
-  **/
-  @ApiModelProperty(required = true, value = "")
-  @NotNull
+   **/
+  @Schema(example = "Creditor Name", required = true, description = "Creditor name.")
+      @NotNull
 
-@Size(max=70)
-
-  @JsonProperty("creditorName")
-  public String getCreditorName() {
+  @Size(max=70)   public String getCreditorName() {
     return creditorName;
   }
 
@@ -163,15 +149,12 @@ public class TrustedBeneficiary   {
   }
 
   /**
-   * Get creditorAlias
+   * An alias for the creditor as defined by the PSU as an alias when displaying the list of trusted beneficiaries in online channels of the ASPSP.
    * @return creditorAlias
-  **/
-  @ApiModelProperty(value = "")
+   **/
+  @Schema(example = "Creditor Alias", description = "An alias for the creditor as defined by the PSU as an alias when displaying the list of trusted beneficiaries in online channels of the ASPSP.")
 
-@Size(max=70)
-
-  @JsonProperty("creditorAlias")
-  public String getCreditorAlias() {
+  @Size(max=70)   public String getCreditorAlias() {
     return creditorAlias;
   }
 
@@ -185,15 +168,12 @@ public class TrustedBeneficiary   {
   }
 
   /**
-   * Get creditorId
+   * Identification of Creditors, e.g. a SEPA Creditor ID.
    * @return creditorId
-  **/
-  @ApiModelProperty(value = "")
+   **/
+  @Schema(example = "Creditor Id 5678", description = "Identification of Creditors, e.g. a SEPA Creditor ID.")
 
-@Size(max=35)
-
-  @JsonProperty("creditorId")
-  public String getCreditorId() {
+  @Size(max=35)   public String getCreditorId() {
     return creditorId;
   }
 
@@ -209,14 +189,11 @@ public class TrustedBeneficiary   {
   /**
    * Get creditorAddress
    * @return creditorAddress
-  **/
-  @ApiModelProperty(value = "")
+   **/
+  @Schema(description = "")
 
-  @Valid
-
-
-  @JsonProperty("creditorAddress")
-  public Address getCreditorAddress() {
+    @Valid
+    public Address getCreditorAddress() {
     return creditorAddress;
   }
 
@@ -232,15 +209,16 @@ public class TrustedBeneficiary   {
     }
     if (o == null || getClass() != o.getClass()) {
       return false;
-}    TrustedBeneficiary trustedBeneficiary = (TrustedBeneficiary) o;
+    }
+    TrustedBeneficiary trustedBeneficiary = (TrustedBeneficiary) o;
     return Objects.equals(this.trustedBeneficiaryId, trustedBeneficiary.trustedBeneficiaryId) &&
-    Objects.equals(this.debtorAccount, trustedBeneficiary.debtorAccount) &&
-    Objects.equals(this.creditorAccount, trustedBeneficiary.creditorAccount) &&
-    Objects.equals(this.creditorAgent, trustedBeneficiary.creditorAgent) &&
-    Objects.equals(this.creditorName, trustedBeneficiary.creditorName) &&
-    Objects.equals(this.creditorAlias, trustedBeneficiary.creditorAlias) &&
-    Objects.equals(this.creditorId, trustedBeneficiary.creditorId) &&
-    Objects.equals(this.creditorAddress, trustedBeneficiary.creditorAddress);
+        Objects.equals(this.debtorAccount, trustedBeneficiary.debtorAccount) &&
+        Objects.equals(this.creditorAccount, trustedBeneficiary.creditorAccount) &&
+        Objects.equals(this.creditorAgent, trustedBeneficiary.creditorAgent) &&
+        Objects.equals(this.creditorName, trustedBeneficiary.creditorName) &&
+        Objects.equals(this.creditorAlias, trustedBeneficiary.creditorAlias) &&
+        Objects.equals(this.creditorId, trustedBeneficiary.creditorId) &&
+        Objects.equals(this.creditorAddress, trustedBeneficiary.creditorAddress);
   }
 
   @Override
@@ -276,4 +254,3 @@ public class TrustedBeneficiary   {
     return o.toString().replace("\n", "\n    ");
   }
 }
-

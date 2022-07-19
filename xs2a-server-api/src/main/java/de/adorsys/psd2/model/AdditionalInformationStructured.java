@@ -1,8 +1,7 @@
 package de.adorsys.psd2.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import org.springframework.validation.annotation.Validated;
 
 import javax.validation.Valid;
@@ -12,9 +11,10 @@ import java.util.Objects;
 /**
  * Is used if and only if the bookingStatus entry equals \&quot;information\&quot;.  Every active standing order related to the dedicated payment account result into one entry.
  */
-@ApiModel(description = "Is used if and only if the bookingStatus entry equals \"information\".  Every active standing order related to the dedicated payment account result into one entry. ")
+@Schema(description = "Is used if and only if the bookingStatus entry equals \"information\".  Every active standing order related to the dedicated payment account result into one entry. ")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2021-11-05T12:22:49.487689+02:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-05-06T13:00:42.214155+03:00[Europe/Kiev]")
+
 
 public class AdditionalInformationStructured   {
   @JsonProperty("standingOrderDetails")
@@ -28,15 +28,12 @@ public class AdditionalInformationStructured   {
   /**
    * Get standingOrderDetails
    * @return standingOrderDetails
-  **/
-  @ApiModelProperty(required = true, value = "")
-  @NotNull
+   **/
+  @Schema(required = true, description = "")
+      @NotNull
 
-  @Valid
-
-
-  @JsonProperty("standingOrderDetails")
-  public StandingOrderDetails getStandingOrderDetails() {
+    @Valid
+    public StandingOrderDetails getStandingOrderDetails() {
     return standingOrderDetails;
   }
 
@@ -52,7 +49,8 @@ public class AdditionalInformationStructured   {
     }
     if (o == null || getClass() != o.getClass()) {
       return false;
-}    AdditionalInformationStructured additionalInformationStructured = (AdditionalInformationStructured) o;
+    }
+    AdditionalInformationStructured additionalInformationStructured = (AdditionalInformationStructured) o;
     return Objects.equals(this.standingOrderDetails, additionalInformationStructured.standingOrderDetails);
   }
 
@@ -82,4 +80,3 @@ public class AdditionalInformationStructured   {
     return o.toString().replace("\n", "\n    ");
   }
 }
-

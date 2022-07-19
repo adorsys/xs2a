@@ -18,9 +18,9 @@
 
 package de.adorsys.psd2.consent.api;
 
-import io.swagger.annotations.ApiModel;
+import io.swagger.v3.oas.annotations.media.Schema;
 
-@ApiModel(description = "Type of the consent", value = "ConsentType")
+@Schema(description = "Type of the consent", name = "ConsentType")
 public enum ConsentType {
     AIS,
     PIS,

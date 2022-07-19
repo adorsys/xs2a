@@ -1,22 +1,21 @@
 package de.adorsys.psd2.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import org.springframework.validation.annotation.Validated;
 
 import javax.validation.Valid;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 
 /**
  * NextGenPSD2 specific definition of reporting error information in case of a HTTP error code 401.
  */
-@ApiModel(description = "NextGenPSD2 specific definition of reporting error information in case of a HTTP error code 401. ")
+@Schema(description = "NextGenPSD2 specific definition of reporting error information in case of a HTTP error code 401. ")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2021-11-05T12:22:49.487689+02:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-05-06T13:00:42.214155+03:00[Europe/Kiev]")
+
 
 public class Error401NGSBS   {
   @JsonProperty("tppMessages")
@@ -24,7 +23,7 @@ public class Error401NGSBS   {
   private List<TppMessage401SBS> tppMessages = null;
 
   @JsonProperty("_links")
-  private Map _links = null;
+  private LinksAll _links = null;
 
   public Error401NGSBS tppMessages(List<TppMessage401SBS> tppMessages) {
     this.tppMessages = tppMessages;
@@ -42,14 +41,10 @@ public class Error401NGSBS   {
   /**
    * Get tppMessages
    * @return tppMessages
-  **/
-  @ApiModelProperty(value = "")
-
-  @Valid
-
-
-  @JsonProperty("tppMessages")
-  public List<TppMessage401SBS> getTppMessages() {
+   **/
+  @Schema(description = "")
+      @Valid
+    public List<TppMessage401SBS> getTppMessages() {
     return tppMessages;
   }
 
@@ -57,7 +52,7 @@ public class Error401NGSBS   {
     this.tppMessages = tppMessages;
   }
 
-  public Error401NGSBS _links(Map _links) {
+  public Error401NGSBS _links(LinksAll _links) {
     this._links = _links;
     return this;
   }
@@ -65,18 +60,15 @@ public class Error401NGSBS   {
   /**
    * Get _links
    * @return _links
-  **/
-  @ApiModelProperty(value = "")
+   **/
+  @Schema(description = "")
 
-  @Valid
-
-
-  @JsonProperty("_links")
-  public Map getLinks() {
+    @Valid
+    public LinksAll getLinks() {
     return _links;
   }
 
-  public void setLinks(Map _links) {
+  public void setLinks(LinksAll _links) {
     this._links = _links;
   }
 
@@ -88,9 +80,10 @@ public class Error401NGSBS   {
     }
     if (o == null || getClass() != o.getClass()) {
       return false;
-}    Error401NGSBS error401NGSBS = (Error401NGSBS) o;
+    }
+    Error401NGSBS error401NGSBS = (Error401NGSBS) o;
     return Objects.equals(this.tppMessages, error401NGSBS.tppMessages) &&
-    Objects.equals(this._links, error401NGSBS._links);
+        Objects.equals(this._links, error401NGSBS._links);
   }
 
   @Override
@@ -120,4 +113,3 @@ public class Error401NGSBS   {
     return o.toString().replace("\n", "\n    ");
   }
 }
-

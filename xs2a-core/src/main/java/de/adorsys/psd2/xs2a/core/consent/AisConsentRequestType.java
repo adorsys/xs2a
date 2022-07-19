@@ -18,9 +18,9 @@
 
 package de.adorsys.psd2.xs2a.core.consent;
 
-import io.swagger.annotations.ApiModel;
+import io.swagger.v3.oas.annotations.media.Schema;
 
-@ApiModel(description = "Type of the ais consent request", value = "AisConsentRequestType")
+@Schema(description = "Type of the ais consent request")
 public enum AisConsentRequestType {
     GLOBAL,
     ALL_AVAILABLE_ACCOUNTS,

@@ -19,7 +19,12 @@
 package de.adorsys.psd2.consent.aspsp.api;
 
 import de.adorsys.psd2.consent.aspsp.api.config.CmsAspspApiTagName;
-import io.swagger.annotations.*;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -29,18 +34,18 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import static de.adorsys.psd2.consent.aspsp.api.config.CmsPsuApiDefaultValue.DEFAULT_SERVICE_INSTANCE_ID;
 
 @RequestMapping(path = "aspsp-api/v1/pis/transaction-status")
-@Api(value = "aspsp-api/v1/pis/transaction-status", tags = CmsAspspApiTagName.ASPSP_PIS_TRANSACTION_STATUS)
+@Tag(name = CmsAspspApiTagName.ASPSP_PIS_TRANSACTION_STATUS, description = "CMS-ASPSP PIS Transaction Controller")
 public interface CmsAspspPisTransactionApi {
 
     @PutMapping(path = "/{payment-id}/status/{status}")
-    @ApiOperation(value = "Updated transaction status by payment id")
+    @Operation(description = "Updated transaction status by payment ID")
     @ApiResponses(value = {
-        @ApiResponse(code = 200, message = "OK"),
-        @ApiResponse(code = 400, message = "Bad request")})
+        @ApiResponse(responseCode = "200", description = "OK"),
+        @ApiResponse(responseCode = "400", description = "Bad request")})
     ResponseEntity<Void> updatePaymentStatus(
-        @ApiParam(name = "payment-id", value = "The payment identification assigned to the created payment.", example = "bf489af6-a2cb-4b75-b71d-d66d58b934d7", required = true)
+        @Parameter(name = "payment-id", description = "The payment identification assigned to the created payment", example = "bf489af6-a2cb-4b75-b71d-d66d58b934d7", required = true)
         @PathVariable("payment-id") String paymentId,
-        @ApiParam(value = "The following code values are permitted 'ACCC', 'ACCP', 'ACSC', 'ACSP', 'ACTC', 'ACWC', 'ACWP', 'PDNG', 'RJCT', 'RCVD', 'CANC', 'ACFC', 'PATC'. These values might be extended by ASPSP by more values.",
+        @Schema(description = "The following code values are permitted: 'ACCC', 'ACCP', 'ACSC', 'ACSP', 'ACTC', 'ACWC', 'ACWP', 'PDNG', 'RJCT', 'RCVD', 'CANC', 'ACFC', 'PATC'. These values might be extended by ASPSP by more values.",
             allowableValues = "ACCC, ACCP, ACSC, ACSP, ACTC, ACWC, ACWP, RCVD, PDNG, RJCT, CANC, ACFC, PATC", required = true)
         @PathVariable("status") String status,
         @RequestHeader(value = "instance-id", required = false, defaultValue = DEFAULT_SERVICE_INSTANCE_ID) String instanceId);

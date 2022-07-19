@@ -50,11 +50,7 @@ import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 import java.time.OffsetDateTime;
-import java.util.Collections;
-import java.util.Currency;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static org.apache.commons.io.IOUtils.resourceToString;
@@ -92,7 +88,7 @@ public class CmsConsentBuilder {
                             cmsConsent.setConsentData(bytes);
                             cmsConsent.setId(consentId);
                             cmsConsent.setConsentType(ConsentType.AIS);
-                            cmsConsent.setRecurringIndicator(BooleanUtils.toBoolean(cr.getRecurringIndicator()));
+                            cmsConsent.setRecurringIndicator(BooleanUtils.toBoolean(cr.isRecurringIndicator()));
                             cmsConsent.setValidUntil(cr.getValidUntil());
                             cmsConsent.setFrequencyPerDay(cr.getFrequencyPerDay());
                             cmsConsent.setLastActionDate(LocalDate.now());

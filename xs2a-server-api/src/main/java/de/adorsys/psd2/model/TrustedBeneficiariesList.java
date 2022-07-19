@@ -1,6 +1,6 @@
 package de.adorsys.psd2.model;
 
-import io.swagger.annotations.ApiModel;
+import io.swagger.v3.oas.annotations.media.Schema;
 import org.springframework.validation.annotation.Validated;
 
 import java.util.ArrayList;
@@ -9,9 +9,10 @@ import java.util.Objects;
 /**
  * Array of Trusted Beneficiaries..
  */
-@ApiModel(description = "Array of Trusted Beneficiaries..")
+@Schema(description = "Array of Trusted Beneficiaries..")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2021-05-24T13:41:46.273636+03:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-05-06T12:59:08.054254+03:00[Europe/Kiev]")
+
 
 public class TrustedBeneficiariesList extends ArrayList<TrustedBeneficiary>  {
 
@@ -22,11 +23,7 @@ public class TrustedBeneficiariesList extends ArrayList<TrustedBeneficiary>  {
     }
     if (o == null || getClass() != o.getClass()) {
       return false;
-}
-    if (!super.equals(o)) {
-    return false;
     }
-
     return true;
   }
 
@@ -55,4 +52,3 @@ public class TrustedBeneficiariesList extends ArrayList<TrustedBeneficiary>  {
     return o.toString().replace("\n", "\n    ");
   }
 }
-

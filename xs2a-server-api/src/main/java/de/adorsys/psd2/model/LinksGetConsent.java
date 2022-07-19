@@ -1,8 +1,7 @@
 package de.adorsys.psd2.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import org.springframework.validation.annotation.Validated;
 
 import javax.validation.Valid;
@@ -12,9 +11,10 @@ import java.util.Objects;
 /**
  * A list of hyperlinks to be recognised by the TPP.  Links of type \&quot;account\&quot; and/or \&quot;cardAccount\&quot;, depending on the nature of the consent.
  */
-@ApiModel(description = "A list of hyperlinks to be recognised by the TPP.  Links of type \"account\" and/or \"cardAccount\", depending on the nature of the consent. ")
+@Schema(description = "A list of hyperlinks to be recognised by the TPP.  Links of type \"account\" and/or \"cardAccount\", depending on the nature of the consent. ")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2021-11-05T12:22:49.487689+02:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-05-06T13:00:42.214155+03:00[Europe/Kiev]")
+
 
 public class LinksGetConsent extends HashMap<String, HrefType>  {
   @JsonProperty("account")
@@ -31,14 +31,11 @@ public class LinksGetConsent extends HashMap<String, HrefType>  {
   /**
    * Get account
    * @return account
-  **/
-  @ApiModelProperty(value = "")
+   **/
+  @Schema(description = "")
 
-  @Valid
-
-
-  @JsonProperty("account")
-  public HrefType getAccount() {
+    @Valid
+    public HrefType getAccount() {
     return account;
   }
 
@@ -54,14 +51,11 @@ public class LinksGetConsent extends HashMap<String, HrefType>  {
   /**
    * Get cardAccount
    * @return cardAccount
-  **/
-  @ApiModelProperty(value = "")
+   **/
+  @Schema(description = "")
 
-  @Valid
-
-
-  @JsonProperty("cardAccount")
-  public HrefType getCardAccount() {
+    @Valid
+    public HrefType getCardAccount() {
     return cardAccount;
   }
 
@@ -77,13 +71,11 @@ public class LinksGetConsent extends HashMap<String, HrefType>  {
     }
     if (o == null || getClass() != o.getClass()) {
       return false;
-}
-    if (!super.equals(o)) {
-    return false;
     }
     LinksGetConsent _linksGetConsent = (LinksGetConsent) o;
     return Objects.equals(this.account, _linksGetConsent.account) &&
-    Objects.equals(this.cardAccount, _linksGetConsent.cardAccount);
+        Objects.equals(this.cardAccount, _linksGetConsent.cardAccount) &&
+        super.equals(o);
   }
 
   @Override
@@ -113,4 +105,3 @@ public class LinksGetConsent extends HashMap<String, HrefType>  {
     return o.toString().replace("\n", "\n    ");
   }
 }
-

@@ -1,8 +1,7 @@
 package de.adorsys.psd2.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import org.springframework.validation.annotation.Validated;
 
 import javax.validation.constraints.NotNull;
@@ -12,9 +11,10 @@ import java.util.Objects;
 /**
  * In cases where the specifically defined criteria (IBAN, BBAN, MSISDN) are not provided to identify an instance of the respective account type (e.g. a savings account), the ASPSP shall include a proprietary ID of the respective account that uniquely identifies the account for this ASPSP.
  */
-@ApiModel(description = "In cases where the specifically defined criteria (IBAN, BBAN, MSISDN) are not provided to identify an instance of the respective account type (e.g. a savings account), the ASPSP shall include a proprietary ID of the respective account that uniquely identifies the account for this ASPSP.")
+@Schema(description = "In cases where the specifically defined criteria (IBAN, BBAN, MSISDN) are not provided to identify an instance of the respective account type (e.g. a savings account), the ASPSP shall include a proprietary ID of the respective account that uniquely identifies the account for this ASPSP.")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2021-11-05T12:22:49.487689+02:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-05-06T13:00:42.214155+03:00[Europe/Kiev]")
+
 
 public class OtherType   {
   @JsonProperty("identification")
@@ -37,14 +37,11 @@ public class OtherType   {
   /**
    * Proprietary identification of the account.
    * @return identification
-  **/
-  @ApiModelProperty(required = true, value = "Proprietary identification of the account.")
-  @NotNull
+   **/
+  @Schema(required = true, description = "Proprietary identification of the account.")
+      @NotNull
 
-@Size(max=35)
-
-  @JsonProperty("identification")
-  public String getIdentification() {
+  @Size(max=35)   public String getIdentification() {
     return identification;
   }
 
@@ -60,13 +57,10 @@ public class OtherType   {
   /**
    * An entry provided by an external ISO code list.
    * @return schemeNameCode
-  **/
-  @ApiModelProperty(value = "An entry provided by an external ISO code list.")
+   **/
+  @Schema(description = "An entry provided by an external ISO code list.")
 
-@Size(max=35)
-
-  @JsonProperty("schemeNameCode")
-  public String getSchemeNameCode() {
+  @Size(max=35)   public String getSchemeNameCode() {
     return schemeNameCode;
   }
 
@@ -82,13 +76,10 @@ public class OtherType   {
   /**
    * A scheme name defined in a proprietary way.
    * @return schemeNameProprietary
-  **/
-  @ApiModelProperty(value = "A scheme name defined in a proprietary way.")
+   **/
+  @Schema(description = "A scheme name defined in a proprietary way.")
 
-@Size(max=35)
-
-  @JsonProperty("schemeNameProprietary")
-  public String getSchemeNameProprietary() {
+  @Size(max=35)   public String getSchemeNameProprietary() {
     return schemeNameProprietary;
   }
 
@@ -104,13 +95,10 @@ public class OtherType   {
   /**
    * Issuer of the identification.
    * @return issuer
-  **/
-  @ApiModelProperty(value = "Issuer of the identification.")
+   **/
+  @Schema(description = "Issuer of the identification.")
 
-@Size(max=35)
-
-  @JsonProperty("issuer")
-  public String getIssuer() {
+  @Size(max=35)   public String getIssuer() {
     return issuer;
   }
 
@@ -126,11 +114,12 @@ public class OtherType   {
     }
     if (o == null || getClass() != o.getClass()) {
       return false;
-}    OtherType otherType = (OtherType) o;
+    }
+    OtherType otherType = (OtherType) o;
     return Objects.equals(this.identification, otherType.identification) &&
-    Objects.equals(this.schemeNameCode, otherType.schemeNameCode) &&
-    Objects.equals(this.schemeNameProprietary, otherType.schemeNameProprietary) &&
-    Objects.equals(this.issuer, otherType.issuer);
+        Objects.equals(this.schemeNameCode, otherType.schemeNameCode) &&
+        Objects.equals(this.schemeNameProprietary, otherType.schemeNameProprietary) &&
+        Objects.equals(this.issuer, otherType.issuer);
   }
 
   @Override
@@ -162,4 +151,3 @@ public class OtherType   {
     return o.toString().replace("\n", "\n    ");
   }
 }
-

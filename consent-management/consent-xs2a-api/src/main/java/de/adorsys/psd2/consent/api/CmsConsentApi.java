@@ -23,93 +23,99 @@ import de.adorsys.psd2.consent.api.ais.ConsentStatusResponse;
 import de.adorsys.psd2.consent.api.config.InternalCmsXs2aApiTagName;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
 import de.adorsys.psd2.xs2a.core.consent.TerminateOldConsentsRequest;
-import io.swagger.annotations.*;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RequestMapping(path = "api/v1/consent")
-@Api(value = "api/v1/consent", tags = InternalCmsXs2aApiTagName.CONSENTS)
+@Tag(name = InternalCmsXs2aApiTagName.CONSENTS, description = "Provides access to consent management system for common consent endpoints")
 public interface CmsConsentApi {
 
     @PostMapping
-    @ApiOperation(value = "Create new consent")
+    @Operation(description = "Create new consent")
     @ApiResponses(value = {
-        @ApiResponse(code = 201, message = "Created", response = String.class),
-        @ApiResponse(code = 400, message = "Checksum verification failed"),
-        @ApiResponse(code = 204, message = "No Content")})
+        @ApiResponse(responseCode = "201", description = "Created", content = @Content(schema = @Schema(implementation = String.class))),
+        @ApiResponse(responseCode = "400", description = "Checksum verification failed"),
+        @ApiResponse(responseCode = "204", description = "No Content")})
     ResponseEntity<Object> createConsent(@RequestBody CmsConsent request);
 
     @GetMapping(path = "/{encrypted-consent-id}")
-    @ApiOperation(value = "Read consent by ID")
+    @Operation(description = "Read consent by ID")
     @ApiResponses(value = {
-        @ApiResponse(code = 200, message = "OK", response = CmsConsent.class),
-        @ApiResponse(code = 404, message = "Not found")})
+        @ApiResponse(responseCode = "200", description = "OK", content = @Content(schema = @Schema(implementation = CmsConsent.class))),
+        @ApiResponse(responseCode = "404", description = "Not found")})
     ResponseEntity<CmsConsent> getConsentById(
-        @ApiParam(name = "encrypted-consent-id",
-            value = "Encrypted consent ID",
+        @Parameter(name = "encrypted-consent-id",
+            description = "Encrypted consent ID",
             example = "bf489af6-a2cb-4b75-b71d-d66d58b934d7",
             required = true)
         @PathVariable("encrypted-consent-id") String encryptedConsentId);
 
     @GetMapping(path = "/{encrypted-consent-id}/status")
-    @ApiOperation(value = "Get consent status by ID")
+    @Operation(description = "Get consent status by ID")
     @ApiResponses(value = {
-        @ApiResponse(code = 200, message = "OK", response = ConsentStatus.class),
-        @ApiResponse(code = 404, message = "Not Found")})
+        @ApiResponse(responseCode = "200", description = "OK", content = @Content(schema = @Schema(implementation = ConsentStatus.class))),
+        @ApiResponse(responseCode = "404", description = "Not Found")})
     ResponseEntity<ConsentStatusResponse> getConsentStatusById(
-        @ApiParam(name = "encrypted-consent-id",
-            value = "Encrypted consent ID",
+        @Parameter(name = "encrypted-consent-id",
+            description = "Encrypted consent ID",
             example = "bf489af6-a2cb-4b75-b71d-d66d58b934d7",
             required = true)
         @PathVariable("encrypted-consent-id") String encryptedConsentId);
 
     @PutMapping(path = "/{encrypted-consent-id}/status/{status}")
-    @ApiOperation(value = "Update consent status by ID")
+    @Operation(description = "Update consent status by ID")
     @ApiResponses(value = {
-        @ApiResponse(code = 200, message = "OK"),
-        @ApiResponse(code = 400, message = "Checksum verification failed"),
-        @ApiResponse(code = 404, message = "Not Found")})
+        @ApiResponse(responseCode = "200", description = "OK"),
+        @ApiResponse(responseCode = "400", description = "Checksum verification failed"),
+        @ApiResponse(responseCode = "404", description = "Not Found")})
     ResponseEntity<Object> updateConsentStatus(
-        @ApiParam(name = "encrypted-consent-id",
-            value = "Encrypted consent ID",
+        @Parameter(name = "encrypted-consent-id",
+            description = "Encrypted consent ID",
             example = "bf489af6-a2cb-4b75-b71d-d66d58b934d7",
             required = true)
         @PathVariable("encrypted-consent-id") String encryptedConsentId,
-        @ApiParam(value = "The following code values are permitted 'VALID', 'REJECTED', 'REVOKED_BY_PSU', 'TERMINATED_BY_TPP'. These values might be extended by ASPSP by more values.",
+        @Parameter(description = "The following code values are permitted 'VALID', 'REJECTED', 'REVOKED_BY_PSU', 'TERMINATED_BY_TPP'. These values might be extended by ASPSP by more values.",
             example = "VALID",
             required = true)
         @PathVariable("status") String status);
 
     @DeleteMapping(path = "/{encrypted-consent-id}/old-consents")
-    @ApiOperation(value = "Find and terminate old consents for TPP and PSU by new consent ID")
-    @ApiResponse(code = 204, message = "No Content")
+    @Operation(description = "Find and terminate old consents for TPP and PSU by new consent ID")
+    @ApiResponse(responseCode = "204", description = "No Content")
     ResponseEntity<Void> findAndTerminateOldConsentsByNewConsentId(
-        @ApiParam(name = "encrypted-consent-id",
-            value = "Encrypted consent ID",
+        @Parameter(name = "encrypted-consent-id",
+            description = "Encrypted consent ID",
             example = "bf489af6-a2cb-4b75-b71d-d66d58b934d7",
             required = true)
         @PathVariable("encrypted-consent-id") String encryptedConsentId);
 
     @PutMapping(path = "/{encrypted-consent-id}/old-consents")
-    @ApiOperation(value = "Find and terminate old consents for TPP and PSU by new consent ID")
-    @ApiResponse(code = 204, message = "No Content")
+    @Operation(description = "Find and terminate old consents for TPP and PSU by new consent ID")
+    @ApiResponse(responseCode = "204", description = "No Content")
     ResponseEntity<Void> findAndTerminateOldConsents(
-        @ApiParam(name = "encrypted-consent-id",
-            value = "Encrypted consent ID",
+        @Parameter(name = "encrypted-consent-id",
+            description = "Encrypted consent ID",
             example = "bf489af6-a2cb-4b75-b71d-d66d58b934d7",
             required = true)
         @PathVariable("encrypted-consent-id") String encryptedConsentId,
         @RequestBody TerminateOldConsentsRequest cmsTerminateConsentsRequest);
 
     @PutMapping(path = "/{encrypted-consent-id}/multilevel-sca")
-    @ApiOperation(value = "Update requirement for multilevel SCA for consent")
+    @Operation(description = "Update requirement for multilevel SCA for consent")
     @ApiResponses(value = {
-        @ApiResponse(code = 200, message = "OK"),
-        @ApiResponse(code = 400, message = "Checksum verification failed"),
-        @ApiResponse(code = 404, message = "Not Found")})
+        @ApiResponse(responseCode = "200", description = "OK"),
+        @ApiResponse(responseCode = "400", description = "Checksum verification failed"),
+        @ApiResponse(responseCode = "404", description = "Not Found")})
     ResponseEntity<Object> updateMultilevelScaRequired(
-        @ApiParam(name = "encrypted-consent-id", value = "Encrypted consent ID", example = "bf489af6-a2cb-4b75-b71d-d66d58b934d7", required = true)
+        @Parameter(name = "encrypted-consent-id", description = "Encrypted consent ID", example = "bf489af6-a2cb-4b75-b71d-d66d58b934d7", required = true)
         @PathVariable("encrypted-consent-id") String encryptedConsentId,
-        @ApiParam(name = "multilevel-sca", value = "Multilevel SCA.", example = "false")
+        @Parameter(name = "multilevel-sca", description = "Multilevel SCA", example = "false")
         @RequestParam(value = "multilevel-sca", defaultValue = "false") boolean multilevelSca);
 }

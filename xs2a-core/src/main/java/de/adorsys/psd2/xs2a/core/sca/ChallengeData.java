@@ -19,8 +19,7 @@
 package de.adorsys.psd2.xs2a.core.sca;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -33,24 +32,24 @@ import java.util.List;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@ApiModel(description = "Challenge data needed for SCA", value = "ChallengeData")
+@Schema(description = "Challenge data needed for SCA")
 public class ChallengeData {
-    @ApiModelProperty(value = "PNG data (max. 512 kilobyte) to be displayed to the PSU, Base64 encoding, cp. [RFC4648]. This attribute is used only, when PHOTO_OTP or CHIP_OTP is the selected SCA method.")
+    @Schema(description = "PNG data (max. 512 kilobyte) to be displayed to the PSU, Base64 encoding, cp. [RFC4648]. This attribute is used only, when PHOTO_OTP or CHIP_OTP is the selected SCA method.")
     private byte[] image;
 
-    @ApiModelProperty(value = "String challenge data", example = "zzz")
+    @Schema(description = "String challenge data", example = "zzz")
     private List<String> data;
 
-    @ApiModelProperty(value = "A link where the ASPSP will provides the challenge image for the TPP", example = "https://www.testbank.com/authentication/image.jpg")
+    @Schema(description = "A link where the ASPSP will provides the challenge image for the TPP", example = "https://www.testbank.com/authentication/image.jpg")
     private String imageLink;
 
-    @ApiModelProperty(value = "The maximal length for the OTP to be typed in by the PSU", example = "6")
+    @Schema(description = "The maximal length for the OTP to be typed in by the PSU", example = "6")
     private Integer otpMaxLength;
 
-    @ApiModelProperty(value = "The format type of the OTP to be typed in. The admitted values are 'characters' or 'integer'.", example = "integer")
+    @Schema(description = "The format type of the OTP to be typed in. The admitted values are 'characters' or 'integer'.", example = "integer")
     private OtpFormat otpFormat;
 
-    @ApiModelProperty(value = "Additional explanation for the PSU to explain e.g. fallback mechanism for the chosen SCA method. The TPP is obliged to show this to the PSU.", example = "Additional information")
+    @Schema(description = "Additional explanation for the PSU to explain e.g. fallback mechanism for the chosen SCA method. The TPP is obliged to show this to the PSU.", example = "Additional information")
     private String additionalInformation;
 
     @JsonIgnore

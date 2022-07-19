@@ -23,71 +23,77 @@ import de.adorsys.psd2.consent.api.pis.CreatePisCommonPaymentResponse;
 import de.adorsys.psd2.consent.api.pis.PisCommonPaymentDataStatusResponse;
 import de.adorsys.psd2.consent.api.pis.PisCommonPaymentResponse;
 import de.adorsys.psd2.consent.api.pis.proto.PisPaymentInfo;
-import io.swagger.annotations.*;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RequestMapping(path = "api/v1/pis/common-payments")
-@Api(value = "api/v1/pis/common-payments", tags = InternalCmsXs2aApiTagName.PIS_COMMON_PAYMENT)
+@Tag(name = InternalCmsXs2aApiTagName.PIS_COMMON_PAYMENT, description = "Provides access to common payment system for PIS")
 public interface PisCommonPaymentApi {
 
     @PostMapping(path = "/")
     @ApiResponses(value = {
-        @ApiResponse(code = 200, message = "OK", response = CreatePisCommonPaymentResponse.class),
-        @ApiResponse(code = 400, message = "Bad request")})
+        @ApiResponse(responseCode = "200", description = "OK", content = @Content(schema = @Schema(implementation = CreatePisCommonPaymentResponse.class))),
+        @ApiResponse(responseCode = "400", description = "Bad request")})
     ResponseEntity<CreatePisCommonPaymentResponse> createCommonPayment(@RequestBody PisPaymentInfo request);
 
     @GetMapping(path = "/{payment-id}/status")
-    @ApiOperation(value = "")
+    @Operation(description = "")
     @ApiResponses(value = {
-        @ApiResponse(code = 200, message = "OK", response = PisCommonPaymentDataStatusResponse.class),
-        @ApiResponse(code = 400, message = "Bad request")})
+        @ApiResponse(responseCode = "200", description = "OK", content = @Content(schema = @Schema(implementation = PisCommonPaymentDataStatusResponse.class))),
+        @ApiResponse(responseCode = "400", description = "Bad request")})
     ResponseEntity<PisCommonPaymentDataStatusResponse> getPisCommonPaymentStatusById(
-        @ApiParam(name = "payment-id",
-            value = "The payment identification assigned to the created payment.",
+        @Parameter(name = "payment-id",
+            description = "The payment identification assigned to the created payment",
             example = "bf489af6-a2cb-4b75-b71d-d66d58b934d7",
             required = true)
         @PathVariable("payment-id") String paymentId);
 
     @GetMapping(path = "/{payment-id}")
-    @ApiOperation(value = "")
+    @Operation(description = "")
     @ApiResponses(value = {
-        @ApiResponse(code = 200, message = "OK", response = PisCommonPaymentResponse.class),
-        @ApiResponse(code = 400, message = "Bad request")})
+        @ApiResponse(responseCode = "200", description = "OK", content = @Content(schema = @Schema(implementation = PisCommonPaymentResponse.class))),
+        @ApiResponse(responseCode = "400", description = "Bad request")})
     ResponseEntity<PisCommonPaymentResponse> getCommonPaymentById(
-        @ApiParam(name = "payment-id",
-            value = "The payment identification assigned to the created payment.",
+        @Parameter(name = "payment-id",
+            description = "The payment identification assigned to the created payment",
             example = "bf489af6-a2cb-4b75-b71d-d66d58b934d7",
             required = true)
         @PathVariable("payment-id") String paymentId);
 
     @PutMapping(path = "/{payment-id}/status/{status}")
-    @ApiOperation(value = "")
+    @Operation(description = "")
     @ApiResponses(value = {
-        @ApiResponse(code = 200, message = "OK"),
-        @ApiResponse(code = 400, message = "Bad request")})
+        @ApiResponse(responseCode = "200", description = "OK"),
+        @ApiResponse(responseCode = "400", description = "Bad request")})
     ResponseEntity<Void> updateCommonPaymentStatus(
-        @ApiParam(name = "payment-id",
-            value = "The payment identification assigned to the created payment.",
+        @Parameter(name = "payment-id",
+            description = "The payment identification assigned to the created payment.",
             example = "bf489af6-a2cb-4b75-b71d-d66d58b934d7",
             required = true)
         @PathVariable("payment-id") String paymentId,
-        @ApiParam(value = "The following code values are permitted 'ACCC', 'ACCP', 'ACSC', 'ACSP', 'ACTC', 'ACWC', 'ACWP', 'PDNG', 'RJCT', 'RCVD', 'CANC', 'ACFC', 'PATC'. These values might be extended by ASPSP by more values.",
+        @Schema(description = "The following code values are permitted 'ACCC', 'ACCP', 'ACSC', 'ACSP', 'ACTC', 'ACWC', 'ACWP', 'PDNG', 'RJCT', 'RCVD', 'CANC', 'ACFC', 'PATC'. These values might be extended by ASPSP by more values.",
             allowableValues = "AcceptedSettlementCompletedCreditor, AcceptedCustomerProfile, AcceptedSettlementCompleted, AcceptedSettlementInProcess, AcceptedTechnicalValidation, AcceptedWithChange, AcceptedWithoutPosting, Received, Pending, Rejected, Canceled, AcceptedFundsChecked, PartiallyAcceptedTechnicalCorrect",
             required = true)
         @PathVariable("status") String status);
 
     @PutMapping(path = "/{payment-id}/multilevel-sca")
-    @ApiOperation(value = "Updates multilevel sca required by payment ID")
+    @Operation(description = "Updates multilevel SCA required by payment ID")
     @ApiResponses(value = {
-        @ApiResponse(code = 200, message = "OK"),
-        @ApiResponse(code = 404, message = "Bad Request")})
+        @ApiResponse(responseCode = "200", description = "OK"),
+        @ApiResponse(responseCode = "404", description = "Bad Request")})
     ResponseEntity<Boolean> updateMultilevelScaRequired(
-        @ApiParam(name = "payment-id",
-            value = "The payment identification of the related payment.",
+        @Parameter(name = "payment-id",
+            description = "The payment identification of the related payment.",
             example = "bf489af6-a2cb-4b75-b71d-d66d58b934d7",
             required = true)
         @PathVariable(name = "payment-id") String paymentId,
-        @ApiParam(name = "multilevel-sca", value = "Multilevel SCA.", example = "false")
+        @Parameter(name = "multilevel-sca", description = "Multilevel SCA", example = "false")
         @RequestParam(value = "multilevel-sca", defaultValue = "false") boolean multilevelSca);
 }

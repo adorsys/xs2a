@@ -24,12 +24,11 @@ import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
 import javax.sql.DataSource;
 
 @Configuration
-@EnableJpaRepositories("de.adorsys.psd2.consent.repository")
+//@EnableJpaRepositories("de.adorsys.psd2.consent.repository")
 @EnableAutoConfiguration
 @EntityScan("de.adorsys.psd2.consent.domain")
 @ComponentScan(basePackages = {

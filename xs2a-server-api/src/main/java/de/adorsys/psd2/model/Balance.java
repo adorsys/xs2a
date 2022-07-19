@@ -1,8 +1,7 @@
 package de.adorsys.psd2.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import org.springframework.validation.annotation.Validated;
 
 import javax.validation.Valid;
@@ -15,9 +14,10 @@ import java.util.Objects;
 /**
  * A single balance element.
  */
-@ApiModel(description = "A single balance element. ")
+@Schema(description = "A single balance element. ")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2021-11-05T12:22:49.487689+02:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-05-06T13:00:42.214155+03:00[Europe/Kiev]")
+
 
 public class Balance   {
   @JsonProperty("balanceAmount")
@@ -46,15 +46,12 @@ public class Balance   {
   /**
    * Get balanceAmount
    * @return balanceAmount
-  **/
-  @ApiModelProperty(required = true, value = "")
-  @NotNull
+   **/
+  @Schema(required = true, description = "")
+      @NotNull
 
-  @Valid
-
-
-  @JsonProperty("balanceAmount")
-  public Amount getBalanceAmount() {
+    @Valid
+    public Amount getBalanceAmount() {
     return balanceAmount;
   }
 
@@ -70,15 +67,12 @@ public class Balance   {
   /**
    * Get balanceType
    * @return balanceType
-  **/
-  @ApiModelProperty(required = true, value = "")
-  @NotNull
+   **/
+  @Schema(required = true, description = "")
+      @NotNull
 
-  @Valid
-
-
-  @JsonProperty("balanceType")
-  public BalanceType getBalanceType() {
+    @Valid
+    public BalanceType getBalanceType() {
     return balanceType;
   }
 
@@ -94,13 +88,10 @@ public class Balance   {
   /**
    * A flag indicating if the credit limit of the corresponding account  is included in the calculation of the balance, where applicable.
    * @return creditLimitIncluded
-  **/
-  @ApiModelProperty(value = "A flag indicating if the credit limit of the corresponding account  is included in the calculation of the balance, where applicable. ")
+   **/
+  @Schema(example = "false", description = "A flag indicating if the credit limit of the corresponding account  is included in the calculation of the balance, where applicable. ")
 
-
-
-  @JsonProperty("creditLimitIncluded")
-  public Boolean isCreditLimitIncluded() {
+    public Boolean isCreditLimitIncluded() {
     return creditLimitIncluded;
   }
 
@@ -116,14 +107,11 @@ public class Balance   {
   /**
    * This data element might be used to indicate e.g. with the expected or booked balance that no action is known  on the account, which is not yet booked.
    * @return lastChangeDateTime
-  **/
-  @ApiModelProperty(value = "This data element might be used to indicate e.g. with the expected or booked balance that no action is known  on the account, which is not yet booked. ")
+   **/
+  @Schema(description = "This data element might be used to indicate e.g. with the expected or booked balance that no action is known  on the account, which is not yet booked. ")
 
-  @Valid
-
-
-  @JsonProperty("lastChangeDateTime")
-  public OffsetDateTime getLastChangeDateTime() {
+    @Valid
+    public OffsetDateTime getLastChangeDateTime() {
     return lastChangeDateTime;
   }
 
@@ -139,14 +127,11 @@ public class Balance   {
   /**
    * Indicates the date of the balance.
    * @return referenceDate
-  **/
-  @ApiModelProperty(value = "Indicates the date of the balance.")
+   **/
+  @Schema(description = "Indicates the date of the balance.")
 
-  @Valid
-
-
-  @JsonProperty("referenceDate")
-  public LocalDate getReferenceDate() {
+    @Valid
+    public LocalDate getReferenceDate() {
     return referenceDate;
   }
 
@@ -162,13 +147,10 @@ public class Balance   {
   /**
    * \"entryReference\" of the last commited transaction to support the TPP in identifying whether all  PSU transactions are already known.
    * @return lastCommittedTransaction
-  **/
-  @ApiModelProperty(value = "\"entryReference\" of the last commited transaction to support the TPP in identifying whether all  PSU transactions are already known. ")
+   **/
+  @Schema(description = "\"entryReference\" of the last commited transaction to support the TPP in identifying whether all  PSU transactions are already known. ")
 
-@Size(max=35)
-
-  @JsonProperty("lastCommittedTransaction")
-  public String getLastCommittedTransaction() {
+  @Size(max=35)   public String getLastCommittedTransaction() {
     return lastCommittedTransaction;
   }
 
@@ -184,13 +166,14 @@ public class Balance   {
     }
     if (o == null || getClass() != o.getClass()) {
       return false;
-}    Balance balance = (Balance) o;
+    }
+    Balance balance = (Balance) o;
     return Objects.equals(this.balanceAmount, balance.balanceAmount) &&
-    Objects.equals(this.balanceType, balance.balanceType) &&
-    Objects.equals(this.creditLimitIncluded, balance.creditLimitIncluded) &&
-    Objects.equals(this.lastChangeDateTime, balance.lastChangeDateTime) &&
-    Objects.equals(this.referenceDate, balance.referenceDate) &&
-    Objects.equals(this.lastCommittedTransaction, balance.lastCommittedTransaction);
+        Objects.equals(this.balanceType, balance.balanceType) &&
+        Objects.equals(this.creditLimitIncluded, balance.creditLimitIncluded) &&
+        Objects.equals(this.lastChangeDateTime, balance.lastChangeDateTime) &&
+        Objects.equals(this.referenceDate, balance.referenceDate) &&
+        Objects.equals(this.lastCommittedTransaction, balance.lastCommittedTransaction);
   }
 
   @Override
@@ -224,4 +207,3 @@ public class Balance   {
     return o.toString().replace("\n", "\n    ");
   }
 }
-

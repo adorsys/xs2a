@@ -1,8 +1,7 @@
 package de.adorsys.psd2.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import org.springframework.validation.annotation.Validated;
 
 import javax.validation.constraints.NotNull;
@@ -11,11 +10,12 @@ import java.util.Objects;
 /**
  * Content of the body of an authorisation confirmation request
  */
-@ApiModel(description = "Content of the body of an authorisation confirmation request ")
+@Schema(description = "Content of the body of an authorisation confirmation request ")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2021-11-05T12:22:49.487689+02:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-05-06T13:00:42.214155+03:00[Europe/Kiev]")
 
-public class AuthorisationConfirmation   {
+
+public class AuthorisationConfirmation {
   @JsonProperty("confirmationCode")
   private String confirmationCode = null;
 
@@ -27,14 +27,11 @@ public class AuthorisationConfirmation   {
   /**
    * Confirmation Code as retrieved by the TPP from the redirect based SCA process.
    * @return confirmationCode
-  **/
-  @ApiModelProperty(required = true, value = "Confirmation Code as retrieved by the TPP from the redirect based SCA process.")
-  @NotNull
+   **/
+  @Schema(required = true, description = "Confirmation Code as retrieved by the TPP from the redirect based SCA process.")
+      @NotNull
 
-
-
-  @JsonProperty("confirmationCode")
-  public String getConfirmationCode() {
+    public String getConfirmationCode() {
     return confirmationCode;
   }
 
@@ -50,7 +47,8 @@ public class AuthorisationConfirmation   {
     }
     if (o == null || getClass() != o.getClass()) {
       return false;
-}    AuthorisationConfirmation authorisationConfirmation = (AuthorisationConfirmation) o;
+    }
+    AuthorisationConfirmation authorisationConfirmation = (AuthorisationConfirmation) o;
     return Objects.equals(this.confirmationCode, authorisationConfirmation.confirmationCode);
   }
 
@@ -80,4 +78,3 @@ public class AuthorisationConfirmation   {
     return o.toString().replace("\n", "\n    ");
   }
 }
-

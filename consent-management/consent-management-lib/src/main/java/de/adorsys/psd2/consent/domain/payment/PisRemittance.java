@@ -18,8 +18,7 @@
 
 package de.adorsys.psd2.consent.domain.payment;
 
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -28,7 +27,7 @@ import javax.persistence.*;
 @Data
 @Entity(name = "pis_remittance")
 @NoArgsConstructor
-@ApiModel(description = "Remittance in pis", value = "PisRemittance")
+@Schema(description = "Remittance in pis", name = "PisRemittance")
 public class PisRemittance {
     @Id
     @Column(name = "remittance_id")
@@ -36,14 +35,14 @@ public class PisRemittance {
     @SequenceGenerator(name = "pis_remittance_generator", sequenceName = "pis_remittance_id_seq", allocationSize = 1)
     private Long id;
 
-    @ApiModelProperty(value = "The actual reference", required = true, example = "Ref Number Merchant")
+    @Schema(description = "The actual reference", required = true, example = "Ref Number Merchant")
     private String reference;
 
     @Column(name = "reference_type")
-    @ApiModelProperty(value = "Reference type", example = "reference type")
+    @Schema(description = "Reference type", example = "reference type")
     private String referenceType;
 
     @Column(name = "reference_issuer")
-    @ApiModelProperty(value = "Reference issuer", example = "reference issuer")
+    @Schema(description = "Reference issuer", example = "reference issuer")
     private String referenceIssuer;
 }

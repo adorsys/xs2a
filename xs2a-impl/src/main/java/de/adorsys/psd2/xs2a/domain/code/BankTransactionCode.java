@@ -18,17 +18,16 @@
 
 package de.adorsys.psd2.xs2a.domain.code;
 
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
 
 @Data
-@ApiModel(description = "BankTransactionCode", value = "The Bank transaction code")
+@Schema(description = "BankTransactionCode", name = "The Bank transaction code")
 @AllArgsConstructor
 public class BankTransactionCode {
 
-    @ApiModelProperty(value = "BankTransactionCode code", example = "123344")
+    @Schema(description = "BankTransactionCode code", example = "123344")
     private String code;
 }

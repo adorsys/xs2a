@@ -1,22 +1,21 @@
 package de.adorsys.psd2.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import org.springframework.validation.annotation.Validated;
 
 import javax.validation.Valid;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 
 /**
  * NextGenPSD2 specific definition of reporting error information in case of a HTTP error code 429.
  */
-@ApiModel(description = "NextGenPSD2 specific definition of reporting error information in case of a HTTP error code 429. ")
+@Schema(description = "NextGenPSD2 specific definition of reporting error information in case of a HTTP error code 429. ")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2021-11-05T12:22:49.487689+02:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-05-06T13:00:42.214155+03:00[Europe/Kiev]")
+
 
 public class Error429NGAIS   {
   @JsonProperty("tppMessages")
@@ -24,7 +23,7 @@ public class Error429NGAIS   {
   private List<TppMessage429AIS> tppMessages = null;
 
   @JsonProperty("_links")
-  private Map _links = null;
+  private LinksAll _links = null;
 
   public Error429NGAIS tppMessages(List<TppMessage429AIS> tppMessages) {
     this.tppMessages = tppMessages;
@@ -42,14 +41,10 @@ public class Error429NGAIS   {
   /**
    * Get tppMessages
    * @return tppMessages
-  **/
-  @ApiModelProperty(value = "")
-
-  @Valid
-
-
-  @JsonProperty("tppMessages")
-  public List<TppMessage429AIS> getTppMessages() {
+   **/
+  @Schema(description = "")
+      @Valid
+    public List<TppMessage429AIS> getTppMessages() {
     return tppMessages;
   }
 
@@ -57,7 +52,7 @@ public class Error429NGAIS   {
     this.tppMessages = tppMessages;
   }
 
-  public Error429NGAIS _links(Map _links) {
+  public Error429NGAIS _links(LinksAll _links) {
     this._links = _links;
     return this;
   }
@@ -65,18 +60,15 @@ public class Error429NGAIS   {
   /**
    * Get _links
    * @return _links
-  **/
-  @ApiModelProperty(value = "")
+   **/
+  @Schema(description = "")
 
-  @Valid
-
-
-  @JsonProperty("_links")
-  public Map getLinks() {
+    @Valid
+    public LinksAll getLinks() {
     return _links;
   }
 
-  public void setLinks(Map _links) {
+  public void setLinks(LinksAll _links) {
     this._links = _links;
   }
 
@@ -88,9 +80,10 @@ public class Error429NGAIS   {
     }
     if (o == null || getClass() != o.getClass()) {
       return false;
-}    Error429NGAIS error429NGAIS = (Error429NGAIS) o;
+    }
+    Error429NGAIS error429NGAIS = (Error429NGAIS) o;
     return Objects.equals(this.tppMessages, error429NGAIS.tppMessages) &&
-    Objects.equals(this._links, error429NGAIS._links);
+        Objects.equals(this._links, error429NGAIS._links);
   }
 
   @Override
@@ -120,4 +113,3 @@ public class Error429NGAIS   {
     return o.toString().replace("\n", "\n    ");
   }
 }
-

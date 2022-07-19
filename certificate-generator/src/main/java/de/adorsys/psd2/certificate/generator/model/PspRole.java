@@ -18,9 +18,9 @@
 
 package de.adorsys.psd2.certificate.generator.model;
 
-import io.swagger.annotations.ApiModel;
+import io.swagger.v3.oas.annotations.media.Schema;
 
-@ApiModel
+@Schema
 public enum PspRole {
     PISP, AISP, PIISP
 }

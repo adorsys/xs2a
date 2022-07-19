@@ -22,10 +22,10 @@ import de.adorsys.psd2.aspsp.profile.domain.AspspSettings;
 import de.adorsys.psd2.aspsp.profile.service.AspspProfileUpdateService;
 import de.adorsys.psd2.aspsp.profile.web.config.AspspProfileApiTagName;
 import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiResponse;
-import io.swagger.annotations.ApiResponses;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Profile;
 import org.springframework.http.HttpStatus;
@@ -39,17 +39,17 @@ import java.util.stream.Collectors;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping(path = "/api/v1/aspsp-profile/for-debug")
-@Api(value = "Update aspsp profile ", tags = AspspProfileApiTagName.UPDATE_ASPSP_PROFILE)
+@Tag(description = "Update ASPSP profile", name = AspspProfileApiTagName.UPDATE_ASPSP_PROFILE)
 public class AspspProfileUpdateController {
     public static final String DEFAULT_SERVICE_INSTANCE_ID = "";
 
     private final AspspProfileUpdateService aspspProfileService;
 
     @PutMapping(path = "/sca-approaches")
-    @ApiOperation(value = "Updates list of sca approaches. Only for DEBUG!")
+    @Operation(description = "Updates list of SCA approaches. Only for DEBUG!")
     @ApiResponses(value = {
-        @ApiResponse(code = 200, message = "Ok"),
-        @ApiResponse(code = 400, message = "Bad request")})
+        @ApiResponse(responseCode = "200", description = "Ok"),
+        @ApiResponse(responseCode = "400", description = "Bad request")})
     public ResponseEntity<Void> updateScaApproach(@RequestBody List<String> newScaApproaches,
                                                   @RequestHeader(value = "Instance-ID", required = false, defaultValue = DEFAULT_SERVICE_INSTANCE_ID) String instanceId) {
         List<ScaApproach> scaApproaches = newScaApproaches.stream()
@@ -61,10 +61,10 @@ public class AspspProfileUpdateController {
     }
 
     @PutMapping(path = "/aspsp-settings")
-    @ApiOperation(value = "Updates aspsp profile settings. Only for DEBUG!")
+    @Operation(description = "Updates ASPSP profile settings. Only for DEBUG!")
     @ApiResponses(value = {
-        @ApiResponse(code = 200, message = "Ok"),
-        @ApiResponse(code = 400, message = "Bad request")})
+        @ApiResponse(responseCode = "200", description = "Ok"),
+        @ApiResponse(responseCode = "400", description = "Bad request")})
     public ResponseEntity<Void> updateAspspSettings(@RequestBody AspspSettings aspspSettings,
                                                     @RequestHeader(value = "Instance-ID", required = false, defaultValue = DEFAULT_SERVICE_INSTANCE_ID) String instanceId) {
         aspspProfileService.updateAspspSettings(aspspSettings, instanceId);
@@ -72,10 +72,10 @@ public class AspspProfileUpdateController {
     }
 
     @PutMapping(path = "/multitenancy/enabled")
-    @ApiOperation(value = "Enable aspsp profile multi tenancy support. Only for DEBUG!")
+    @Operation(description = "Enable ASPSP profile multi tenancy support. Only for DEBUG!")
     @ApiResponses(value = {
-        @ApiResponse(code = 200, message = "Ok"),
-        @ApiResponse(code = 400, message = "Bad request")})
+        @ApiResponse(responseCode = "200", description = "Ok"),
+        @ApiResponse(responseCode = "400", description = "Bad request")})
     public ResponseEntity<Void> enableMultitenancy(@RequestBody Boolean multitenancyEnabled) {
         aspspProfileService.enableMultitenancy(multitenancyEnabled);
         return new ResponseEntity<>(HttpStatus.OK);

@@ -1,8 +1,7 @@
 package de.adorsys.psd2.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import org.springframework.validation.annotation.Validated;
 
 import javax.validation.Valid;
@@ -14,9 +13,10 @@ import java.util.Objects;
 /**
  * List of card accounts with details.
  */
-@ApiModel(description = "List of card accounts with details. ")
+@Schema(description = "List of card accounts with details. ")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2021-11-05T12:22:49.487689+02:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-05-06T13:00:42.214155+03:00[Europe/Kiev]")
+
 
 public class CardAccountList   {
   @JsonProperty("cardAccounts")
@@ -36,15 +36,11 @@ public class CardAccountList   {
   /**
    * Get cardAccounts
    * @return cardAccounts
-  **/
-  @ApiModelProperty(required = true, value = "")
-  @NotNull
-
-  @Valid
-
-
-  @JsonProperty("cardAccounts")
-  public List<CardAccountDetails> getCardAccounts() {
+   **/
+  @Schema(required = true, description = "")
+      @NotNull
+    @Valid
+    public List<CardAccountDetails> getCardAccounts() {
     return cardAccounts;
   }
 
@@ -60,7 +56,8 @@ public class CardAccountList   {
     }
     if (o == null || getClass() != o.getClass()) {
       return false;
-}    CardAccountList cardAccountList = (CardAccountList) o;
+    }
+    CardAccountList cardAccountList = (CardAccountList) o;
     return Objects.equals(this.cardAccounts, cardAccountList.cardAccounts);
   }
 
@@ -90,4 +87,3 @@ public class CardAccountList   {
     return o.toString().replace("\n", "\n    ");
   }
 }
-

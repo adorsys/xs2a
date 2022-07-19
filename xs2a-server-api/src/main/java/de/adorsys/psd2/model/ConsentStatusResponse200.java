@@ -1,8 +1,7 @@
 package de.adorsys.psd2.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import org.springframework.validation.annotation.Validated;
 
 import javax.validation.Valid;
@@ -13,9 +12,10 @@ import java.util.Objects;
 /**
  * Body of the JSON response for a successful get status request for a consent.
  */
-@ApiModel(description = "Body of the JSON response for a successful get status request for a consent.")
+@Schema(description = "Body of the JSON response for a successful get status request for a consent.")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2021-11-05T12:22:49.487689+02:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-05-06T13:00:42.214155+03:00[Europe/Kiev]")
+
 
 public class ConsentStatusResponse200   {
   @JsonProperty("consentStatus")
@@ -32,15 +32,12 @@ public class ConsentStatusResponse200   {
   /**
    * Get consentStatus
    * @return consentStatus
-  **/
-  @ApiModelProperty(required = true, value = "")
-  @NotNull
+   **/
+  @Schema(required = true, description = "")
+      @NotNull
 
-  @Valid
-
-
-  @JsonProperty("consentStatus")
-  public ConsentStatus getConsentStatus() {
+    @Valid
+    public ConsentStatus getConsentStatus() {
     return consentStatus;
   }
 
@@ -54,15 +51,12 @@ public class ConsentStatusResponse200   {
   }
 
   /**
-   * Get psuMessage
+   * Text to be displayed to the PSU.
    * @return psuMessage
-  **/
-  @ApiModelProperty(value = "")
+   **/
+  @Schema(description = "Text to be displayed to the PSU.")
 
-@Size(max=500)
-
-  @JsonProperty("psuMessage")
-  public String getPsuMessage() {
+  @Size(max=500)   public String getPsuMessage() {
     return psuMessage;
   }
 
@@ -78,9 +72,10 @@ public class ConsentStatusResponse200   {
     }
     if (o == null || getClass() != o.getClass()) {
       return false;
-}    ConsentStatusResponse200 consentStatusResponse200 = (ConsentStatusResponse200) o;
+    }
+    ConsentStatusResponse200 consentStatusResponse200 = (ConsentStatusResponse200) o;
     return Objects.equals(this.consentStatus, consentStatusResponse200.consentStatus) &&
-    Objects.equals(this.psuMessage, consentStatusResponse200.psuMessage);
+        Objects.equals(this.psuMessage, consentStatusResponse200.psuMessage);
   }
 
   @Override
@@ -110,4 +105,3 @@ public class ConsentStatusResponse200   {
     return o.toString().replace("\n", "\n    ");
   }
 }
-

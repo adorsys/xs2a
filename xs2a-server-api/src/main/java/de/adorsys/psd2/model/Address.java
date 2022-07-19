@@ -1,7 +1,7 @@
 package de.adorsys.psd2.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import org.springframework.validation.annotation.Validated;
 
 import javax.validation.constraints.NotNull;
@@ -13,7 +13,8 @@ import java.util.Objects;
  * Address
  */
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2021-11-05T12:22:49.487689+02:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-05-06T13:00:42.214155+03:00[Europe/Kiev]")
+
 
 public class Address   {
   @JsonProperty("streetName")
@@ -39,13 +40,10 @@ public class Address   {
   /**
    * Get streetName
    * @return streetName
-  **/
-  @ApiModelProperty(value = "")
+   **/
+  @Schema(description = "")
 
-@Size(max=70)
-
-  @JsonProperty("streetName")
-  public String getStreetName() {
+  @Size(max=70)   public String getStreetName() {
     return streetName;
   }
 
@@ -61,13 +59,10 @@ public class Address   {
   /**
    * Get buildingNumber
    * @return buildingNumber
-  **/
-  @ApiModelProperty(value = "")
+   **/
+  @Schema(description = "")
 
-
-
-  @JsonProperty("buildingNumber")
-  public String getBuildingNumber() {
+    public String getBuildingNumber() {
     return buildingNumber;
   }
 
@@ -83,13 +78,10 @@ public class Address   {
   /**
    * Get townName
    * @return townName
-  **/
-  @ApiModelProperty(value = "")
+   **/
+  @Schema(description = "")
 
-
-
-  @JsonProperty("townName")
-  public String getTownName() {
+    public String getTownName() {
     return townName;
   }
 
@@ -105,13 +97,10 @@ public class Address   {
   /**
    * Get postCode
    * @return postCode
-  **/
-  @ApiModelProperty(value = "")
+   **/
+  @Schema(description = "")
 
-
-
-  @JsonProperty("postCode")
-  public String getPostCode() {
+    public String getPostCode() {
     return postCode;
   }
 
@@ -125,16 +114,13 @@ public class Address   {
   }
 
   /**
-   * Get country
+   * ISO 3166 ALPHA2 country code.
    * @return country
-  **/
-  @ApiModelProperty(required = true, value = "")
-  @NotNull
+   **/
+  @Schema(example = "SE", required = true, description = "ISO 3166 ALPHA2 country code.")
+      @NotNull
 
-@Pattern(regexp="[A-Z]{2}")
-
-  @JsonProperty("country")
-  public String getCountry() {
+  @Pattern(regexp="[A-Z]{2}")   public String getCountry() {
     return country;
   }
 
@@ -150,12 +136,13 @@ public class Address   {
     }
     if (o == null || getClass() != o.getClass()) {
       return false;
-}    Address address = (Address) o;
+    }
+    Address address = (Address) o;
     return Objects.equals(this.streetName, address.streetName) &&
-    Objects.equals(this.buildingNumber, address.buildingNumber) &&
-    Objects.equals(this.townName, address.townName) &&
-    Objects.equals(this.postCode, address.postCode) &&
-    Objects.equals(this.country, address.country);
+        Objects.equals(this.buildingNumber, address.buildingNumber) &&
+        Objects.equals(this.townName, address.townName) &&
+        Objects.equals(this.postCode, address.postCode) &&
+        Objects.equals(this.country, address.country);
   }
 
   @Override
@@ -188,4 +175,3 @@ public class Address   {
     return o.toString().replace("\n", "\n    ");
   }
 }
-

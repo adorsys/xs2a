@@ -22,8 +22,7 @@ import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import de.adorsys.psd2.xs2a.core.tpp.TppRedirectUri;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -31,21 +30,21 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@ApiModel(description = "Create authorisation request", value = "CreateAuthorisationRequest")
+@Schema(description = "Create authorisation request", name = "CreateAuthorisationRequest")
 public class CreateAuthorisationRequest {
 
-    @ApiModelProperty(value = "Authorisation id")
+    @Schema(description = "Authorisation id")
     private String authorisationId;
 
-    @ApiModelProperty(value = "Corresponding PSU", required = true)
+    @Schema(description = "Corresponding PSU", required = true)
     private PsuIdData psuData;
 
-    @ApiModelProperty(value = "SCA approach")
+    @Schema(description = "SCA approach")
     private ScaApproach scaApproach;
 
-    @ApiModelProperty(value = "SCA status")
+    @Schema(description = "SCA status")
     private ScaStatus scaStatus;
 
-    @ApiModelProperty(value = "TPP redirect URIs")
+    @Schema(description = "TPP redirect URIs")
     private TppRedirectUri tppRedirectURIs;
 }

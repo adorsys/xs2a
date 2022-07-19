@@ -20,28 +20,28 @@ package de.adorsys.psd2.consent.api;
 
 import de.adorsys.psd2.consent.api.config.InternalCmsXs2aApiTagName;
 import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
-import io.swagger.annotations.ApiResponse;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RequestMapping(path = "api/v1/tpp")
-@Api(value = "api/v1/tpp", tags = InternalCmsXs2aApiTagName.TPP)
+@Tag(name = InternalCmsXs2aApiTagName.TPP, description = "Provides access to the TPP")
 public interface TppApi {
 
     @PutMapping
-    @ApiOperation(value = "Updates TPP Info")
-    @ApiResponse(code = 200, message = "OK")
+    @Operation(description = "Updates TPP Info")
+    @ApiResponse(responseCode = "200", description = "OK")
     ResponseEntity<Boolean> updateTppInfo(@RequestBody TppInfo tppInfo);
 
     @GetMapping(path = "/stop-list")
-    @ApiOperation(value = "Checks if TPP is blocked")
-    @ApiResponse(code = 200, message = "OK")
+    @Operation(description = "Checks if TPP is blocked")
+    @ApiResponse(responseCode = "200", description = "OK")
     ResponseEntity<Boolean> checkIfTppBlocked(
-        @ApiParam(value = "ID of TPP", example = "12345987")
+        @Parameter(description = "ID of TPP", example = "12345987")
         @RequestHeader(value = "tpp-authorisation-number") String tppAuthorisationNumber,
-        @ApiParam(value = "ID of the particular service instance")
+        @Parameter(description = "ID of the particular service instance")
         @RequestHeader(value = "instance-id", required = false, defaultValue = "") String instanceId);
 }

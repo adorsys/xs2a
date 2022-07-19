@@ -83,7 +83,7 @@ public class ConsentBodyFieldsValidatorImpl extends AbstractBodyValidatorImpl im
 
         Consents consents = consentsOptional.get();
 
-        if (consents.getRecurringIndicator() == null) { //NOSONAR
+        if (consents.isRecurringIndicator() == null) { //NOSONAR
             errorBuildingService.enrichMessageError(messageError, TppMessageInformation.of(FORMAT_ERROR_NULL_VALUE, "recurringIndicator"));
         }
 

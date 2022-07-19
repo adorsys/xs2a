@@ -40,6 +40,7 @@ import de.adorsys.psd2.xs2a.spi.service.CommonPaymentSpi;
 import org.apache.commons.collections.map.MultiKeyMap;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.info.BuildProperties;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -101,6 +102,8 @@ public abstract class CustomPaymentTestParent {
     protected RestTemplate consentRestTemplate;
     @MockBean
     protected AuthorisationChainResponsibilityService authorisationChainResponsibilityService;
+    @MockBean
+    private BuildProperties buildProperties;
 
     protected void init() {
         HashMap<String, String> headerMap = new HashMap<>();

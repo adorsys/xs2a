@@ -1,8 +1,7 @@
 package de.adorsys.psd2.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import org.springframework.validation.annotation.Validated;
 
 import javax.validation.Valid;
@@ -12,9 +11,10 @@ import java.util.Objects;
 /**
  * Links to the account, which can be directly used for retrieving account information from this dedicated account.  Links to \&quot;balances\&quot; and/or \&quot;transactions\&quot;  These links are only supported, when the corresponding consent has been already granted.
  */
-@ApiModel(description = "Links to the account, which can be directly used for retrieving account information from this dedicated account.  Links to \"balances\" and/or \"transactions\"  These links are only supported, when the corresponding consent has been already granted. ")
+@Schema(description = "Links to the account, which can be directly used for retrieving account information from this dedicated account.  Links to \"balances\" and/or \"transactions\"  These links are only supported, when the corresponding consent has been already granted. ")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2021-11-05T12:22:49.487689+02:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-05-06T13:00:42.214155+03:00[Europe/Kiev]")
+
 
 public class LinksAccountDetails extends HashMap<String, HrefType>  {
   @JsonProperty("balances")
@@ -31,14 +31,11 @@ public class LinksAccountDetails extends HashMap<String, HrefType>  {
   /**
    * Get balances
    * @return balances
-  **/
-  @ApiModelProperty(value = "")
+   **/
+  @Schema(description = "")
 
-  @Valid
-
-
-  @JsonProperty("balances")
-  public HrefType getBalances() {
+    @Valid
+    public HrefType getBalances() {
     return balances;
   }
 
@@ -54,14 +51,11 @@ public class LinksAccountDetails extends HashMap<String, HrefType>  {
   /**
    * Get transactions
    * @return transactions
-  **/
-  @ApiModelProperty(value = "")
+   **/
+  @Schema(description = "")
 
-  @Valid
-
-
-  @JsonProperty("transactions")
-  public HrefType getTransactions() {
+    @Valid
+    public HrefType getTransactions() {
     return transactions;
   }
 
@@ -77,13 +71,11 @@ public class LinksAccountDetails extends HashMap<String, HrefType>  {
     }
     if (o == null || getClass() != o.getClass()) {
       return false;
-}
-    if (!super.equals(o)) {
-    return false;
     }
     LinksAccountDetails _linksAccountDetails = (LinksAccountDetails) o;
     return Objects.equals(this.balances, _linksAccountDetails.balances) &&
-    Objects.equals(this.transactions, _linksAccountDetails.transactions);
+        Objects.equals(this.transactions, _linksAccountDetails.transactions) &&
+        super.equals(o);
   }
 
   @Override
@@ -113,4 +105,3 @@ public class LinksAccountDetails extends HashMap<String, HrefType>  {
     return o.toString().replace("\n", "\n    ");
   }
 }
-

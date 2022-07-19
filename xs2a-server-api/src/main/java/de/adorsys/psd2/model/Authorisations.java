@@ -1,8 +1,7 @@
 package de.adorsys.psd2.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import org.springframework.validation.annotation.Validated;
 
 import javax.validation.Valid;
@@ -12,9 +11,10 @@ import java.util.Objects;
 /**
  * An array of all authorisationIds.
  */
-@ApiModel(description = "An array of all authorisationIds.")
+@Schema(description = "An array of all authorisationIds.")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2021-11-05T12:22:49.487689+02:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-05-06T13:00:42.214155+03:00[Europe/Kiev]")
+
 
 public class Authorisations   {
   @JsonProperty("authorisationIds")
@@ -28,15 +28,12 @@ public class Authorisations   {
   /**
    * Get authorisationIds
    * @return authorisationIds
-  **/
-  @ApiModelProperty(required = true, value = "")
-  @NotNull
+   **/
+  @Schema(required = true, description = "")
+      @NotNull
 
-  @Valid
-
-
-  @JsonProperty("authorisationIds")
-  public AuthorisationsList getAuthorisationIds() {
+    @Valid
+    public AuthorisationsList getAuthorisationIds() {
     return authorisationIds;
   }
 
@@ -52,7 +49,8 @@ public class Authorisations   {
     }
     if (o == null || getClass() != o.getClass()) {
       return false;
-}    Authorisations authorisations = (Authorisations) o;
+    }
+    Authorisations authorisations = (Authorisations) o;
     return Objects.equals(this.authorisationIds, authorisations.authorisationIds);
   }
 
@@ -82,4 +80,3 @@ public class Authorisations   {
     return o.toString().replace("\n", "\n    ");
   }
 }
-

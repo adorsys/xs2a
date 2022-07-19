@@ -1,8 +1,7 @@
 package de.adorsys.psd2.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import org.springframework.validation.annotation.Validated;
 
 import javax.validation.constraints.NotNull;
@@ -12,11 +11,12 @@ import java.util.Objects;
 /**
  * Content of the body of a Select PSU authentication method request
  */
-@ApiModel(description = "Content of the body of a Select PSU authentication method request ")
+@Schema(description = "Content of the body of a Select PSU authentication method request ")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2021-11-05T12:22:49.487689+02:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-05-06T13:00:42.214155+03:00[Europe/Kiev]")
 
-public class SelectPsuAuthenticationMethod   {
+
+public class SelectPsuAuthenticationMethod {
   @JsonProperty("authenticationMethodId")
   private String authenticationMethodId = null;
 
@@ -26,16 +26,13 @@ public class SelectPsuAuthenticationMethod   {
   }
 
   /**
-   * Get authenticationMethodId
+   * An identification provided by the ASPSP for the later identification of the authentication method selection.
    * @return authenticationMethodId
-  **/
-  @ApiModelProperty(required = true, value = "")
-  @NotNull
+   **/
+  @Schema(example = "myAuthenticationID", required = true, description = "An identification provided by the ASPSP for the later identification of the authentication method selection. ")
+      @NotNull
 
-@Size(max=35)
-
-  @JsonProperty("authenticationMethodId")
-  public String getAuthenticationMethodId() {
+  @Size(max=35)   public String getAuthenticationMethodId() {
     return authenticationMethodId;
   }
 
@@ -51,7 +48,8 @@ public class SelectPsuAuthenticationMethod   {
     }
     if (o == null || getClass() != o.getClass()) {
       return false;
-}    SelectPsuAuthenticationMethod selectPsuAuthenticationMethod = (SelectPsuAuthenticationMethod) o;
+    }
+    SelectPsuAuthenticationMethod selectPsuAuthenticationMethod = (SelectPsuAuthenticationMethod) o;
     return Objects.equals(this.authenticationMethodId, selectPsuAuthenticationMethod.authenticationMethodId);
   }
 
@@ -81,4 +79,3 @@ public class SelectPsuAuthenticationMethod   {
     return o.toString().replace("\n", "\n    ");
   }
 }
-

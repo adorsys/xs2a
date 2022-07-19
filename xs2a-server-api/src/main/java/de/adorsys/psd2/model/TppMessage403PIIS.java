@@ -1,7 +1,7 @@
 package de.adorsys.psd2.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import org.springframework.validation.annotation.Validated;
 
 import javax.validation.Valid;
@@ -13,7 +13,8 @@ import java.util.Objects;
  * TppMessage403PIIS
  */
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2021-11-05T12:22:49.487689+02:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-05-06T13:00:42.214155+03:00[Europe/Kiev]")
+
 
 public class TppMessage403PIIS   {
   @JsonProperty("category")
@@ -36,15 +37,12 @@ public class TppMessage403PIIS   {
   /**
    * Get category
    * @return category
-  **/
-  @ApiModelProperty(required = true, value = "")
-  @NotNull
+   **/
+  @Schema(required = true, description = "")
+      @NotNull
 
-  @Valid
-
-
-  @JsonProperty("category")
-  public TppMessageCategory getCategory() {
+    @Valid
+    public TppMessageCategory getCategory() {
     return category;
   }
 
@@ -58,16 +56,13 @@ public class TppMessage403PIIS   {
   }
 
   /**
-   * Get code
+   * Message codes defined for PIIS for HTTP Error code 403 (FORBIDDEN).
    * @return code
-  **/
-  @ApiModelProperty(required = true, value = "")
-  @NotNull
+   **/
+  @Schema(required = true, description = "Message codes defined for PIIS for HTTP Error code 403 (FORBIDDEN).")
+      @NotNull
 
-
-
-  @JsonProperty("code")
-  public String getCode() {
+    public String getCode() {
     return code;
   }
 
@@ -83,13 +78,10 @@ public class TppMessage403PIIS   {
   /**
    * Get path
    * @return path
-  **/
-  @ApiModelProperty(value = "")
+   **/
+  @Schema(description = "")
 
-
-
-  @JsonProperty("path")
-  public String getPath() {
+    public String getPath() {
     return path;
   }
 
@@ -103,15 +95,12 @@ public class TppMessage403PIIS   {
   }
 
   /**
-   * Get text
+   * Additional explaining text to the TPP.
    * @return text
-  **/
-  @ApiModelProperty(value = "")
+   **/
+  @Schema(description = "Additional explaining text to the TPP.")
 
-@Size(max=500)
-
-  @JsonProperty("text")
-  public String getText() {
+  @Size(max=500)   public String getText() {
     return text;
   }
 
@@ -127,11 +116,12 @@ public class TppMessage403PIIS   {
     }
     if (o == null || getClass() != o.getClass()) {
       return false;
-}    TppMessage403PIIS tppMessage403PIIS = (TppMessage403PIIS) o;
+    }
+    TppMessage403PIIS tppMessage403PIIS = (TppMessage403PIIS) o;
     return Objects.equals(this.category, tppMessage403PIIS.category) &&
-    Objects.equals(this.code, tppMessage403PIIS.code) &&
-    Objects.equals(this.path, tppMessage403PIIS.path) &&
-    Objects.equals(this.text, tppMessage403PIIS.text);
+        Objects.equals(this.code, tppMessage403PIIS.code) &&
+        Objects.equals(this.path, tppMessage403PIIS.path) &&
+        Objects.equals(this.text, tppMessage403PIIS.text);
   }
 
   @Override
@@ -163,4 +153,3 @@ public class TppMessage403PIIS   {
     return o.toString().replace("\n", "\n    ");
   }
 }
-

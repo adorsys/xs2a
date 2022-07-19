@@ -1,7 +1,7 @@
 package de.adorsys.psd2.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import org.springframework.validation.annotation.Validated;
 
 import javax.validation.Valid;
@@ -13,7 +13,8 @@ import java.util.Objects;
  * TppMessage201PaymentInitiation
  */
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2021-11-05T12:22:49.487689+02:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-05-06T13:00:42.214155+03:00[Europe/Kiev]")
+
 
 public class TppMessage201PaymentInitiation   {
   @JsonProperty("category")
@@ -36,15 +37,12 @@ public class TppMessage201PaymentInitiation   {
   /**
    * Get category
    * @return category
-  **/
-  @ApiModelProperty(required = true, value = "")
-  @NotNull
+   **/
+  @Schema(required = true, description = "")
+      @NotNull
 
-  @Valid
-
-
-  @JsonProperty("category")
-  public TppMessageCategory getCategory() {
+    @Valid
+    public TppMessageCategory getCategory() {
     return category;
   }
 
@@ -60,15 +58,12 @@ public class TppMessage201PaymentInitiation   {
   /**
    * Get code
    * @return code
-  **/
-  @ApiModelProperty(required = true, value = "")
-  @NotNull
+   **/
+  @Schema(required = true, description = "")
+      @NotNull
 
-  @Valid
-
-
-  @JsonProperty("code")
-  public MessageCode201PaymentInitiation getCode() {
+    @Valid
+    public MessageCode201PaymentInitiation getCode() {
     return code;
   }
 
@@ -84,13 +79,10 @@ public class TppMessage201PaymentInitiation   {
   /**
    * Get path
    * @return path
-  **/
-  @ApiModelProperty(value = "")
+   **/
+  @Schema(description = "")
 
-
-
-  @JsonProperty("path")
-  public String getPath() {
+    public String getPath() {
     return path;
   }
 
@@ -104,15 +96,12 @@ public class TppMessage201PaymentInitiation   {
   }
 
   /**
-   * Get text
+   * Additional explaining text to the TPP.
    * @return text
-  **/
-  @ApiModelProperty(value = "")
+   **/
+  @Schema(description = "Additional explaining text to the TPP.")
 
-@Size(max=500)
-
-  @JsonProperty("text")
-  public String getText() {
+  @Size(max=500)   public String getText() {
     return text;
   }
 
@@ -128,11 +117,12 @@ public class TppMessage201PaymentInitiation   {
     }
     if (o == null || getClass() != o.getClass()) {
       return false;
-}    TppMessage201PaymentInitiation tppMessage201PaymentInitiation = (TppMessage201PaymentInitiation) o;
+    }
+    TppMessage201PaymentInitiation tppMessage201PaymentInitiation = (TppMessage201PaymentInitiation) o;
     return Objects.equals(this.category, tppMessage201PaymentInitiation.category) &&
-    Objects.equals(this.code, tppMessage201PaymentInitiation.code) &&
-    Objects.equals(this.path, tppMessage201PaymentInitiation.path) &&
-    Objects.equals(this.text, tppMessage201PaymentInitiation.text);
+        Objects.equals(this.code, tppMessage201PaymentInitiation.code) &&
+        Objects.equals(this.path, tppMessage201PaymentInitiation.path) &&
+        Objects.equals(this.text, tppMessage201PaymentInitiation.text);
   }
 
   @Override
@@ -164,4 +154,3 @@ public class TppMessage201PaymentInitiation   {
     return o.toString().replace("\n", "\n    ");
   }
 }
-

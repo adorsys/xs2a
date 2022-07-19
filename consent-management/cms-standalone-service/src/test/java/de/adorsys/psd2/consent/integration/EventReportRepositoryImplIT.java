@@ -18,8 +18,11 @@
 
 package de.adorsys.psd2.consent.integration;
 
-import com.google.common.collect.Sets;
+import de.adorsys.psd2.consent.domain.consent.ConsentEntity;
+import de.adorsys.psd2.consent.domain.payment.PisCommonPaymentData;
 import de.adorsys.psd2.consent.integration.config.IntegrationTestConfiguration;
+import de.adorsys.psd2.consent.repository.ConsentJpaRepository;
+import de.adorsys.psd2.consent.repository.PisCommonPaymentDataRepository;
 import de.adorsys.psd2.event.core.model.EventOrigin;
 import de.adorsys.psd2.event.core.model.EventType;
 import de.adorsys.psd2.event.persist.EventReportRepository;
@@ -32,22 +35,23 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import org.springframework.test.context.ActiveProfiles;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
+import java.util.Collections;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-@ActiveProfiles("integration-test")
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = IntegrationTestConfiguration.class)
-@DataJpaTest
+@SpringBootTest
+@TestPropertySource(locations = "classpath:application-integration-test.properties")
 @TestInstance(value = TestInstance.Lifecycle.PER_CLASS)
 class EventReportRepositoryImplIT {
     private static final String INSTANCE_ID = "3de76f19-1df7-44d8-b760-ca972d2f945c";
@@ -60,16 +64,36 @@ class EventReportRepositoryImplIT {
     private EventReportRepository repository;
 
     @Autowired
+    private ConsentJpaRepository consentJpaRepository;
+
+    @Autowired
     private EventRepository eventRepository;
 
+    @Autowired
+    private PisCommonPaymentDataRepository pisCommonPaymentDataRepository;
+
     private ReportEvent expectedEvent;
+    private ReportEvent expectedPaymentEvent;
+
     private final JsonReader jsonReader = new JsonReader();
 
     @BeforeAll
     void setUp() {
+        ConsentEntity consentEntity = jsonReader.getObjectFromFile("json/consent/integration/ais/consent-entity.json", ConsentEntity.class);
+        consentJpaRepository.save(consentEntity);
+
+        PisCommonPaymentData pisCommonPaymentData = jsonReader.getObjectFromFile("json/consent/integration/pis/common-payment-data.json", PisCommonPaymentData.class);
+        pisCommonPaymentData.getPayments().forEach(p -> p.setPaymentData(pisCommonPaymentData));
+
+        pisCommonPaymentDataRepository.save(pisCommonPaymentData);
+
         EventPO eventPO = jsonReader.getObjectFromFile("json/event.json", EventPO.class);
-        expectedEvent = buildReportEvent(eventPO);
+        expectedEvent = buildReportEvent(eventPO, 1L);
         eventRepository.save(eventPO);
+
+        EventPO eventPaymentPO = jsonReader.getObjectFromFile("json/event-payment.json", EventPO.class);
+        expectedPaymentEvent = buildReportEvent(eventPaymentPO, 2L);
+        eventRepository.save(eventPaymentPO);
     }
 
     @Test
@@ -77,7 +101,7 @@ class EventReportRepositoryImplIT {
         List<ReportEvent> eventsForPeriod = repository.getEventsForPeriod(START, END, INSTANCE_ID, 0, 20);
 
         assertNotNull(eventsForPeriod);
-        assertEquals(1, eventsForPeriod.size());
+        assertEquals(2, eventsForPeriod.size());
         assertEquals(expectedEvent, updateToUTC(eventsForPeriod.get(0)));
     }
 
@@ -96,7 +120,7 @@ class EventReportRepositoryImplIT {
 
         assertNotNull(eventsForPeriod);
         assertEquals(1, eventsForPeriod.size());
-        assertEquals(expectedEvent, updateToUTC(eventsForPeriod.get(0)));
+        assertEquals(expectedPaymentEvent, updateToUTC(eventsForPeriod.get(0)));
     }
 
     @Test
@@ -104,7 +128,7 @@ class EventReportRepositoryImplIT {
         List<ReportEvent> eventsForPeriod = repository.getEventsForPeriodAndEventOrigin(START, END, EventOrigin.TPP, INSTANCE_ID, 0, 20);
 
         assertNotNull(eventsForPeriod);
-        assertEquals(1, eventsForPeriod.size());
+        assertEquals(2, eventsForPeriod.size());
         assertEquals(expectedEvent, updateToUTC(eventsForPeriod.get(0)));
     }
 
@@ -113,7 +137,7 @@ class EventReportRepositoryImplIT {
         List<ReportEvent> eventsForPeriod = repository.getEventsForPeriodAndEventType(START, END, EventType.PAYMENT_INITIATION_REQUEST_RECEIVED, INSTANCE_ID, 0, 20);
 
         assertNotNull(eventsForPeriod);
-        assertEquals(1, eventsForPeriod.size());
+        assertEquals(2, eventsForPeriod.size());
         assertEquals(expectedEvent, updateToUTC(eventsForPeriod.get(0)));
     }
 
@@ -122,9 +146,9 @@ class EventReportRepositoryImplIT {
         return reportEvent;
     }
 
-    private ReportEvent buildReportEvent(EventPO eventPO) {
+    private ReportEvent buildReportEvent(EventPO eventPO, Long id) {
         ReportEvent reportEvent = new ReportEvent();
-        reportEvent.setId(1L);
+        reportEvent.setId(id);
         reportEvent.setTimestamp(eventPO.getTimestamp());
         reportEvent.setConsentId(eventPO.getConsentId());
         reportEvent.setPaymentId(eventPO.getPaymentId());
@@ -134,7 +158,7 @@ class EventReportRepositoryImplIT {
         reportEvent.setInstanceId(eventPO.getInstanceId());
         reportEvent.setTppAuthorisationNumber(eventPO.getTppAuthorisationNumber());
         reportEvent.setXRequestId(eventPO.getXRequestId());
-        reportEvent.setPsuIdData(Sets.newHashSet(eventPO.getPsuIdData()));
+        reportEvent.setPsuIdData(Collections.singleton((eventPO.getPsuIdData())));
         reportEvent.setInternalRequestId(eventPO.getInternalRequestId());
         return reportEvent;
     }

@@ -46,6 +46,7 @@ import de.adorsys.psd2.xs2a.domain.pis.*;
 import de.adorsys.psd2.xs2a.service.*;
 import de.adorsys.psd2.xs2a.service.mapper.ResponseMapper;
 import de.adorsys.psd2.xs2a.service.mapper.psd2.ResponseErrorMapper;
+import de.adorsys.psd2.xs2a.web.controller.psd2.PaymentController;
 import de.adorsys.psd2.xs2a.web.header.PaymentCancellationHeadersBuilder;
 import de.adorsys.psd2.xs2a.web.header.PaymentInitiationHeadersBuilder;
 import de.adorsys.psd2.xs2a.web.header.ResponseHeaders;

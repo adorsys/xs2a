@@ -20,7 +20,11 @@ package de.adorsys.psd2.consent.api;
 
 import de.adorsys.psd2.consent.api.config.InternalCmsXs2aApiTagName;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
-import io.swagger.annotations.*;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -29,17 +33,17 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import java.util.List;
 
 @RequestMapping(path = "api/v1/pis")
-@Api(value = "api/v1/pis", tags = InternalCmsXs2aApiTagName.PIS_PSU_DATA)
+@Tag(name = InternalCmsXs2aApiTagName.PIS_PSU_DATA, description = "Provides access to consent management system for PSU Data")
 public interface PisPsuDataApi {
 
     @GetMapping(path = "/payment/{payment-id}/psu-data")
-    @ApiOperation(value = "Get PSU data identified by given payment id.")
+    @Operation(description = "Get PSU data identified by given payment ID")
     @ApiResponses(value = {
-        @ApiResponse(code = 200, message = "OK"),
-        @ApiResponse(code = 404, message = "Not Found")})
+        @ApiResponse(responseCode = "200", description = "OK"),
+        @ApiResponse(responseCode = "404", description = "Not Found")})
     ResponseEntity<List<PsuIdData>> getPsuDataByPaymentId(
-        @ApiParam(name = "payment-id",
-            value = "The payment identification.",
+        @Parameter(name = "payment-id",
+            description = "The payment identification.",
             example = "32454656712432",
             required = true)
         @PathVariable("payment-id") String paymentId);

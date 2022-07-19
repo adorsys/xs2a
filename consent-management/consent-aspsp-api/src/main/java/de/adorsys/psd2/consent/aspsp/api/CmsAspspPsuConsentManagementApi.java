@@ -19,7 +19,11 @@
 package de.adorsys.psd2.consent.aspsp.api;
 
 import de.adorsys.psd2.consent.aspsp.api.config.CmsAspspApiTagName;
-import io.swagger.annotations.*;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.RequestHeader;
@@ -28,25 +32,25 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import static de.adorsys.psd2.consent.aspsp.api.config.CmsPsuApiDefaultValue.DEFAULT_SERVICE_INSTANCE_ID;
 
 @RequestMapping(path = "aspsp-api/v1/psu/consent")
-@Api(value = "aspsp-api/v1/psu/consent", tags = CmsAspspApiTagName.ASPSP_PSU_CONSENT_MANAGEMENT)
+@Tag(name = CmsAspspApiTagName.ASPSP_PSU_CONSENT_MANAGEMENT, description = "CMS-ASPSP PSU Consent Management Controller")
 public interface CmsAspspPsuConsentManagementApi {
 
     @DeleteMapping(path = "/all")
-    @ApiOperation(value = "Close all PIIS and AIS consents for PSU or account")
+    @Operation(description = "Close all PIIS and AIS consents for PSU or account")
     @ApiResponses(value = {
-        @ApiResponse(code = 200, message = "OK", response = Boolean.class),
-        @ApiResponse(code = 400, message = "Bad Request")})
+        @ApiResponse(responseCode = "200", description = "OK"),
+        @ApiResponse(responseCode = "400", description = "Bad Request")})
     ResponseEntity<Boolean> closeAllConsents(
-        @ApiParam(value = "Bank specific account identifier.", example = "11111-99999")
+        @Parameter(description = "Bank specific account identifier", example = "11111-99999")
         @RequestHeader(value = "account-id", required = false) String aspspAccountId,
-        @ApiParam(value = "Client ID of the PSU in the ASPSP client interface. Might be mandated in the ASPSP's documentation. Is not contained if an OAuth2 based authentication was performed in a pre-step or an OAuth2 based SCA was performed in an preceding AIS service in the same session. ")
+        @Parameter(description = "Client ID of the PSU in the ASPSP client interface. Might be mandated in the ASPSP's documentation. Is not contained if an OAuth2 based authentication was performed in a pre-step or an OAuth2 based SCA was performed in an preceding AIS service in the same session.")
         @RequestHeader(value = "psu-id", required = false) String psuId,
-        @ApiParam(value = "Type of the PSU-ID, needed in scenarios where PSUs have several PSU-IDs as access possibility. ")
+        @Parameter(description = "Type of the PSU-ID, needed in scenarios where PSUs have several PSU-IDs as access possibility")
         @RequestHeader(value = "psu-id-type", required = false) String psuIdType,
-        @ApiParam(value = "Might be mandated in the ASPSP's documentation. Only used in a corporate context. ")
+        @Parameter(description = "Might be mandated in the ASPSP's documentation. Only used in a corporate context.")
         @RequestHeader(value = "psu-corporate-id", required = false) String psuCorporateId,
-        @ApiParam(value = "Might be mandated in the ASPSP's documentation. Only used in a corporate context. ")
+        @Parameter(description = "Might be mandated in the ASPSP's documentation. Only used in a corporate context.")
         @RequestHeader(value = "psu-corporate-id-type", required = false) String psuCorporateIdType,
-        @ApiParam(value = "ID of the particular service instance")
+        @Parameter(description = "ID of the particular service instance")
         @RequestHeader(value = "instance-id", required = false, defaultValue = DEFAULT_SERVICE_INSTANCE_ID) String instanceId);
 }

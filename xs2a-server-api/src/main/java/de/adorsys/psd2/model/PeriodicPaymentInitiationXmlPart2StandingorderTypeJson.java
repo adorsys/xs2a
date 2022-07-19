@@ -1,22 +1,21 @@
 package de.adorsys.psd2.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import org.springframework.validation.annotation.Validated;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
 import java.time.LocalDate;
 import java.util.Objects;
 
 /**
  * The body part 2 of a periodic payment initation request containes the execution related informations  of the periodic payment.
  */
-@ApiModel(description = "The body part 2 of a periodic payment initation request containes the execution related informations  of the periodic payment. ")
+@Schema(description = "The body part 2 of a periodic payment initation request containes the execution related informations  of the periodic payment. ")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2021-11-05T12:22:49.487689+02:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-05-06T13:00:42.214155+03:00[Europe/Kiev]")
+
 
 public class PeriodicPaymentInitiationXmlPart2StandingorderTypeJson   {
   @JsonProperty("startDate")
@@ -43,17 +42,14 @@ public class PeriodicPaymentInitiationXmlPart2StandingorderTypeJson   {
   }
 
   /**
-   * Get startDate
+   * The first applicable day of execution starting from this date is the first payment.
    * @return startDate
-  **/
-  @ApiModelProperty(required = true, value = "")
-  @NotNull
+   **/
+  @Schema(required = true, description = "The first applicable day of execution starting from this date is the first payment. ")
+      @NotNull
 
-  @Valid
-
-
-  @JsonProperty("startDate")
-  public LocalDate getStartDate() {
+    @Valid
+    public LocalDate getStartDate() {
     return startDate;
   }
 
@@ -67,16 +63,13 @@ public class PeriodicPaymentInitiationXmlPart2StandingorderTypeJson   {
   }
 
   /**
-   * Get endDate
+   * The last applicable day of execution. If not given, it is an infinite standing order.
    * @return endDate
-  **/
-  @ApiModelProperty(value = "")
+   **/
+  @Schema(description = "The last applicable day of execution. If not given, it is an infinite standing order. ")
 
-  @Valid
-
-
-  @JsonProperty("endDate")
-  public LocalDate getEndDate() {
+    @Valid
+    public LocalDate getEndDate() {
     return endDate;
   }
 
@@ -92,14 +85,11 @@ public class PeriodicPaymentInitiationXmlPart2StandingorderTypeJson   {
   /**
    * Get executionRule
    * @return executionRule
-  **/
-  @ApiModelProperty(value = "")
+   **/
+  @Schema(description = "")
 
-  @Valid
-
-
-  @JsonProperty("executionRule")
-  public ExecutionRule getExecutionRule() {
+    @Valid
+    public ExecutionRule getExecutionRule() {
     return executionRule;
   }
 
@@ -115,15 +105,12 @@ public class PeriodicPaymentInitiationXmlPart2StandingorderTypeJson   {
   /**
    * Get frequency
    * @return frequency
-  **/
-  @ApiModelProperty(required = true, value = "")
-  @NotNull
+   **/
+  @Schema(required = true, description = "")
+      @NotNull
 
-  @Valid
-
-
-  @JsonProperty("frequency")
-  public FrequencyCode getFrequency() {
+    @Valid
+    public FrequencyCode getFrequency() {
     return frequency;
   }
 
@@ -139,13 +126,10 @@ public class PeriodicPaymentInitiationXmlPart2StandingorderTypeJson   {
   /**
    * Get dayOfExecution
    * @return dayOfExecution
-  **/
-  @ApiModelProperty(value = "")
+   **/
+  @Schema(description = "")
 
-  @Valid
-@Size(max=2)
-
-  @JsonProperty("dayOfExecution")
+    @Valid
   public DayOfExecution getDayOfExecution() {
     return dayOfExecution;
   }
@@ -162,14 +146,11 @@ public class PeriodicPaymentInitiationXmlPart2StandingorderTypeJson   {
   /**
    * Get monthsOfExecution
    * @return monthsOfExecution
-  **/
-  @ApiModelProperty(value = "")
+   **/
+  @Schema(description = "")
 
-  @Valid
-
-
-  @JsonProperty("monthsOfExecution")
-  public MonthsOfExecution getMonthsOfExecution() {
+    @Valid
+    public MonthsOfExecution getMonthsOfExecution() {
     return monthsOfExecution;
   }
 
@@ -185,13 +166,14 @@ public class PeriodicPaymentInitiationXmlPart2StandingorderTypeJson   {
     }
     if (o == null || getClass() != o.getClass()) {
       return false;
-}    PeriodicPaymentInitiationXmlPart2StandingorderTypeJson periodicPaymentInitiationXmlPart2StandingorderTypeJson = (PeriodicPaymentInitiationXmlPart2StandingorderTypeJson) o;
+    }
+    PeriodicPaymentInitiationXmlPart2StandingorderTypeJson periodicPaymentInitiationXmlPart2StandingorderTypeJson = (PeriodicPaymentInitiationXmlPart2StandingorderTypeJson) o;
     return Objects.equals(this.startDate, periodicPaymentInitiationXmlPart2StandingorderTypeJson.startDate) &&
-    Objects.equals(this.endDate, periodicPaymentInitiationXmlPart2StandingorderTypeJson.endDate) &&
-    Objects.equals(this.executionRule, periodicPaymentInitiationXmlPart2StandingorderTypeJson.executionRule) &&
-    Objects.equals(this.frequency, periodicPaymentInitiationXmlPart2StandingorderTypeJson.frequency) &&
-    Objects.equals(this.dayOfExecution, periodicPaymentInitiationXmlPart2StandingorderTypeJson.dayOfExecution) &&
-    Objects.equals(this.monthsOfExecution, periodicPaymentInitiationXmlPart2StandingorderTypeJson.monthsOfExecution);
+        Objects.equals(this.endDate, periodicPaymentInitiationXmlPart2StandingorderTypeJson.endDate) &&
+        Objects.equals(this.executionRule, periodicPaymentInitiationXmlPart2StandingorderTypeJson.executionRule) &&
+        Objects.equals(this.frequency, periodicPaymentInitiationXmlPart2StandingorderTypeJson.frequency) &&
+        Objects.equals(this.dayOfExecution, periodicPaymentInitiationXmlPart2StandingorderTypeJson.dayOfExecution) &&
+        Objects.equals(this.monthsOfExecution, periodicPaymentInitiationXmlPart2StandingorderTypeJson.monthsOfExecution);
   }
 
   @Override
@@ -225,4 +207,3 @@ public class PeriodicPaymentInitiationXmlPart2StandingorderTypeJson   {
     return o.toString().replace("\n", "\n    ");
   }
 }
-

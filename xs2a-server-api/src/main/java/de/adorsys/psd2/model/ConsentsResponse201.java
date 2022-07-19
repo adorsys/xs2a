@@ -1,8 +1,7 @@
 package de.adorsys.psd2.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import org.springframework.validation.annotation.Validated;
 
 import javax.validation.Valid;
@@ -16,9 +15,10 @@ import java.util.Objects;
 /**
  * Body of the JSON response for a successful consent request.
  */
-@ApiModel(description = "Body of the JSON response for a successful consent request.")
+@Schema(description = "Body of the JSON response for a successful consent request.")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2021-11-05T12:22:49.487689+02:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-05-06T13:00:42.214155+03:00[Europe/Kiev]")
+
 
 public class ConsentsResponse201   {
   @JsonProperty("consentStatus")
@@ -57,15 +57,12 @@ public class ConsentsResponse201   {
   /**
    * Get consentStatus
    * @return consentStatus
-  **/
-  @ApiModelProperty(required = true, value = "")
-  @NotNull
+   **/
+  @Schema(required = true, description = "")
+      @NotNull
 
-  @Valid
-
-
-  @JsonProperty("consentStatus")
-  public ConsentStatus getConsentStatus() {
+    @Valid
+    public ConsentStatus getConsentStatus() {
     return consentStatus;
   }
 
@@ -79,16 +76,13 @@ public class ConsentsResponse201   {
   }
 
   /**
-   * Get consentId
+   * ID of the corresponding consent object as returned by an account information consent request.
    * @return consentId
-  **/
-  @ApiModelProperty(required = true, value = "")
-  @NotNull
+   **/
+  @Schema(required = true, description = "ID of the corresponding consent object as returned by an account information consent request. ")
+      @NotNull
 
-
-
-  @JsonProperty("consentId")
-  public String getConsentId() {
+    public String getConsentId() {
     return consentId;
   }
 
@@ -104,14 +98,11 @@ public class ConsentsResponse201   {
   /**
    * Get scaMethods
    * @return scaMethods
-  **/
-  @ApiModelProperty(value = "")
+   **/
+  @Schema(description = "")
 
-  @Valid
-
-
-  @JsonProperty("scaMethods")
-  public ScaMethods getScaMethods() {
+    @Valid
+    public ScaMethods getScaMethods() {
     return scaMethods;
   }
 
@@ -127,14 +118,11 @@ public class ConsentsResponse201   {
   /**
    * Get chosenScaMethod
    * @return chosenScaMethod
-  **/
-  @ApiModelProperty(value = "")
+   **/
+  @Schema(description = "")
 
-  @Valid
-
-
-  @JsonProperty("chosenScaMethod")
-  public ChosenScaMethod getChosenScaMethod() {
+    @Valid
+    public ChosenScaMethod getChosenScaMethod() {
     return chosenScaMethod;
   }
 
@@ -150,14 +138,11 @@ public class ConsentsResponse201   {
   /**
    * Get challengeData
    * @return challengeData
-  **/
-  @ApiModelProperty(value = "")
+   **/
+  @Schema(description = "")
 
-  @Valid
-
-
-  @JsonProperty("challengeData")
-  public ChallengeData getChallengeData() {
+    @Valid
+    public ChallengeData getChallengeData() {
     return challengeData;
   }
 
@@ -173,19 +158,16 @@ public class ConsentsResponse201   {
   /**
    * Get _links
    * @return _links
-  **/
-  @ApiModelProperty(required = true, value = "")
-  @NotNull
+   **/
+  @Schema(required = true, description = "")
+      @NotNull
 
-  @Valid
-
-
-  @JsonProperty("_links")
-  public Map getLinks() {
+    @Valid
+    public Map getLinks() {
     return _links;
   }
 
-  public void setLinks(Map _links) {
+  public void setLinks(LinksConsents _links) {
     this._links = _links;
   }
 
@@ -195,15 +177,12 @@ public class ConsentsResponse201   {
   }
 
   /**
-   * Get psuMessage
+   * Text to be displayed to the PSU.
    * @return psuMessage
-  **/
-  @ApiModelProperty(value = "")
+   **/
+  @Schema(description = "Text to be displayed to the PSU.")
 
-@Size(max=500)
-
-  @JsonProperty("psuMessage")
-  public String getPsuMessage() {
+  @Size(max=500)   public String getPsuMessage() {
     return psuMessage;
   }
 
@@ -227,14 +206,10 @@ public class ConsentsResponse201   {
   /**
    * Get tppMessages
    * @return tppMessages
-  **/
-  @ApiModelProperty(value = "")
-
-  @Valid
-
-
-  @JsonProperty("tppMessages")
-  public List<TppMessageGeneric> getTppMessages() {
+   **/
+  @Schema(description = "")
+      @Valid
+    public List<TppMessageGeneric> getTppMessages() {
     return tppMessages;
   }
 
@@ -250,14 +225,11 @@ public class ConsentsResponse201   {
   /**
    * Get scaStatus
    * @return scaStatus
-  **/
-  @ApiModelProperty(value = "")
+   **/
+  @Schema(description = "")
 
-  @Valid
-
-
-  @JsonProperty("scaStatus")
-  public ScaStatus getScaStatus() {
+    @Valid
+    public ScaStatus getScaStatus() {
     return scaStatus;
   }
 
@@ -273,16 +245,17 @@ public class ConsentsResponse201   {
     }
     if (o == null || getClass() != o.getClass()) {
       return false;
-}    ConsentsResponse201 consentsResponse201 = (ConsentsResponse201) o;
+    }
+    ConsentsResponse201 consentsResponse201 = (ConsentsResponse201) o;
     return Objects.equals(this.consentStatus, consentsResponse201.consentStatus) &&
-    Objects.equals(this.consentId, consentsResponse201.consentId) &&
-    Objects.equals(this.scaMethods, consentsResponse201.scaMethods) &&
-    Objects.equals(this.chosenScaMethod, consentsResponse201.chosenScaMethod) &&
-    Objects.equals(this.challengeData, consentsResponse201.challengeData) &&
-    Objects.equals(this._links, consentsResponse201._links) &&
-    Objects.equals(this.psuMessage, consentsResponse201.psuMessage) &&
-    Objects.equals(this.tppMessages, consentsResponse201.tppMessages) &&
-    Objects.equals(this.scaStatus, consentsResponse201.scaStatus);
+        Objects.equals(this.consentId, consentsResponse201.consentId) &&
+        Objects.equals(this.scaMethods, consentsResponse201.scaMethods) &&
+        Objects.equals(this.chosenScaMethod, consentsResponse201.chosenScaMethod) &&
+        Objects.equals(this.challengeData, consentsResponse201.challengeData) &&
+        Objects.equals(this._links, consentsResponse201._links) &&
+        Objects.equals(this.psuMessage, consentsResponse201.psuMessage) &&
+        Objects.equals(this.tppMessages, consentsResponse201.tppMessages) &&
+        Objects.equals(this.scaStatus, consentsResponse201.scaStatus);
   }
 
   @Override
@@ -319,4 +292,3 @@ public class ConsentsResponse201   {
     return o.toString().replace("\n", "\n    ");
   }
 }
-

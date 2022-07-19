@@ -21,10 +21,12 @@ package de.adorsys.psd2.consent.integration.config;
 import de.adorsys.psd2.consent.web.aspsp.config.EnableCmsAspspApiSwagger;
 import de.adorsys.psd2.consent.web.psu.config.EnableCmsPsuApiSwagger;
 import de.adorsys.psd2.consent.web.xs2a.config.EnableCmsXs2aApiSwagger;
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
+@EnableAutoConfiguration
 @ComponentScan(value = "de.adorsys.psd2",
     excludeFilters = @ComponentScan.Filter({
         EnableCmsXs2aApiSwagger.class,

@@ -1,8 +1,7 @@
 package de.adorsys.psd2.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import org.springframework.validation.annotation.Validated;
 
 import javax.validation.Valid;
@@ -13,9 +12,10 @@ import java.util.Objects;
 /**
  * Reference to an account by either   * IBAN, of a payment accounts, or   * BBAN, for payment accounts if there is no IBAN, or    * the Primary Account Number (PAN) of a card, can be tokenised by the ASPSP due to PCI DSS requirements, or   * the Primary Account Number (PAN) of a card in a masked form, or   * an alias to access a payment account via a registered mobile phone number (MSISDN), or   * a proprietary ID of the  respective account that uniquely identifies the account for this ASPSP.
  */
-@ApiModel(description = "Reference to an account by either   * IBAN, of a payment accounts, or   * BBAN, for payment accounts if there is no IBAN, or    * the Primary Account Number (PAN) of a card, can be tokenised by the ASPSP due to PCI DSS requirements, or   * the Primary Account Number (PAN) of a card in a masked form, or   * an alias to access a payment account via a registered mobile phone number (MSISDN), or   * a proprietary ID of the  respective account that uniquely identifies the account for this ASPSP. ")
+@Schema(description = "Reference to an account by either   * IBAN, of a payment accounts, or   * BBAN, for payment accounts if there is no IBAN, or    * the Primary Account Number (PAN) of a card, can be tokenised by the ASPSP due to PCI DSS requirements, or   * the Primary Account Number (PAN) of a card in a masked form, or   * an alias to access a payment account via a registered mobile phone number (MSISDN), or   * a proprietary ID of the  respective account that uniquely identifies the account for this ASPSP. ")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2021-11-05T12:22:49.487689+02:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-05-06T13:00:42.214155+03:00[Europe/Kiev]")
+
 
 public class AccountReference   {
   @JsonProperty("iban")
@@ -48,15 +48,12 @@ public class AccountReference   {
   }
 
   /**
-   * Get iban
+   * IBAN of an account.
    * @return iban
-  **/
-  @ApiModelProperty(value = "")
+   **/
+  @Schema(example = "FR7612345987650123456789014", description = "IBAN of an account.")
 
-@Pattern(regexp="[A-Z]{2,2}[0-9]{2,2}[a-zA-Z0-9]{1,30}")
-
-  @JsonProperty("iban")
-  public String getIban() {
+  @Pattern(regexp="[A-Z]{2,2}[0-9]{2,2}[a-zA-Z0-9]{1,30}")   public String getIban() {
     return iban;
   }
 
@@ -70,15 +67,12 @@ public class AccountReference   {
   }
 
   /**
-   * Get bban
+   * Basic Bank Account Number (BBAN) Identifier.  This data element can be used in the body of the consent request.   Message for retrieving account access consent from this account. This   data elements is used for payment accounts which have no IBAN.   ISO20022: Basic Bank Account Number (BBAN).       Identifier used nationally by financial institutions, i.e., in individual countries,    generally as part of a National Account Numbering Scheme(s),    which uniquely identifies the account of a customer.
    * @return bban
-  **/
-  @ApiModelProperty(value = "")
+   **/
+  @Schema(example = "BARC12345612345678", description = "Basic Bank Account Number (BBAN) Identifier.  This data element can be used in the body of the consent request.   Message for retrieving account access consent from this account. This   data elements is used for payment accounts which have no IBAN.   ISO20022: Basic Bank Account Number (BBAN).       Identifier used nationally by financial institutions, i.e., in individual countries,    generally as part of a National Account Numbering Scheme(s),    which uniquely identifies the account of a customer. ")
 
-@Pattern(regexp="[a-zA-Z0-9]{1,30}")
-
-  @JsonProperty("bban")
-  public String getBban() {
+  @Pattern(regexp="[a-zA-Z0-9]{1,30}")   public String getBban() {
     return bban;
   }
 
@@ -92,15 +86,12 @@ public class AccountReference   {
   }
 
   /**
-   * Get pan
+   * Primary Account Number according to ISO/IEC 7812.
    * @return pan
-  **/
-  @ApiModelProperty(value = "")
+   **/
+  @Schema(example = "5409050000000000", description = "Primary Account Number according to ISO/IEC 7812. ")
 
-@Size(max=35)
-
-  @JsonProperty("pan")
-  public String getPan() {
+  @Size(max=35)   public String getPan() {
     return pan;
   }
 
@@ -114,15 +105,12 @@ public class AccountReference   {
   }
 
   /**
-   * Get maskedPan
+   * Masked Primary Account Number.
    * @return maskedPan
-  **/
-  @ApiModelProperty(value = "")
+   **/
+  @Schema(example = "123456xxxxxx1234", description = "Masked Primary Account Number. ")
 
-@Size(max=35)
-
-  @JsonProperty("maskedPan")
-  public String getMaskedPan() {
+  @Size(max=35)   public String getMaskedPan() {
     return maskedPan;
   }
 
@@ -136,15 +124,12 @@ public class AccountReference   {
   }
 
   /**
-   * Get msisdn
+   * Mobile phone number.
    * @return msisdn
-  **/
-  @ApiModelProperty(value = "")
+   **/
+  @Schema(example = "+49 170 1234567", description = "Mobile phone number.")
 
-@Size(max=35)
-
-  @JsonProperty("msisdn")
-  public String getMsisdn() {
+  @Size(max=35)   public String getMsisdn() {
     return msisdn;
   }
 
@@ -160,14 +145,11 @@ public class AccountReference   {
   /**
    * Get other
    * @return other
-  **/
-  @ApiModelProperty(value = "")
+   **/
+  @Schema(description = "")
 
-  @Valid
-
-
-  @JsonProperty("other")
-  public OtherType getOther() {
+    @Valid
+    public OtherType getOther() {
     return other;
   }
 
@@ -181,15 +163,12 @@ public class AccountReference   {
   }
 
   /**
-   * Get currency
+   * ISO 4217 Alpha 3 currency code.
    * @return currency
-  **/
-  @ApiModelProperty(value = "")
+   **/
+  @Schema(example = "EUR", description = "ISO 4217 Alpha 3 currency code. ")
 
-@Pattern(regexp="[A-Z]{3}")
-
-  @JsonProperty("currency")
-  public String getCurrency() {
+  @Pattern(regexp="[A-Z]{3}")   public String getCurrency() {
     return currency;
   }
 
@@ -203,15 +182,12 @@ public class AccountReference   {
   }
 
   /**
-   * Get cashAccountType
+   * ExternalCashAccountType1Code from ISO 20022.
    * @return cashAccountType
-  **/
-  @ApiModelProperty(value = "")
+   **/
+  @Schema(description = "ExternalCashAccountType1Code from ISO 20022. ")
 
-
-
-  @JsonProperty("cashAccountType")
-  public String getCashAccountType() {
+    public String getCashAccountType() {
     return cashAccountType;
   }
 
@@ -227,15 +203,16 @@ public class AccountReference   {
     }
     if (o == null || getClass() != o.getClass()) {
       return false;
-}    AccountReference accountReference = (AccountReference) o;
+    }
+    AccountReference accountReference = (AccountReference) o;
     return Objects.equals(this.iban, accountReference.iban) &&
-    Objects.equals(this.bban, accountReference.bban) &&
-    Objects.equals(this.pan, accountReference.pan) &&
-    Objects.equals(this.maskedPan, accountReference.maskedPan) &&
-    Objects.equals(this.msisdn, accountReference.msisdn) &&
-    Objects.equals(this.other, accountReference.other) &&
-    Objects.equals(this.currency, accountReference.currency) &&
-    Objects.equals(this.cashAccountType, accountReference.cashAccountType);
+        Objects.equals(this.bban, accountReference.bban) &&
+        Objects.equals(this.pan, accountReference.pan) &&
+        Objects.equals(this.maskedPan, accountReference.maskedPan) &&
+        Objects.equals(this.msisdn, accountReference.msisdn) &&
+        Objects.equals(this.other, accountReference.other) &&
+        Objects.equals(this.currency, accountReference.currency) &&
+        Objects.equals(this.cashAccountType, accountReference.cashAccountType);
   }
 
   @Override
@@ -271,4 +248,3 @@ public class AccountReference   {
     return o.toString().replace("\n", "\n    ");
   }
 }
-

@@ -18,62 +18,45 @@
 
 package de.adorsys.psd2.consent.web.xs2a.config;
 
-import com.google.common.base.Predicates;
+import io.swagger.v3.oas.models.OpenAPI;
+import io.swagger.v3.oas.models.info.Contact;
+import io.swagger.v3.oas.models.info.Info;
+import io.swagger.v3.oas.models.info.License;
 import lombok.RequiredArgsConstructor;
+import org.springdoc.core.GroupedOpenApi;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.info.BuildProperties;
 import org.springframework.context.annotation.Bean;
-import springfox.documentation.builders.ApiInfoBuilder;
-import springfox.documentation.builders.PathSelectors;
-import springfox.documentation.builders.RequestHandlerSelectors;
-import springfox.documentation.service.ApiInfo;
-import springfox.documentation.service.Contact;
-import springfox.documentation.spi.DocumentationType;
-import springfox.documentation.spring.web.plugins.Docket;
-import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
-@EnableSwagger2
 @RequiredArgsConstructor
 public class Xs2aApiSwaggerConfig {
     @Value("${xs2a.license.url}")
     private String licenseUrl;
     private final BuildProperties buildProperties;
 
-    @SuppressWarnings("Guava")  // Intellij IDEA claims that Guava predicates could be replaced with Java API,
-    // but actually it is not possible
-    @Bean(name = "xs2a-api")
-    public Docket apiDocklet() {
-        return new Docket(DocumentationType.SWAGGER_2)
-                   .groupName("Internal CMS-XS2A-API")
-                   .apiInfo(getApiInfo())
-                   .tags(
-                       InternalCmsXs2aApiTagHolder.AIS_CONSENTS,
-                       InternalCmsXs2aApiTagHolder.AIS_PSU_DATA,
-                       InternalCmsXs2aApiTagHolder.ASPSP_CONSENT_DATA,
-                       InternalCmsXs2aApiTagHolder.AUTHORISATIONS,
-                       InternalCmsXs2aApiTagHolder.CONSENTS,
-                       InternalCmsXs2aApiTagHolder.EVENTS,
-                       InternalCmsXs2aApiTagHolder.PIIS_CONSENTS,
-                       InternalCmsXs2aApiTagHolder.PIS_COMMON_PAYMENT,
-                       InternalCmsXs2aApiTagHolder.PIS_PAYMENTS,
-                       InternalCmsXs2aApiTagHolder.PIS_PSU_DATA,
-                       InternalCmsXs2aApiTagHolder.TPP
-                   )
-                   .select()
-                   .apis(RequestHandlerSelectors.basePackage("de.adorsys.psd2.consent.web.xs2a"))
-                   .paths(Predicates.not(PathSelectors.regex("/error.*?")))
-                   .paths(Predicates.not(PathSelectors.regex("/connect.*")))
-                   .paths(Predicates.not(PathSelectors.regex("/management.*")))
+    @Bean
+    public GroupedOpenApi cmsInternalRestApi() {
+        return GroupedOpenApi.builder()
+                   .group("CMS internal REST API")
+                   .packagesToScan("de.adorsys.psd2.consent.web.xs2a")
+                   .pathsToExclude("/error.*?")
+                   .pathsToExclude("/connect.*")
+                   .pathsToExclude("/management.*")
                    .build();
     }
 
-    private ApiInfo getApiInfo() {
-        return new ApiInfoBuilder()
-                   .title("XS2A CMS Internal API")
-                   .contact(new Contact("adorsys GmbH & Co. KG", "https://adorsys-platform.de/solutions/", "psd2@adorsys.de"))
-                   .version(buildProperties.getVersion() + " " + buildProperties.get("build.number"))
-                   .license("GNU Affero General Public License (AGPL) version 3.0")
-                   .licenseUrl(licenseUrl)
-                   .build();
+
+    @Bean(name = "xs2a-api")
+    public OpenAPI xs2aWebOpenAPI() {
+        return new OpenAPI()
+                   .info(new Info()
+                             .title("XS2A CMS REST API")
+                             .description("OpenApi for XS2A Consent Management System")
+                             .contact(new Contact()
+                                          .name("pru")
+                                          .email("pru@adorsys.com.ua")
+                                          .url("https://www.adorsys.de"))
+                             .version(buildProperties.getVersion() + " " + buildProperties.get("build.number"))
+                             .license(new License().name("AGPL version 3.0").url(licenseUrl)));
     }
 }

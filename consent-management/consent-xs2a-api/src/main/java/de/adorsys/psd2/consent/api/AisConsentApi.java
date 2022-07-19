@@ -21,27 +21,31 @@ package de.adorsys.psd2.consent.api;
 import de.adorsys.psd2.consent.api.ais.AisConsentActionRequest;
 import de.adorsys.psd2.consent.api.config.InternalCmsXs2aApiTagName;
 import de.adorsys.psd2.core.data.AccountAccess;
-import io.swagger.annotations.*;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RequestMapping(path = "api/v1/ais/consent")
-@Api(value = "api/v1/ais/consent", tags = InternalCmsXs2aApiTagName.AIS_CONSENTS)
+@Tag(name = InternalCmsXs2aApiTagName.AIS_CONSENTS, description = "Provides access to consent management system for AIS")
 public interface AisConsentApi {
 
     @PostMapping(path = "/action")
-    @ApiOperation(value = "Save information about uses of consent")
+    @Operation(description = "Save information about uses of consent")
     ResponseEntity<Object> saveConsentActionLog(@RequestBody AisConsentActionRequest request);
 
     @PutMapping(path = "/{encrypted-consent-id}/access")
-    @ApiOperation(value = "Update AccountAccess in the consent identified by given consent id.")
+    @Operation(description = "Update AccountAccess in the consent identified by given consent ID")
     @ApiResponses(value = {
-        @ApiResponse(code = 200, message = "OK"),
-        @ApiResponse(code = 400, message = "Checksum verification failed"),
-        @ApiResponse(code = 404, message = "Not Found")})
+        @ApiResponse(responseCode = "200", description = "OK"),
+        @ApiResponse(responseCode = "400", description = "Checksum verification failed"),
+        @ApiResponse(responseCode = "404", description = "Not Found")})
     ResponseEntity<Object> updateAccountAccess(
-        @ApiParam(name = "consent-id",
-            value = "The account consent identification assigned to the created account consent.",
+        @Parameter(name = "consent-id",
+            description = "The account consent identification assigned to the created account consent",
             example = "bf489af6-a2cb-4b75-b71d-d66d58b934d7",
             required = true)
         @PathVariable("encrypted-consent-id") String encryptedConsentId,

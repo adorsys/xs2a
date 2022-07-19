@@ -1,8 +1,7 @@
 package de.adorsys.psd2.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import org.springframework.validation.annotation.Validated;
 
 import javax.validation.Valid;
@@ -16,11 +15,12 @@ import java.util.Objects;
 /**
  * Body of the JSON response with SCA Status.
  */
-@ApiModel(description = "Body of the JSON response with SCA Status.")
+@Schema(description = "Body of the JSON response with SCA Status.")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2021-11-05T12:22:49.487689+02:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-05-06T13:00:42.214155+03:00[Europe/Kiev]")
 
-public class ScaStatusResponse   {
+
+public class ScaStatusResponse {
   @JsonProperty("scaStatus")
   private ScaStatus scaStatus = null;
 
@@ -45,15 +45,12 @@ public class ScaStatusResponse   {
   /**
    * Get scaStatus
    * @return scaStatus
-  **/
-  @ApiModelProperty(required = true, value = "")
-  @NotNull
+   **/
+  @Schema(required = true, description = "")
+      @NotNull
 
-  @Valid
-
-
-  @JsonProperty("scaStatus")
-  public ScaStatus getScaStatus() {
+    @Valid
+    public ScaStatus getScaStatus() {
     return scaStatus;
   }
 
@@ -67,15 +64,12 @@ public class ScaStatusResponse   {
   }
 
   /**
-   * Get psuMessage
+   * Text to be displayed to the PSU.
    * @return psuMessage
-  **/
-  @ApiModelProperty(value = "")
+   **/
+  @Schema(description = "Text to be displayed to the PSU.")
 
-@Size(max=500)
-
-  @JsonProperty("psuMessage")
-  public String getPsuMessage() {
+  @Size(max=500)   public String getPsuMessage() {
     return psuMessage;
   }
 
@@ -89,15 +83,12 @@ public class ScaStatusResponse   {
   }
 
   /**
-   * Get trustedBeneficiaryFlag
+   * Additional Service: Trusted Benificiaries Within this data element, the ASPSP might optionally communicate towards the TPP whether the creditor was part of the related trusted beneficiary list.  This attribute is only contained in case of a final scaStatus.
    * @return trustedBeneficiaryFlag
-  **/
-  @ApiModelProperty(value = "")
+   **/
+  @Schema(example = "false", description = "Additional Service: Trusted Benificiaries Within this data element, the ASPSP might optionally communicate towards the TPP whether the creditor was part of the related trusted beneficiary list.  This attribute is only contained in case of a final scaStatus. ")
 
-
-
-  @JsonProperty("trustedBeneficiaryFlag")
-  public Boolean getTrustedBeneficiaryFlag() {
+    public Boolean isTrustedBeneficiaryFlag() {
     return trustedBeneficiaryFlag;
   }
 
@@ -113,18 +104,15 @@ public class ScaStatusResponse   {
   /**
    * Get _links
    * @return _links
-  **/
-  @ApiModelProperty(value = "")
+   **/
+  @Schema(description = "")
 
-  @Valid
-
-
-  @JsonProperty("_links")
-  public Map getLinks() {
+    @Valid
+    public Map getLinks() {
     return _links;
   }
 
-  public void setLinks(Map _links) {
+  public void setLinks(LinksAll _links) {
     this._links = _links;
   }
 
@@ -144,14 +132,10 @@ public class ScaStatusResponse   {
   /**
    * Messages to the TPP on operational issues.
    * @return tppMessages
-  **/
-  @ApiModelProperty(value = "Messages to the TPP on operational issues.")
-
-  @Valid
-
-
-  @JsonProperty("tppMessages")
-  public List<TppMessageGeneric> getTppMessages() {
+   **/
+  @Schema(description = "Messages to the TPP on operational issues.")
+      @Valid
+    public List<TppMessageGeneric> getTppMessages() {
     return tppMessages;
   }
 
@@ -167,12 +151,13 @@ public class ScaStatusResponse   {
     }
     if (o == null || getClass() != o.getClass()) {
       return false;
-}    ScaStatusResponse scaStatusResponse = (ScaStatusResponse) o;
+    }
+    ScaStatusResponse scaStatusResponse = (ScaStatusResponse) o;
     return Objects.equals(this.scaStatus, scaStatusResponse.scaStatus) &&
-    Objects.equals(this.psuMessage, scaStatusResponse.psuMessage) &&
-    Objects.equals(this.trustedBeneficiaryFlag, scaStatusResponse.trustedBeneficiaryFlag) &&
-    Objects.equals(this._links, scaStatusResponse._links) &&
-    Objects.equals(this.tppMessages, scaStatusResponse.tppMessages);
+        Objects.equals(this.psuMessage, scaStatusResponse.psuMessage) &&
+        Objects.equals(this.trustedBeneficiaryFlag, scaStatusResponse.trustedBeneficiaryFlag) &&
+        Objects.equals(this._links, scaStatusResponse._links) &&
+        Objects.equals(this.tppMessages, scaStatusResponse.tppMessages);
   }
 
   @Override
@@ -205,4 +190,3 @@ public class ScaStatusResponse   {
     return o.toString().replace("\n", "\n    ");
   }
 }
-

@@ -8,7 +8,8 @@ import java.util.Objects;
  * ChosenScaMethod
  */
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2021-11-05T12:22:49.487689+02:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-05-06T13:00:42.214155+03:00[Europe/Kiev]")
+
 
 public class ChosenScaMethod extends AuthenticationObject  {
 
@@ -19,11 +20,7 @@ public class ChosenScaMethod extends AuthenticationObject  {
     }
     if (o == null || getClass() != o.getClass()) {
       return false;
-}
-    if (!super.equals(o)) {
-    return false;
     }
-
     return true;
   }
 
@@ -52,4 +49,3 @@ public class ChosenScaMethod extends AuthenticationObject  {
     return o.toString().replace("\n", "\n    ");
   }
 }
-

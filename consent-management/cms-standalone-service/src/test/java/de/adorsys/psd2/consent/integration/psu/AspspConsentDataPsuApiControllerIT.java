@@ -33,8 +33,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
-import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
@@ -48,11 +48,11 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@ActiveProfiles({"api-integration-test"})
 @ExtendWith(SpringExtension.class)
 @AutoConfigureMockMvc
 @SpringBootTest(classes = ConsentManagementStandaloneApp.class)
 @ContextConfiguration(classes = WebConfig.class)
+@TestPropertySource(locations = "classpath:application-integration-test.properties")
 class AspspConsentDataPsuApiControllerIT {
 
     private static final String CONSENT_ID = "4b112130-6a96-4941-a220-2da8a4af2c65";

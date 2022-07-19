@@ -1,8 +1,7 @@
 package de.adorsys.psd2.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import org.springframework.validation.annotation.Validated;
 
 import javax.validation.Valid;
@@ -12,11 +11,12 @@ import java.util.Objects;
 /**
  * Content of the body of a Update PSU authentication request  Password subfield is used.
  */
-@ApiModel(description = "Content of the body of a Update PSU authentication request  Password subfield is used. ")
+@Schema(description = "Content of the body of a Update PSU authentication request  Password subfield is used. ")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2021-11-05T12:22:49.487689+02:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-05-06T13:00:42.214155+03:00[Europe/Kiev]")
 
-public class UpdatePsuAuthentication   {
+
+public class UpdatePsuAuthentication {
   @JsonProperty("psuData")
   private PsuData psuData = null;
 
@@ -28,15 +28,12 @@ public class UpdatePsuAuthentication   {
   /**
    * Get psuData
    * @return psuData
-  **/
-  @ApiModelProperty(required = true, value = "")
-  @NotNull
+   **/
+  @Schema(required = true, description = "")
+      @NotNull
 
-  @Valid
-
-
-  @JsonProperty("psuData")
-  public PsuData getPsuData() {
+    @Valid
+    public PsuData getPsuData() {
     return psuData;
   }
 
@@ -52,7 +49,8 @@ public class UpdatePsuAuthentication   {
     }
     if (o == null || getClass() != o.getClass()) {
       return false;
-}    UpdatePsuAuthentication updatePsuAuthentication = (UpdatePsuAuthentication) o;
+    }
+    UpdatePsuAuthentication updatePsuAuthentication = (UpdatePsuAuthentication) o;
     return Objects.equals(this.psuData, updatePsuAuthentication.psuData);
   }
 
@@ -82,4 +80,3 @@ public class UpdatePsuAuthentication   {
     return o.toString().replace("\n", "\n    ");
   }
 }
-

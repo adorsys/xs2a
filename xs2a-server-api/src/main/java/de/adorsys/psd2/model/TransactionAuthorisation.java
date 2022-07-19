@@ -1,8 +1,7 @@
 package de.adorsys.psd2.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import org.springframework.validation.annotation.Validated;
 
 import javax.validation.constraints.NotNull;
@@ -11,11 +10,12 @@ import java.util.Objects;
 /**
  * Content of the body of a transaction authorisation request
  */
-@ApiModel(description = "Content of the body of a transaction authorisation request ")
+@Schema(description = "Content of the body of a transaction authorisation request ")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2021-11-05T12:22:49.487689+02:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-05-06T13:00:42.214155+03:00[Europe/Kiev]")
 
-public class TransactionAuthorisation   {
+
+public class TransactionAuthorisation {
   @JsonProperty("scaAuthenticationData")
   private String scaAuthenticationData = null;
 
@@ -25,16 +25,13 @@ public class TransactionAuthorisation   {
   }
 
   /**
-   * Get scaAuthenticationData
+   * SCA authentication data, depending on the chosen authentication method.  If the data is binary, then it is base64 encoded.
    * @return scaAuthenticationData
-  **/
-  @ApiModelProperty(required = true, value = "")
-  @NotNull
+   **/
+  @Schema(required = true, description = "SCA authentication data, depending on the chosen authentication method.  If the data is binary, then it is base64 encoded. ")
+      @NotNull
 
-
-
-  @JsonProperty("scaAuthenticationData")
-  public String getScaAuthenticationData() {
+    public String getScaAuthenticationData() {
     return scaAuthenticationData;
   }
 
@@ -50,7 +47,8 @@ public class TransactionAuthorisation   {
     }
     if (o == null || getClass() != o.getClass()) {
       return false;
-}    TransactionAuthorisation transactionAuthorisation = (TransactionAuthorisation) o;
+    }
+    TransactionAuthorisation transactionAuthorisation = (TransactionAuthorisation) o;
     return Objects.equals(this.scaAuthenticationData, transactionAuthorisation.scaAuthenticationData);
   }
 
@@ -80,4 +78,3 @@ public class TransactionAuthorisation   {
     return o.toString().replace("\n", "\n    ");
   }
 }
-

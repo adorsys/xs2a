@@ -155,7 +155,7 @@ class PaymentModelMapperPsd2Test {
     void mapToStatusResponse_ShouldMapCorrectly() {
         PaymentInitiationStatusResponse200Json response = mapper.mapToStatusResponseJson(PAYMENT_STATUS_RESPONSE);
         assertEquals(de.adorsys.psd2.model.TransactionStatus.ACCP, response.getTransactionStatus());
-        assertEquals(true, response.getFundsAvailable());
+        assertEquals(true, response.isFundsAvailable());
     }
 
     @Test

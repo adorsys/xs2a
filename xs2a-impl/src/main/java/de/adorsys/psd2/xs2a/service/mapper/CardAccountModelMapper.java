@@ -23,12 +23,7 @@ import de.adorsys.psd2.model.*;
 import de.adorsys.psd2.xs2a.core.profile.AccountReference;
 import de.adorsys.psd2.xs2a.domain.Xs2aBalance;
 import de.adorsys.psd2.xs2a.domain.Xs2aExchangeRate;
-import de.adorsys.psd2.xs2a.domain.account.Xs2aBalancesReport;
-import de.adorsys.psd2.xs2a.domain.account.Xs2aCardAccountDetails;
-import de.adorsys.psd2.xs2a.domain.account.Xs2aCardAccountDetailsHolder;
-import de.adorsys.psd2.xs2a.domain.account.Xs2aCardAccountListHolder;
-import de.adorsys.psd2.xs2a.domain.account.Xs2aCardAccountReport;
-import de.adorsys.psd2.xs2a.domain.account.Xs2aCardTransactionsReport;
+import de.adorsys.psd2.xs2a.domain.account.*;
 import de.adorsys.psd2.xs2a.service.profile.AspspProfileServiceWrapper;
 import de.adorsys.psd2.xs2a.web.mapper.HrefLinkMapper;
 import de.adorsys.psd2.xs2a.web.mapper.PurposeCodeMapper;
@@ -67,10 +62,10 @@ public abstract class CardAccountModelMapper {
         return new CardAccountList().cardAccounts(details);
     }
 
-    public InlineResponse2002 mapToInlineResponse202(Xs2aCardAccountDetailsHolder xs2aAccountDetailsHolder) {
-        InlineResponse2002 inlineResponse202 = new InlineResponse2002();
-        inlineResponse202.setCardAccount(mapToCardAccountDetails(xs2aAccountDetailsHolder.getCardAccountDetails()));
-        return inlineResponse202;
+    public InlineResponse2007 mapToInlineResponse2007(Xs2aCardAccountDetailsHolder xs2aAccountDetailsHolder) {
+        InlineResponse2007 inlineResponse2007 = new InlineResponse2007();
+        inlineResponse2007.cardAccount(mapToCardAccountDetails(xs2aAccountDetailsHolder.getCardAccountDetails()));
+        return inlineResponse2007;
     }
 
     @Mapping(target = "_links", ignore = true)

@@ -24,8 +24,7 @@ import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
 import java.time.OffsetDateTime;
@@ -34,57 +33,57 @@ import java.util.List;
 import java.util.Optional;
 
 @Data
-@ApiModel(description = "Pis payment initialisation common payment response", value = "PisCommonPaymentResponse")
+@Schema(description = "Pis payment initialisation common payment response", name = "PisCommonPaymentResponse")
 public class PisCommonPaymentResponse implements CommonPaymentData {
-    @ApiModelProperty(value = "Payment data", required = true)
+    @Schema(description = "Payment data", required = true)
     private List<PisPayment> payments;
 
-    @ApiModelProperty(value = "Payment product", required = true, example = "sepa-credit-transfers")
+    @Schema(description = "Payment product", required = true, example = "sepa-credit-transfers")
     private String paymentProduct;
 
-    @ApiModelProperty(value = "Payment type: BULK, SINGLE or PERIODIC.", required = true, example = "SINGLE")
+    @Schema(description = "Payment type: BULK, SINGLE or PERIODIC.", required = true, example = "SINGLE")
     private PaymentType paymentType;
 
-    @ApiModelProperty(value = "Tpp information", required = true)
+    @Schema(description = "Tpp information", required = true)
     private TppInfo tppInfo;
 
-    @ApiModelProperty(value = "An external exposed identification of the created common payment", required = true, example = "bf489af6-a2cb-4b75-b71d-d66d58b934d7")
+    @Schema(description = "An external exposed identification of the created common payment", required = true, example = "bf489af6-a2cb-4b75-b71d-d66d58b934d7")
     private String externalId;
 
-    @ApiModelProperty(value = "List of corresponding PSU", required = true)
+    @Schema(description = "List of corresponding PSU", required = true)
     private List<PsuIdData> psuData;
 
-    @ApiModelProperty(value = "Payment info")
+    @Schema(description = "Payment info")
     private byte[] paymentData;
 
-    @ApiModelProperty(value = "Transaction status", required = true)
+    @Schema(description = "Transaction status", required = true)
     private TransactionStatus transactionStatus;
 
-    @ApiModelProperty(value = "Internal payment status", required = true)
+    @Schema(description = "Internal payment status", required = true)
     private InternalPaymentStatus internalPaymentStatus;
 
-    @ApiModelProperty(value = "Timestamp of the last payment transaction status changing")
+    @Schema(description = "Timestamp of the last payment transaction status changing")
     private OffsetDateTime statusChangeTimestamp;
 
-    @ApiModelProperty(value = "List of corresponding PSU", required = true)
+    @Schema(description = "List of corresponding PSU", required = true)
     private List<Authorisation> authorisations = new ArrayList<>();
 
-    @ApiModelProperty(value = "Defines whether the payment requires multilevel SCA", example = "true")
+    @Schema(description = "Defines whether the payment requires multilevel SCA", example = "true")
     private boolean multilevelScaRequired;
 
-    @ApiModelProperty(value = "Timestamp of the payment creation")
+    @Schema(description = "Timestamp of the payment creation")
     private OffsetDateTime creationTimestamp;
 
-    @ApiModelProperty(value = "Response content type")
+    @Schema(description = "Response content type")
     private String contentType;
 
-    @ApiModelProperty(value = "Response instance id")
+    @Schema(description = "Response instance id")
     private String instanceId;
 
-    @ApiModelProperty(value = "Signing basket blocked")
+    @Schema(description = "Signing basket blocked")
     private boolean signingBasketBlocked;
 
-    @ApiModelProperty(value = "Signing basket authorised")
+    @Schema(description = "Signing basket authorised")
     private boolean signingBasketAuthorised;
 
     public Optional<Authorisation> findAuthorisationInPayment(String authorisationId) {

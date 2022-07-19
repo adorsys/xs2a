@@ -7,34 +7,20 @@ import com.fasterxml.jackson.annotation.JsonValue;
  * ExternalServiceLevel1Code from ISO 20022.  Values from ISO 20022 External Code List ExternalCodeSets_1Q2021 May 2021.
  */
 public enum ServiceLevelCode {
-
   BKTR("BKTR"),
-
-  G001("G001"),
-
-  G002("G002"),
-
-  G003("G003"),
-
-  G004("G004"),
-
-  NPCA("NPCA"),
-
-  NUGP("NUGP"),
-
-  NURG("NURG"),
-
-  PRPT("PRPT"),
-
-  SDVA("SDVA"),
-
-  SEPA("SEPA"),
-
-  SVDE("SVDE"),
-
-  URGP("URGP"),
-
-  URNS("URNS");
+    G001("G001"),
+    G002("G002"),
+    G003("G003"),
+    G004("G004"),
+    NPCA("NPCA"),
+    NUGP("NUGP"),
+    NURG("NURG"),
+    PRPT("PRPT"),
+    SDVA("SDVA"),
+    SEPA("SEPA"),
+    SVDE("SVDE"),
+    URGP("URGP"),
+    URNS("URNS");
 
   private String value;
 
@@ -58,4 +44,3 @@ public enum ServiceLevelCode {
     return null;
   }
 }
-

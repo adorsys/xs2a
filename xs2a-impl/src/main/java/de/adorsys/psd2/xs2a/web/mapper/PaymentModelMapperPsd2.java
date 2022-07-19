@@ -104,8 +104,8 @@ public class PaymentModelMapperPsd2 {
         response201.setEstimatedTotalAmount(amountModelMapper.mapToAmount(response.getEstimatedTotalAmount()));
         response201.setEstimatedInterbankSettlementAmount(amountModelMapper.mapToAmount(response.getEstimatedInterbankSettlementAmount()));
         response201.setScaStatus(Optional.ofNullable(response.getScaStatus())
-                                  .map(coreObjectsMapper::mapToModelScaStatus)
-                                  .orElse(null));
+                                     .map(coreObjectsMapper::mapToModelScaStatus)
+                                     .orElse(null));
         return response201;
     }
 

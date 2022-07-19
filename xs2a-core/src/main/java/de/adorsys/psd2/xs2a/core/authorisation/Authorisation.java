@@ -21,41 +21,40 @@ package de.adorsys.psd2.xs2a.core.authorisation;
 import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
-@ApiModel(description = "Authorisation object", value = "AuthorisationResponse")
+@Schema(description = "Authorisation object")
 @NoArgsConstructor
 public class Authorisation {
 
-    @ApiModelProperty(value = "ID of the Authorisation", required = true, example = "6dc3d5b3-5023-7848-3853-f7200a64e80d")
+    @Schema(description = "ID of the Authorisation", required = true, example = "6dc3d5b3-5023-7848-3853-f7200a64e80d")
     private String authorisationId;
 
-    @ApiModelProperty(value = "PSU identification data", required = true)
+    @Schema(description = "PSU identification data", required = true)
     private PsuIdData psuIdData;
 
-    @ApiModelProperty(value = "An identification of the created account consent", required = true, example = "bf489af6-a2cb-4b75-b71d-d66d58b934d7")
+    @Schema(description = "An identification of the created account consent", required = true, example = "bf489af6-a2cb-4b75-b71d-d66d58b934d7")
     private String parentId;
 
-    @ApiModelProperty(value = "Authorisation type 'CONSENT', 'PIS_CREATION', 'PIS_CANCELLATION'.", required = true, example = "AIS")
+    @Schema(description = "Authorisation type 'CONSENT', 'PIS_CREATION', 'PIS_CANCELLATION'.", required = true, example = "AIS")
     private AuthorisationType authorisationType;
 
-    @ApiModelProperty(value = "The following code values are permitted 'received', 'psuIdentified', 'psuAuthenticated', 'scaMethodSelected', 'started', 'finalised' 'failed' 'exempted'.", required = true, example = "STARTED")
+    @Schema(description = "The following code values are permitted 'received', 'psuIdentified', 'psuAuthenticated', 'scaMethodSelected', 'started', 'finalised' 'failed' 'exempted'.", required = true, example = "STARTED")
     private ScaStatus scaStatus;
 
-    @ApiModelProperty(value = "An identification provided by the ASPSP for the later identification of the authentication method selection.")
+    @Schema(description = "An identification provided by the ASPSP for the later identification of the authentication method selection.")
     private String authenticationMethodId;
 
-    @ApiModelProperty(value = "Password")
+    @Schema(description = "Password")
     private String password;
 
-    @ApiModelProperty(value = "SCA authentication data")
+    @Schema(description = "SCA authentication data")
     private String scaAuthenticationData;
 
-    @ApiModelProperty(value = "Chosen SCA approach")
+    @Schema(description = "Chosen SCA approach")
     private ScaApproach chosenScaApproach;
 
     public Authorisation(String authorisationId, PsuIdData psuIdData, String parentId, AuthorisationType authorisationType, ScaStatus scaStatus) {

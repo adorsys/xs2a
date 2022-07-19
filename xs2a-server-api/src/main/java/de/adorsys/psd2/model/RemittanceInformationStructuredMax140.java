@@ -1,8 +1,7 @@
 package de.adorsys.psd2.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import org.springframework.validation.annotation.Validated;
 
 import javax.validation.constraints.NotNull;
@@ -12,9 +11,10 @@ import java.util.Objects;
 /**
  * Structured remittance information Max
  */
-@ApiModel(description = "Structured remittance information Max ")
+@Schema(description = "Structured remittance information Max ")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-01-28T11:48:01.003821+02:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-05-09T09:54:21.220655+03:00[Europe/Kiev]")
+
 
 public class RemittanceInformationStructuredMax140   {
   @JsonProperty("reference")
@@ -34,14 +34,11 @@ public class RemittanceInformationStructuredMax140   {
   /**
    * Get reference
    * @return reference
-  **/
-  @ApiModelProperty(required = true, value = "")
-  @NotNull
+   **/
+  @Schema(required = true, description = "")
+      @NotNull
 
-@Size(max=140)
-
-  @JsonProperty("reference")
-  public String getReference() {
+  @Size(max=140)   public String getReference() {
     return reference;
   }
 
@@ -57,13 +54,10 @@ public class RemittanceInformationStructuredMax140   {
   /**
    * Get referenceType
    * @return referenceType
-  **/
-  @ApiModelProperty(value = "")
+   **/
+  @Schema(description = "")
 
-@Size(max=140)
-
-  @JsonProperty("referenceType")
-  public String getReferenceType() {
+  @Size(max=140)   public String getReferenceType() {
     return referenceType;
   }
 
@@ -79,13 +73,10 @@ public class RemittanceInformationStructuredMax140   {
   /**
    * Get referenceIssuer
    * @return referenceIssuer
-  **/
-  @ApiModelProperty(value = "")
+   **/
+  @Schema(description = "")
 
-@Size(max=140)
-
-  @JsonProperty("referenceIssuer")
-  public String getReferenceIssuer() {
+  @Size(max=140)   public String getReferenceIssuer() {
     return referenceIssuer;
   }
 
@@ -101,10 +92,11 @@ public class RemittanceInformationStructuredMax140   {
     }
     if (o == null || getClass() != o.getClass()) {
       return false;
-}    RemittanceInformationStructuredMax140 remittanceInformationStructuredMax140 = (RemittanceInformationStructuredMax140) o;
+    }
+    RemittanceInformationStructuredMax140 remittanceInformationStructuredMax140 = (RemittanceInformationStructuredMax140) o;
     return Objects.equals(this.reference, remittanceInformationStructuredMax140.reference) &&
-    Objects.equals(this.referenceType, remittanceInformationStructuredMax140.referenceType) &&
-    Objects.equals(this.referenceIssuer, remittanceInformationStructuredMax140.referenceIssuer);
+        Objects.equals(this.referenceType, remittanceInformationStructuredMax140.referenceType) &&
+        Objects.equals(this.referenceIssuer, remittanceInformationStructuredMax140.referenceIssuer);
   }
 
   @Override
@@ -135,4 +127,3 @@ public class RemittanceInformationStructuredMax140   {
     return o.toString().replace("\n", "\n    ");
   }
 }
-

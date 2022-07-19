@@ -1,8 +1,7 @@
 package de.adorsys.psd2.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import org.springframework.validation.annotation.Validated;
 
 import javax.validation.Valid;
@@ -17,11 +16,12 @@ import java.util.Objects;
 /**
  * Generic JSON response body consistion of the corresponding payment initation JSON body together with an optional transaction status field.
  */
-@ApiModel(description = "Generic JSON response body consistion of the corresponding payment initation JSON body together with an optional transaction status field. ")
+@Schema(description = "Generic JSON response body consistion of the corresponding payment initation JSON body together with an optional transaction status field. ")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2021-11-05T12:22:49.487689+02:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-05-06T13:00:42.214155+03:00[Europe/Kiev]")
 
-public class PaymentInitiationWithStatusResponse   {
+
+public class PaymentInitiationWithStatusResponse {
   @JsonProperty("endToEndIdentification")
   private String endToEndIdentification = null;
 
@@ -91,13 +91,10 @@ public class PaymentInitiationWithStatusResponse   {
   /**
    * Get endToEndIdentification
    * @return endToEndIdentification
-  **/
-  @ApiModelProperty(value = "")
+   **/
+  @Schema(description = "")
 
-@Size(max=35)
-
-  @JsonProperty("endToEndIdentification")
-  public String getEndToEndIdentification() {
+  @Size(max=35)   public String getEndToEndIdentification() {
     return endToEndIdentification;
   }
 
@@ -113,13 +110,10 @@ public class PaymentInitiationWithStatusResponse   {
   /**
    * Get instructionIdentification
    * @return instructionIdentification
-  **/
-  @ApiModelProperty(value = "")
+   **/
+  @Schema(description = "")
 
-@Size(max=35)
-
-  @JsonProperty("instructionIdentification")
-  public String getInstructionIdentification() {
+  @Size(max=35)   public String getInstructionIdentification() {
     return instructionIdentification;
   }
 
@@ -133,15 +127,12 @@ public class PaymentInitiationWithStatusResponse   {
   }
 
   /**
-   * Get debtorName
+   * Debtor name.
    * @return debtorName
-  **/
-  @ApiModelProperty(value = "")
+   **/
+  @Schema(example = "Debtor Name", description = "Debtor name.")
 
-@Size(max=70)
-
-  @JsonProperty("debtorName")
-  public String getDebtorName() {
+  @Size(max=70)   public String getDebtorName() {
     return debtorName;
   }
 
@@ -157,15 +148,12 @@ public class PaymentInitiationWithStatusResponse   {
   /**
    * Get debtorAccount
    * @return debtorAccount
-  **/
-  @ApiModelProperty(required = true, value = "")
-  @NotNull
+   **/
+  @Schema(required = true, description = "")
+      @NotNull
 
-  @Valid
-
-
-  @JsonProperty("debtorAccount")
-  public AccountReference getDebtorAccount() {
+    @Valid
+    public AccountReference getDebtorAccount() {
     return debtorAccount;
   }
 
@@ -179,15 +167,12 @@ public class PaymentInitiationWithStatusResponse   {
   }
 
   /**
-   * Get ultimateDebtor
+   * Ultimate debtor.
    * @return ultimateDebtor
-  **/
-  @ApiModelProperty(value = "")
+   **/
+  @Schema(example = "Ultimate Debtor", description = "Ultimate debtor.")
 
-@Size(max=70)
-
-  @JsonProperty("ultimateDebtor")
-  public String getUltimateDebtor() {
+  @Size(max=70)   public String getUltimateDebtor() {
     return ultimateDebtor;
   }
 
@@ -203,15 +188,12 @@ public class PaymentInitiationWithStatusResponse   {
   /**
    * Get instructedAmount
    * @return instructedAmount
-  **/
-  @ApiModelProperty(required = true, value = "")
-  @NotNull
+   **/
+  @Schema(required = true, description = "")
+      @NotNull
 
-  @Valid
-
-
-  @JsonProperty("instructedAmount")
-  public Amount getInstructedAmount() {
+    @Valid
+    public Amount getInstructedAmount() {
     return instructedAmount;
   }
 
@@ -227,15 +209,12 @@ public class PaymentInitiationWithStatusResponse   {
   /**
    * Get creditorAccount
    * @return creditorAccount
-  **/
-  @ApiModelProperty(required = true, value = "")
-  @NotNull
+   **/
+  @Schema(required = true, description = "")
+      @NotNull
 
-  @Valid
-
-
-  @JsonProperty("creditorAccount")
-  public AccountReference getCreditorAccount() {
+    @Valid
+    public AccountReference getCreditorAccount() {
     return creditorAccount;
   }
 
@@ -249,15 +228,12 @@ public class PaymentInitiationWithStatusResponse   {
   }
 
   /**
-   * Get creditorAgent
+   * BICFI
    * @return creditorAgent
-  **/
-  @ApiModelProperty(value = "")
+   **/
+  @Schema(example = "AAAADEBBXXX", description = "BICFI ")
 
-@Pattern(regexp="[A-Z]{6,6}[A-Z2-9][A-NP-Z0-9]([A-Z0-9]{3,3}){0,1}")
-
-  @JsonProperty("creditorAgent")
-  public String getCreditorAgent() {
+  @Pattern(regexp="[A-Z]{6,6}[A-Z2-9][A-NP-Z0-9]([A-Z0-9]{3,3}){0,1}")   public String getCreditorAgent() {
     return creditorAgent;
   }
 
@@ -271,16 +247,13 @@ public class PaymentInitiationWithStatusResponse   {
   }
 
   /**
-   * Get creditorName
+   * Creditor name.
    * @return creditorName
-  **/
-  @ApiModelProperty(required = true, value = "")
-  @NotNull
+   **/
+  @Schema(example = "Creditor Name", required = true, description = "Creditor name.")
+      @NotNull
 
-@Size(max=70)
-
-  @JsonProperty("creditorName")
-  public String getCreditorName() {
+  @Size(max=70)   public String getCreditorName() {
     return creditorName;
   }
 
@@ -296,14 +269,11 @@ public class PaymentInitiationWithStatusResponse   {
   /**
    * Get creditorAddress
    * @return creditorAddress
-  **/
-  @ApiModelProperty(value = "")
+   **/
+  @Schema(description = "")
 
-  @Valid
-
-
-  @JsonProperty("creditorAddress")
-  public Address getCreditorAddress() {
+    @Valid
+    public Address getCreditorAddress() {
     return creditorAddress;
   }
 
@@ -319,13 +289,10 @@ public class PaymentInitiationWithStatusResponse   {
   /**
    * Identification of Creditors, e.g. a SEPA Creditor ID.
    * @return creditorId
-  **/
-  @ApiModelProperty(value = "Identification of Creditors, e.g. a SEPA Creditor ID.")
+   **/
+  @Schema(description = "Identification of Creditors, e.g. a SEPA Creditor ID.")
 
-@Size(max=35)
-
-  @JsonProperty("creditorId")
-  public String getCreditorId() {
+  @Size(max=35)   public String getCreditorId() {
     return creditorId;
   }
 
@@ -339,15 +306,12 @@ public class PaymentInitiationWithStatusResponse   {
   }
 
   /**
-   * Get ultimateCreditor
+   * Ultimate creditor.
    * @return ultimateCreditor
-  **/
-  @ApiModelProperty(value = "")
+   **/
+  @Schema(example = "Ultimate Creditor", description = "Ultimate creditor.")
 
-@Size(max=70)
-
-  @JsonProperty("ultimateCreditor")
-  public String getUltimateCreditor() {
+  @Size(max=70)   public String getUltimateCreditor() {
     return ultimateCreditor;
   }
 
@@ -363,14 +327,11 @@ public class PaymentInitiationWithStatusResponse   {
   /**
    * Get purposeCode
    * @return purposeCode
-  **/
-  @ApiModelProperty(value = "")
+   **/
+  @Schema(description = "")
 
-  @Valid
-
-
-  @JsonProperty("purposeCode")
-  public PurposeCode getPurposeCode() {
+    @Valid
+    public PurposeCode getPurposeCode() {
     return purposeCode;
   }
 
@@ -386,14 +347,11 @@ public class PaymentInitiationWithStatusResponse   {
   /**
    * Get chargeBearer
    * @return chargeBearer
-  **/
-  @ApiModelProperty(value = "")
+   **/
+  @Schema(description = "")
 
-  @Valid
-
-
-  @JsonProperty("chargeBearer")
-  public ChargeBearer getChargeBearer() {
+    @Valid
+    public ChargeBearer getChargeBearer() {
     return chargeBearer;
   }
 
@@ -407,15 +365,12 @@ public class PaymentInitiationWithStatusResponse   {
   }
 
   /**
-   * Get remittanceInformationUnstructured
+   * Unstructured remittance information.
    * @return remittanceInformationUnstructured
-  **/
-  @ApiModelProperty(value = "")
+   **/
+  @Schema(example = "Ref Number Merchant", description = "Unstructured remittance information. ")
 
-@Size(max=140)
-
-  @JsonProperty("remittanceInformationUnstructured")
-  public String getRemittanceInformationUnstructured() {
+  @Size(max=140)   public String getRemittanceInformationUnstructured() {
     return remittanceInformationUnstructured;
   }
 
@@ -429,15 +384,12 @@ public class PaymentInitiationWithStatusResponse   {
   }
 
   /**
-   * Get remittanceInformationStructured
+   * Structured remittance information Max
    * @return remittanceInformationStructured
-  **/
-  @ApiModelProperty(value = "")
+   **/
+  @Schema(description = "Structured remittance information Max ")
 
-@Size(max=140)
-
-  @JsonProperty("remittanceInformationStructured")
-  public String getRemittanceInformationStructured() {
+  @Size(max=140)   public String getRemittanceInformationStructured() {
     return remittanceInformationStructured;
   }
 
@@ -453,14 +405,11 @@ public class PaymentInitiationWithStatusResponse   {
   /**
    * Get remittanceInformationStructuredArray
    * @return remittanceInformationStructuredArray
-  **/
-  @ApiModelProperty(value = "")
+   **/
+  @Schema(description = "")
 
-  @Valid
-
-
-  @JsonProperty("remittanceInformationStructuredArray")
-  public RemittanceInformationStructuredArray getRemittanceInformationStructuredArray() {
+    @Valid
+    public RemittanceInformationStructuredArray getRemittanceInformationStructuredArray() {
     return remittanceInformationStructuredArray;
   }
 
@@ -476,14 +425,11 @@ public class PaymentInitiationWithStatusResponse   {
   /**
    * Get requestedExecutionDate
    * @return requestedExecutionDate
-  **/
-  @ApiModelProperty(value = "")
+   **/
+  @Schema(description = "")
 
-  @Valid
-
-
-  @JsonProperty("requestedExecutionDate")
-  public LocalDate getRequestedExecutionDate() {
+    @Valid
+    public LocalDate getRequestedExecutionDate() {
     return requestedExecutionDate;
   }
 
@@ -499,14 +445,11 @@ public class PaymentInitiationWithStatusResponse   {
   /**
    * Get transactionStatus
    * @return transactionStatus
-  **/
-  @ApiModelProperty(value = "")
+   **/
+  @Schema(description = "")
 
-  @Valid
-
-
-  @JsonProperty("transactionStatus")
-  public TransactionStatus getTransactionStatus() {
+    @Valid
+    public TransactionStatus getTransactionStatus() {
     return transactionStatus;
   }
 
@@ -530,14 +473,10 @@ public class PaymentInitiationWithStatusResponse   {
   /**
    * Messages to the TPP on operational issues.
    * @return tppMessages
-  **/
-  @ApiModelProperty(value = "Messages to the TPP on operational issues.")
-
-  @Valid
-
-
-  @JsonProperty("tppMessages")
-  public List<TppMessageGeneric> getTppMessages() {
+   **/
+  @Schema(description = "Messages to the TPP on operational issues.")
+      @Valid
+    public List<TppMessageGeneric> getTppMessages() {
     return tppMessages;
   }
 
@@ -553,27 +492,28 @@ public class PaymentInitiationWithStatusResponse   {
     }
     if (o == null || getClass() != o.getClass()) {
       return false;
-}    PaymentInitiationWithStatusResponse paymentInitiationWithStatusResponse = (PaymentInitiationWithStatusResponse) o;
+    }
+    PaymentInitiationWithStatusResponse paymentInitiationWithStatusResponse = (PaymentInitiationWithStatusResponse) o;
     return Objects.equals(this.endToEndIdentification, paymentInitiationWithStatusResponse.endToEndIdentification) &&
-    Objects.equals(this.instructionIdentification, paymentInitiationWithStatusResponse.instructionIdentification) &&
-    Objects.equals(this.debtorName, paymentInitiationWithStatusResponse.debtorName) &&
-    Objects.equals(this.debtorAccount, paymentInitiationWithStatusResponse.debtorAccount) &&
-    Objects.equals(this.ultimateDebtor, paymentInitiationWithStatusResponse.ultimateDebtor) &&
-    Objects.equals(this.instructedAmount, paymentInitiationWithStatusResponse.instructedAmount) &&
-    Objects.equals(this.creditorAccount, paymentInitiationWithStatusResponse.creditorAccount) &&
-    Objects.equals(this.creditorAgent, paymentInitiationWithStatusResponse.creditorAgent) &&
-    Objects.equals(this.creditorName, paymentInitiationWithStatusResponse.creditorName) &&
-    Objects.equals(this.creditorAddress, paymentInitiationWithStatusResponse.creditorAddress) &&
-    Objects.equals(this.creditorId, paymentInitiationWithStatusResponse.creditorId) &&
-    Objects.equals(this.ultimateCreditor, paymentInitiationWithStatusResponse.ultimateCreditor) &&
-    Objects.equals(this.purposeCode, paymentInitiationWithStatusResponse.purposeCode) &&
-    Objects.equals(this.chargeBearer, paymentInitiationWithStatusResponse.chargeBearer) &&
-    Objects.equals(this.remittanceInformationUnstructured, paymentInitiationWithStatusResponse.remittanceInformationUnstructured) &&
-    Objects.equals(this.remittanceInformationStructured, paymentInitiationWithStatusResponse.remittanceInformationStructured) &&
-    Objects.equals(this.remittanceInformationStructuredArray, paymentInitiationWithStatusResponse.remittanceInformationStructuredArray) &&
-    Objects.equals(this.requestedExecutionDate, paymentInitiationWithStatusResponse.requestedExecutionDate) &&
-    Objects.equals(this.transactionStatus, paymentInitiationWithStatusResponse.transactionStatus) &&
-    Objects.equals(this.tppMessages, paymentInitiationWithStatusResponse.tppMessages);
+        Objects.equals(this.instructionIdentification, paymentInitiationWithStatusResponse.instructionIdentification) &&
+        Objects.equals(this.debtorName, paymentInitiationWithStatusResponse.debtorName) &&
+        Objects.equals(this.debtorAccount, paymentInitiationWithStatusResponse.debtorAccount) &&
+        Objects.equals(this.ultimateDebtor, paymentInitiationWithStatusResponse.ultimateDebtor) &&
+        Objects.equals(this.instructedAmount, paymentInitiationWithStatusResponse.instructedAmount) &&
+        Objects.equals(this.creditorAccount, paymentInitiationWithStatusResponse.creditorAccount) &&
+        Objects.equals(this.creditorAgent, paymentInitiationWithStatusResponse.creditorAgent) &&
+        Objects.equals(this.creditorName, paymentInitiationWithStatusResponse.creditorName) &&
+        Objects.equals(this.creditorAddress, paymentInitiationWithStatusResponse.creditorAddress) &&
+        Objects.equals(this.creditorId, paymentInitiationWithStatusResponse.creditorId) &&
+        Objects.equals(this.ultimateCreditor, paymentInitiationWithStatusResponse.ultimateCreditor) &&
+        Objects.equals(this.purposeCode, paymentInitiationWithStatusResponse.purposeCode) &&
+        Objects.equals(this.chargeBearer, paymentInitiationWithStatusResponse.chargeBearer) &&
+        Objects.equals(this.remittanceInformationUnstructured, paymentInitiationWithStatusResponse.remittanceInformationUnstructured) &&
+        Objects.equals(this.remittanceInformationStructured, paymentInitiationWithStatusResponse.remittanceInformationStructured) &&
+        Objects.equals(this.remittanceInformationStructuredArray, paymentInitiationWithStatusResponse.remittanceInformationStructuredArray) &&
+        Objects.equals(this.requestedExecutionDate, paymentInitiationWithStatusResponse.requestedExecutionDate) &&
+        Objects.equals(this.transactionStatus, paymentInitiationWithStatusResponse.transactionStatus) &&
+        Objects.equals(this.tppMessages, paymentInitiationWithStatusResponse.tppMessages);
   }
 
   @Override
@@ -621,4 +561,3 @@ public class PaymentInitiationWithStatusResponse   {
     return o.toString().replace("\n", "\n    ");
   }
 }
-

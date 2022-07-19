@@ -20,7 +20,11 @@ package de.adorsys.psd2.consent.aspsp.api;
 
 import de.adorsys.psd2.consent.aspsp.api.config.CmsAspspApiTagName;
 import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
-import io.swagger.annotations.*;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestHeader;
@@ -29,17 +33,17 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import static de.adorsys.psd2.consent.aspsp.api.config.CmsPsuApiDefaultValue.DEFAULT_SERVICE_INSTANCE_ID;
 
 @RequestMapping(path = "aspsp-api/v1/tpp")
-@Api(value = "aspsp-api/v1/tpp", tags = CmsAspspApiTagName.ASPSP_TPP_INFO)
+@Tag(name = CmsAspspApiTagName.ASPSP_TPP_INFO, description = "Provides access to the consent management system TPP Info")
 public interface CmsAspspTppInfoApi {
 
     @GetMapping
-    @ApiOperation(value = "Returns TPP info by TPP ID")
+    @Operation(description = "Returns TPP info by TPP ID")
     @ApiResponses(value = {
-        @ApiResponse(code = 200, message = "OK"),
-        @ApiResponse(code = 404, message = "Not Found")})
+        @ApiResponse(responseCode = "200", description = "OK"),
+        @ApiResponse(responseCode = "404", description = "Not Found")})
     ResponseEntity<TppInfo> getTppInfo(
-        @ApiParam(value = "ID of TPP", required = true, example = "12345987")
+        @Parameter(description = "ID of TPP", required = true, example = "12345987")
         @RequestHeader(value = "tpp-authorisation-number") String tppAuthorisationNumber,
-        @ApiParam(value = "Service instance id", example = "instance id")
+        @Parameter(description = "Service instance ID", example = "instance id")
         @RequestHeader(value = "instance-id", required = false, defaultValue = DEFAULT_SERVICE_INSTANCE_ID) String instanceId);
 }

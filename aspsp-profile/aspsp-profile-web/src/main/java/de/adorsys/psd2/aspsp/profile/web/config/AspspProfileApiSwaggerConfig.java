@@ -18,55 +18,46 @@
 
 package de.adorsys.psd2.aspsp.profile.web.config;
 
-import com.google.common.base.Predicates;
+import io.swagger.v3.oas.models.OpenAPI;
+import io.swagger.v3.oas.models.info.Contact;
+import io.swagger.v3.oas.models.info.Info;
+import io.swagger.v3.oas.models.info.License;
 import lombok.RequiredArgsConstructor;
+import org.springdoc.core.GroupedOpenApi;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.info.BuildProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import springfox.documentation.builders.ApiInfoBuilder;
-import springfox.documentation.builders.PathSelectors;
-import springfox.documentation.builders.RequestHandlerSelectors;
-import springfox.documentation.service.ApiInfo;
-import springfox.documentation.service.Contact;
-import springfox.documentation.spi.DocumentationType;
-import springfox.documentation.spring.web.plugins.Docket;
-import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
 @Configuration
-@EnableSwagger2
 @RequiredArgsConstructor
 public class AspspProfileApiSwaggerConfig {
     @Value("${xs2a.license.url}")
     private String licenseUrl;
     private final BuildProperties buildProperties;
 
-    // Intellij IDEA claims that Guava predicates could be replaced with Java API, but actually it is not possible
-    @SuppressWarnings("Guava")
-    @Bean(name = "aspsp-profile-api")
-    public Docket apiDocklet() {
-        return new Docket(DocumentationType.SWAGGER_2)
-                   .groupName("ASPSP-PROFILE-API")
-                   .apiInfo(getApiInfo())
-                   .tags(
-                       AspspProfileApiTagHolder.ASPSP_PROFILE,
-                       AspspProfileApiTagHolder.UPDATE_ASPSP_PROFILE
-                   )
-                   .select()
-                   .apis(RequestHandlerSelectors.basePackage("de.adorsys.psd2.aspsp.profile"))
-                   .paths(Predicates.not(PathSelectors.regex("/error.*?")))
-                   .paths(Predicates.not(PathSelectors.regex("/connect.*")))
-                   .paths(Predicates.not(PathSelectors.regex("/management.*")))
+    @Bean
+    public GroupedOpenApi aspspProfileGroupedOpenAPI() {
+        return GroupedOpenApi.builder()
+                   .group("ASPSP Profile REST API")
+                   .packagesToScan("de.adorsys.psd2.aspsp.profile.web.controller")
+                   .pathsToExclude("/error.*?")
+                   .pathsToExclude("/connect.*")
+                   .pathsToExclude("/management.*")
                    .build();
     }
 
-    private ApiInfo getApiInfo() {
-        return new ApiInfoBuilder()
-                   .title("ASPSP Profile rest API")
-                   .contact(new Contact("pru, adorsys GmbH & Co. KG", "http://www.adorsys.de", "pru@adorsys.com.ua"))
-                   .version(buildProperties.getVersion() + " " + buildProperties.get("build.number"))
-                   .license("GNU Affero General Public License (AGPL) version 3.0")
-                   .licenseUrl(licenseUrl)
-                   .build();
+    @Bean
+    public OpenAPI aspspProfileOpenAPI() {
+        return new OpenAPI()
+                   .info(new Info()
+                             .title("ASPSP Profile REST API")
+                             .description("OpenApi for ASPSP Profile application")
+                             .contact(new Contact()
+                                          .name("pru")
+                                          .email("pru@adorsys.com.ua")
+                                          .url("https://www.adorsys.de"))
+                             .version(buildProperties.getVersion() + " " + buildProperties.get("build.number"))
+                             .license(new License().name("AGPL version 3.0").url(licenseUrl)));
     }
 }

@@ -25,12 +25,7 @@ import de.adorsys.psd2.xs2a.domain.Transactions;
 import de.adorsys.psd2.xs2a.domain.account.Xs2aAccountReport;
 import de.adorsys.psd2.xs2a.domain.account.Xs2aTransactionsReport;
 import de.adorsys.psd2.xs2a.service.profile.AspspProfileServiceWrapper;
-import de.adorsys.psd2.xs2a.web.mapper.BalanceMapper;
-import de.adorsys.psd2.xs2a.web.mapper.DayOfExecutionMapper;
-import de.adorsys.psd2.xs2a.web.mapper.HrefLinkMapper;
-import de.adorsys.psd2.xs2a.web.mapper.PurposeCodeMapper;
-import de.adorsys.psd2.xs2a.web.mapper.RemittanceMapper;
-import de.adorsys.psd2.xs2a.web.mapper.Xs2aAddressMapper;
+import de.adorsys.psd2.xs2a.web.mapper.*;
 import org.apache.commons.collections4.CollectionUtils;
 import org.jetbrains.annotations.Nullable;
 import org.mapstruct.Mapper;
@@ -88,7 +83,7 @@ public abstract class TransactionModelMapper {
     @Mapping(target = "ultimateDebtor", source = "transactionInfo.ultimateDebtor")
     @Mapping(target = "remittanceInformationUnstructured", source = "transactionInfo.remittanceInformationUnstructured")
     @Mapping(target = "remittanceInformationUnstructuredArray", source = "transactionInfo")
-    @Mapping(target = "remittanceInformationStructured", source = "transactionInfo")
+    @Mapping(target = "remittanceInformationStructured", source = "transactionInfo.remittanceInformationStructured")
     @Mapping(target = "remittanceInformationStructuredArray", expression = "java(mapToRemittanceInformationStructuredArray(transactions.getTransactionInfo()))")
     @Mapping(target = "purposeCode", source = "transactionInfo.purposeCode")
     public abstract de.adorsys.psd2.model.Transactions mapToTransactions(Transactions transactions);

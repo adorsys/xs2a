@@ -67,10 +67,10 @@ public abstract class AccountModelMapper {
         return new AccountList().accounts(details);
     }
 
-    public InlineResponse200 mapToInlineResponse200(Xs2aAccountDetailsHolder xs2aAccountDetailsHolder) {
-        InlineResponse200 inlineResponse200 = new InlineResponse200();
-        inlineResponse200.setAccount(mapToAccountDetails(xs2aAccountDetailsHolder.getAccountDetails()));
-        return inlineResponse200;
+    public InlineResponse2003 mapToInlineResponse2003(Xs2aAccountDetailsHolder xs2aAccountDetailsHolder) {
+        InlineResponse2003 inlineResponse2003 = new InlineResponse2003();
+        inlineResponse2003.setAccount(mapToAccountDetails(xs2aAccountDetailsHolder.getAccountDetails()));
+        return inlineResponse2003;
     }
 
     @Mapping(target = "_links", ignore = true)

@@ -1,8 +1,7 @@
 package de.adorsys.psd2.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import org.springframework.validation.annotation.Validated;
 
 import javax.validation.Valid;
@@ -15,9 +14,10 @@ import java.util.Objects;
 /**
  * Exchange Rate.
  */
-@ApiModel(description = "Exchange Rate.")
+@Schema(description = "Exchange Rate.")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2021-11-05T12:22:49.487689+02:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-05-06T13:00:42.214155+03:00[Europe/Kiev]")
+
 
 public class ReportExchangeRate   {
   @JsonProperty("sourceCurrency")
@@ -44,16 +44,13 @@ public class ReportExchangeRate   {
   }
 
   /**
-   * Get sourceCurrency
+   * ISO 4217 Alpha 3 currency code.
    * @return sourceCurrency
-  **/
-  @ApiModelProperty(required = true, value = "")
-  @NotNull
+   **/
+  @Schema(example = "EUR", required = true, description = "ISO 4217 Alpha 3 currency code. ")
+      @NotNull
 
-@Pattern(regexp="[A-Z]{3}")
-
-  @JsonProperty("sourceCurrency")
-  public String getSourceCurrency() {
+  @Pattern(regexp="[A-Z]{3}")   public String getSourceCurrency() {
     return sourceCurrency;
   }
 
@@ -69,14 +66,11 @@ public class ReportExchangeRate   {
   /**
    * Get exchangeRate
    * @return exchangeRate
-  **/
-  @ApiModelProperty(required = true, value = "")
-  @NotNull
+   **/
+  @Schema(required = true, description = "")
+      @NotNull
 
-
-
-  @JsonProperty("exchangeRate")
-  public String getExchangeRate() {
+    public String getExchangeRate() {
     return exchangeRate;
   }
 
@@ -90,16 +84,13 @@ public class ReportExchangeRate   {
   }
 
   /**
-   * Get unitCurrency
+   * ISO 4217 Alpha 3 currency code.
    * @return unitCurrency
-  **/
-  @ApiModelProperty(required = true, value = "")
-  @NotNull
+   **/
+  @Schema(example = "EUR", required = true, description = "ISO 4217 Alpha 3 currency code. ")
+      @NotNull
 
-@Pattern(regexp="[A-Z]{3}")
-
-  @JsonProperty("unitCurrency")
-  public String getUnitCurrency() {
+  @Pattern(regexp="[A-Z]{3}")   public String getUnitCurrency() {
     return unitCurrency;
   }
 
@@ -113,16 +104,13 @@ public class ReportExchangeRate   {
   }
 
   /**
-   * Get targetCurrency
+   * ISO 4217 Alpha 3 currency code.
    * @return targetCurrency
-  **/
-  @ApiModelProperty(required = true, value = "")
-  @NotNull
+   **/
+  @Schema(example = "EUR", required = true, description = "ISO 4217 Alpha 3 currency code. ")
+      @NotNull
 
-@Pattern(regexp="[A-Z]{3}")
-
-  @JsonProperty("targetCurrency")
-  public String getTargetCurrency() {
+  @Pattern(regexp="[A-Z]{3}")   public String getTargetCurrency() {
     return targetCurrency;
   }
 
@@ -138,15 +126,12 @@ public class ReportExchangeRate   {
   /**
    * Get quotationDate
    * @return quotationDate
-  **/
-  @ApiModelProperty(required = true, value = "")
-  @NotNull
+   **/
+  @Schema(required = true, description = "")
+      @NotNull
 
-  @Valid
-
-
-  @JsonProperty("quotationDate")
-  public LocalDate getQuotationDate() {
+    @Valid
+    public LocalDate getQuotationDate() {
     return quotationDate;
   }
 
@@ -162,13 +147,10 @@ public class ReportExchangeRate   {
   /**
    * Get contractIdentification
    * @return contractIdentification
-  **/
-  @ApiModelProperty(value = "")
+   **/
+  @Schema(description = "")
 
-@Size(max=35)
-
-  @JsonProperty("contractIdentification")
-  public String getContractIdentification() {
+  @Size(max=35)   public String getContractIdentification() {
     return contractIdentification;
   }
 
@@ -184,13 +166,14 @@ public class ReportExchangeRate   {
     }
     if (o == null || getClass() != o.getClass()) {
       return false;
-}    ReportExchangeRate reportExchangeRate = (ReportExchangeRate) o;
+    }
+    ReportExchangeRate reportExchangeRate = (ReportExchangeRate) o;
     return Objects.equals(this.sourceCurrency, reportExchangeRate.sourceCurrency) &&
-    Objects.equals(this.exchangeRate, reportExchangeRate.exchangeRate) &&
-    Objects.equals(this.unitCurrency, reportExchangeRate.unitCurrency) &&
-    Objects.equals(this.targetCurrency, reportExchangeRate.targetCurrency) &&
-    Objects.equals(this.quotationDate, reportExchangeRate.quotationDate) &&
-    Objects.equals(this.contractIdentification, reportExchangeRate.contractIdentification);
+        Objects.equals(this.exchangeRate, reportExchangeRate.exchangeRate) &&
+        Objects.equals(this.unitCurrency, reportExchangeRate.unitCurrency) &&
+        Objects.equals(this.targetCurrency, reportExchangeRate.targetCurrency) &&
+        Objects.equals(this.quotationDate, reportExchangeRate.quotationDate) &&
+        Objects.equals(this.contractIdentification, reportExchangeRate.contractIdentification);
   }
 
   @Override
@@ -224,4 +207,3 @@ public class ReportExchangeRate   {
     return o.toString().replace("\n", "\n    ");
   }
 }
-

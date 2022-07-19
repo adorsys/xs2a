@@ -18,8 +18,7 @@
 
 package de.adorsys.psd2.certificate.generator.model;
 
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -36,46 +35,46 @@ import java.util.List;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@ApiModel(description = "Certificate Data", value = "CertificateRequest")
+@Schema(description = "Certificate Data", name = "CertificateRequest")
 public class CertificateRequest {
 
-    @ApiModelProperty(required = true, example = "87B2AC",
-        notes = "Available in the Public Register of the appropriate National Competent Authority; ")
+    @Schema(required = true, example = "87B2AC",
+        description = "Available in the Public Register of the appropriate National Competent Authority; ")
     @NotNull
     private String authorizationNumber;
 
-    @ApiModelProperty(required = true, notes = "Roles of the PSP", position = 1)
+    @Schema(required = true, description = "Roles of the PSP")
     @Size(min = 1, max = 3)
     @NotNull
     @Builder.Default
     private List<PspRole> roles = new ArrayList<>();
 
-    @ApiModelProperty(required = true, example = "Fictional Corporation AG",
-        notes = "Registered name of your corporation", position = 1)
+    @Schema(required = true, example = "Fictional Corporation AG",
+        description = "Registered name of your corporation")
     @NotNull
     private String organizationName;
 
-    @ApiModelProperty(example = "Information Technology", notes = "", position = 2)
+    @Schema(example = "Information Technology")
     private String organizationUnit;
 
-    @ApiModelProperty(example = "public.corporation.de",
-        notes = "Domain of your corporation", position = 2)
+    @Schema(example = "public.corporation.de",
+        description = "Domain of your corporation")
     private String domainComponent;
 
-    @ApiModelProperty(example = "Nuremberg",
-        notes = "Name of the city of your corporation headquarter", position = 2)
+    @Schema(example = "Nuremberg",
+        description = "Name of the city of your corporation headquarter")
     private String localityName;
 
-    @ApiModelProperty(example = "Bayern",
-        notes = "Name of the state/province of your corporation headquarter", position = 2)
+    @Schema(example = "Bayern",
+        description = "Name of the state/province of your corporation headquarter")
     private String stateOrProvinceName;
 
-    @ApiModelProperty(example = "Germany",
-        notes = "Name of the country your corporation is registered", position = 2)
+    @Schema(example = "Germany",
+        description = "Name of the country your corporation is registered")
     private String countryName;
 
-    @ApiModelProperty(example = "365",
-        notes = "Number of days the certificate is valid", position = 2)
+    @Schema(example = "365",
+        description = "Number of days the certificate is valid")
     @Min(1)
     @Max(365)
     @NotNull
@@ -83,7 +82,7 @@ public class CertificateRequest {
     private int validity = 365;
 
     @NotNull
-    @ApiModelProperty(example = "XS2A Sandbox")
+    @Schema(description = "XS2A Sandbox")
     private String commonName;
 
 }

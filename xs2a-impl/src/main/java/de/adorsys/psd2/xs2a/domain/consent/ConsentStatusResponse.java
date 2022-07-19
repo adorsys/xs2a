@@ -19,11 +19,11 @@
 package de.adorsys.psd2.xs2a.domain.consent;
 
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
-import io.swagger.annotations.ApiModel;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Value;
 
 @Value
-@ApiModel(description = "Consent Status response", value = "consentStatus")
+@Schema(description = "Consent Status response", name = "consentStatus")
 public class ConsentStatusResponse {
     private String consentStatus;
     private String psuMessage;

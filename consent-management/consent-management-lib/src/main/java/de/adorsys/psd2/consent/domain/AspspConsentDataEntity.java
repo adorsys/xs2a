@@ -18,7 +18,7 @@
 
 package de.adorsys.psd2.consent.domain;
 
-import io.swagger.annotations.ApiModel;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -29,7 +29,7 @@ import javax.persistence.Lob;
 
 @Data
 @Entity(name = "aspsp_consent_data")
-@ApiModel(description = "Aspsp consent data", value = "AspspConsentData")
+@Schema(description = "ASPSP consent data", name = "AspspConsentData")
 @NoArgsConstructor
 public class AspspConsentDataEntity extends InstanceDependableEntity {
     @Id

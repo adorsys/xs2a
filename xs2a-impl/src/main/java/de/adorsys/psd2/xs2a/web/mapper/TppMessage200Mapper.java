@@ -50,6 +50,6 @@ public interface TppMessage200Mapper {
     TppMessageCategory mapToTppMessageCategory(MessageCategory messageCategory);
 
     default MessageCode200InitiationStatus getMessageCode() {
-        return MessageCode200InitiationStatus.AVAILABLE;
+        return MessageCode200InitiationStatus.FUNDS_NOT_AVAILABLE;
     }
 }

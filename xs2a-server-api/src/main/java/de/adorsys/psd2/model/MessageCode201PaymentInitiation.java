@@ -7,10 +7,8 @@ import com.fasterxml.jackson.annotation.JsonValue;
  * Message codes for HTTP Codes 201 to a Payment Initiation Request.
  */
 public enum MessageCode201PaymentInitiation {
-
   WARNING("WARNING"),
-
-  BENEFICIARY_WHITELISTING_REQUIRED("BENEFICIARY_WHITELISTING_REQUIRED");
+    BENEFICIARY_WHITELISTING_REQUIRED("BENEFICIARY_WHITELISTING_REQUIRED");
 
   private String value;
 
@@ -34,4 +32,3 @@ public enum MessageCode201PaymentInitiation {
     return null;
   }
 }
-

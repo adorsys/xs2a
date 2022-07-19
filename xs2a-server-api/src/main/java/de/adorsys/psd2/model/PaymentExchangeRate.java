@@ -1,8 +1,7 @@
 package de.adorsys.psd2.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import org.springframework.validation.annotation.Validated;
 
 import javax.validation.Valid;
@@ -13,9 +12,10 @@ import java.util.Objects;
 /**
  * Exchange Rate.
  */
-@ApiModel(description = "Exchange Rate.")
+@Schema(description = "Exchange Rate.")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2021-11-05T12:22:49.487689+02:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-05-06T13:00:42.214155+03:00[Europe/Kiev]")
+
 
 public class PaymentExchangeRate   {
   @JsonProperty("unitCurrency")
@@ -36,15 +36,12 @@ public class PaymentExchangeRate   {
   }
 
   /**
-   * Get unitCurrency
+   * ISO 4217 Alpha 3 currency code.
    * @return unitCurrency
-  **/
-  @ApiModelProperty(value = "")
+   **/
+  @Schema(example = "EUR", description = "ISO 4217 Alpha 3 currency code. ")
 
-@Pattern(regexp="[A-Z]{3}")
-
-  @JsonProperty("unitCurrency")
-  public String getUnitCurrency() {
+  @Pattern(regexp="[A-Z]{3}")   public String getUnitCurrency() {
     return unitCurrency;
   }
 
@@ -60,13 +57,10 @@ public class PaymentExchangeRate   {
   /**
    * Get exchangeRate
    * @return exchangeRate
-  **/
-  @ApiModelProperty(value = "")
+   **/
+  @Schema(description = "")
 
-
-
-  @JsonProperty("exchangeRate")
-  public String getExchangeRate() {
+    public String getExchangeRate() {
     return exchangeRate;
   }
 
@@ -82,13 +76,10 @@ public class PaymentExchangeRate   {
   /**
    * Get contractIdentification
    * @return contractIdentification
-  **/
-  @ApiModelProperty(value = "")
+   **/
+  @Schema(description = "")
 
-@Size(max=35)
-
-  @JsonProperty("contractIdentification")
-  public String getContractIdentification() {
+  @Size(max=35)   public String getContractIdentification() {
     return contractIdentification;
   }
 
@@ -104,14 +95,11 @@ public class PaymentExchangeRate   {
   /**
    * Get rateType
    * @return rateType
-  **/
-  @ApiModelProperty(value = "")
+   **/
+  @Schema(description = "")
 
-  @Valid
-
-
-  @JsonProperty("rateType")
-  public ExchangeRateTypeCode getRateType() {
+    @Valid
+    public ExchangeRateTypeCode getRateType() {
     return rateType;
   }
 
@@ -127,11 +115,12 @@ public class PaymentExchangeRate   {
     }
     if (o == null || getClass() != o.getClass()) {
       return false;
-}    PaymentExchangeRate paymentExchangeRate = (PaymentExchangeRate) o;
+    }
+    PaymentExchangeRate paymentExchangeRate = (PaymentExchangeRate) o;
     return Objects.equals(this.unitCurrency, paymentExchangeRate.unitCurrency) &&
-    Objects.equals(this.exchangeRate, paymentExchangeRate.exchangeRate) &&
-    Objects.equals(this.contractIdentification, paymentExchangeRate.contractIdentification) &&
-    Objects.equals(this.rateType, paymentExchangeRate.rateType);
+        Objects.equals(this.exchangeRate, paymentExchangeRate.exchangeRate) &&
+        Objects.equals(this.contractIdentification, paymentExchangeRate.contractIdentification) &&
+        Objects.equals(this.rateType, paymentExchangeRate.rateType);
   }
 
   @Override
@@ -163,4 +152,3 @@ public class PaymentExchangeRate   {
     return o.toString().replace("\n", "\n    ");
   }
 }
-

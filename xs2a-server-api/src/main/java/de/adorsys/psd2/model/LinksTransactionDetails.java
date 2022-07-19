@@ -1,7 +1,7 @@
 package de.adorsys.psd2.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import org.springframework.validation.annotation.Validated;
 
 import javax.validation.Valid;
@@ -13,7 +13,8 @@ import java.util.Objects;
  * LinksTransactionDetails
  */
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2021-11-05T12:22:49.487689+02:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-05-06T13:00:42.214155+03:00[Europe/Kiev]")
+
 
 public class LinksTransactionDetails extends HashMap<String, HrefType>  {
   @JsonProperty("transactionDetails")
@@ -27,15 +28,12 @@ public class LinksTransactionDetails extends HashMap<String, HrefType>  {
   /**
    * Get transactionDetails
    * @return transactionDetails
-  **/
-  @ApiModelProperty(required = true, value = "")
-  @NotNull
+   **/
+  @Schema(required = true, description = "")
+      @NotNull
 
-  @Valid
-
-
-  @JsonProperty("transactionDetails")
-  public HrefType getTransactionDetails() {
+    @Valid
+    public HrefType getTransactionDetails() {
     return transactionDetails;
   }
 
@@ -51,12 +49,10 @@ public class LinksTransactionDetails extends HashMap<String, HrefType>  {
     }
     if (o == null || getClass() != o.getClass()) {
       return false;
-}
-    if (!super.equals(o)) {
-    return false;
     }
     LinksTransactionDetails _linksTransactionDetails = (LinksTransactionDetails) o;
-    return Objects.equals(this.transactionDetails, _linksTransactionDetails.transactionDetails);
+    return Objects.equals(this.transactionDetails, _linksTransactionDetails.transactionDetails) &&
+        super.equals(o);
   }
 
   @Override
@@ -85,4 +81,3 @@ public class LinksTransactionDetails extends HashMap<String, HrefType>  {
     return o.toString().replace("\n", "\n    ");
   }
 }
-

@@ -1,8 +1,7 @@
 package de.adorsys.psd2.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import org.springframework.validation.annotation.Validated;
 
 import javax.validation.Valid;
@@ -13,9 +12,10 @@ import java.util.Objects;
 /**
  * JSON based card account report.  This card account report contains transactions resulting from the query parameters.
  */
-@ApiModel(description = "JSON based card account report.  This card account report contains transactions resulting from the query parameters. ")
+@Schema(description = "JSON based card account report.  This card account report contains transactions resulting from the query parameters. ")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2021-11-05T12:22:49.487689+02:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-05-06T13:00:42.214155+03:00[Europe/Kiev]")
+
 
 public class CardAccountReport   {
   @JsonProperty("booked")
@@ -35,14 +35,11 @@ public class CardAccountReport   {
   /**
    * Get booked
    * @return booked
-  **/
-  @ApiModelProperty(value = "")
+   **/
+  @Schema(description = "")
 
-  @Valid
-
-
-  @JsonProperty("booked")
-  public CardTransactionList getBooked() {
+    @Valid
+    public CardTransactionList getBooked() {
     return booked;
   }
 
@@ -58,14 +55,11 @@ public class CardAccountReport   {
   /**
    * Get pending
    * @return pending
-  **/
-  @ApiModelProperty(value = "")
+   **/
+  @Schema(description = "")
 
-  @Valid
-
-
-  @JsonProperty("pending")
-  public CardTransactionList getPending() {
+    @Valid
+    public CardTransactionList getPending() {
     return pending;
   }
 
@@ -73,7 +67,7 @@ public class CardAccountReport   {
     this.pending = pending;
   }
 
-  public CardAccountReport _links(Map _links) {
+  public CardAccountReport _links(LinksCardAccountReport _links) {
     this._links = _links;
     return this;
   }
@@ -81,15 +75,12 @@ public class CardAccountReport   {
   /**
    * Get _links
    * @return _links
-  **/
-  @ApiModelProperty(required = true, value = "")
-  @NotNull
+   **/
+  @Schema(required = true, description = "")
+      @NotNull
 
-  @Valid
-
-
-  @JsonProperty("_links")
-  public Map getLinks() {
+    @Valid
+    public Map getLinks() {
     return _links;
   }
 
@@ -105,10 +96,11 @@ public class CardAccountReport   {
     }
     if (o == null || getClass() != o.getClass()) {
       return false;
-}    CardAccountReport cardAccountReport = (CardAccountReport) o;
+    }
+    CardAccountReport cardAccountReport = (CardAccountReport) o;
     return Objects.equals(this.booked, cardAccountReport.booked) &&
-    Objects.equals(this.pending, cardAccountReport.pending) &&
-    Objects.equals(this._links, cardAccountReport._links);
+        Objects.equals(this.pending, cardAccountReport.pending) &&
+        Objects.equals(this._links, cardAccountReport._links);
   }
 
   @Override
@@ -139,4 +131,3 @@ public class CardAccountReport   {
     return o.toString().replace("\n", "\n    ");
   }
 }
-

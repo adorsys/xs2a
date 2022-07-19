@@ -58,6 +58,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.info.BuildProperties;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -120,6 +121,8 @@ class PaymentStartCancellationAuthorisationIT {
     private PisCommonPaymentServiceEncrypted pisCommonPaymentServiceEncrypted;
     @MockBean
     private AuthorisationServiceEncrypted authorisationServiceEncrypted;
+    @MockBean
+    private BuildProperties buildProperties;
 
     @Captor
     private ArgumentCaptor<CreateAuthorisationRequest> createAuthorisationRequestCaptor;

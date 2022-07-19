@@ -1,8 +1,7 @@
 package de.adorsys.psd2.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import org.springframework.validation.annotation.Validated;
 
 import javax.validation.Valid;
@@ -12,9 +11,10 @@ import java.util.Objects;
 /**
  * Body of the JSON response for a successful read card account transaction list request. This card account report contains transactions resulting from the query parameters.
  */
-@ApiModel(description = "Body of the JSON response for a successful read card account transaction list request. This card account report contains transactions resulting from the query parameters. ")
+@Schema(description = "Body of the JSON response for a successful read card account transaction list request. This card account report contains transactions resulting from the query parameters. ")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2021-11-05T12:22:49.487689+02:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-05-06T13:00:42.214155+03:00[Europe/Kiev]")
+
 
 public class CardAccountsTransactionsResponse200   {
   @JsonProperty("cardAccount")
@@ -40,14 +40,11 @@ public class CardAccountsTransactionsResponse200   {
   /**
    * Get cardAccount
    * @return cardAccount
-  **/
-  @ApiModelProperty(value = "")
+   **/
+  @Schema(description = "")
 
-  @Valid
-
-
-  @JsonProperty("cardAccount")
-  public AccountReference getCardAccount() {
+    @Valid
+    public AccountReference getCardAccount() {
     return cardAccount;
   }
 
@@ -61,15 +58,12 @@ public class CardAccountsTransactionsResponse200   {
   }
 
   /**
-   * Get debitAccounting
+   * If true, the amounts of debits on the reports are quoted positive with the related consequence for balances. If false, the amount of debits on the reports are quoted negative.
    * @return debitAccounting
-  **/
-  @ApiModelProperty(value = "")
+   **/
+  @Schema(description = "If true, the amounts of debits on the reports are quoted positive with the related consequence for balances. If false, the amount of debits on the reports are quoted negative. ")
 
-
-
-  @JsonProperty("debitAccounting")
-  public Boolean getDebitAccounting() {
+    public Boolean isDebitAccounting() {
     return debitAccounting;
   }
 
@@ -85,14 +79,11 @@ public class CardAccountsTransactionsResponse200   {
   /**
    * Get cardTransactions
    * @return cardTransactions
-  **/
-  @ApiModelProperty(value = "")
+   **/
+  @Schema(description = "")
 
-  @Valid
-
-
-  @JsonProperty("cardTransactions")
-  public CardAccountReport getCardTransactions() {
+    @Valid
+    public CardAccountReport getCardTransactions() {
     return cardTransactions;
   }
 
@@ -108,14 +99,11 @@ public class CardAccountsTransactionsResponse200   {
   /**
    * Get balances
    * @return balances
-  **/
-  @ApiModelProperty(value = "")
+   **/
+  @Schema(description = "")
 
-  @Valid
-
-
-  @JsonProperty("balances")
-  public BalanceList getBalances() {
+    @Valid
+    public BalanceList getBalances() {
     return balances;
   }
 
@@ -123,7 +111,7 @@ public class CardAccountsTransactionsResponse200   {
     this.balances = balances;
   }
 
-  public CardAccountsTransactionsResponse200 _links(Map _links) {
+  public CardAccountsTransactionsResponse200 _links(LinksDownload _links) {
     this._links = _links;
     return this;
   }
@@ -131,14 +119,11 @@ public class CardAccountsTransactionsResponse200   {
   /**
    * Get _links
    * @return _links
-  **/
-  @ApiModelProperty(value = "")
+   **/
+  @Schema(description = "")
 
-  @Valid
-
-
-  @JsonProperty("_links")
-  public Map getLinks() {
+    @Valid
+    public Map getLinks() {
     return _links;
   }
 
@@ -154,12 +139,13 @@ public class CardAccountsTransactionsResponse200   {
     }
     if (o == null || getClass() != o.getClass()) {
       return false;
-}    CardAccountsTransactionsResponse200 cardAccountsTransactionsResponse200 = (CardAccountsTransactionsResponse200) o;
+    }
+    CardAccountsTransactionsResponse200 cardAccountsTransactionsResponse200 = (CardAccountsTransactionsResponse200) o;
     return Objects.equals(this.cardAccount, cardAccountsTransactionsResponse200.cardAccount) &&
-    Objects.equals(this.debitAccounting, cardAccountsTransactionsResponse200.debitAccounting) &&
-    Objects.equals(this.cardTransactions, cardAccountsTransactionsResponse200.cardTransactions) &&
-    Objects.equals(this.balances, cardAccountsTransactionsResponse200.balances) &&
-    Objects.equals(this._links, cardAccountsTransactionsResponse200._links);
+        Objects.equals(this.debitAccounting, cardAccountsTransactionsResponse200.debitAccounting) &&
+        Objects.equals(this.cardTransactions, cardAccountsTransactionsResponse200.cardTransactions) &&
+        Objects.equals(this.balances, cardAccountsTransactionsResponse200.balances) &&
+        Objects.equals(this._links, cardAccountsTransactionsResponse200._links);
   }
 
   @Override
@@ -192,4 +178,3 @@ public class CardAccountsTransactionsResponse200   {
     return o.toString().replace("\n", "\n    ");
   }
 }
-

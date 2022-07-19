@@ -18,8 +18,7 @@
 
 package de.adorsys.psd2.xs2a.core.pis;
 
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -28,16 +27,16 @@ import javax.validation.constraints.NotNull;
 import java.util.Currency;
 
 @Data
-@ApiModel(description = "Amount information", value = "Amount")
+@Schema(description = "Amount information")
 @NoArgsConstructor
 @AllArgsConstructor
 public class Xs2aAmount {
 
-	@ApiModelProperty(value = "ISO 4217 currency code", required = true, example = "EUR")
+	@Schema(description = "ISO 4217 currency code", required = true, example = "EUR")
     @NotNull
     private Currency currency;
 
-	@ApiModelProperty(value = "The amount given with fractional digits, where fractions must be compliant to the currency definition. The decimal separator is a dot", required = true, example = "1000.00")
+	@Schema(description = "The amount given with fractional digits, where fractions must be compliant to the currency definition. The decimal separator is a dot", required = true, example = "1000.00")
     @NotNull
     private String amount;
 }

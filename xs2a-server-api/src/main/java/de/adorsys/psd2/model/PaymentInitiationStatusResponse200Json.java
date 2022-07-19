@@ -1,8 +1,7 @@
 package de.adorsys.psd2.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import org.springframework.validation.annotation.Validated;
 
 import javax.validation.Valid;
@@ -14,11 +13,12 @@ import java.util.Map;
 import java.util.Objects;
 
 /**
- * Body of the response for a successful payment initiation status request in case of an JSON based endpoint. *Remark:* If the PSU does not complete a required SCA within the required timeframe the payment resource&#39;s status must be set to \&quot;RJCT\&quot;. Particularly, if a multi-level-SCA is required and the number of successful SCAs during the required timeframe is insufficient, the status must also be set to \&quot;RJCT\&quot;.
+ * Body of the response for a successful payment initiation status request in case of an JSON based endpoint. *Remark:* If the PSU does not complete a required SCA within the required timeframe the payment resource&#x27;s status must be set to \&quot;RJCT\&quot;. Particularly, if a multi-level-SCA is required and the number of successful SCAs during the required timeframe is insufficient, the status must also be set to \&quot;RJCT\&quot;.
  */
-@ApiModel(description = "Body of the response for a successful payment initiation status request in case of an JSON based endpoint. *Remark:* If the PSU does not complete a required SCA within the required timeframe the payment resource's status must be set to \"RJCT\". Particularly, if a multi-level-SCA is required and the number of successful SCAs during the required timeframe is insufficient, the status must also be set to \"RJCT\".")
+@Schema(description = "Body of the response for a successful payment initiation status request in case of an JSON based endpoint. *Remark:* If the PSU does not complete a required SCA within the required timeframe the payment resource's status must be set to \"RJCT\". Particularly, if a multi-level-SCA is required and the number of successful SCAs during the required timeframe is insufficient, the status must also be set to \"RJCT\".")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2021-11-05T12:22:49.487689+02:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-05-06T13:00:42.214155+03:00[Europe/Kiev]")
+
 
 public class PaymentInitiationStatusResponse200Json   {
   @JsonProperty("transactionStatus")
@@ -45,15 +45,12 @@ public class PaymentInitiationStatusResponse200Json   {
   /**
    * Get transactionStatus
    * @return transactionStatus
-  **/
-  @ApiModelProperty(required = true, value = "")
-  @NotNull
+   **/
+  @Schema(required = true, description = "")
+      @NotNull
 
-  @Valid
-
-
-  @JsonProperty("transactionStatus")
-  public TransactionStatus getTransactionStatus() {
+    @Valid
+    public TransactionStatus getTransactionStatus() {
     return transactionStatus;
   }
 
@@ -67,15 +64,12 @@ public class PaymentInitiationStatusResponse200Json   {
   }
 
   /**
-   * Get fundsAvailable
+   * Equals true if sufficient funds are available at the time of the request, false otherwise.  This datalemenet is allways contained in a confirmation of funds response.  This data element is contained in a payment status response,  if supported by the ASPSP, if a funds check has been performed and  if the transactionStatus is \"ACTC\", \"ACWC\" or \"ACCP\".
    * @return fundsAvailable
-  **/
-  @ApiModelProperty(value = "")
+   **/
+  @Schema(description = "Equals true if sufficient funds are available at the time of the request, false otherwise.  This datalemenet is allways contained in a confirmation of funds response.  This data element is contained in a payment status response,  if supported by the ASPSP, if a funds check has been performed and  if the transactionStatus is \"ACTC\", \"ACWC\" or \"ACCP\". ")
 
-
-
-  @JsonProperty("fundsAvailable")
-  public Boolean getFundsAvailable() {
+    public Boolean isFundsAvailable() {
     return fundsAvailable;
   }
 
@@ -89,15 +83,12 @@ public class PaymentInitiationStatusResponse200Json   {
   }
 
   /**
-   * Get psuMessage
+   * Text to be displayed to the PSU.
    * @return psuMessage
-  **/
-  @ApiModelProperty(value = "")
+   **/
+  @Schema(description = "Text to be displayed to the PSU.")
 
-@Size(max=500)
-
-  @JsonProperty("psuMessage")
-  public String getPsuMessage() {
+  @Size(max=500)   public String getPsuMessage() {
     return psuMessage;
   }
 
@@ -113,18 +104,15 @@ public class PaymentInitiationStatusResponse200Json   {
   /**
    * Get _links
    * @return _links
-  **/
-  @ApiModelProperty(value = "")
+   **/
+  @Schema(description = "")
 
-  @Valid
-
-
-  @JsonProperty("_links")
-  public Map getLinks() {
+    @Valid
+    public Map getLinks() {
     return _links;
   }
 
-  public void setLinks(Map _links) {
+  public void setLinks(LinksPaymentInitiationStatus _links) {
     this._links = _links;
   }
 
@@ -144,14 +132,10 @@ public class PaymentInitiationStatusResponse200Json   {
   /**
    * Messages to the TPP on operational issues.
    * @return tppMessages
-  **/
-  @ApiModelProperty(value = "Messages to the TPP on operational issues.")
-
-  @Valid
-
-
-  @JsonProperty("tppMessages")
-  public List<TppMessageGeneric> getTppMessages() {
+   **/
+  @Schema(description = "Messages to the TPP on operational issues.")
+      @Valid
+    public List<TppMessageGeneric> getTppMessages() {
     return tppMessages;
   }
 
@@ -167,12 +151,13 @@ public class PaymentInitiationStatusResponse200Json   {
     }
     if (o == null || getClass() != o.getClass()) {
       return false;
-}    PaymentInitiationStatusResponse200Json paymentInitiationStatusResponse200Json = (PaymentInitiationStatusResponse200Json) o;
+    }
+    PaymentInitiationStatusResponse200Json paymentInitiationStatusResponse200Json = (PaymentInitiationStatusResponse200Json) o;
     return Objects.equals(this.transactionStatus, paymentInitiationStatusResponse200Json.transactionStatus) &&
-    Objects.equals(this.fundsAvailable, paymentInitiationStatusResponse200Json.fundsAvailable) &&
-    Objects.equals(this.psuMessage, paymentInitiationStatusResponse200Json.psuMessage) &&
-    Objects.equals(this._links, paymentInitiationStatusResponse200Json._links) &&
-    Objects.equals(this.tppMessages, paymentInitiationStatusResponse200Json.tppMessages);
+        Objects.equals(this.fundsAvailable, paymentInitiationStatusResponse200Json.fundsAvailable) &&
+        Objects.equals(this.psuMessage, paymentInitiationStatusResponse200Json.psuMessage) &&
+        Objects.equals(this._links, paymentInitiationStatusResponse200Json._links) &&
+        Objects.equals(this.tppMessages, paymentInitiationStatusResponse200Json.tppMessages);
   }
 
   @Override
@@ -205,4 +190,3 @@ public class PaymentInitiationStatusResponse200Json   {
     return o.toString().replace("\n", "\n    ");
   }
 }
-

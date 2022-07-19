@@ -18,7 +18,7 @@
 
 package de.adorsys.psd2.xs2a.core.tpp;
 
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
 import java.time.OffsetDateTime;
@@ -26,15 +26,15 @@ import java.time.OffsetDateTime;
 @Data
 public class TppStopListRecord {
 
-    @ApiModelProperty(value = "Authorisation number", required = true, example = "12345987")
+    @Schema(description = "Authorisation number", required = true, example = "12345987")
     private String tppAuthorisationNumber;
 
-    @ApiModelProperty(value = "Status of the TPP in stop list", example = "ENABLED", allowableValues = "ENABLED,BLOCKED")
+    @Schema(description = "Status of the TPP in stop list", example = "ENABLED", allowableValues = "ENABLED,BLOCKED")
     private TppStatus status;
 
-    @ApiModelProperty(value = "Blocking expiration datetime", example = "2020-01-01T15:30:35.035Z")
+    @Schema(description = "Blocking expiration datetime", example = "2020-01-01T15:30:35.035Z")
     private OffsetDateTime blockingExpirationTimestamp;
 
-    @ApiModelProperty(value = "Service instance id", example = "instance id")
+    @Schema(description = "Service instance id", example = "instance id")
     private String instanceId;
 }

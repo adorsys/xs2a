@@ -24,7 +24,7 @@ import de.adorsys.psd2.xs2a.domain.account.Xs2aAccountDetails;
 import de.adorsys.psd2.xs2a.domain.account.Xs2aAccountDetailsHolder;
 import de.adorsys.psd2.xs2a.domain.account.Xs2aAccountListHolder;
 import de.adorsys.psd2.xs2a.service.profile.AspspProfileServiceWrapper;
-import de.adorsys.psd2.xs2a.web.controller.AccountController;
+import de.adorsys.psd2.xs2a.web.controller.psd2.AccountController;
 import de.adorsys.psd2.xs2a.web.link.AccountDetailsLinks;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

@@ -1,20 +1,13 @@
 package de.adorsys.psd2.model;
 
-import java.util.Objects;
-import io.swagger.annotations.ApiModel;
-import com.fasterxml.jackson.annotation.JsonValue;
-import org.springframework.validation.annotation.Validated;
-import javax.validation.Valid;
-import javax.validation.constraints.*;
-
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonValue;
 
 /**
  * Message codes defined for Trusted Beneficiaries for HTTP Error code 405 (METHOD NOT ALLOWED).
  */
 public enum MessageCode405LTB {
-
-  INVALID("SERVICE_INVALID");
+  SERVICE_INVALID("SERVICE_INVALID");
 
   private String value;
 
@@ -38,4 +31,3 @@ public enum MessageCode405LTB {
     return null;
   }
 }
-

@@ -19,8 +19,7 @@
 package de.adorsys.psd2.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import org.springframework.validation.annotation.Validated;
 
 import javax.validation.Valid;
@@ -34,11 +33,12 @@ import java.util.Objects;
 /**
  * Body of the JSON response for a Start Multilevel SCA authorisation request.
  */
-@ApiModel(description = "Body of the JSON response for a Start Multilevel SCA authorisation request.")
+@Schema(description = "Body of the JSON response for a Start Multilevel SCA authorisation request.")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2020-07-01T15:25:06.394043+03:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-05-06T13:00:06.283258+03:00[Europe/Kiev]")
 
-public class ConsentsConfirmationOfFundsMultilevelSCAResponse   {
+
+public class ConsentsConfirmationOfFundsMultilevelSCAResponse {
   @JsonProperty("consentStatus")
   private ConsentStatus consentStatus = null;
 
@@ -63,15 +63,12 @@ public class ConsentsConfirmationOfFundsMultilevelSCAResponse   {
   /**
    * Get consentStatus
    * @return consentStatus
-  **/
-  @ApiModelProperty(required = true, value = "")
-  @NotNull
+   **/
+  @Schema(required = true, description = "")
+      @NotNull
 
-  @Valid
-
-
-  @JsonProperty("consentStatus")
-  public ConsentStatus getConsentStatus() {
+    @Valid
+    public ConsentStatus getConsentStatus() {
     return consentStatus;
   }
 
@@ -85,16 +82,13 @@ public class ConsentsConfirmationOfFundsMultilevelSCAResponse   {
   }
 
   /**
-   * Get consentId
+   * ID of the corresponding consent object as returned by an Account Information Consent Request.
    * @return consentId
-  **/
-  @ApiModelProperty(required = true, value = "")
-  @NotNull
+   **/
+  @Schema(required = true, description = "ID of the corresponding consent object as returned by an Account Information Consent Request. ")
+      @NotNull
 
-
-
-  @JsonProperty("consentId")
-  public String getConsentId() {
+    public String getConsentId() {
     return consentId;
   }
 
@@ -102,7 +96,7 @@ public class ConsentsConfirmationOfFundsMultilevelSCAResponse   {
     this.consentId = consentId;
   }
 
-  public ConsentsConfirmationOfFundsMultilevelSCAResponse _links(Map _links) {
+  public ConsentsConfirmationOfFundsMultilevelSCAResponse _links(LinksStartScaProcessMultilevelSca _links) {
     this._links = _links;
     return this;
   }
@@ -110,15 +104,12 @@ public class ConsentsConfirmationOfFundsMultilevelSCAResponse   {
   /**
    * Get _links
    * @return _links
-  **/
-  @ApiModelProperty(required = true, value = "")
-  @NotNull
+   **/
+  @Schema(required = true, description = "")
+      @NotNull
 
-  @Valid
-
-
-  @JsonProperty("_links")
-  public Map getLinks() {
+    @Valid
+    public Map getLinks() {
     return _links;
   }
 
@@ -132,15 +123,12 @@ public class ConsentsConfirmationOfFundsMultilevelSCAResponse   {
   }
 
   /**
-   * Get psuMessage
+   * Text to be displayed to the PSU
    * @return psuMessage
-  **/
-  @ApiModelProperty(value = "")
+   **/
+  @Schema(description = "Text to be displayed to the PSU")
 
-@Size(max=512)
-
-  @JsonProperty("psuMessage")
-  public String getPsuMessage() {
+  @Size(max=512)   public String getPsuMessage() {
     return psuMessage;
   }
 
@@ -164,14 +152,10 @@ public class ConsentsConfirmationOfFundsMultilevelSCAResponse   {
   /**
    * Get tppMessages
    * @return tppMessages
-  **/
-  @ApiModelProperty(value = "")
-
-  @Valid
-
-
-  @JsonProperty("tppMessages")
-  public List<TppMessage2XX> getTppMessages() {
+   **/
+  @Schema(description = "")
+      @Valid
+    public List<TppMessage2XX> getTppMessages() {
     return tppMessages;
   }
 
@@ -226,4 +210,3 @@ public class ConsentsConfirmationOfFundsMultilevelSCAResponse   {
     return o.toString().replace("\n", "\n    ");
   }
 }
-

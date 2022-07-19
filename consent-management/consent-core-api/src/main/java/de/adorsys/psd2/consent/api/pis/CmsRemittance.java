@@ -18,19 +18,18 @@
 
 package de.adorsys.psd2.consent.api.pis;
 
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
 @Data
-@ApiModel(description = "Remittance in cms", value = "CmsRemittance")
+@Schema(description = "Remittance in CMS", name = "CmsRemittance")
 public class CmsRemittance {
-    @ApiModelProperty(value = "the actual reference", required = true, example = "Ref Number Merchant")
+    @Schema(description = "the actual reference", required = true, example = "Ref Number Merchant")
     private String reference;
 
-    @ApiModelProperty(value = "reference type", example = "reference type")
+    @Schema(description = "reference type", example = "reference type")
     private String referenceType;
 
-    @ApiModelProperty(value = "reference issuer", example = "reference issuer")
+    @Schema(description = "reference issuer", example = "reference issuer")
     private String referenceIssuer;
 }

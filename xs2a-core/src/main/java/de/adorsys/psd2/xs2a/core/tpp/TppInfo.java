@@ -19,7 +19,7 @@
 package de.adorsys.psd2.xs2a.core.tpp;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.apache.commons.lang3.StringUtils;
@@ -32,45 +32,45 @@ import java.util.List;
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class TppInfo {
     @EqualsAndHashCode.Include
-    @ApiModelProperty(value = "Authorization number", required = true, example = "12345987")
+    @Schema(description = "Authorization number", required = true, example = "12345987")
     private String authorisationNumber;
 
-    @ApiModelProperty(value = "Tpp name", required = true, example = "Tpp company")
+    @Schema(description = "Tpp name", required = true, example = "Tpp company")
     private String tppName;
 
-    @ApiModelProperty(value = "Tpp role", required = true)
+    @Schema(description = "Tpp role", required = true)
     private List<TppRole> tppRoles;
 
-    @ApiModelProperty(value = "National competent authority id", required = true, example = "authority id")
+    @Schema(description = "National competent authority id", required = true, example = "authority id")
     private String authorityId;
 
-    @ApiModelProperty(value = "National competent authority name", required = true, example = "authority name")
+    @Schema(description = "National competent authority name", required = true, example = "authority name")
     private String authorityName;
 
-    @ApiModelProperty(value = "Country", required = true, example = "Germany")
+    @Schema(description = "Country", required = true, example = "Germany")
     private String country;
 
-    @ApiModelProperty(value = "Organisation", required = true, example = "Organisation")
+    @Schema(description = "Organisation", required = true, example = "Organisation")
     private String organisation;
 
-    @ApiModelProperty(value = "Organisation unit", required = true, example = "Organisation unit")
+    @Schema(description = "Organisation unit", required = true, example = "Organisation unit")
     private String organisationUnit;
 
-    @ApiModelProperty(value = "City", required = true, example = "Nuremberg")
+    @Schema(description = "City", required = true, example = "Nuremberg")
     private String city;
 
-    @ApiModelProperty(value = "State", required = true, example = "Bayern")
+    @Schema(description = "State", required = true, example = "Bayern")
     private String state;
 
     @Nullable
-    @ApiModelProperty(value = "Cancel TPP redirect URIs")
+    @Schema(description = "Cancel TPP redirect URIs")
     private TppRedirectUri cancelTppRedirectUri;
 
-    @ApiModelProperty(value = "Issuer CN", required = true, example = "Authority CA Domain Name")
+    @Schema(description = "Issuer CN", required = true, example = "Authority CA Domain Name")
     private String issuerCN;
 
     @JsonIgnore
-    @ApiModelProperty(value = "List of DNS which are stored in `Subject Alternative Name` field in QWAC")
+    @Schema(description = "List of DNS which are stored in `Subject Alternative Name` field in QWAC")
     private List<String> dnsList = new ArrayList<>();
 
     @JsonIgnore

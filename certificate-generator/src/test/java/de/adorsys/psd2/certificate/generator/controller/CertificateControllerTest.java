@@ -19,6 +19,7 @@
 package de.adorsys.psd2.certificate.generator.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import de.adorsys.psd2.certificate.generator.CertificateGeneratorApp;
 import de.adorsys.psd2.certificate.generator.config.CorsConfigProperties;
 import de.adorsys.psd2.certificate.generator.model.CertificateRequest;
 import de.adorsys.psd2.certificate.generator.model.CertificateResponse;
@@ -27,13 +28,13 @@ import de.adorsys.psd2.certificate.generator.service.CertificateService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
 import java.util.Collections;
 
@@ -46,8 +47,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @ExtendWith(SpringExtension.class)
-@EnableWebMvc
-@WebMvcTest(value = CertificateController.class)
+@AutoConfigureMockMvc
+@SpringBootTest(
+    classes = CertificateGeneratorApp.class)
 class CertificateControllerTest {
     private static final String CERTIFICATE = "-----BEGIN CERTIFICATE-----Stuff-----END CERTIFICATE-----";
     private static final String PRIVATE_KEY = "-----BEGIN RSA PRIVATE KEY-----Stuff-----END RSA PRIVATE KEY-----";

@@ -19,8 +19,7 @@
 package de.adorsys.psd2.xs2a.core.profile;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
@@ -34,41 +33,42 @@ import java.util.stream.Stream;
 
 @Data
 @NoArgsConstructor
-@ApiModel(description = "Account Reference", value = "AccountReference")
+@Schema(description = "Account Reference")
 @EqualsAndHashCode(exclude = "id")
 public class AccountReference {
 
     @JsonIgnore
     private Long id;
 
-    @ApiModelProperty(example = "123-DEDE89370400440532013000-EUR")
+    @Schema(example = "123-DEDE89370400440532013000-EUR")
     private String aspspAccountId;
 
-    @ApiModelProperty(value = "RESOURCE-ID: This identification is denoting the addressed account.")
+    @Schema(description = "RESOURCE-ID: This identification is denoting the addressed account.")
     private String resourceId;
 
-    @ApiModelProperty(value = "IBAN: This data element can be used in the body of the CreateConsentReq Request Message for retrieving account access consent from this payment account", example = "DE89370400440532013000")
+    @Schema(description = "IBAN: This data element can be used in the body of the CreateConsentReq Request Message for retrieving account access consent from this payment account", example = "DE89370400440532013000")
     private String iban;
 
-    @ApiModelProperty(value = "BBAN: This data elements is used for payment accounts which have no IBAN", example = "89370400440532013000")
+    @Schema(description = "BBAN: This data elements is used for payment accounts which have no IBAN", example = "89370400440532013000")
     private String bban;
 
-    @ApiModelProperty(value = "PAN: Primary Account Number (PAN) of a card, can be tokenized by the ASPSP due to PCI DSS requirements.", example = "2356 5746 3217 1234")
+    @Schema(description = "PAN: Primary Account Number (PAN) of a card, can be tokenized by the ASPSP due to PCI DSS requirements.", example = "2356 5746 3217 1234")
     private String pan;
 
-    @ApiModelProperty(value = "MASKED_PAN: Primary Account Number (PAN) of a card in a masked form.", example = "2356xxxxxx1234")
+    @Schema(description = "MASKED_PAN: Primary Account Number (PAN) of a card in a masked form.", example = "2356xxxxxx1234")
     private String maskedPan;
 
-    @ApiModelProperty(value = "MSISDN: An alias to access a payment account via a registered mobile phone number. This alias might be needed e.g. in the payment initiation service, cp. Section 5.3.1. The support of this alias must be explicitly documented by the ASPSP for the corresponding API calls.", example = "+49(0)911 360698-0")
+    @Schema(description = "MSISDN: An alias to access a payment account via a registered mobile phone number. This alias might be needed e.g. in the payment initiation service, cp. Section 5.3.1. The support of this alias must be explicitly documented by the ASPSP for the corresponding API calls.", example = "+49(0)911 360698-0")
     private String msisdn;
 
-    @ApiModelProperty(value = "Codes following ISO 4217", example = "EUR")
+    @Schema(description = "Codes following ISO 4217", example = "EUR")
     private Currency currency;
 
-    @ApiModelProperty(value = "Other account identifier", example = "30-163033-7")
+    @Schema(description = "Other account identifier", example = "30-163033-7")
     private String other;
 
     private String cashAccountType;
+
     /**
      * This constructor should be used for storing initial accounts data (as it was requested by TPP)
      *

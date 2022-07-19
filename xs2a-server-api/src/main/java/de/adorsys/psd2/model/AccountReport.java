@@ -1,8 +1,7 @@
 package de.adorsys.psd2.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import org.springframework.validation.annotation.Validated;
 
 import javax.validation.Valid;
@@ -11,11 +10,12 @@ import java.util.Map;
 import java.util.Objects;
 
 /**
- * JSON based account report. This account report contains transactions resulting from the query parameters.  &#39;booked&#39; shall be contained if bookingStatus parameter is set to \&quot;booked\&quot; or \&quot;both\&quot;.  &#39;pending&#39; is not contained if the bookingStatus parameter is set to \&quot;booked\&quot; or \&quot;information\&quot;.  &#39;information&#39; Only contained if the bookingStatus is set to \&quot;information\&quot; and if supported by ASPSP.
+ * JSON based account report. This account report contains transactions resulting from the query parameters.  &#x27;booked&#x27; shall be contained if bookingStatus parameter is set to \&quot;booked\&quot; or \&quot;both\&quot;.  &#x27;pending&#x27; is not contained if the bookingStatus parameter is set to \&quot;booked\&quot; or \&quot;information\&quot;.  &#x27;information&#x27; Only contained if the bookingStatus is set to \&quot;information\&quot; and if supported by ASPSP.
  */
-@ApiModel(description = "JSON based account report. This account report contains transactions resulting from the query parameters.  'booked' shall be contained if bookingStatus parameter is set to \"booked\" or \"both\".  'pending' is not contained if the bookingStatus parameter is set to \"booked\" or \"information\".  'information' Only contained if the bookingStatus is set to \"information\" and if supported by ASPSP. ")
+@Schema(description = "JSON based account report. This account report contains transactions resulting from the query parameters.  'booked' shall be contained if bookingStatus parameter is set to \"booked\" or \"both\".  'pending' is not contained if the bookingStatus parameter is set to \"booked\" or \"information\".  'information' Only contained if the bookingStatus is set to \"information\" and if supported by ASPSP. ")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2021-11-05T12:22:49.487689+02:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-05-06T13:00:42.214155+03:00[Europe/Kiev]")
+
 
 public class AccountReport   {
   @JsonProperty("booked")
@@ -38,14 +38,11 @@ public class AccountReport   {
   /**
    * Get booked
    * @return booked
-  **/
-  @ApiModelProperty(value = "")
+   **/
+  @Schema(description = "")
 
-  @Valid
-
-
-  @JsonProperty("booked")
-  public TransactionList getBooked() {
+    @Valid
+    public TransactionList getBooked() {
     return booked;
   }
 
@@ -61,14 +58,11 @@ public class AccountReport   {
   /**
    * Get pending
    * @return pending
-  **/
-  @ApiModelProperty(value = "")
+   **/
+  @Schema(description = "")
 
-  @Valid
-
-
-  @JsonProperty("pending")
-  public TransactionList getPending() {
+    @Valid
+    public TransactionList getPending() {
     return pending;
   }
 
@@ -84,14 +78,11 @@ public class AccountReport   {
   /**
    * Get information
    * @return information
-  **/
-  @ApiModelProperty(value = "")
+   **/
+  @Schema(description = "")
 
-  @Valid
-
-
-  @JsonProperty("information")
-  public TransactionList getInformation() {
+    @Valid
+    public TransactionList getInformation() {
     return information;
   }
 
@@ -99,7 +90,7 @@ public class AccountReport   {
     this.information = information;
   }
 
-  public AccountReport _links(Map _links) {
+  public AccountReport _links(LinksAccountReport _links) {
     this._links = _links;
     return this;
   }
@@ -107,15 +98,12 @@ public class AccountReport   {
   /**
    * Get _links
    * @return _links
-  **/
-  @ApiModelProperty(required = true, value = "")
-  @NotNull
+   **/
+  @Schema(required = true, description = "")
+      @NotNull
 
-  @Valid
-
-
-  @JsonProperty("_links")
-  public Map getLinks() {
+    @Valid
+    public Map getLinks() {
     return _links;
   }
 
@@ -131,11 +119,12 @@ public class AccountReport   {
     }
     if (o == null || getClass() != o.getClass()) {
       return false;
-}    AccountReport accountReport = (AccountReport) o;
+    }
+    AccountReport accountReport = (AccountReport) o;
     return Objects.equals(this.booked, accountReport.booked) &&
-    Objects.equals(this.pending, accountReport.pending) &&
-    Objects.equals(this.information, accountReport.information) &&
-    Objects.equals(this._links, accountReport._links);
+        Objects.equals(this.pending, accountReport.pending) &&
+        Objects.equals(this.information, accountReport.information) &&
+        Objects.equals(this._links, accountReport._links);
   }
 
   @Override
@@ -167,4 +156,3 @@ public class AccountReport   {
     return o.toString().replace("\n", "\n    ");
   }
 }
-

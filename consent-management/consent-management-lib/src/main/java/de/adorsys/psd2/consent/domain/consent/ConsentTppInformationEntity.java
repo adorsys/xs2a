@@ -21,8 +21,7 @@ package de.adorsys.psd2.consent.domain.consent;
 import de.adorsys.psd2.consent.api.ais.AdditionalTppInfo;
 import de.adorsys.psd2.consent.domain.TppInfoEntity;
 import de.adorsys.psd2.xs2a.core.profile.NotificationSupportedMode;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
 import javax.persistence.*;
@@ -31,7 +30,7 @@ import java.util.Objects;
 
 @Data
 @Entity(name = "consent_tpp_information")
-@ApiModel(description = "Consent tpp information", value = "ConsentTppInformationEntity")
+@Schema(description = "Consent tpp information", name = "ConsentTppInformationEntity")
 public class ConsentTppInformationEntity {
     @Id
     @Column(name = "consent_tpp_information_id")
@@ -40,12 +39,12 @@ public class ConsentTppInformationEntity {
     private Long id;
 
     @Column(name = "tpp_redirect_preferred", nullable = false)
-    @ApiModelProperty(name = "tppRedirectPreferred", value = "If it equals “true”, the TPP prefers a redirect over an embedded SCA approach.", required = true, example = "false")
+    @Schema(name = "tppRedirectPreferred", description = "If it equals “true”, the TPP prefers a redirect over an embedded SCA approach.", required = true, example = "false")
     private boolean tppRedirectPreferred;
 
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "tpp_info_id", nullable = false)
-    @ApiModelProperty(value = "Information about TPP", required = true)
+    @Schema(description = "Information about TPP", required = true)
     private TppInfoEntity tppInfo;
 
     @Column(name = "tpp_frequency_per_day")

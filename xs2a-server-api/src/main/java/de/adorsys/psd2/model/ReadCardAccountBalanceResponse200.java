@@ -1,8 +1,7 @@
 package de.adorsys.psd2.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import org.springframework.validation.annotation.Validated;
 
 import javax.validation.Valid;
@@ -12,9 +11,10 @@ import java.util.Objects;
 /**
  * Body of the response for a successful read balance for a card account request.
  */
-@ApiModel(description = "Body of the response for a successful read balance for a card account request.")
+@Schema(description = "Body of the response for a successful read balance for a card account request.")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2021-11-05T12:22:49.487689+02:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-05-06T13:00:42.214155+03:00[Europe/Kiev]")
+
 
 public class ReadCardAccountBalanceResponse200   {
   @JsonProperty("cardAccount")
@@ -34,14 +34,11 @@ public class ReadCardAccountBalanceResponse200   {
   /**
    * Get cardAccount
    * @return cardAccount
-  **/
-  @ApiModelProperty(value = "")
+   **/
+  @Schema(description = "")
 
-  @Valid
-
-
-  @JsonProperty("cardAccount")
-  public AccountReference getCardAccount() {
+    @Valid
+    public AccountReference getCardAccount() {
     return cardAccount;
   }
 
@@ -55,15 +52,12 @@ public class ReadCardAccountBalanceResponse200   {
   }
 
   /**
-   * Get debitAccounting
+   * If true, the amounts of debits on the reports are quoted positive with the related consequence for balances. If false, the amount of debits on the reports are quoted negative.
    * @return debitAccounting
-  **/
-  @ApiModelProperty(value = "")
+   **/
+  @Schema(description = "If true, the amounts of debits on the reports are quoted positive with the related consequence for balances. If false, the amount of debits on the reports are quoted negative. ")
 
-
-
-  @JsonProperty("debitAccounting")
-  public Boolean getDebitAccounting() {
+    public Boolean isDebitAccounting() {
     return debitAccounting;
   }
 
@@ -79,15 +73,12 @@ public class ReadCardAccountBalanceResponse200   {
   /**
    * Get balances
    * @return balances
-  **/
-  @ApiModelProperty(required = true, value = "")
-  @NotNull
+   **/
+  @Schema(required = true, description = "")
+      @NotNull
 
-  @Valid
-
-
-  @JsonProperty("balances")
-  public BalanceList getBalances() {
+    @Valid
+    public BalanceList getBalances() {
     return balances;
   }
 
@@ -103,10 +94,11 @@ public class ReadCardAccountBalanceResponse200   {
     }
     if (o == null || getClass() != o.getClass()) {
       return false;
-}    ReadCardAccountBalanceResponse200 readCardAccountBalanceResponse200 = (ReadCardAccountBalanceResponse200) o;
+    }
+    ReadCardAccountBalanceResponse200 readCardAccountBalanceResponse200 = (ReadCardAccountBalanceResponse200) o;
     return Objects.equals(this.cardAccount, readCardAccountBalanceResponse200.cardAccount) &&
-    Objects.equals(this.debitAccounting, readCardAccountBalanceResponse200.debitAccounting) &&
-    Objects.equals(this.balances, readCardAccountBalanceResponse200.balances);
+        Objects.equals(this.debitAccounting, readCardAccountBalanceResponse200.debitAccounting) &&
+        Objects.equals(this.balances, readCardAccountBalanceResponse200.balances);
   }
 
   @Override
@@ -137,4 +129,3 @@ public class ReadCardAccountBalanceResponse200   {
     return o.toString().replace("\n", "\n    ");
   }
 }
-

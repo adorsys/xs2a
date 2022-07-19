@@ -22,11 +22,9 @@ import de.adorsys.xs2a.reader.JsonReader;
 import org.springframework.boot.test.util.TestPropertyValues;
 import org.springframework.context.ApplicationContextInitializer;
 import org.springframework.context.ConfigurableApplicationContext;
-import org.springframework.test.context.ActiveProfiles;
 import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Container;
 
-@ActiveProfiles("integration-test")
 @SuppressWarnings("rawtypes")
 public class BaseTest extends AbstractContainerDatabaseTest {
 

@@ -18,49 +18,66 @@
 
 package de.adorsys.psd2.xs2a.web.config;
 
-import com.google.common.base.Predicates;
+import io.swagger.v3.oas.models.OpenAPI;
+import io.swagger.v3.oas.models.info.Contact;
+import io.swagger.v3.oas.models.info.Info;
+import io.swagger.v3.oas.models.info.License;
 import lombok.AllArgsConstructor;
+import org.springdoc.core.GroupedOpenApi;
+import org.springframework.boot.info.BuildProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Primary;
-import springfox.documentation.builders.ApiInfoBuilder;
-import springfox.documentation.builders.PathSelectors;
-import springfox.documentation.spi.DocumentationType;
-import springfox.documentation.spring.web.plugins.Docket;
-import springfox.documentation.swagger.web.InMemorySwaggerResourcesProvider;
-import springfox.documentation.swagger.web.SwaggerResource;
-import springfox.documentation.swagger.web.SwaggerResourcesProvider;
-import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
-import java.util.ArrayList;
-import java.util.List;
-
-@EnableSwagger2
 @AllArgsConstructor
 public class SwaggerConfig {
-    private SwaggerResourceBuilder swaggerResourceBuilder;
 
-    @SuppressWarnings("Guava") // Intellij IDEA claims that Guava predicates could be replaced with Java API,
-    // but actually it is not possible
-    @Bean(name = "api")
-    public Docket apiDocklet() {
-        return new Docket(DocumentationType.SWAGGER_2)
-                   .apiInfo(new ApiInfoBuilder().build())
-                   .select()
-                   .paths(Predicates.not(PathSelectors.regex("/error.*?")))
-                   .paths(Predicates.not(PathSelectors.regex("/connect.*")))
-                   .paths(Predicates.not(PathSelectors.regex("/management.*")))
+    private final BuildProperties buildProperties;
+
+    @Bean
+    public GroupedOpenApi psd2ApiV1() {
+        return GroupedOpenApi.builder()
+                   .group("Berlin Group PSD2 API v1")
+                   .packagesToScan("de.adorsys.psd2.xs2a.web.controller.psd2")
+                   .pathsToExclude("/error.*?")
+                   .pathsToExclude("/connect.*")
+                   .pathsToExclude("/management.*")
                    .build();
     }
 
     @Bean
+    public GroupedOpenApi confirmationOfFundsApi() {
+        return GroupedOpenApi.builder()
+                   .group("Confirmation Of Funds API")
+                   .packagesToScan("de.adorsys.psd2.xs2a.web.controller.cof")
+                   .pathsToExclude("/error.*?")
+                   .pathsToExclude("/connect.*")
+                   .pathsToExclude("/management.*")
+                   .build();
+    }
+
+    @Bean
+    public GroupedOpenApi trustedBeneficiariesApi() {
+        return GroupedOpenApi.builder()
+                   .group("Trusted Beneficiaries API")
+                   .packagesToScan("de.adorsys.psd2.xs2a.web.controller.tb")
+                   .pathsToExclude("/error.*?")
+                   .pathsToExclude("/connect.*")
+                   .pathsToExclude("/management.*")
+                   .build();
+    }
+
     @Primary
-    public SwaggerResourcesProvider swaggerResourcesProvider(InMemorySwaggerResourcesProvider defaultResourcesProvider) {
-        return () -> {
-            List<SwaggerResource> resources = new ArrayList<>(defaultResourcesProvider.get());
-            resources.add(swaggerResourceBuilder.buildPSD2ApiV1());
-            resources.add(swaggerResourceBuilder.buildFundsConfirmationApiV2());
-            resources.add(swaggerResourceBuilder.buildTrustedBeneficiariesApiV1());
-            return resources;
-        };
+    @Bean(name = "api")
+    public OpenAPI psd2OpenAPI() {
+        return new OpenAPI()
+                   .info(new Info()
+                             .title("XS2A PSD2 API")
+                             .description("OpenApi for XS2A application")
+                             .contact(new Contact()
+                                          .name("pru")
+                                          .email("pru@adorsys.com.ua")
+                                          .url("https://www.adorsys.de"))
+                             .version(buildProperties.getVersion() + " " + buildProperties.get("build.number"))
+                             .license(new License().name("AGPL version 3.0")));
     }
 }

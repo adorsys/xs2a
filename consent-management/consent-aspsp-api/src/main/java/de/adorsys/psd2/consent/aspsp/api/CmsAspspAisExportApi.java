@@ -22,7 +22,11 @@ import de.adorsys.psd2.consent.api.CmsConstant;
 import de.adorsys.psd2.consent.api.ResponseData;
 import de.adorsys.psd2.consent.api.ais.CmsAisAccountConsent;
 import de.adorsys.psd2.consent.aspsp.api.config.CmsAspspApiTagName;
-import io.swagger.annotations.*;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.*;
 
@@ -32,84 +36,84 @@ import java.util.Collection;
 import static de.adorsys.psd2.consent.aspsp.api.config.CmsPsuApiDefaultValue.DEFAULT_SERVICE_INSTANCE_ID;
 
 @RequestMapping(path = "aspsp-api/v1/ais/consents")
-@Api(value = "aspsp-api/v1/ais/consents", tags = CmsAspspApiTagName.ASPSP_EXPORT_AIS_CONSENTS)
+@Tag(name = CmsAspspApiTagName.ASPSP_EXPORT_AIS_CONSENTS, description = "Provides access to the consent management system for exporting AIS consents by ASPSP")
 public interface CmsAspspAisExportApi {
 
     @GetMapping(path = "/tpp/{tpp-id}")
-    @ApiOperation(value = "Returns a list of AIS consent objects by given mandatory TPP ID, optional creation date, PSU ID Data and instance ID")
+    @Operation(description = "Returns a list of AIS consent objects by given mandatory TPP ID, optional creation date, PSU ID Data and instance ID")
     @ApiResponses(value = {
-        @ApiResponse(code = 200, message = "OK")})
+        @ApiResponse(responseCode = "200", description = "OK")})
     ResponseData<Collection<CmsAisAccountConsent>> getConsentsByTpp(
-        @ApiParam(value = "TPP ID", example = "12345987", required = true)
+        @Parameter(description = "TPP ID", example = "12345987", required = true)
         @PathVariable("tpp-id") String tppId,
-        @ApiParam(value = "Creation start date", example = "2010-01-01")
+        @Parameter(description = "Creation start date", example = "2010-01-01")
         @RequestHeader(value = "start-date", required = false)
         @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate start,
-        @ApiParam(value = "Creation end date", example = "2030-01-01")
+        @Parameter(description = "Creation end date", example = "2030-01-01")
         @RequestHeader(value = "end-date", required = false)
         @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate end,
-        @ApiParam(value = "Client ID of the PSU in the ASPSP client interface. Might be mandated in the ASPSP's" +
+        @Parameter(description = "Client ID of the PSU in the ASPSP client interface. Might be mandated in the ASPSP's" +
                               " documentation. Is not contained if an OAuth2 based authentication was performed in a pre-step or an OAuth2 based SCA was performed in an preceding AIS service in the same session. ")
         @RequestHeader(value = "psu-id", required = false) String psuId,
-        @ApiParam(value = "Type of the PSU-ID, needed in scenarios where PSUs have several PSU-IDs as access possibility. ")
+        @Parameter(description = "Type of the PSU-ID, needed in scenarios where PSUs have several PSU-IDs as access possibility")
         @RequestHeader(value = "psu-id-type", required = false) String psuIdType,
-        @ApiParam(value = "Might be mandated in the ASPSP's documentation. Only used in a corporate context. ")
+        @Parameter(description = "Might be mandated in the ASPSP's documentation. Only used in a corporate context.")
         @RequestHeader(value = "psu-corporate-id", required = false) String psuCorporateId,
-        @ApiParam(value = "Might be mandated in the ASPSP's documentation. Only used in a corporate context. ")
+        @Parameter(description = "Might be mandated in the ASPSP's documentation. Only used in a corporate context.")
         @RequestHeader(value = "psu-corporate-id-type", required = false) String psuCorporateIdType,
-        @ApiParam(value = "ID of the particular service instance")
+        @Parameter(description = "ID of the particular service instance")
         @RequestHeader(value = "instance-id", required = false, defaultValue = DEFAULT_SERVICE_INSTANCE_ID) String instanceId,
-        @ApiParam(value = "Index of current page", example = "0")
+        @Parameter(description = "Index of current page", example = "0")
         @RequestParam(value = CmsConstant.QUERY.PAGE_INDEX, defaultValue = "0") Integer pageIndex,
-        @ApiParam(value = "Quantity of consents on one page", example = "20")
+        @Parameter(description = "Quantity of consents on one page", example = "20")
         @RequestParam(value = CmsConstant.QUERY.ITEMS_PER_PAGE, defaultValue = "20") Integer itemsPerPage,
         @RequestParam(value = CmsConstant.QUERY.ADDITIONAL_TPP_INFO, required = false) String additionalTppInfo);
 
     @GetMapping(path = "/psu")
-    @ApiOperation(value = "Returns a list of AIS consent objects by given mandatory PSU ID Data, optional creation date and instance ID")
+    @Operation(description = "Returns a list of AIS consent objects by given mandatory PSU ID Data, optional creation date and instance ID")
     @ApiResponses(value = {
-        @ApiResponse(code = 200, message = "OK")})
+        @ApiResponse(responseCode = "200", description = "OK")})
     ResponseData<Collection<CmsAisAccountConsent>> getConsentsByPsu(
-        @ApiParam(value = "Creation start date", example = "2010-01-01")
+        @Parameter(description = "Creation start date", example = "2010-01-01")
         @RequestHeader(value = "start-date", required = false)
         @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate start,
-        @ApiParam(value = "Creation end date", example = "2030-01-01")
+        @Parameter(description = "Creation end date", example = "2030-01-01")
         @RequestHeader(value = "end-date", required = false)
         @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate end,
-        @ApiParam(value = "Client ID of the PSU in the ASPSP client interface. Might be mandated in the ASPSP's documentation. Is not contained if an OAuth2 based authentication was performed in a pre-step or an OAuth2 based SCA was performed in an preceding AIS service in the same session. ")
+        @Parameter(description = "Client ID of the PSU in the ASPSP client interface. Might be mandated in the ASPSP's documentation. Is not contained if an OAuth2 based authentication was performed in a pre-step or an OAuth2 based SCA was performed in an preceding AIS service in the same session. ")
         @RequestHeader(value = "psu-id", required = false) String psuId,
-        @ApiParam(value = "Type of the PSU-ID, needed in scenarios where PSUs have several PSU-IDs as access possibility. ")
+        @Parameter(description = "Type of the PSU-ID, needed in scenarios where PSUs have several PSU-IDs as access possibility")
         @RequestHeader(value = "psu-id-type", required = false) String psuIdType,
-        @ApiParam(value = "Might be mandated in the ASPSP's documentation. Only used in a corporate context. ")
+        @Parameter(description = "Might be mandated in the ASPSP's documentation. Only used in a corporate context.")
         @RequestHeader(value = "psu-corporate-id", required = false) String psuCorporateId,
-        @ApiParam(value = "Might be mandated in the ASPSP's documentation. Only used in a corporate context. ")
+        @Parameter(description = "Might be mandated in the ASPSP's documentation. Only used in a corporate context.")
         @RequestHeader(value = "psu-corporate-id-type", required = false) String psuCorporateIdType,
-        @ApiParam(value = "ID of the particular service instance")
+        @Parameter(description = "ID of the particular service instance")
         @RequestHeader(value = "instance-id", required = false, defaultValue = DEFAULT_SERVICE_INSTANCE_ID) String instanceId,
-        @ApiParam(value = "Index of current page", example = "0")
+        @Parameter(description = "Index of current page", example = "0")
         @RequestParam(value = CmsConstant.QUERY.PAGE_INDEX, defaultValue = "0") Integer pageIndex,
-        @ApiParam(value = "Quantity of consents on one page", example = "20")
+        @Parameter(description = "Quantity of consents on one page", example = "20")
         @RequestParam(value = CmsConstant.QUERY.ITEMS_PER_PAGE, defaultValue = "20") Integer itemsPerPage,
         @RequestParam(value = CmsConstant.QUERY.ADDITIONAL_TPP_INFO, required = false) String additionalTppInfo);
 
     @GetMapping(path = "/account/{account-id}")
-    @ApiOperation(value = "Returns a list of consents by given mandatory aspsp account id, optional creation date and instance ID")
+    @Operation(description = "Returns a list of consents by given mandatory ASPSP account ID, optional creation date and instance ID")
     @ApiResponses(value = {
-        @ApiResponse(code = 200, message = "OK")})
+        @ApiResponse(responseCode = "200", description = "OK")})
     ResponseData<Collection<CmsAisAccountConsent>> getConsentsByAccount(
-        @ApiParam(value = "Bank specific account identifier.", required = true, example = "11111-99999")
+        @Parameter(description = "Bank specific account identifier.", required = true, example = "11111-99999")
         @PathVariable("account-id") String aspspAccountId,
-        @ApiParam(value = "Creation start date", example = "2010-01-01")
+        @Parameter(description = "Creation start date", example = "2010-01-01")
         @RequestHeader(value = "start-date", required = false)
         @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate start,
-        @ApiParam(value = "Creation end date", example = "2030-01-01")
+        @Parameter(description = "Creation end date", example = "2030-01-01")
         @RequestHeader(value = "end-date", required = false)
         @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate end,
-        @ApiParam(value = "ID of the particular service instance")
+        @Parameter(description = "ID of the particular service instance")
         @RequestHeader(value = "instance-id", required = false, defaultValue = DEFAULT_SERVICE_INSTANCE_ID) String instanceId,
-        @ApiParam(value = "Index of current page", example = "0")
+        @Parameter(description = "Index of current page", example = "0")
         @RequestParam(value = CmsConstant.QUERY.PAGE_INDEX, defaultValue = "0") Integer pageIndex,
-        @ApiParam(value = "Quantity of consents on one page", example = "20")
+        @Parameter(description = "Quantity of consents on one page", example = "20")
         @RequestParam(value = CmsConstant.QUERY.ITEMS_PER_PAGE, defaultValue = "20") Integer itemsPerPage,
         @RequestParam(value = CmsConstant.QUERY.ADDITIONAL_TPP_INFO, required = false) String additionalTppInfo);
 }

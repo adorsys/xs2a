@@ -18,17 +18,15 @@
 
 package de.adorsys.psd2.certificate.generator.controller;
 
-import io.swagger.annotations.Api;
+import io.swagger.v3.oas.annotations.Hidden;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import springfox.documentation.annotations.ApiIgnore;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
-@ApiIgnore
-@Api(hidden = true)
+@Hidden
 @RestController
 @RequestMapping
 public class SwaggerRedirectResource {

@@ -1,45 +1,17 @@
 package de.adorsys.psd2.model;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-import io.swagger.annotations.ApiModelProperty;
 import org.springframework.validation.annotation.Validated;
 
-import javax.validation.Valid;
 import java.util.Objects;
 
 /**
  * InlineResponse200
  */
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2021-11-05T12:22:49.487689+02:00[Europe/Kiev]")
-
-public class InlineResponse200   {
-  @JsonProperty("account")
-  private AccountDetails account = null;
-
-  public InlineResponse200 account(AccountDetails account) {
-    this.account = account;
-    return this;
-  }
-
-  /**
-   * Get account
-   * @return account
-  **/
-  @ApiModelProperty(value = "")
-
-  @Valid
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-05-06T13:00:42.214155+03:00[Europe/Kiev]")
 
 
-  @JsonProperty("account")
-  public AccountDetails getAccount() {
-    return account;
-  }
-
-  public void setAccount(AccountDetails account) {
-    this.account = account;
-  }
-
+public class InlineResponse200 {
 
   @Override
   public boolean equals(Object o) {
@@ -48,13 +20,13 @@ public class InlineResponse200   {
     }
     if (o == null || getClass() != o.getClass()) {
       return false;
-}    InlineResponse200 inlineResponse200 = (InlineResponse200) o;
-    return Objects.equals(this.account, inlineResponse200.account);
+    }
+    return true;
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(account);
+    return Objects.hash();
   }
 
   @Override
@@ -62,7 +34,6 @@ public class InlineResponse200   {
     StringBuilder sb = new StringBuilder();
     sb.append("class InlineResponse200 {\n");
 
-    sb.append("    account: ").append(toIndentedString(account)).append("\n");
     sb.append("}");
     return sb.toString();
   }
@@ -78,4 +49,3 @@ public class InlineResponse200   {
     return o.toString().replace("\n", "\n    ");
   }
 }
-

@@ -1,8 +1,7 @@
 package de.adorsys.psd2.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import org.springframework.validation.annotation.Validated;
 
 import javax.validation.Valid;
@@ -17,11 +16,12 @@ import java.util.Objects;
 /**
  * Generic JSON response body consistion of the corresponding bulk payment initation JSON body together with an optional transaction status field.
  */
-@ApiModel(description = "Generic JSON response body consistion of the corresponding bulk payment initation JSON body together with an optional transaction status field. ")
+@Schema(description = "Generic JSON response body consistion of the corresponding bulk payment initation JSON body together with an optional transaction status field. ")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2021-11-05T12:22:49.487689+02:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-05-06T13:00:42.214155+03:00[Europe/Kiev]")
 
-public class BulkPaymentInitiationWithStatusResponse   {
+
+public class BulkPaymentInitiationWithStatusResponse {
   @JsonProperty("batchBookingPreferred")
   private Boolean batchBookingPreferred = null;
 
@@ -54,15 +54,12 @@ public class BulkPaymentInitiationWithStatusResponse   {
   }
 
   /**
-   * Get batchBookingPreferred
+   * If this element equals 'true', the PSU prefers only one booking entry.  If this element equals 'false', the PSU prefers individual booking of all contained individual transactions.   The ASPSP will follow this preference according to contracts agreed on with the PSU.
    * @return batchBookingPreferred
-  **/
-  @ApiModelProperty(value = "")
+   **/
+  @Schema(example = "false", description = "If this element equals 'true', the PSU prefers only one booking entry.  If this element equals 'false', the PSU prefers individual booking of all contained individual transactions.   The ASPSP will follow this preference according to contracts agreed on with the PSU. ")
 
-
-
-  @JsonProperty("batchBookingPreferred")
-  public Boolean getBatchBookingPreferred() {
+    public Boolean isBatchBookingPreferred() {
     return batchBookingPreferred;
   }
 
@@ -78,14 +75,11 @@ public class BulkPaymentInitiationWithStatusResponse   {
   /**
    * Get requestedExecutionDate
    * @return requestedExecutionDate
-  **/
-  @ApiModelProperty(value = "")
+   **/
+  @Schema(description = "")
 
-  @Valid
-
-
-  @JsonProperty("requestedExecutionDate")
-  public LocalDate getRequestedExecutionDate() {
+    @Valid
+    public LocalDate getRequestedExecutionDate() {
     return requestedExecutionDate;
   }
 
@@ -101,14 +95,11 @@ public class BulkPaymentInitiationWithStatusResponse   {
   /**
    * Get acceptorTransactionDateTime
    * @return acceptorTransactionDateTime
-  **/
-  @ApiModelProperty(value = "")
+   **/
+  @Schema(description = "")
 
-  @Valid
-
-
-  @JsonProperty("acceptorTransactionDateTime")
-  public OffsetDateTime getAcceptorTransactionDateTime() {
+    @Valid
+    public OffsetDateTime getAcceptorTransactionDateTime() {
     return acceptorTransactionDateTime;
   }
 
@@ -124,15 +115,12 @@ public class BulkPaymentInitiationWithStatusResponse   {
   /**
    * Get debtorAccount
    * @return debtorAccount
-  **/
-  @ApiModelProperty(required = true, value = "")
-  @NotNull
+   **/
+  @Schema(required = true, description = "")
+      @NotNull
 
-  @Valid
-
-
-  @JsonProperty("debtorAccount")
-  public AccountReference getDebtorAccount() {
+    @Valid
+    public AccountReference getDebtorAccount() {
     return debtorAccount;
   }
 
@@ -148,13 +136,10 @@ public class BulkPaymentInitiationWithStatusResponse   {
   /**
    * Get paymentInformationId
    * @return paymentInformationId
-  **/
-  @ApiModelProperty(value = "")
+   **/
+  @Schema(description = "")
 
-@Size(max=35)
-
-  @JsonProperty("paymentInformationId")
-  public String getPaymentInformationId() {
+  @Size(max=35)   public String getPaymentInformationId() {
     return paymentInformationId;
   }
 
@@ -175,15 +160,11 @@ public class BulkPaymentInitiationWithStatusResponse   {
   /**
    * A list of generic JSON bodies payment initations for bulk payments via JSON.  Note: Some fields from single payments do not occcur in a bulk payment element
    * @return payments
-  **/
-  @ApiModelProperty(required = true, value = "A list of generic JSON bodies payment initations for bulk payments via JSON.  Note: Some fields from single payments do not occcur in a bulk payment element ")
-  @NotNull
-
-  @Valid
-
-
-  @JsonProperty("payments")
-  public List<PaymentInitiationBulkElementJson> getPayments() {
+   **/
+  @Schema(required = true, description = "A list of generic JSON bodies payment initations for bulk payments via JSON.  Note: Some fields from single payments do not occcur in a bulk payment element ")
+      @NotNull
+    @Valid
+    public List<PaymentInitiationBulkElementJson> getPayments() {
     return payments;
   }
 
@@ -199,14 +180,11 @@ public class BulkPaymentInitiationWithStatusResponse   {
   /**
    * Get transactionStatus
    * @return transactionStatus
-  **/
-  @ApiModelProperty(value = "")
+   **/
+  @Schema(description = "")
 
-  @Valid
-
-
-  @JsonProperty("transactionStatus")
-  public TransactionStatus getTransactionStatus() {
+    @Valid
+    public TransactionStatus getTransactionStatus() {
     return transactionStatus;
   }
 
@@ -230,14 +208,10 @@ public class BulkPaymentInitiationWithStatusResponse   {
   /**
    * Messages to the TPP on operational issues.
    * @return tppMessages
-  **/
-  @ApiModelProperty(value = "Messages to the TPP on operational issues.")
-
-  @Valid
-
-
-  @JsonProperty("tppMessages")
-  public List<TppMessageGeneric> getTppMessages() {
+   **/
+  @Schema(description = "Messages to the TPP on operational issues.")
+      @Valid
+    public List<TppMessageGeneric> getTppMessages() {
     return tppMessages;
   }
 
@@ -253,15 +227,16 @@ public class BulkPaymentInitiationWithStatusResponse   {
     }
     if (o == null || getClass() != o.getClass()) {
       return false;
-}    BulkPaymentInitiationWithStatusResponse bulkPaymentInitiationWithStatusResponse = (BulkPaymentInitiationWithStatusResponse) o;
+    }
+    BulkPaymentInitiationWithStatusResponse bulkPaymentInitiationWithStatusResponse = (BulkPaymentInitiationWithStatusResponse) o;
     return Objects.equals(this.batchBookingPreferred, bulkPaymentInitiationWithStatusResponse.batchBookingPreferred) &&
-    Objects.equals(this.requestedExecutionDate, bulkPaymentInitiationWithStatusResponse.requestedExecutionDate) &&
-    Objects.equals(this.acceptorTransactionDateTime, bulkPaymentInitiationWithStatusResponse.acceptorTransactionDateTime) &&
-    Objects.equals(this.debtorAccount, bulkPaymentInitiationWithStatusResponse.debtorAccount) &&
-    Objects.equals(this.paymentInformationId, bulkPaymentInitiationWithStatusResponse.paymentInformationId) &&
-    Objects.equals(this.payments, bulkPaymentInitiationWithStatusResponse.payments) &&
-    Objects.equals(this.transactionStatus, bulkPaymentInitiationWithStatusResponse.transactionStatus) &&
-    Objects.equals(this.tppMessages, bulkPaymentInitiationWithStatusResponse.tppMessages);
+        Objects.equals(this.requestedExecutionDate, bulkPaymentInitiationWithStatusResponse.requestedExecutionDate) &&
+        Objects.equals(this.acceptorTransactionDateTime, bulkPaymentInitiationWithStatusResponse.acceptorTransactionDateTime) &&
+        Objects.equals(this.debtorAccount, bulkPaymentInitiationWithStatusResponse.debtorAccount) &&
+        Objects.equals(this.paymentInformationId, bulkPaymentInitiationWithStatusResponse.paymentInformationId) &&
+        Objects.equals(this.payments, bulkPaymentInitiationWithStatusResponse.payments) &&
+        Objects.equals(this.transactionStatus, bulkPaymentInitiationWithStatusResponse.transactionStatus) &&
+        Objects.equals(this.tppMessages, bulkPaymentInitiationWithStatusResponse.tppMessages);
   }
 
   @Override
@@ -297,4 +272,3 @@ public class BulkPaymentInitiationWithStatusResponse   {
     return o.toString().replace("\n", "\n    ");
   }
 }
-

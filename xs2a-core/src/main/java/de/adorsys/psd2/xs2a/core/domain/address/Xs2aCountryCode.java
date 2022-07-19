@@ -18,16 +18,15 @@
 
 package de.adorsys.psd2.xs2a.core.domain.address;
 
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
 @Data
 @AllArgsConstructor
-@ApiModel(description = "Country code", value = "49")
+@Schema(description = "Country code")
 public class Xs2aCountryCode {
 
-    @ApiModelProperty(value = "Country code", required = true, example = "49")
+    @Schema(description = "Country code", required = true, example = "49")
     private String code;
 }

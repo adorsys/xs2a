@@ -19,8 +19,7 @@
 package de.adorsys.psd2.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import org.springframework.validation.annotation.Validated;
 
 import javax.validation.Valid;
@@ -30,9 +29,10 @@ import java.util.Objects;
 /**
  * Body of the JSON response.
  */
-@ApiModel(description = "Body of the JSON response.")
+@Schema(description = "Body of the JSON response.")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2020-07-01T15:25:06.394043+03:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-05-06T13:00:06.283258+03:00[Europe/Kiev]")
+
 
 public class ConsentConfirmationOfFundsStatusResponse   {
   @JsonProperty("consentStatus")
@@ -46,15 +46,12 @@ public class ConsentConfirmationOfFundsStatusResponse   {
   /**
    * Get consentStatus
    * @return consentStatus
-  **/
-  @ApiModelProperty(required = true, value = "")
-  @NotNull
+   **/
+  @Schema(required = true, description = "")
+      @NotNull
 
-  @Valid
-
-
-  @JsonProperty("consentStatus")
-  public ConsentStatus getConsentStatus() {
+    @Valid
+    public ConsentStatus getConsentStatus() {
     return consentStatus;
   }
 
@@ -101,4 +98,3 @@ public class ConsentConfirmationOfFundsStatusResponse   {
     return o.toString().replace("\n", "\n    ");
   }
 }
-
