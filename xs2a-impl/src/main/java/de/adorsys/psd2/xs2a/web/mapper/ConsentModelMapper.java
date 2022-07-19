@@ -61,7 +61,7 @@ public class ConsentModelMapper {
                    .map(cnst -> {
                        CreateConsentReq createConsentReq = new CreateConsentReq();
                        createConsentReq.setAccess(mapToAccountAccessInner(cnst.getAccess()));
-                       createConsentReq.setRecurringIndicator(cnst.getRecurringIndicator());
+                       createConsentReq.setRecurringIndicator(cnst.isRecurringIndicator());
                        createConsentReq.setValidUntil(cnst.getValidUntil());
                        createConsentReq.setFrequencyPerDay(cnst.getFrequencyPerDay());
                        createConsentReq.setCombinedServiceIndicator(BooleanUtils.toBoolean(cnst.isCombinedServiceIndicator()));

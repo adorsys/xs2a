@@ -1,53 +1,44 @@
 package de.adorsys.psd2.model;
 
-import io.swagger.annotations.ApiModel;
-import org.springframework.validation.annotation.Validated;
-
-import java.util.Objects;
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonValue;
 
 /**
  * Message codes defined for AIS for HTTP Error code 400 (BAD_REQUEST).
  */
-@ApiModel(description = "Message codes defined for AIS for HTTP Error code 400 (BAD_REQUEST).")
-@Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2021-11-05T12:22:49.487689+02:00[Europe/Kiev]")
+public enum MessageCode400AIS {
+  FORMAT_ERROR("FORMAT_ERROR"),
+    PARAMETER_NOT_CONSISTENT("PARAMETER_NOT_CONSISTENT"),
+    PARAMETER_NOT_SUPPORTED("PARAMETER_NOT_SUPPORTED"),
+    SERVICE_INVALID("SERVICE_INVALID"),
+    RESOURCE_UNKNOWN("RESOURCE_UNKNOWN"),
+    RESOURCE_EXPIRED("RESOURCE_EXPIRED"),
+    RESOURCE_BLOCKED("RESOURCE_BLOCKED"),
+    TIMESTAMP_INVALID("TIMESTAMP_INVALID"),
+    PERIOD_INVALID("PERIOD_INVALID"),
+    SCA_METHOD_UNKNOWN("SCA_METHOD_UNKNOWN"),
+    CONSENT_UNKNOWN("CONSENT_UNKNOWN"),
+    SESSIONS_NOT_SUPPORTED("SESSIONS_NOT_SUPPORTED");
 
-public class MessageCode400AIS   {
+  private String value;
 
-  @Override
-  public boolean equals(Object o) {
-    if (this == o) {
-      return true;
-    }
-    if (o == null || getClass() != o.getClass()) {
-      return false;
-}
-    return true;
+  MessageCode400AIS(String value) {
+    this.value = value;
   }
 
   @Override
-  public int hashCode() {
-    return Objects.hash();
-  }
-
-  @Override
+  @JsonValue
   public String toString() {
-    StringBuilder sb = new StringBuilder();
-    sb.append("class MessageCode400AIS {\n");
-
-    sb.append("}");
-    return sb.toString();
+    return String.valueOf(value);
   }
 
-  /**
-   * Convert the given object to string with each line indented by 4 spaces
-   * (except the first line).
-   */
-  private String toIndentedString(Object o) {
-    if (o == null) {
-      return "null";
+  @JsonCreator
+  public static MessageCode400AIS fromValue(String text) {
+    for (MessageCode400AIS b : MessageCode400AIS.values()) {
+      if (String.valueOf(b.value).equals(text)) {
+        return b;
+      }
     }
-    return o.toString().replace("\n", "\n    ");
+    return null;
   }
 }
-

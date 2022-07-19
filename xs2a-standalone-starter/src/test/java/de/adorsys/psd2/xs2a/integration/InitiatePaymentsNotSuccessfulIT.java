@@ -48,6 +48,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.info.BuildProperties;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -109,6 +110,8 @@ class InitiatePaymentsNotSuccessfulIT {
     private AuthorisationServiceEncrypted authorisationServiceEncrypted;
     @MockBean
     private SinglePaymentSpi singlePaymentSpi;
+    @MockBean
+    private BuildProperties buildProperties;
 
     @BeforeEach
     void init() {
@@ -142,7 +145,7 @@ class InitiatePaymentsNotSuccessfulIT {
         ResultActions resultActions = mockMvc.perform(requestBuilder);
         //Then
         resultActions.andExpect(status().isBadRequest())
-            .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+            .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
             .andExpect(content().json(IOUtils.resourceToString(PSU_IP_ADDRESS_MISSING_ERROR_MESSAGE_JSON_PATH, UTF_8)));
     }
 

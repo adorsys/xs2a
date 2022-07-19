@@ -1,8 +1,7 @@
 package de.adorsys.psd2.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import org.springframework.validation.annotation.Validated;
 
 import javax.validation.Valid;
@@ -12,9 +11,10 @@ import java.util.Objects;
 /**
  * A _link object with all available link types.
  */
-@ApiModel(description = "A _link object with all available link types. ")
+@Schema(description = "A _link object with all available link types. ")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2021-11-05T12:22:49.487689+02:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-05-06T13:00:42.214155+03:00[Europe/Kiev]")
+
 
 public class LinksAll extends HashMap<String, HrefType>  {
   @JsonProperty("scaRedirect")
@@ -121,14 +121,11 @@ public class LinksAll extends HashMap<String, HrefType>  {
   /**
    * Get scaRedirect
    * @return scaRedirect
-  **/
-  @ApiModelProperty(value = "")
+   **/
+  @Schema(description = "")
 
-  @Valid
-
-
-  @JsonProperty("scaRedirect")
-  public HrefType getScaRedirect() {
+    @Valid
+    public HrefType getScaRedirect() {
     return scaRedirect;
   }
 
@@ -144,14 +141,11 @@ public class LinksAll extends HashMap<String, HrefType>  {
   /**
    * Get scaOAuth
    * @return scaOAuth
-  **/
-  @ApiModelProperty(value = "")
+   **/
+  @Schema(description = "")
 
-  @Valid
-
-
-  @JsonProperty("scaOAuth")
-  public HrefType getScaOAuth() {
+    @Valid
+    public HrefType getScaOAuth() {
     return scaOAuth;
   }
 
@@ -167,14 +161,11 @@ public class LinksAll extends HashMap<String, HrefType>  {
   /**
    * Get confirmation
    * @return confirmation
-  **/
-  @ApiModelProperty(value = "")
+   **/
+  @Schema(description = "")
 
-  @Valid
-
-
-  @JsonProperty("confirmation")
-  public HrefType getConfirmation() {
+    @Valid
+    public HrefType getConfirmation() {
     return confirmation;
   }
 
@@ -190,14 +181,11 @@ public class LinksAll extends HashMap<String, HrefType>  {
   /**
    * Get startAuthorisation
    * @return startAuthorisation
-  **/
-  @ApiModelProperty(value = "")
+   **/
+  @Schema(description = "")
 
-  @Valid
-
-
-  @JsonProperty("startAuthorisation")
-  public HrefType getStartAuthorisation() {
+    @Valid
+    public HrefType getStartAuthorisation() {
     return startAuthorisation;
   }
 
@@ -213,14 +201,11 @@ public class LinksAll extends HashMap<String, HrefType>  {
   /**
    * Get startAuthorisationWithPsuIdentification
    * @return startAuthorisationWithPsuIdentification
-  **/
-  @ApiModelProperty(value = "")
+   **/
+  @Schema(description = "")
 
-  @Valid
-
-
-  @JsonProperty("startAuthorisationWithPsuIdentification")
-  public HrefType getStartAuthorisationWithPsuIdentification() {
+    @Valid
+    public HrefType getStartAuthorisationWithPsuIdentification() {
     return startAuthorisationWithPsuIdentification;
   }
 
@@ -236,14 +221,11 @@ public class LinksAll extends HashMap<String, HrefType>  {
   /**
    * Get updatePsuIdentification
    * @return updatePsuIdentification
-  **/
-  @ApiModelProperty(value = "")
+   **/
+  @Schema(description = "")
 
-  @Valid
-
-
-  @JsonProperty("updatePsuIdentification")
-  public HrefType getUpdatePsuIdentification() {
+    @Valid
+    public HrefType getUpdatePsuIdentification() {
     return updatePsuIdentification;
   }
 
@@ -259,14 +241,11 @@ public class LinksAll extends HashMap<String, HrefType>  {
   /**
    * Get startAuthorisationWithProprietaryData
    * @return startAuthorisationWithProprietaryData
-  **/
-  @ApiModelProperty(value = "")
+   **/
+  @Schema(description = "")
 
-  @Valid
-
-
-  @JsonProperty("startAuthorisationWithProprietaryData")
-  public HrefType getStartAuthorisationWithProprietaryData() {
+    @Valid
+    public HrefType getStartAuthorisationWithProprietaryData() {
     return startAuthorisationWithProprietaryData;
   }
 
@@ -282,14 +261,11 @@ public class LinksAll extends HashMap<String, HrefType>  {
   /**
    * Get updateProprietaryData
    * @return updateProprietaryData
-  **/
-  @ApiModelProperty(value = "")
+   **/
+  @Schema(description = "")
 
-  @Valid
-
-
-  @JsonProperty("updateProprietaryData")
-  public HrefType getUpdateProprietaryData() {
+    @Valid
+    public HrefType getUpdateProprietaryData() {
     return updateProprietaryData;
   }
 
@@ -305,14 +281,11 @@ public class LinksAll extends HashMap<String, HrefType>  {
   /**
    * Get startAuthorisationWithPsuAuthentication
    * @return startAuthorisationWithPsuAuthentication
-  **/
-  @ApiModelProperty(value = "")
+   **/
+  @Schema(description = "")
 
-  @Valid
-
-
-  @JsonProperty("startAuthorisationWithPsuAuthentication")
-  public HrefType getStartAuthorisationWithPsuAuthentication() {
+    @Valid
+    public HrefType getStartAuthorisationWithPsuAuthentication() {
     return startAuthorisationWithPsuAuthentication;
   }
 
@@ -328,14 +301,11 @@ public class LinksAll extends HashMap<String, HrefType>  {
   /**
    * Get updatePsuAuthentication
    * @return updatePsuAuthentication
-  **/
-  @ApiModelProperty(value = "")
+   **/
+  @Schema(description = "")
 
-  @Valid
-
-
-  @JsonProperty("updatePsuAuthentication")
-  public HrefType getUpdatePsuAuthentication() {
+    @Valid
+    public HrefType getUpdatePsuAuthentication() {
     return updatePsuAuthentication;
   }
 
@@ -351,14 +321,11 @@ public class LinksAll extends HashMap<String, HrefType>  {
   /**
    * Get startAuthorisationWithEncryptedPsuAuthentication
    * @return startAuthorisationWithEncryptedPsuAuthentication
-  **/
-  @ApiModelProperty(value = "")
+   **/
+  @Schema(description = "")
 
-  @Valid
-
-
-  @JsonProperty("startAuthorisationWithEncryptedPsuAuthentication")
-  public HrefType getStartAuthorisationWithEncryptedPsuAuthentication() {
+    @Valid
+    public HrefType getStartAuthorisationWithEncryptedPsuAuthentication() {
     return startAuthorisationWithEncryptedPsuAuthentication;
   }
 
@@ -374,14 +341,11 @@ public class LinksAll extends HashMap<String, HrefType>  {
   /**
    * Get updateEncryptedPsuAuthentication
    * @return updateEncryptedPsuAuthentication
-  **/
-  @ApiModelProperty(value = "")
+   **/
+  @Schema(description = "")
 
-  @Valid
-
-
-  @JsonProperty("updateEncryptedPsuAuthentication")
-  public HrefType getUpdateEncryptedPsuAuthentication() {
+    @Valid
+    public HrefType getUpdateEncryptedPsuAuthentication() {
     return updateEncryptedPsuAuthentication;
   }
 
@@ -397,14 +361,11 @@ public class LinksAll extends HashMap<String, HrefType>  {
   /**
    * Get updateAdditionalPsuAuthentication
    * @return updateAdditionalPsuAuthentication
-  **/
-  @ApiModelProperty(value = "")
+   **/
+  @Schema(description = "")
 
-  @Valid
-
-
-  @JsonProperty("updateAdditionalPsuAuthentication")
-  public HrefType getUpdateAdditionalPsuAuthentication() {
+    @Valid
+    public HrefType getUpdateAdditionalPsuAuthentication() {
     return updateAdditionalPsuAuthentication;
   }
 
@@ -420,14 +381,11 @@ public class LinksAll extends HashMap<String, HrefType>  {
   /**
    * Get updateAdditionalEncryptedPsuAuthentication
    * @return updateAdditionalEncryptedPsuAuthentication
-  **/
-  @ApiModelProperty(value = "")
+   **/
+  @Schema(description = "")
 
-  @Valid
-
-
-  @JsonProperty("updateAdditionalEncryptedPsuAuthentication")
-  public HrefType getUpdateAdditionalEncryptedPsuAuthentication() {
+    @Valid
+    public HrefType getUpdateAdditionalEncryptedPsuAuthentication() {
     return updateAdditionalEncryptedPsuAuthentication;
   }
 
@@ -443,14 +401,11 @@ public class LinksAll extends HashMap<String, HrefType>  {
   /**
    * Get startAuthorisationWithAuthenticationMethodSelection
    * @return startAuthorisationWithAuthenticationMethodSelection
-  **/
-  @ApiModelProperty(value = "")
+   **/
+  @Schema(description = "")
 
-  @Valid
-
-
-  @JsonProperty("startAuthorisationWithAuthenticationMethodSelection")
-  public HrefType getStartAuthorisationWithAuthenticationMethodSelection() {
+    @Valid
+    public HrefType getStartAuthorisationWithAuthenticationMethodSelection() {
     return startAuthorisationWithAuthenticationMethodSelection;
   }
 
@@ -466,14 +421,11 @@ public class LinksAll extends HashMap<String, HrefType>  {
   /**
    * Get selectAuthenticationMethod
    * @return selectAuthenticationMethod
-  **/
-  @ApiModelProperty(value = "")
+   **/
+  @Schema(description = "")
 
-  @Valid
-
-
-  @JsonProperty("selectAuthenticationMethod")
-  public HrefType getSelectAuthenticationMethod() {
+    @Valid
+    public HrefType getSelectAuthenticationMethod() {
     return selectAuthenticationMethod;
   }
 
@@ -489,14 +441,11 @@ public class LinksAll extends HashMap<String, HrefType>  {
   /**
    * Get startAuthorisationWithTransactionAuthorisation
    * @return startAuthorisationWithTransactionAuthorisation
-  **/
-  @ApiModelProperty(value = "")
+   **/
+  @Schema(description = "")
 
-  @Valid
-
-
-  @JsonProperty("startAuthorisationWithTransactionAuthorisation")
-  public HrefType getStartAuthorisationWithTransactionAuthorisation() {
+    @Valid
+    public HrefType getStartAuthorisationWithTransactionAuthorisation() {
     return startAuthorisationWithTransactionAuthorisation;
   }
 
@@ -512,14 +461,11 @@ public class LinksAll extends HashMap<String, HrefType>  {
   /**
    * Get authoriseTransaction
    * @return authoriseTransaction
-  **/
-  @ApiModelProperty(value = "")
+   **/
+  @Schema(description = "")
 
-  @Valid
-
-
-  @JsonProperty("authoriseTransaction")
-  public HrefType getAuthoriseTransaction() {
+    @Valid
+    public HrefType getAuthoriseTransaction() {
     return authoriseTransaction;
   }
 
@@ -535,14 +481,11 @@ public class LinksAll extends HashMap<String, HrefType>  {
   /**
    * Get self
    * @return self
-  **/
-  @ApiModelProperty(value = "")
+   **/
+  @Schema(description = "")
 
-  @Valid
-
-
-  @JsonProperty("self")
-  public HrefType getSelf() {
+    @Valid
+    public HrefType getSelf() {
     return self;
   }
 
@@ -558,14 +501,11 @@ public class LinksAll extends HashMap<String, HrefType>  {
   /**
    * Get status
    * @return status
-  **/
-  @ApiModelProperty(value = "")
+   **/
+  @Schema(description = "")
 
-  @Valid
-
-
-  @JsonProperty("status")
-  public HrefType getStatus() {
+    @Valid
+    public HrefType getStatus() {
     return status;
   }
 
@@ -581,14 +521,11 @@ public class LinksAll extends HashMap<String, HrefType>  {
   /**
    * Get scaStatus
    * @return scaStatus
-  **/
-  @ApiModelProperty(value = "")
+   **/
+  @Schema(description = "")
 
-  @Valid
-
-
-  @JsonProperty("scaStatus")
-  public HrefType getScaStatus() {
+    @Valid
+    public HrefType getScaStatus() {
     return scaStatus;
   }
 
@@ -604,14 +541,11 @@ public class LinksAll extends HashMap<String, HrefType>  {
   /**
    * Get account
    * @return account
-  **/
-  @ApiModelProperty(value = "")
+   **/
+  @Schema(description = "")
 
-  @Valid
-
-
-  @JsonProperty("account")
-  public HrefType getAccount() {
+    @Valid
+    public HrefType getAccount() {
     return account;
   }
 
@@ -627,14 +561,11 @@ public class LinksAll extends HashMap<String, HrefType>  {
   /**
    * Get balances
    * @return balances
-  **/
-  @ApiModelProperty(value = "")
+   **/
+  @Schema(description = "")
 
-  @Valid
-
-
-  @JsonProperty("balances")
-  public HrefType getBalances() {
+    @Valid
+    public HrefType getBalances() {
     return balances;
   }
 
@@ -650,14 +581,11 @@ public class LinksAll extends HashMap<String, HrefType>  {
   /**
    * Get transactions
    * @return transactions
-  **/
-  @ApiModelProperty(value = "")
+   **/
+  @Schema(description = "")
 
-  @Valid
-
-
-  @JsonProperty("transactions")
-  public HrefType getTransactions() {
+    @Valid
+    public HrefType getTransactions() {
     return transactions;
   }
 
@@ -673,14 +601,11 @@ public class LinksAll extends HashMap<String, HrefType>  {
   /**
    * Get transactionDetails
    * @return transactionDetails
-  **/
-  @ApiModelProperty(value = "")
+   **/
+  @Schema(description = "")
 
-  @Valid
-
-
-  @JsonProperty("transactionDetails")
-  public HrefType getTransactionDetails() {
+    @Valid
+    public HrefType getTransactionDetails() {
     return transactionDetails;
   }
 
@@ -696,14 +621,11 @@ public class LinksAll extends HashMap<String, HrefType>  {
   /**
    * Get cardAccount
    * @return cardAccount
-  **/
-  @ApiModelProperty(value = "")
+   **/
+  @Schema(description = "")
 
-  @Valid
-
-
-  @JsonProperty("cardAccount")
-  public HrefType getCardAccount() {
+    @Valid
+    public HrefType getCardAccount() {
     return cardAccount;
   }
 
@@ -719,14 +641,11 @@ public class LinksAll extends HashMap<String, HrefType>  {
   /**
    * Get cardTransactions
    * @return cardTransactions
-  **/
-  @ApiModelProperty(value = "")
+   **/
+  @Schema(description = "")
 
-  @Valid
-
-
-  @JsonProperty("cardTransactions")
-  public HrefType getCardTransactions() {
+    @Valid
+    public HrefType getCardTransactions() {
     return cardTransactions;
   }
 
@@ -742,14 +661,11 @@ public class LinksAll extends HashMap<String, HrefType>  {
   /**
    * Get first
    * @return first
-  **/
-  @ApiModelProperty(value = "")
+   **/
+  @Schema(description = "")
 
-  @Valid
-
-
-  @JsonProperty("first")
-  public HrefType getFirst() {
+    @Valid
+    public HrefType getFirst() {
     return first;
   }
 
@@ -765,14 +681,11 @@ public class LinksAll extends HashMap<String, HrefType>  {
   /**
    * Get next
    * @return next
-  **/
-  @ApiModelProperty(value = "")
+   **/
+  @Schema(description = "")
 
-  @Valid
-
-
-  @JsonProperty("next")
-  public HrefType getNext() {
+    @Valid
+    public HrefType getNext() {
     return next;
   }
 
@@ -788,14 +701,11 @@ public class LinksAll extends HashMap<String, HrefType>  {
   /**
    * Get previous
    * @return previous
-  **/
-  @ApiModelProperty(value = "")
+   **/
+  @Schema(description = "")
 
-  @Valid
-
-
-  @JsonProperty("previous")
-  public HrefType getPrevious() {
+    @Valid
+    public HrefType getPrevious() {
     return previous;
   }
 
@@ -811,14 +721,11 @@ public class LinksAll extends HashMap<String, HrefType>  {
   /**
    * Get last
    * @return last
-  **/
-  @ApiModelProperty(value = "")
+   **/
+  @Schema(description = "")
 
-  @Valid
-
-
-  @JsonProperty("last")
-  public HrefType getLast() {
+    @Valid
+    public HrefType getLast() {
     return last;
   }
 
@@ -834,14 +741,11 @@ public class LinksAll extends HashMap<String, HrefType>  {
   /**
    * Get download
    * @return download
-  **/
-  @ApiModelProperty(value = "")
+   **/
+  @Schema(description = "")
 
-  @Valid
-
-
-  @JsonProperty("download")
-  public HrefType getDownload() {
+    @Valid
+    public HrefType getDownload() {
     return download;
   }
 
@@ -857,43 +761,41 @@ public class LinksAll extends HashMap<String, HrefType>  {
     }
     if (o == null || getClass() != o.getClass()) {
       return false;
-}
-    if (!super.equals(o)) {
-    return false;
     }
     LinksAll _linksAll = (LinksAll) o;
     return Objects.equals(this.scaRedirect, _linksAll.scaRedirect) &&
-    Objects.equals(this.scaOAuth, _linksAll.scaOAuth) &&
-    Objects.equals(this.confirmation, _linksAll.confirmation) &&
-    Objects.equals(this.startAuthorisation, _linksAll.startAuthorisation) &&
-    Objects.equals(this.startAuthorisationWithPsuIdentification, _linksAll.startAuthorisationWithPsuIdentification) &&
-    Objects.equals(this.updatePsuIdentification, _linksAll.updatePsuIdentification) &&
-    Objects.equals(this.startAuthorisationWithProprietaryData, _linksAll.startAuthorisationWithProprietaryData) &&
-    Objects.equals(this.updateProprietaryData, _linksAll.updateProprietaryData) &&
-    Objects.equals(this.startAuthorisationWithPsuAuthentication, _linksAll.startAuthorisationWithPsuAuthentication) &&
-    Objects.equals(this.updatePsuAuthentication, _linksAll.updatePsuAuthentication) &&
-    Objects.equals(this.startAuthorisationWithEncryptedPsuAuthentication, _linksAll.startAuthorisationWithEncryptedPsuAuthentication) &&
-    Objects.equals(this.updateEncryptedPsuAuthentication, _linksAll.updateEncryptedPsuAuthentication) &&
-    Objects.equals(this.updateAdditionalPsuAuthentication, _linksAll.updateAdditionalPsuAuthentication) &&
-    Objects.equals(this.updateAdditionalEncryptedPsuAuthentication, _linksAll.updateAdditionalEncryptedPsuAuthentication) &&
-    Objects.equals(this.startAuthorisationWithAuthenticationMethodSelection, _linksAll.startAuthorisationWithAuthenticationMethodSelection) &&
-    Objects.equals(this.selectAuthenticationMethod, _linksAll.selectAuthenticationMethod) &&
-    Objects.equals(this.startAuthorisationWithTransactionAuthorisation, _linksAll.startAuthorisationWithTransactionAuthorisation) &&
-    Objects.equals(this.authoriseTransaction, _linksAll.authoriseTransaction) &&
-    Objects.equals(this.self, _linksAll.self) &&
-    Objects.equals(this.status, _linksAll.status) &&
-    Objects.equals(this.scaStatus, _linksAll.scaStatus) &&
-    Objects.equals(this.account, _linksAll.account) &&
-    Objects.equals(this.balances, _linksAll.balances) &&
-    Objects.equals(this.transactions, _linksAll.transactions) &&
-    Objects.equals(this.transactionDetails, _linksAll.transactionDetails) &&
-    Objects.equals(this.cardAccount, _linksAll.cardAccount) &&
-    Objects.equals(this.cardTransactions, _linksAll.cardTransactions) &&
-    Objects.equals(this.first, _linksAll.first) &&
-    Objects.equals(this.next, _linksAll.next) &&
-    Objects.equals(this.previous, _linksAll.previous) &&
-    Objects.equals(this.last, _linksAll.last) &&
-    Objects.equals(this.download, _linksAll.download);
+        Objects.equals(this.scaOAuth, _linksAll.scaOAuth) &&
+        Objects.equals(this.confirmation, _linksAll.confirmation) &&
+        Objects.equals(this.startAuthorisation, _linksAll.startAuthorisation) &&
+        Objects.equals(this.startAuthorisationWithPsuIdentification, _linksAll.startAuthorisationWithPsuIdentification) &&
+        Objects.equals(this.updatePsuIdentification, _linksAll.updatePsuIdentification) &&
+        Objects.equals(this.startAuthorisationWithProprietaryData, _linksAll.startAuthorisationWithProprietaryData) &&
+        Objects.equals(this.updateProprietaryData, _linksAll.updateProprietaryData) &&
+        Objects.equals(this.startAuthorisationWithPsuAuthentication, _linksAll.startAuthorisationWithPsuAuthentication) &&
+        Objects.equals(this.updatePsuAuthentication, _linksAll.updatePsuAuthentication) &&
+        Objects.equals(this.startAuthorisationWithEncryptedPsuAuthentication, _linksAll.startAuthorisationWithEncryptedPsuAuthentication) &&
+        Objects.equals(this.updateEncryptedPsuAuthentication, _linksAll.updateEncryptedPsuAuthentication) &&
+        Objects.equals(this.updateAdditionalPsuAuthentication, _linksAll.updateAdditionalPsuAuthentication) &&
+        Objects.equals(this.updateAdditionalEncryptedPsuAuthentication, _linksAll.updateAdditionalEncryptedPsuAuthentication) &&
+        Objects.equals(this.startAuthorisationWithAuthenticationMethodSelection, _linksAll.startAuthorisationWithAuthenticationMethodSelection) &&
+        Objects.equals(this.selectAuthenticationMethod, _linksAll.selectAuthenticationMethod) &&
+        Objects.equals(this.startAuthorisationWithTransactionAuthorisation, _linksAll.startAuthorisationWithTransactionAuthorisation) &&
+        Objects.equals(this.authoriseTransaction, _linksAll.authoriseTransaction) &&
+        Objects.equals(this.self, _linksAll.self) &&
+        Objects.equals(this.status, _linksAll.status) &&
+        Objects.equals(this.scaStatus, _linksAll.scaStatus) &&
+        Objects.equals(this.account, _linksAll.account) &&
+        Objects.equals(this.balances, _linksAll.balances) &&
+        Objects.equals(this.transactions, _linksAll.transactions) &&
+        Objects.equals(this.transactionDetails, _linksAll.transactionDetails) &&
+        Objects.equals(this.cardAccount, _linksAll.cardAccount) &&
+        Objects.equals(this.cardTransactions, _linksAll.cardTransactions) &&
+        Objects.equals(this.first, _linksAll.first) &&
+        Objects.equals(this.next, _linksAll.next) &&
+        Objects.equals(this.previous, _linksAll.previous) &&
+        Objects.equals(this.last, _linksAll.last) &&
+        Objects.equals(this.download, _linksAll.download) &&
+        super.equals(o);
   }
 
   @Override
@@ -953,4 +855,3 @@ public class LinksAll extends HashMap<String, HrefType>  {
     return o.toString().replace("\n", "\n    ");
   }
 }
-

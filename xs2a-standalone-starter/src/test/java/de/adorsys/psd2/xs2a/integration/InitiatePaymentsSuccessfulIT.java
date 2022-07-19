@@ -67,6 +67,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.info.BuildProperties;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -158,6 +159,8 @@ class InitiatePaymentsSuccessfulIT {
     private BulkPaymentSpi bulkPaymentSpi;
     @MockBean
     private AuthorisationChainResponsibilityService authorisationChainResponsibilityService;
+    @MockBean
+    private BuildProperties buildProperties;
 
     @MockBean
     @Qualifier("consentRestTemplate")

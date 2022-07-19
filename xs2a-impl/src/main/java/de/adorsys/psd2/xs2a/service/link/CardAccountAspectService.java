@@ -23,7 +23,7 @@ import de.adorsys.psd2.xs2a.core.consent.AisConsentRequestType;
 import de.adorsys.psd2.xs2a.domain.ResponseObject;
 import de.adorsys.psd2.xs2a.domain.account.*;
 import de.adorsys.psd2.xs2a.service.profile.AspspProfileServiceWrapper;
-import de.adorsys.psd2.xs2a.web.controller.CardAccountController;
+import de.adorsys.psd2.xs2a.web.controller.psd2.CardAccountController;
 import de.adorsys.psd2.xs2a.web.link.CardAccountDetailsLinks;
 import de.adorsys.psd2.xs2a.web.link.TransactionsReportCardDownloadLinks;
 import de.adorsys.psd2.xs2a.web.link.TransactionsReportCardLinks;

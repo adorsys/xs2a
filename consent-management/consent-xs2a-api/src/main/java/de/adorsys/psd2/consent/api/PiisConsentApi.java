@@ -21,7 +21,11 @@ package de.adorsys.psd2.consent.api;
 import de.adorsys.psd2.consent.api.ais.CmsConsent;
 import de.adorsys.psd2.consent.api.config.InternalCmsXs2aApiTagName;
 import de.adorsys.psd2.xs2a.core.profile.AccountReferenceType;
-import io.swagger.annotations.*;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -31,24 +35,24 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import java.util.List;
 
 @RequestMapping(path = "api/v1/piis/consent")
-@Api(value = "api/v1/piis/consent", tags = InternalCmsXs2aApiTagName.PIIS_CONSENTS)
+@Tag(name = InternalCmsXs2aApiTagName.PIIS_CONSENTS, description = "Provides access to consent management system for PIIS")
 public interface PiisConsentApi {
 
     @GetMapping(path = "/{account-reference-type}/{account-identifier}")
-    @ApiOperation(value = "Gets list of consents by account reference data.")
+    @Operation(description = "Gets list of consents by account reference data.")
     @ApiResponses(value = {
-        @ApiResponse(code = 200, message = "OK"),
-        @ApiResponse(code = 404, message = "Not Found")})
+        @ApiResponse(responseCode = "200", description = "OK"),
+        @ApiResponse(responseCode = "404", description = "Not Found")})
     ResponseEntity<List<CmsConsent>> getPiisConsentListByAccountReference(
-        @ApiParam(name = "currency", value = "Valid currency code", example = "EUR")
+        @Parameter(name = "currency", description = "Valid currency code", example = "EUR")
         @RequestHeader(value = "currency", required = false) String currency,
-        @ApiParam(name = "account-reference-type",
-            value = "Account reference type, can be either IBAN, BBAN, PAN, MSISDN or MASKED_PAN.",
+        @Parameter(name = "account-reference-type",
+            description = "Account reference type, can be either IBAN, BBAN, PAN, MSISDN or MASKED_PAN",
             example = "IBAN",
             required = true)
         @PathVariable("account-reference-type") AccountReferenceType accountReferenceType,
-        @ApiParam(name = "account-identifier",
-            value = "The value of account identifier.",
+        @Parameter(name = "account-identifier",
+            description = "The value of account identifier",
             example = "DE2310010010123456789",
             required = true)
         @PathVariable("account-identifier") String accountIdentifier);

@@ -65,7 +65,7 @@ import de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiAuthorisationStatus;
 import de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiPsuAuthorisationResponse;
 import de.adorsys.psd2.xs2a.spi.domain.psu.SpiPsuData;
 import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponse;
-import de.adorsys.psd2.xs2a.web.controller.ConsentController;
+import de.adorsys.psd2.xs2a.web.controller.psd2.ConsentController;
 import de.adorsys.psd2.xs2a.web.filter.ContentCachingWrappingFilter;
 import de.adorsys.psd2.xs2a.web.filter.OauthModeFilter;
 import de.adorsys.psd2.xs2a.web.filter.QwacCertificateFilter;
@@ -79,6 +79,7 @@ import org.junit.jupiter.api.extension.ExtensionContext;
 import org.junit.jupiter.api.extension.RegisterExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.info.BuildProperties;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -187,6 +188,8 @@ class ServiceUnavailableIT {
     @Value("${qwac-certificate-mock}")
     private String qwacCertificateMock;
     private final Supplier<ResourceAccessException> resourceAccessExceptionSupplier = () -> new ResourceAccessException("");
+    @MockBean
+    private BuildProperties buildProperties;
 
     @RegisterExtension
     final BeforeEachCallback resourceAvailableCallback = this::onStartingTest;

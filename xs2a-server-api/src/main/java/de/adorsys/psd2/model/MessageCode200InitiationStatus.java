@@ -7,8 +7,7 @@ import com.fasterxml.jackson.annotation.JsonValue;
  * Message codes for HTTP codes 200 to a Payment Initiation Status Request.
  */
 public enum MessageCode200InitiationStatus {
-
-  AVAILABLE("FUNDS_NOT_AVAILABLE");
+  FUNDS_NOT_AVAILABLE("FUNDS_NOT_AVAILABLE");
 
   private String value;
 
@@ -32,4 +31,3 @@ public enum MessageCode200InitiationStatus {
     return null;
   }
 }
-

@@ -1,7 +1,7 @@
 package de.adorsys.psd2.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import org.springframework.validation.annotation.Validated;
 
 import javax.validation.Valid;
@@ -13,7 +13,8 @@ import java.util.Objects;
  * LinksAccountReport
  */
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2021-11-05T12:22:49.487689+02:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-05-06T13:00:42.214155+03:00[Europe/Kiev]")
+
 
 public class LinksAccountReport extends HashMap<String, HrefType>  {
   @JsonProperty("account")
@@ -39,15 +40,12 @@ public class LinksAccountReport extends HashMap<String, HrefType>  {
   /**
    * Get account
    * @return account
-  **/
-  @ApiModelProperty(required = true, value = "")
-  @NotNull
+   **/
+  @Schema(required = true, description = "")
+      @NotNull
 
-  @Valid
-
-
-  @JsonProperty("account")
-  public HrefType getAccount() {
+    @Valid
+    public HrefType getAccount() {
     return account;
   }
 
@@ -63,14 +61,11 @@ public class LinksAccountReport extends HashMap<String, HrefType>  {
   /**
    * Get first
    * @return first
-  **/
-  @ApiModelProperty(value = "")
+   **/
+  @Schema(description = "")
 
-  @Valid
-
-
-  @JsonProperty("first")
-  public HrefType getFirst() {
+    @Valid
+    public HrefType getFirst() {
     return first;
   }
 
@@ -86,14 +81,11 @@ public class LinksAccountReport extends HashMap<String, HrefType>  {
   /**
    * Get next
    * @return next
-  **/
-  @ApiModelProperty(value = "")
+   **/
+  @Schema(description = "")
 
-  @Valid
-
-
-  @JsonProperty("next")
-  public HrefType getNext() {
+    @Valid
+    public HrefType getNext() {
     return next;
   }
 
@@ -109,14 +101,11 @@ public class LinksAccountReport extends HashMap<String, HrefType>  {
   /**
    * Get previous
    * @return previous
-  **/
-  @ApiModelProperty(value = "")
+   **/
+  @Schema(description = "")
 
-  @Valid
-
-
-  @JsonProperty("previous")
-  public HrefType getPrevious() {
+    @Valid
+    public HrefType getPrevious() {
     return previous;
   }
 
@@ -132,14 +121,11 @@ public class LinksAccountReport extends HashMap<String, HrefType>  {
   /**
    * Get last
    * @return last
-  **/
-  @ApiModelProperty(value = "")
+   **/
+  @Schema(description = "")
 
-  @Valid
-
-
-  @JsonProperty("last")
-  public HrefType getLast() {
+    @Valid
+    public HrefType getLast() {
     return last;
   }
 
@@ -155,16 +141,14 @@ public class LinksAccountReport extends HashMap<String, HrefType>  {
     }
     if (o == null || getClass() != o.getClass()) {
       return false;
-}
-    if (!super.equals(o)) {
-    return false;
     }
     LinksAccountReport _linksAccountReport = (LinksAccountReport) o;
     return Objects.equals(this.account, _linksAccountReport.account) &&
-    Objects.equals(this.first, _linksAccountReport.first) &&
-    Objects.equals(this.next, _linksAccountReport.next) &&
-    Objects.equals(this.previous, _linksAccountReport.previous) &&
-    Objects.equals(this.last, _linksAccountReport.last);
+        Objects.equals(this.first, _linksAccountReport.first) &&
+        Objects.equals(this.next, _linksAccountReport.next) &&
+        Objects.equals(this.previous, _linksAccountReport.previous) &&
+        Objects.equals(this.last, _linksAccountReport.last) &&
+        super.equals(o);
   }
 
   @Override
@@ -197,4 +181,3 @@ public class LinksAccountReport extends HashMap<String, HrefType>  {
     return o.toString().replace("\n", "\n    ");
   }
 }
-

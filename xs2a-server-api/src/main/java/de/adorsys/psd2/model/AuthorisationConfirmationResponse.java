@@ -1,8 +1,7 @@
 package de.adorsys.psd2.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import org.springframework.validation.annotation.Validated;
 
 import javax.validation.Valid;
@@ -14,11 +13,12 @@ import java.util.Objects;
 /**
  * Body of the JSON response for an authorisation confirmation request.
  */
-@ApiModel(description = "Body of the JSON response for an authorisation confirmation request.")
+@Schema(description = "Body of the JSON response for an authorisation confirmation request.")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2021-11-05T12:22:49.487689+02:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-05-06T13:00:42.214155+03:00[Europe/Kiev]")
 
-public class AuthorisationConfirmationResponse   {
+
+public class AuthorisationConfirmationResponse {
   @JsonProperty("scaStatus")
   private ScaStatusAuthorisationConfirmation scaStatus = null;
 
@@ -36,15 +36,12 @@ public class AuthorisationConfirmationResponse   {
   /**
    * Get scaStatus
    * @return scaStatus
-  **/
-  @ApiModelProperty(required = true, value = "")
-  @NotNull
+   **/
+  @Schema(required = true, description = "")
+      @NotNull
 
-  @Valid
-
-
-  @JsonProperty("scaStatus")
-  public ScaStatusAuthorisationConfirmation getScaStatus() {
+    @Valid
+    public ScaStatusAuthorisationConfirmation getScaStatus() {
     return scaStatus;
   }
 
@@ -52,7 +49,7 @@ public class AuthorisationConfirmationResponse   {
     this.scaStatus = scaStatus;
   }
 
-  public AuthorisationConfirmationResponse _links(Map _links) {
+  public AuthorisationConfirmationResponse _links(LinksAuthorisationConfirmation _links) {
     this._links = _links;
     return this;
   }
@@ -60,15 +57,12 @@ public class AuthorisationConfirmationResponse   {
   /**
    * Get _links
    * @return _links
-  **/
-  @ApiModelProperty(required = true, value = "")
-  @NotNull
+   **/
+  @Schema(required = true, description = "")
+      @NotNull
 
-  @Valid
-
-
-  @JsonProperty("_links")
-  public Map getLinks() {
+    @Valid
+    public Map getLinks() {
     return _links;
   }
 
@@ -82,15 +76,12 @@ public class AuthorisationConfirmationResponse   {
   }
 
   /**
-   * Get psuMessage
+   * Text to be displayed to the PSU.
    * @return psuMessage
-  **/
-  @ApiModelProperty(value = "")
+   **/
+  @Schema(description = "Text to be displayed to the PSU.")
 
-@Size(max=500)
-
-  @JsonProperty("psuMessage")
-  public String getPsuMessage() {
+  @Size(max=500)   public String getPsuMessage() {
     return psuMessage;
   }
 
@@ -106,10 +97,11 @@ public class AuthorisationConfirmationResponse   {
     }
     if (o == null || getClass() != o.getClass()) {
       return false;
-}    AuthorisationConfirmationResponse authorisationConfirmationResponse = (AuthorisationConfirmationResponse) o;
+    }
+    AuthorisationConfirmationResponse authorisationConfirmationResponse = (AuthorisationConfirmationResponse) o;
     return Objects.equals(this.scaStatus, authorisationConfirmationResponse.scaStatus) &&
-    Objects.equals(this._links, authorisationConfirmationResponse._links) &&
-    Objects.equals(this.psuMessage, authorisationConfirmationResponse.psuMessage);
+        Objects.equals(this._links, authorisationConfirmationResponse._links) &&
+        Objects.equals(this.psuMessage, authorisationConfirmationResponse.psuMessage);
   }
 
   @Override
@@ -140,4 +132,3 @@ public class AuthorisationConfirmationResponse   {
     return o.toString().replace("\n", "\n    ");
   }
 }
-

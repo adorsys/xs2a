@@ -1,7 +1,7 @@
 package de.adorsys.psd2.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import org.springframework.validation.annotation.Validated;
 
 import javax.validation.Valid;
@@ -14,7 +14,8 @@ import java.util.Objects;
  * EntryDetailsElement
  */
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2021-11-05T12:22:49.487689+02:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-05-06T13:00:42.214155+03:00[Europe/Kiev]")
+
 
 public class EntryDetailsElement   {
   @JsonProperty("endToEndId")
@@ -82,13 +83,10 @@ public class EntryDetailsElement   {
   /**
    * Unique end to end identity.
    * @return endToEndId
-  **/
-  @ApiModelProperty(value = "Unique end to end identity.")
+   **/
+  @Schema(description = "Unique end to end identity.")
 
-@Size(max=35)
-
-  @JsonProperty("endToEndId")
-  public String getEndToEndId() {
+  @Size(max=35)   public String getEndToEndId() {
     return endToEndId;
   }
 
@@ -104,13 +102,10 @@ public class EntryDetailsElement   {
   /**
    * Identification of Mandates, e.g. a SEPA Mandate ID.
    * @return mandateId
-  **/
-  @ApiModelProperty(value = "Identification of Mandates, e.g. a SEPA Mandate ID.")
+   **/
+  @Schema(description = "Identification of Mandates, e.g. a SEPA Mandate ID.")
 
-@Size(max=35)
-
-  @JsonProperty("mandateId")
-  public String getMandateId() {
+  @Size(max=35)   public String getMandateId() {
     return mandateId;
   }
 
@@ -126,13 +121,10 @@ public class EntryDetailsElement   {
   /**
    * Identification of a Cheque.
    * @return checkId
-  **/
-  @ApiModelProperty(value = "Identification of a Cheque.")
+   **/
+  @Schema(description = "Identification of a Cheque.")
 
-@Size(max=35)
-
-  @JsonProperty("checkId")
-  public String getCheckId() {
+  @Size(max=35)   public String getCheckId() {
     return checkId;
   }
 
@@ -146,15 +138,12 @@ public class EntryDetailsElement   {
   }
 
   /**
-   * Get creditorId
+   * Identification of Creditors, e.g. a SEPA Creditor ID.
    * @return creditorId
-  **/
-  @ApiModelProperty(value = "")
+   **/
+  @Schema(example = "Creditor Id 5678", description = "Identification of Creditors, e.g. a SEPA Creditor ID.")
 
-@Size(max=35)
-
-  @JsonProperty("creditorId")
-  public String getCreditorId() {
+  @Size(max=35)   public String getCreditorId() {
     return creditorId;
   }
 
@@ -170,15 +159,12 @@ public class EntryDetailsElement   {
   /**
    * Get transactionAmount
    * @return transactionAmount
-  **/
-  @ApiModelProperty(required = true, value = "")
-  @NotNull
+   **/
+  @Schema(required = true, description = "")
+      @NotNull
 
-  @Valid
-
-
-  @JsonProperty("transactionAmount")
-  public Amount getTransactionAmount() {
+    @Valid
+    public Amount getTransactionAmount() {
     return transactionAmount;
   }
 
@@ -194,14 +180,11 @@ public class EntryDetailsElement   {
   /**
    * Get currencyExchange
    * @return currencyExchange
-  **/
-  @ApiModelProperty(value = "")
+   **/
+  @Schema(description = "")
 
-  @Valid
-
-
-  @JsonProperty("currencyExchange")
-  public ReportExchangeRateList getCurrencyExchange() {
+    @Valid
+    public ReportExchangeRateList getCurrencyExchange() {
     return currencyExchange;
   }
 
@@ -215,15 +198,12 @@ public class EntryDetailsElement   {
   }
 
   /**
-   * Get creditorName
+   * Creditor name.
    * @return creditorName
-  **/
-  @ApiModelProperty(value = "")
+   **/
+  @Schema(example = "Creditor Name", description = "Creditor name.")
 
-@Size(max=70)
-
-  @JsonProperty("creditorName")
-  public String getCreditorName() {
+  @Size(max=70)   public String getCreditorName() {
     return creditorName;
   }
 
@@ -239,14 +219,11 @@ public class EntryDetailsElement   {
   /**
    * Get creditorAccount
    * @return creditorAccount
-  **/
-  @ApiModelProperty(value = "")
+   **/
+  @Schema(description = "")
 
-  @Valid
-
-
-  @JsonProperty("creditorAccount")
-  public AccountReference getCreditorAccount() {
+    @Valid
+    public AccountReference getCreditorAccount() {
     return creditorAccount;
   }
 
@@ -260,15 +237,12 @@ public class EntryDetailsElement   {
   }
 
   /**
-   * Get creditorAgent
+   * BICFI
    * @return creditorAgent
-  **/
-  @ApiModelProperty(value = "")
+   **/
+  @Schema(example = "AAAADEBBXXX", description = "BICFI ")
 
-@Pattern(regexp="[A-Z]{6,6}[A-Z2-9][A-NP-Z0-9]([A-Z0-9]{3,3}){0,1}")
-
-  @JsonProperty("creditorAgent")
-  public String getCreditorAgent() {
+  @Pattern(regexp="[A-Z]{6,6}[A-Z2-9][A-NP-Z0-9]([A-Z0-9]{3,3}){0,1}")   public String getCreditorAgent() {
     return creditorAgent;
   }
 
@@ -282,15 +256,12 @@ public class EntryDetailsElement   {
   }
 
   /**
-   * Get ultimateCreditor
+   * Ultimate creditor.
    * @return ultimateCreditor
-  **/
-  @ApiModelProperty(value = "")
+   **/
+  @Schema(example = "Ultimate Creditor", description = "Ultimate creditor.")
 
-@Size(max=70)
-
-  @JsonProperty("ultimateCreditor")
-  public String getUltimateCreditor() {
+  @Size(max=70)   public String getUltimateCreditor() {
     return ultimateCreditor;
   }
 
@@ -304,15 +275,12 @@ public class EntryDetailsElement   {
   }
 
   /**
-   * Get debtorName
+   * Debtor name.
    * @return debtorName
-  **/
-  @ApiModelProperty(value = "")
+   **/
+  @Schema(example = "Debtor Name", description = "Debtor name.")
 
-@Size(max=70)
-
-  @JsonProperty("debtorName")
-  public String getDebtorName() {
+  @Size(max=70)   public String getDebtorName() {
     return debtorName;
   }
 
@@ -328,14 +296,11 @@ public class EntryDetailsElement   {
   /**
    * Get debtorAccount
    * @return debtorAccount
-  **/
-  @ApiModelProperty(value = "")
+   **/
+  @Schema(description = "")
 
-  @Valid
-
-
-  @JsonProperty("debtorAccount")
-  public AccountReference getDebtorAccount() {
+    @Valid
+    public AccountReference getDebtorAccount() {
     return debtorAccount;
   }
 
@@ -349,15 +314,12 @@ public class EntryDetailsElement   {
   }
 
   /**
-   * Get debtorAgent
+   * BICFI
    * @return debtorAgent
-  **/
-  @ApiModelProperty(value = "")
+   **/
+  @Schema(example = "AAAADEBBXXX", description = "BICFI ")
 
-@Pattern(regexp="[A-Z]{6,6}[A-Z2-9][A-NP-Z0-9]([A-Z0-9]{3,3}){0,1}")
-
-  @JsonProperty("debtorAgent")
-  public String getDebtorAgent() {
+  @Pattern(regexp="[A-Z]{6,6}[A-Z2-9][A-NP-Z0-9]([A-Z0-9]{3,3}){0,1}")   public String getDebtorAgent() {
     return debtorAgent;
   }
 
@@ -371,15 +333,12 @@ public class EntryDetailsElement   {
   }
 
   /**
-   * Get ultimateDebtor
+   * Ultimate debtor.
    * @return ultimateDebtor
-  **/
-  @ApiModelProperty(value = "")
+   **/
+  @Schema(example = "Ultimate Debtor", description = "Ultimate debtor.")
 
-@Size(max=70)
-
-  @JsonProperty("ultimateDebtor")
-  public String getUltimateDebtor() {
+  @Size(max=70)   public String getUltimateDebtor() {
     return ultimateDebtor;
   }
 
@@ -393,15 +352,12 @@ public class EntryDetailsElement   {
   }
 
   /**
-   * Get remittanceInformationUnstructured
+   * Unstructured remittance information.
    * @return remittanceInformationUnstructured
-  **/
-  @ApiModelProperty(value = "")
+   **/
+  @Schema(example = "Ref Number Merchant", description = "Unstructured remittance information. ")
 
-@Size(max=140)
-
-  @JsonProperty("remittanceInformationUnstructured")
-  public String getRemittanceInformationUnstructured() {
+  @Size(max=140)   public String getRemittanceInformationUnstructured() {
     return remittanceInformationUnstructured;
   }
 
@@ -417,14 +373,11 @@ public class EntryDetailsElement   {
   /**
    * Get remittanceInformationUnstructuredArray
    * @return remittanceInformationUnstructuredArray
-  **/
-  @ApiModelProperty(value = "")
+   **/
+  @Schema(description = "")
 
-  @Valid
-
-
-  @JsonProperty("remittanceInformationUnstructuredArray")
-  public RemittanceInformationUnstructuredArray getRemittanceInformationUnstructuredArray() {
+    @Valid
+    public RemittanceInformationUnstructuredArray getRemittanceInformationUnstructuredArray() {
     return remittanceInformationUnstructuredArray;
   }
 
@@ -440,14 +393,11 @@ public class EntryDetailsElement   {
   /**
    * Get remittanceInformationStructured
    * @return remittanceInformationStructured
-  **/
-  @ApiModelProperty(value = "")
+   **/
+  @Schema(description = "")
 
-  @Valid
-
-
-  @JsonProperty("remittanceInformationStructured")
-  public RemittanceInformationStructured getRemittanceInformationStructured() {
+    @Valid
+    public RemittanceInformationStructured getRemittanceInformationStructured() {
     return remittanceInformationStructured;
   }
 
@@ -463,14 +413,11 @@ public class EntryDetailsElement   {
   /**
    * Get remittanceInformationStructuredArray
    * @return remittanceInformationStructuredArray
-  **/
-  @ApiModelProperty(value = "")
+   **/
+  @Schema(description = "")
 
-  @Valid
-
-
-  @JsonProperty("remittanceInformationStructuredArray")
-  public RemittanceInformationStructuredArray getRemittanceInformationStructuredArray() {
+    @Valid
+    public RemittanceInformationStructuredArray getRemittanceInformationStructuredArray() {
     return remittanceInformationStructuredArray;
   }
 
@@ -486,14 +433,11 @@ public class EntryDetailsElement   {
   /**
    * Get purposeCode
    * @return purposeCode
-  **/
-  @ApiModelProperty(value = "")
+   **/
+  @Schema(description = "")
 
-  @Valid
-
-
-  @JsonProperty("purposeCode")
-  public PurposeCode getPurposeCode() {
+    @Valid
+    public PurposeCode getPurposeCode() {
     return purposeCode;
   }
 
@@ -509,26 +453,27 @@ public class EntryDetailsElement   {
     }
     if (o == null || getClass() != o.getClass()) {
       return false;
-}    EntryDetailsElement entryDetailsElement = (EntryDetailsElement) o;
+    }
+    EntryDetailsElement entryDetailsElement = (EntryDetailsElement) o;
     return Objects.equals(this.endToEndId, entryDetailsElement.endToEndId) &&
-    Objects.equals(this.mandateId, entryDetailsElement.mandateId) &&
-    Objects.equals(this.checkId, entryDetailsElement.checkId) &&
-    Objects.equals(this.creditorId, entryDetailsElement.creditorId) &&
-    Objects.equals(this.transactionAmount, entryDetailsElement.transactionAmount) &&
-    Objects.equals(this.currencyExchange, entryDetailsElement.currencyExchange) &&
-    Objects.equals(this.creditorName, entryDetailsElement.creditorName) &&
-    Objects.equals(this.creditorAccount, entryDetailsElement.creditorAccount) &&
-    Objects.equals(this.creditorAgent, entryDetailsElement.creditorAgent) &&
-    Objects.equals(this.ultimateCreditor, entryDetailsElement.ultimateCreditor) &&
-    Objects.equals(this.debtorName, entryDetailsElement.debtorName) &&
-    Objects.equals(this.debtorAccount, entryDetailsElement.debtorAccount) &&
-    Objects.equals(this.debtorAgent, entryDetailsElement.debtorAgent) &&
-    Objects.equals(this.ultimateDebtor, entryDetailsElement.ultimateDebtor) &&
-    Objects.equals(this.remittanceInformationUnstructured, entryDetailsElement.remittanceInformationUnstructured) &&
-    Objects.equals(this.remittanceInformationUnstructuredArray, entryDetailsElement.remittanceInformationUnstructuredArray) &&
-    Objects.equals(this.remittanceInformationStructured, entryDetailsElement.remittanceInformationStructured) &&
-    Objects.equals(this.remittanceInformationStructuredArray, entryDetailsElement.remittanceInformationStructuredArray) &&
-    Objects.equals(this.purposeCode, entryDetailsElement.purposeCode);
+        Objects.equals(this.mandateId, entryDetailsElement.mandateId) &&
+        Objects.equals(this.checkId, entryDetailsElement.checkId) &&
+        Objects.equals(this.creditorId, entryDetailsElement.creditorId) &&
+        Objects.equals(this.transactionAmount, entryDetailsElement.transactionAmount) &&
+        Objects.equals(this.currencyExchange, entryDetailsElement.currencyExchange) &&
+        Objects.equals(this.creditorName, entryDetailsElement.creditorName) &&
+        Objects.equals(this.creditorAccount, entryDetailsElement.creditorAccount) &&
+        Objects.equals(this.creditorAgent, entryDetailsElement.creditorAgent) &&
+        Objects.equals(this.ultimateCreditor, entryDetailsElement.ultimateCreditor) &&
+        Objects.equals(this.debtorName, entryDetailsElement.debtorName) &&
+        Objects.equals(this.debtorAccount, entryDetailsElement.debtorAccount) &&
+        Objects.equals(this.debtorAgent, entryDetailsElement.debtorAgent) &&
+        Objects.equals(this.ultimateDebtor, entryDetailsElement.ultimateDebtor) &&
+        Objects.equals(this.remittanceInformationUnstructured, entryDetailsElement.remittanceInformationUnstructured) &&
+        Objects.equals(this.remittanceInformationUnstructuredArray, entryDetailsElement.remittanceInformationUnstructuredArray) &&
+        Objects.equals(this.remittanceInformationStructured, entryDetailsElement.remittanceInformationStructured) &&
+        Objects.equals(this.remittanceInformationStructuredArray, entryDetailsElement.remittanceInformationStructuredArray) &&
+        Objects.equals(this.purposeCode, entryDetailsElement.purposeCode);
   }
 
   @Override
@@ -575,4 +520,3 @@ public class EntryDetailsElement   {
     return o.toString().replace("\n", "\n    ");
   }
 }
-

@@ -1,8 +1,7 @@
 package de.adorsys.psd2.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import org.springframework.validation.annotation.Validated;
 
 import javax.validation.Valid;
@@ -12,9 +11,10 @@ import java.util.Objects;
 /**
  * Body of the response for a successful read balance for an account request.
  */
-@ApiModel(description = "Body of the response for a successful read balance for an account request.")
+@Schema(description = "Body of the response for a successful read balance for an account request.")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2021-11-05T12:22:49.487689+02:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-05-06T13:00:42.214155+03:00[Europe/Kiev]")
+
 
 public class ReadAccountBalanceResponse200   {
   @JsonProperty("account")
@@ -31,14 +31,11 @@ public class ReadAccountBalanceResponse200   {
   /**
    * Get account
    * @return account
-  **/
-  @ApiModelProperty(value = "")
+   **/
+  @Schema(description = "")
 
-  @Valid
-
-
-  @JsonProperty("account")
-  public AccountReference getAccount() {
+    @Valid
+    public AccountReference getAccount() {
     return account;
   }
 
@@ -54,15 +51,12 @@ public class ReadAccountBalanceResponse200   {
   /**
    * Get balances
    * @return balances
-  **/
-  @ApiModelProperty(required = true, value = "")
-  @NotNull
+   **/
+  @Schema(required = true, description = "")
+      @NotNull
 
-  @Valid
-
-
-  @JsonProperty("balances")
-  public BalanceList getBalances() {
+    @Valid
+    public BalanceList getBalances() {
     return balances;
   }
 
@@ -78,9 +72,10 @@ public class ReadAccountBalanceResponse200   {
     }
     if (o == null || getClass() != o.getClass()) {
       return false;
-}    ReadAccountBalanceResponse200 readAccountBalanceResponse200 = (ReadAccountBalanceResponse200) o;
+    }
+    ReadAccountBalanceResponse200 readAccountBalanceResponse200 = (ReadAccountBalanceResponse200) o;
     return Objects.equals(this.account, readAccountBalanceResponse200.account) &&
-    Objects.equals(this.balances, readAccountBalanceResponse200.balances);
+        Objects.equals(this.balances, readAccountBalanceResponse200.balances);
   }
 
   @Override
@@ -110,4 +105,3 @@ public class ReadAccountBalanceResponse200   {
     return o.toString().replace("\n", "\n    ");
   }
 }
-

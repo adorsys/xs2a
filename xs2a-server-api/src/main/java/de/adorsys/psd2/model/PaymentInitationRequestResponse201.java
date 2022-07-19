@@ -1,8 +1,7 @@
 package de.adorsys.psd2.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import org.springframework.validation.annotation.Validated;
 
 import javax.validation.Valid;
@@ -16,9 +15,10 @@ import java.util.Objects;
 /**
  * Body of the response for a successful payment initiation request.
  */
-@ApiModel(description = "Body of the response for a successful payment initiation request.")
+@Schema(description = "Body of the response for a successful payment initiation request.")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2021-11-05T12:22:49.487689+02:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-05-06T13:00:42.214155+03:00[Europe/Kiev]")
+
 
 public class PaymentInitationRequestResponse201   {
   @JsonProperty("transactionStatus")
@@ -72,15 +72,12 @@ public class PaymentInitationRequestResponse201   {
   /**
    * Get transactionStatus
    * @return transactionStatus
-  **/
-  @ApiModelProperty(required = true, value = "")
-  @NotNull
+   **/
+  @Schema(required = true, description = "")
+      @NotNull
 
-  @Valid
-
-
-  @JsonProperty("transactionStatus")
-  public TransactionStatus getTransactionStatus() {
+    @Valid
+    public TransactionStatus getTransactionStatus() {
     return transactionStatus;
   }
 
@@ -94,16 +91,13 @@ public class PaymentInitationRequestResponse201   {
   }
 
   /**
-   * Get paymentId
+   * Resource identification of the generated payment initiation resource.
    * @return paymentId
-  **/
-  @ApiModelProperty(required = true, value = "")
-  @NotNull
+   **/
+  @Schema(example = "1234-wertiq-983", required = true, description = "Resource identification of the generated payment initiation resource.")
+      @NotNull
 
-
-
-  @JsonProperty("paymentId")
-  public String getPaymentId() {
+    public String getPaymentId() {
     return paymentId;
   }
 
@@ -119,14 +113,11 @@ public class PaymentInitationRequestResponse201   {
   /**
    * Get transactionFees
    * @return transactionFees
-  **/
-  @ApiModelProperty(value = "")
+   **/
+  @Schema(description = "")
 
-  @Valid
-
-
-  @JsonProperty("transactionFees")
-  public Amount getTransactionFees() {
+    @Valid
+    public Amount getTransactionFees() {
     return transactionFees;
   }
 
@@ -142,14 +133,11 @@ public class PaymentInitationRequestResponse201   {
   /**
    * Get currencyConversionFee
    * @return currencyConversionFee
-  **/
-  @ApiModelProperty(value = "")
+   **/
+  @Schema(description = "")
 
-  @Valid
-
-
-  @JsonProperty("currencyConversionFee")
-  public Amount getCurrencyConversionFee() {
+    @Valid
+    public Amount getCurrencyConversionFee() {
     return currencyConversionFee;
   }
 
@@ -165,14 +153,11 @@ public class PaymentInitationRequestResponse201   {
   /**
    * Get estimatedTotalAmount
    * @return estimatedTotalAmount
-  **/
-  @ApiModelProperty(value = "")
+   **/
+  @Schema(description = "")
 
-  @Valid
-
-
-  @JsonProperty("estimatedTotalAmount")
-  public Amount getEstimatedTotalAmount() {
+    @Valid
+    public Amount getEstimatedTotalAmount() {
     return estimatedTotalAmount;
   }
 
@@ -188,14 +173,11 @@ public class PaymentInitationRequestResponse201   {
   /**
    * Get estimatedInterbankSettlementAmount
    * @return estimatedInterbankSettlementAmount
-  **/
-  @ApiModelProperty(value = "")
+   **/
+  @Schema(description = "")
 
-  @Valid
-
-
-  @JsonProperty("estimatedInterbankSettlementAmount")
-  public Amount getEstimatedInterbankSettlementAmount() {
+    @Valid
+    public Amount getEstimatedInterbankSettlementAmount() {
     return estimatedInterbankSettlementAmount;
   }
 
@@ -209,15 +191,12 @@ public class PaymentInitationRequestResponse201   {
   }
 
   /**
-   * Get transactionFeeIndicator
+   * If equals 'true', the transaction will involve specific transaction cost as shown by the ASPSP in their public price list or as agreed between ASPSP and PSU. If equals 'false', the transaction will not involve additional specific transaction costs to the PSU unless the fee amount is given specifically in the data elements transactionFees and/or currencyConversionFees. If this data element is not used, there is no information about transaction fees unless the fee amount is given explicitly in the data element transactionFees and/or currencyConversionFees.
    * @return transactionFeeIndicator
-  **/
-  @ApiModelProperty(value = "")
+   **/
+  @Schema(description = "If equals 'true', the transaction will involve specific transaction cost as shown by the ASPSP in their public price list or as agreed between ASPSP and PSU. If equals 'false', the transaction will not involve additional specific transaction costs to the PSU unless the fee amount is given specifically in the data elements transactionFees and/or currencyConversionFees. If this data element is not used, there is no information about transaction fees unless the fee amount is given explicitly in the data element transactionFees and/or currencyConversionFees. ")
 
-
-
-  @JsonProperty("transactionFeeIndicator")
-  public Boolean getTransactionFeeIndicator() {
+    public Boolean isTransactionFeeIndicator() {
     return transactionFeeIndicator;
   }
 
@@ -233,14 +212,11 @@ public class PaymentInitationRequestResponse201   {
   /**
    * Get scaMethods
    * @return scaMethods
-  **/
-  @ApiModelProperty(value = "")
+   **/
+  @Schema(description = "")
 
-  @Valid
-
-
-  @JsonProperty("scaMethods")
-  public ScaMethods getScaMethods() {
+    @Valid
+    public ScaMethods getScaMethods() {
     return scaMethods;
   }
 
@@ -256,14 +232,11 @@ public class PaymentInitationRequestResponse201   {
   /**
    * Get chosenScaMethod
    * @return chosenScaMethod
-  **/
-  @ApiModelProperty(value = "")
+   **/
+  @Schema(description = "")
 
-  @Valid
-
-
-  @JsonProperty("chosenScaMethod")
-  public ChosenScaMethod getChosenScaMethod() {
+    @Valid
+    public ChosenScaMethod getChosenScaMethod() {
     return chosenScaMethod;
   }
 
@@ -279,14 +252,11 @@ public class PaymentInitationRequestResponse201   {
   /**
    * Get challengeData
    * @return challengeData
-  **/
-  @ApiModelProperty(value = "")
+   **/
+  @Schema(description = "")
 
-  @Valid
-
-
-  @JsonProperty("challengeData")
-  public ChallengeData getChallengeData() {
+    @Valid
+    public ChallengeData getChallengeData() {
     return challengeData;
   }
 
@@ -294,7 +264,7 @@ public class PaymentInitationRequestResponse201   {
     this.challengeData = challengeData;
   }
 
-  public PaymentInitationRequestResponse201 _links(Map _links) {
+  public PaymentInitationRequestResponse201 _links(LinksPaymentInitiation _links) {
     this._links = _links;
     return this;
   }
@@ -302,15 +272,12 @@ public class PaymentInitationRequestResponse201   {
   /**
    * Get _links
    * @return _links
-  **/
-  @ApiModelProperty(required = true, value = "")
-  @NotNull
+   **/
+  @Schema(required = true, description = "")
+      @NotNull
 
-  @Valid
-
-
-  @JsonProperty("_links")
-  public Map getLinks() {
+    @Valid
+    public Map getLinks() {
     return _links;
   }
 
@@ -324,15 +291,12 @@ public class PaymentInitationRequestResponse201   {
   }
 
   /**
-   * Get psuMessage
+   * Text to be displayed to the PSU.
    * @return psuMessage
-  **/
-  @ApiModelProperty(value = "")
+   **/
+  @Schema(description = "Text to be displayed to the PSU.")
 
-@Size(max=500)
-
-  @JsonProperty("psuMessage")
-  public String getPsuMessage() {
+  @Size(max=500)   public String getPsuMessage() {
     return psuMessage;
   }
 
@@ -356,14 +320,10 @@ public class PaymentInitationRequestResponse201   {
   /**
    * Get tppMessages
    * @return tppMessages
-  **/
-  @ApiModelProperty(value = "")
-
-  @Valid
-
-
-  @JsonProperty("tppMessages")
-  public List<TppMessage201PaymentInitiation> getTppMessages() {
+   **/
+  @Schema(description = "")
+      @Valid
+    public List<TppMessage201PaymentInitiation> getTppMessages() {
     return tppMessages;
   }
 
@@ -379,14 +339,11 @@ public class PaymentInitationRequestResponse201   {
   /**
    * Get scaStatus
    * @return scaStatus
-  **/
-  @ApiModelProperty(value = "")
+   **/
+  @Schema(description = "")
 
-  @Valid
-
-
-  @JsonProperty("scaStatus")
-  public ScaStatus getScaStatus() {
+    @Valid
+    public ScaStatus getScaStatus() {
     return scaStatus;
   }
 
@@ -402,21 +359,22 @@ public class PaymentInitationRequestResponse201   {
     }
     if (o == null || getClass() != o.getClass()) {
       return false;
-}    PaymentInitationRequestResponse201 paymentInitationRequestResponse201 = (PaymentInitationRequestResponse201) o;
+    }
+    PaymentInitationRequestResponse201 paymentInitationRequestResponse201 = (PaymentInitationRequestResponse201) o;
     return Objects.equals(this.transactionStatus, paymentInitationRequestResponse201.transactionStatus) &&
-    Objects.equals(this.paymentId, paymentInitationRequestResponse201.paymentId) &&
-    Objects.equals(this.transactionFees, paymentInitationRequestResponse201.transactionFees) &&
-    Objects.equals(this.currencyConversionFee, paymentInitationRequestResponse201.currencyConversionFee) &&
-    Objects.equals(this.estimatedTotalAmount, paymentInitationRequestResponse201.estimatedTotalAmount) &&
-    Objects.equals(this.estimatedInterbankSettlementAmount, paymentInitationRequestResponse201.estimatedInterbankSettlementAmount) &&
-    Objects.equals(this.transactionFeeIndicator, paymentInitationRequestResponse201.transactionFeeIndicator) &&
-    Objects.equals(this.scaMethods, paymentInitationRequestResponse201.scaMethods) &&
-    Objects.equals(this.chosenScaMethod, paymentInitationRequestResponse201.chosenScaMethod) &&
-    Objects.equals(this.challengeData, paymentInitationRequestResponse201.challengeData) &&
-    Objects.equals(this._links, paymentInitationRequestResponse201._links) &&
-    Objects.equals(this.psuMessage, paymentInitationRequestResponse201.psuMessage) &&
-    Objects.equals(this.tppMessages, paymentInitationRequestResponse201.tppMessages) &&
-    Objects.equals(this.scaStatus, paymentInitationRequestResponse201.scaStatus);
+        Objects.equals(this.paymentId, paymentInitationRequestResponse201.paymentId) &&
+        Objects.equals(this.transactionFees, paymentInitationRequestResponse201.transactionFees) &&
+        Objects.equals(this.currencyConversionFee, paymentInitationRequestResponse201.currencyConversionFee) &&
+        Objects.equals(this.estimatedTotalAmount, paymentInitationRequestResponse201.estimatedTotalAmount) &&
+        Objects.equals(this.estimatedInterbankSettlementAmount, paymentInitationRequestResponse201.estimatedInterbankSettlementAmount) &&
+        Objects.equals(this.transactionFeeIndicator, paymentInitationRequestResponse201.transactionFeeIndicator) &&
+        Objects.equals(this.scaMethods, paymentInitationRequestResponse201.scaMethods) &&
+        Objects.equals(this.chosenScaMethod, paymentInitationRequestResponse201.chosenScaMethod) &&
+        Objects.equals(this.challengeData, paymentInitationRequestResponse201.challengeData) &&
+        Objects.equals(this._links, paymentInitationRequestResponse201._links) &&
+        Objects.equals(this.psuMessage, paymentInitationRequestResponse201.psuMessage) &&
+        Objects.equals(this.tppMessages, paymentInitationRequestResponse201.tppMessages) &&
+        Objects.equals(this.scaStatus, paymentInitationRequestResponse201.scaStatus);
   }
 
   @Override
@@ -458,4 +416,3 @@ public class PaymentInitationRequestResponse201   {
     return o.toString().replace("\n", "\n    ");
   }
 }
-

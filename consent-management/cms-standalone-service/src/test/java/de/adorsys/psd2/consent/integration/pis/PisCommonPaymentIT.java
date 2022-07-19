@@ -25,6 +25,8 @@ import de.adorsys.psd2.consent.api.service.PisCommonPaymentService;
 import de.adorsys.psd2.consent.domain.payment.PisCommonPaymentData;
 import de.adorsys.psd2.consent.integration.config.IntegrationTestConfiguration;
 import de.adorsys.psd2.consent.repository.PisCommonPaymentDataRepository;
+import de.adorsys.psd2.integration.test.BaseTest;
+import de.adorsys.psd2.integration.test.TestDBConfiguration;
 import de.adorsys.psd2.xs2a.core.pis.InternalPaymentStatus;
 import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
@@ -35,12 +37,12 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceException;
@@ -50,11 +52,13 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.when;
 
-@ActiveProfiles("integration-test")
+@ActiveProfiles("testcontainers-it")
 @ExtendWith(SpringExtension.class)
-@ContextConfiguration(classes = {IntegrationTestConfiguration.class, MockHttpServletRequest.class})
-@DataJpaTest
-class PisCommonPaymentIT {
+@SpringBootTest
+@ContextConfiguration(classes = {TestDBConfiguration.class, IntegrationTestConfiguration.class},
+    initializers = {PisCommonPaymentIT.Initializer.class})
+class PisCommonPaymentIT extends BaseTest {
+
     private static final String TPP_ID = "Test TppId";
     private static final String PAYMENT_PRODUCT = "sepa-credit-transfers";
     private static final PaymentType PAYMENT_SERVICE = PaymentType.SINGLE;
@@ -76,19 +80,21 @@ class PisCommonPaymentIT {
 
     @BeforeEach
     public void setUp() {
+        clearData();
+
         AspspSettings aspspSettings = jsonReader.getObjectFromFile("json/aspect/aspsp-settings.json", AspspSettings.class);
 
         when(aspspProfileService.getAspspSettings(DEFAULT_SERVICE_INSTANCE_ID)).thenReturn(aspspSettings);
     }
 
     @Test
+    @Transactional
     void createPisCommonPayment_successWithNewStatus() {
         // Given
         PisPaymentInfo pisPaymentInfo = buildPisPaymentInfo();
 
         // When
         pisCommonPaymentService.createCommonPayment(pisPaymentInfo);
-        flushAndClearPersistenceContext();
         Iterable<PisCommonPaymentData> entities = pisCommonPaymentDataRepository.findAll();
         PisCommonPaymentData savedEntity = entities.iterator().next();
 
@@ -98,7 +104,6 @@ class PisCommonPaymentIT {
 
         // When
         pisCommonPaymentService.updateCommonPaymentStatusById(savedEntity.getPaymentId(), TransactionStatus.RJCT);
-        flushAndClearPersistenceContext();
 
         // Then
         // Second, we update the status and check it and the updated timestamp
@@ -109,13 +114,13 @@ class PisCommonPaymentIT {
     }
 
     @Test
+    @Transactional
     void createPisCommonPayment_successWithTheSameStatus() {
         // Given
         PisPaymentInfo pisPaymentInfo = buildPisPaymentInfo();
 
         // When
         pisCommonPaymentService.createCommonPayment(pisPaymentInfo);
-        flushAndClearPersistenceContext();
         Iterable<PisCommonPaymentData> entities = pisCommonPaymentDataRepository.findAll();
         PisCommonPaymentData savedEntity = entities.iterator().next();
 
@@ -125,7 +130,6 @@ class PisCommonPaymentIT {
 
         // When
         pisCommonPaymentService.updateCommonPaymentStatusById(savedEntity.getPaymentId(), TransactionStatus.RCVD);
-        flushAndClearPersistenceContext();
 
         // Then
         // Second, we update the status and check it and the updated timestamp
@@ -136,13 +140,13 @@ class PisCommonPaymentIT {
     }
 
     @Test
+    @Transactional
     void createPisCommonPayment_failShouldThrowException() {
         // Given
         PisPaymentInfo pisPaymentInfo = buildPisPaymentInfo();
 
         // When
         pisCommonPaymentService.createCommonPayment(pisPaymentInfo);
-        flushAndClearPersistenceContext();
         Iterable<PisCommonPaymentData> entities = pisCommonPaymentDataRepository.findAll();
         PisCommonPaymentData savedEntity = entities.iterator().next();
 
@@ -155,7 +159,7 @@ class PisCommonPaymentIT {
         pisCommonPaymentService.updateCommonPaymentStatusById(savedEntity.getPaymentId(), null);
 
         assertThrows(
-            PersistenceException.class, this::flushAndClearPersistenceContext
+            PersistenceException.class, entityManager::flush
         );
     }
 
@@ -181,13 +185,5 @@ class PisCommonPaymentIT {
         tppInfo.setAuthorisationNumber(TPP_ID);
         tppInfo.setAuthorityId(AUTHORITY_ID);
         return tppInfo;
-    }
-
-    /**
-     * Flush and clear the persistence context to force the call to the database
-     */
-    private void flushAndClearPersistenceContext() {
-        entityManager.flush();
-        entityManager.clear();
     }
 }

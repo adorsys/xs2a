@@ -1,20 +1,39 @@
+/*
+ * Copyright 2018-2022 adorsys GmbH & Co KG
+ *
+ * This program is free software: you can redistribute it and/or modify it
+ * under the terms of the GNU Affero General Public License as published
+ * by the Free Software Foundation, either version 3 of the License, or (at
+ * your option) any later version. This program is distributed in the hope that
+ * it will be useful, but WITHOUT ANY WARRANTY; without even the implied
+ * warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program. If not, see https://www.gnu.org/licenses/.
+ *
+ * This project is also available under a separate commercial license. You can
+ * contact us at psd2@adorsys.com.
+ */
+
 package de.adorsys.psd2.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import org.springframework.validation.annotation.Validated;
 
 import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.util.Objects;
 
 /**
  * This is a data element to support the declaration of additional errors in the context of [RFC7807].
  */
-@ApiModel(description = "This is a data element to support the declaration of additional errors in the context of [RFC7807].")
+@Schema(description = "This is a data element to support the declaration of additional errors in the context of [RFC7807].")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2021-05-24T13:41:46.273636+03:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-05-06T12:59:08.054254+03:00[Europe/Kiev]")
+
 
 public class Error401LTBAdditionalErrors   {
   @JsonProperty("title")
@@ -32,15 +51,12 @@ public class Error401LTBAdditionalErrors   {
   }
 
   /**
-   * Get title
+   * Short human readable description of error type. Could be in local language. To be provided by ASPSPs.
    * @return title
-  **/
-  @ApiModelProperty(value = "")
+   **/
+  @Schema(description = "Short human readable description of error type. Could be in local language. To be provided by ASPSPs. ")
 
-@Size(max=70)
-
-  @JsonProperty("title")
-  public String getTitle() {
+  @Size(max=70)   public String getTitle() {
     return title;
   }
 
@@ -54,15 +70,12 @@ public class Error401LTBAdditionalErrors   {
   }
 
   /**
-   * Get detail
+   * Detailed human readable text specific to this instance of the error. XPath might be used to point to the issue generating the error in addition. Remark for Future: In future, a dedicated field might be introduced for the XPath.
    * @return detail
-  **/
-  @ApiModelProperty(value = "")
+   **/
+  @Schema(description = "Detailed human readable text specific to this instance of the error. XPath might be used to point to the issue generating the error in addition. Remark for Future: In future, a dedicated field might be introduced for the XPath. ")
 
-@Size(max=500)
-
-  @JsonProperty("detail")
-  public String getDetail() {
+  @Size(max=500)   public String getDetail() {
     return detail;
   }
 
@@ -78,14 +91,12 @@ public class Error401LTBAdditionalErrors   {
   /**
    * Get code
    * @return code
-  **/
-  @ApiModelProperty(value = "")
+   **/
+  @Schema(required = true, description = "")
+      @NotNull
 
-  @Valid
-
-
-  @JsonProperty("code")
-  public MessageCode401LTB getCode() {
+    @Valid
+    public MessageCode401LTB getCode() {
     return code;
   }
 
@@ -101,10 +112,11 @@ public class Error401LTBAdditionalErrors   {
     }
     if (o == null || getClass() != o.getClass()) {
       return false;
-}    Error401LTBAdditionalErrors error401LTBAdditionalErrors = (Error401LTBAdditionalErrors) o;
+    }
+    Error401LTBAdditionalErrors error401LTBAdditionalErrors = (Error401LTBAdditionalErrors) o;
     return Objects.equals(this.title, error401LTBAdditionalErrors.title) &&
-    Objects.equals(this.detail, error401LTBAdditionalErrors.detail) &&
-    Objects.equals(this.code, error401LTBAdditionalErrors.code);
+        Objects.equals(this.detail, error401LTBAdditionalErrors.detail) &&
+        Objects.equals(this.code, error401LTBAdditionalErrors.code);
   }
 
   @Override
@@ -135,4 +147,3 @@ public class Error401LTBAdditionalErrors   {
     return o.toString().replace("\n", "\n    ");
   }
 }
-

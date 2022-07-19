@@ -1,8 +1,7 @@
 package de.adorsys.psd2.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import org.springframework.validation.annotation.Validated;
 
 import javax.validation.Valid;
@@ -14,11 +13,12 @@ import java.util.Objects;
 /**
  * Body of the JSON response for a successful select PSU authentication method request.
  */
-@ApiModel(description = "Body of the JSON response for a successful select PSU authentication method request.")
+@Schema(description = "Body of the JSON response for a successful select PSU authentication method request.")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2021-11-05T12:22:49.487689+02:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-05-06T13:00:42.214155+03:00[Europe/Kiev]")
 
-public class SelectPsuAuthenticationMethodResponse   {
+
+public class SelectPsuAuthenticationMethodResponse {
   @JsonProperty("transactionFees")
   private Amount transactionFees = null;
 
@@ -54,14 +54,11 @@ public class SelectPsuAuthenticationMethodResponse   {
   /**
    * Get transactionFees
    * @return transactionFees
-  **/
-  @ApiModelProperty(value = "")
+   **/
+  @Schema(description = "")
 
-  @Valid
-
-
-  @JsonProperty("transactionFees")
-  public Amount getTransactionFees() {
+    @Valid
+    public Amount getTransactionFees() {
     return transactionFees;
   }
 
@@ -77,14 +74,11 @@ public class SelectPsuAuthenticationMethodResponse   {
   /**
    * Get currencyConversionFees
    * @return currencyConversionFees
-  **/
-  @ApiModelProperty(value = "")
+   **/
+  @Schema(description = "")
 
-  @Valid
-
-
-  @JsonProperty("currencyConversionFees")
-  public Amount getCurrencyConversionFees() {
+    @Valid
+    public Amount getCurrencyConversionFees() {
     return currencyConversionFees;
   }
 
@@ -100,14 +94,11 @@ public class SelectPsuAuthenticationMethodResponse   {
   /**
    * Get estimatedTotalAmount
    * @return estimatedTotalAmount
-  **/
-  @ApiModelProperty(value = "")
+   **/
+  @Schema(description = "")
 
-  @Valid
-
-
-  @JsonProperty("estimatedTotalAmount")
-  public Amount getEstimatedTotalAmount() {
+    @Valid
+    public Amount getEstimatedTotalAmount() {
     return estimatedTotalAmount;
   }
 
@@ -123,14 +114,11 @@ public class SelectPsuAuthenticationMethodResponse   {
   /**
    * Get estimatedInterbankSettlementAmount
    * @return estimatedInterbankSettlementAmount
-  **/
-  @ApiModelProperty(value = "")
+   **/
+  @Schema(description = "")
 
-  @Valid
-
-
-  @JsonProperty("estimatedInterbankSettlementAmount")
-  public Amount getEstimatedInterbankSettlementAmount() {
+    @Valid
+    public Amount getEstimatedInterbankSettlementAmount() {
     return estimatedInterbankSettlementAmount;
   }
 
@@ -146,14 +134,11 @@ public class SelectPsuAuthenticationMethodResponse   {
   /**
    * Get chosenScaMethod
    * @return chosenScaMethod
-  **/
-  @ApiModelProperty(value = "")
+   **/
+  @Schema(description = "")
 
-  @Valid
-
-
-  @JsonProperty("chosenScaMethod")
-  public ChosenScaMethod getChosenScaMethod() {
+    @Valid
+    public ChosenScaMethod getChosenScaMethod() {
     return chosenScaMethod;
   }
 
@@ -169,14 +154,11 @@ public class SelectPsuAuthenticationMethodResponse   {
   /**
    * Get challengeData
    * @return challengeData
-  **/
-  @ApiModelProperty(value = "")
+   **/
+  @Schema(description = "")
 
-  @Valid
-
-
-  @JsonProperty("challengeData")
-  public ChallengeData getChallengeData() {
+    @Valid
+    public ChallengeData getChallengeData() {
     return challengeData;
   }
 
@@ -184,7 +166,7 @@ public class SelectPsuAuthenticationMethodResponse   {
     this.challengeData = challengeData;
   }
 
-  public SelectPsuAuthenticationMethodResponse _links(Map _links) {
+  public SelectPsuAuthenticationMethodResponse _links(LinksSelectPsuAuthenticationMethod _links) {
     this._links = _links;
     return this;
   }
@@ -192,14 +174,11 @@ public class SelectPsuAuthenticationMethodResponse   {
   /**
    * Get _links
    * @return _links
-  **/
-  @ApiModelProperty(value = "")
+   **/
+  @Schema(description = "")
 
-  @Valid
-
-
-  @JsonProperty("_links")
-  public Map getLinks() {
+    @Valid
+    public Map getLinks() {
     return _links;
   }
 
@@ -215,15 +194,12 @@ public class SelectPsuAuthenticationMethodResponse   {
   /**
    * Get scaStatus
    * @return scaStatus
-  **/
-  @ApiModelProperty(required = true, value = "")
-  @NotNull
+   **/
+  @Schema(required = true, description = "")
+      @NotNull
 
-  @Valid
-
-
-  @JsonProperty("scaStatus")
-  public ScaStatus getScaStatus() {
+    @Valid
+    public ScaStatus getScaStatus() {
     return scaStatus;
   }
 
@@ -237,15 +213,12 @@ public class SelectPsuAuthenticationMethodResponse   {
   }
 
   /**
-   * Get psuMessage
+   * Text to be displayed to the PSU.
    * @return psuMessage
-  **/
-  @ApiModelProperty(value = "")
+   **/
+  @Schema(description = "Text to be displayed to the PSU.")
 
-@Size(max=500)
-
-  @JsonProperty("psuMessage")
-  public String getPsuMessage() {
+  @Size(max=500)   public String getPsuMessage() {
     return psuMessage;
   }
 
@@ -261,16 +234,17 @@ public class SelectPsuAuthenticationMethodResponse   {
     }
     if (o == null || getClass() != o.getClass()) {
       return false;
-}    SelectPsuAuthenticationMethodResponse selectPsuAuthenticationMethodResponse = (SelectPsuAuthenticationMethodResponse) o;
+    }
+    SelectPsuAuthenticationMethodResponse selectPsuAuthenticationMethodResponse = (SelectPsuAuthenticationMethodResponse) o;
     return Objects.equals(this.transactionFees, selectPsuAuthenticationMethodResponse.transactionFees) &&
-    Objects.equals(this.currencyConversionFees, selectPsuAuthenticationMethodResponse.currencyConversionFees) &&
-    Objects.equals(this.estimatedTotalAmount, selectPsuAuthenticationMethodResponse.estimatedTotalAmount) &&
-    Objects.equals(this.estimatedInterbankSettlementAmount, selectPsuAuthenticationMethodResponse.estimatedInterbankSettlementAmount) &&
-    Objects.equals(this.chosenScaMethod, selectPsuAuthenticationMethodResponse.chosenScaMethod) &&
-    Objects.equals(this.challengeData, selectPsuAuthenticationMethodResponse.challengeData) &&
-    Objects.equals(this._links, selectPsuAuthenticationMethodResponse._links) &&
-    Objects.equals(this.scaStatus, selectPsuAuthenticationMethodResponse.scaStatus) &&
-    Objects.equals(this.psuMessage, selectPsuAuthenticationMethodResponse.psuMessage);
+        Objects.equals(this.currencyConversionFees, selectPsuAuthenticationMethodResponse.currencyConversionFees) &&
+        Objects.equals(this.estimatedTotalAmount, selectPsuAuthenticationMethodResponse.estimatedTotalAmount) &&
+        Objects.equals(this.estimatedInterbankSettlementAmount, selectPsuAuthenticationMethodResponse.estimatedInterbankSettlementAmount) &&
+        Objects.equals(this.chosenScaMethod, selectPsuAuthenticationMethodResponse.chosenScaMethod) &&
+        Objects.equals(this.challengeData, selectPsuAuthenticationMethodResponse.challengeData) &&
+        Objects.equals(this._links, selectPsuAuthenticationMethodResponse._links) &&
+        Objects.equals(this.scaStatus, selectPsuAuthenticationMethodResponse.scaStatus) &&
+        Objects.equals(this.psuMessage, selectPsuAuthenticationMethodResponse.psuMessage);
   }
 
   @Override
@@ -307,4 +281,3 @@ public class SelectPsuAuthenticationMethodResponse   {
     return o.toString().replace("\n", "\n    ");
   }
 }
-

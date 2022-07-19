@@ -1,8 +1,7 @@
 package de.adorsys.psd2.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import org.springframework.validation.annotation.Validated;
 
 import javax.validation.Valid;
@@ -16,9 +15,10 @@ import java.util.Objects;
 /**
  * Card transaction information.
  */
-@ApiModel(description = "Card transaction information.")
+@Schema(description = "Card transaction information.")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2021-11-16T16:54:38.691901+02:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-05-06T13:00:42.214155+03:00[Europe/Kiev]")
+
 
 public class CardTransaction   {
   @JsonProperty("cardTransactionId")
@@ -87,15 +87,12 @@ public class CardTransaction   {
   }
 
   /**
-   * Get cardTransactionId
+   * Unique end to end identity.
    * @return cardTransactionId
-  **/
-  @ApiModelProperty(value = "")
+   **/
+  @Schema(description = "Unique end to end identity.")
 
-@Size(max=35)
-
-  @JsonProperty("cardTransactionId")
-  public String getCardTransactionId() {
+  @Size(max=35)   public String getCardTransactionId() {
     return cardTransactionId;
   }
 
@@ -109,15 +106,12 @@ public class CardTransaction   {
   }
 
   /**
-   * Get terminalId
+   * Identification of the Terminal, where the card has been used.
    * @return terminalId
-  **/
-  @ApiModelProperty(value = "")
+   **/
+  @Schema(description = "Identification of the Terminal, where the card has been used.")
 
-@Size(max=35)
-
-  @JsonProperty("terminalId")
-  public String getTerminalId() {
+  @Size(max=35)   public String getTerminalId() {
     return terminalId;
   }
 
@@ -131,16 +125,13 @@ public class CardTransaction   {
   }
 
   /**
-   * Get transactionDate
+   * Date of the actual card transaction.
    * @return transactionDate
-  **/
-  @ApiModelProperty(value = "")
+   **/
+  @Schema(description = "Date of the actual card transaction.")
 
-  @Valid
-
-
-  @JsonProperty("transactionDate")
-  public LocalDate getTransactionDate() {
+    @Valid
+    public LocalDate getTransactionDate() {
     return transactionDate;
   }
 
@@ -156,14 +147,11 @@ public class CardTransaction   {
   /**
    * Timestamp of the actual card transaction within the acceptance system
    * @return acceptorTransactionDateTime
-  **/
-  @ApiModelProperty(value = "Timestamp of the actual card transaction within the acceptance system")
+   **/
+  @Schema(description = "Timestamp of the actual card transaction within the acceptance system")
 
-  @Valid
-
-
-  @JsonProperty("acceptorTransactionDateTime")
-  public OffsetDateTime getAcceptorTransactionDateTime() {
+    @Valid
+    public OffsetDateTime getAcceptorTransactionDateTime() {
     return acceptorTransactionDateTime;
   }
 
@@ -177,16 +165,13 @@ public class CardTransaction   {
   }
 
   /**
-   * Get bookingDate
+   * The date when an entry is posted to an account on the ASPSPs books.
    * @return bookingDate
-  **/
-  @ApiModelProperty(value = "")
+   **/
+  @Schema(description = "The date when an entry is posted to an account on the ASPSPs books. ")
 
-  @Valid
-
-
-  @JsonProperty("bookingDate")
-  public LocalDate getBookingDate() {
+    @Valid
+    public LocalDate getBookingDate() {
     return bookingDate;
   }
 
@@ -202,14 +187,11 @@ public class CardTransaction   {
   /**
    * The Date at which assets become available to the account owner in case of a credit, or cease to be available to the account owner in case of a debit entry. For card transactions this is the payment due date of related booked transactions of a card.
    * @return valueDate
-  **/
-  @ApiModelProperty(value = "The Date at which assets become available to the account owner in case of a credit, or cease to be available to the account owner in case of a debit entry. For card transactions this is the payment due date of related booked transactions of a card.")
+   **/
+  @Schema(description = "The Date at which assets become available to the account owner in case of a credit, or cease to be available to the account owner in case of a debit entry. For card transactions this is the payment due date of related booked transactions of a card.")
 
-  @Valid
-
-
-  @JsonProperty("valueDate")
-  public LocalDate getValueDate() {
+    @Valid
+    public LocalDate getValueDate() {
     return valueDate;
   }
 
@@ -225,15 +207,12 @@ public class CardTransaction   {
   /**
    * Get transactionAmount
    * @return transactionAmount
-  **/
-  @ApiModelProperty(required = true, value = "")
-  @NotNull
+   **/
+  @Schema(required = true, description = "")
+      @NotNull
 
-  @Valid
-
-
-  @JsonProperty("transactionAmount")
-  public Amount getTransactionAmount() {
+    @Valid
+    public Amount getTransactionAmount() {
     return transactionAmount;
   }
 
@@ -249,14 +228,11 @@ public class CardTransaction   {
   /**
    * Get grandTotalAmount
    * @return grandTotalAmount
-  **/
-  @ApiModelProperty(value = "")
+   **/
+  @Schema(description = "")
 
-  @Valid
-
-
-  @JsonProperty("grandTotalAmount")
-  public GrandTotalAmount getGrandTotalAmount() {
+    @Valid
+    public GrandTotalAmount getGrandTotalAmount() {
     return grandTotalAmount;
   }
 
@@ -272,14 +248,11 @@ public class CardTransaction   {
   /**
    * Get currencyExchange
    * @return currencyExchange
-  **/
-  @ApiModelProperty(value = "")
+   **/
+  @Schema(description = "")
 
-  @Valid
-
-
-  @JsonProperty("currencyExchange")
-  public ReportExchangeRateList getCurrencyExchange() {
+    @Valid
+    public ReportExchangeRateList getCurrencyExchange() {
     return currencyExchange;
   }
 
@@ -295,14 +268,11 @@ public class CardTransaction   {
   /**
    * Get originalAmount
    * @return originalAmount
-  **/
-  @ApiModelProperty(value = "")
+   **/
+  @Schema(description = "")
 
-  @Valid
-
-
-  @JsonProperty("originalAmount")
-  public Amount getOriginalAmount() {
+    @Valid
+    public Amount getOriginalAmount() {
     return originalAmount;
   }
 
@@ -318,14 +288,11 @@ public class CardTransaction   {
   /**
    * Get markupFee
    * @return markupFee
-  **/
-  @ApiModelProperty(value = "")
+   **/
+  @Schema(description = "")
 
-  @Valid
-
-
-  @JsonProperty("markupFee")
-  public Amount getMarkupFee() {
+    @Valid
+    public Amount getMarkupFee() {
     return markupFee;
   }
 
@@ -341,13 +308,10 @@ public class CardTransaction   {
   /**
    * Get markupFeePercentage
    * @return markupFeePercentage
-  **/
-  @ApiModelProperty(example = "0.3", value = "")
+   **/
+  @Schema(example = "0.3", description = "")
 
-
-
-  @JsonProperty("markupFeePercentage")
-  public String getMarkupFeePercentage() {
+    public String getMarkupFeePercentage() {
     return markupFeePercentage;
   }
 
@@ -363,13 +327,10 @@ public class CardTransaction   {
   /**
    * Get cardAcceptorId
    * @return cardAcceptorId
-  **/
-  @ApiModelProperty(value = "")
+   **/
+  @Schema(description = "")
 
-@Size(max=35)
-
-  @JsonProperty("cardAcceptorId")
-  public String getCardAcceptorId() {
+  @Size(max=35)   public String getCardAcceptorId() {
     return cardAcceptorId;
   }
 
@@ -385,14 +346,11 @@ public class CardTransaction   {
   /**
    * Get cardAcceptorAddress
    * @return cardAcceptorAddress
-  **/
-  @ApiModelProperty(value = "")
+   **/
+  @Schema(description = "")
 
-  @Valid
-
-
-  @JsonProperty("cardAcceptorAddress")
-  public Address getCardAcceptorAddress() {
+    @Valid
+    public Address getCardAcceptorAddress() {
     return cardAcceptorAddress;
   }
 
@@ -406,15 +364,12 @@ public class CardTransaction   {
   }
 
   /**
-   * Get cardAcceptorPhone
+   * Merchant phone number It consists of a \"+\" followed by the country code (from 1 to 3 characters) then a \"-\" and finally, any combination of numbers, \"(\", \")\", \"+\" and \"-\" (up to 30 characters). pattern according to ISO20022 \\+[0-9]{1,3}-[0-9()+\\-]{1,30}
    * @return cardAcceptorPhone
-  **/
-  @ApiModelProperty(value = "")
+   **/
+  @Schema(description = "Merchant phone number It consists of a \"+\" followed by the country code (from 1 to 3 characters) then a \"-\" and finally, any combination of numbers, \"(\", \")\", \"+\" and \"-\" (up to 30 characters). pattern according to ISO20022 \\+[0-9]{1,3}-[0-9()+\\-]{1,30} ")
 
-@Pattern(regexp="\\+[0-9]{1,3}\\-[0-9()+\\-]{1,30}")
-
-  @JsonProperty("cardAcceptorPhone")
-  public String getCardAcceptorPhone() {
+  @Pattern(regexp="\\+[0-9]{1,3}\\-[0-9()+\\-]{1,30}")   public String getCardAcceptorPhone() {
     return cardAcceptorPhone;
   }
 
@@ -428,15 +383,12 @@ public class CardTransaction   {
   }
 
   /**
-   * Get merchantCategoryCode
+   * Merchant category code.
    * @return merchantCategoryCode
-  **/
-  @ApiModelProperty(value = "")
+   **/
+  @Schema(description = "Merchant category code.")
 
-@Size(min=4,max=4)
-
-  @JsonProperty("merchantCategoryCode")
-  public String getMerchantCategoryCode() {
+  @Size(min=4,max=4)   public String getMerchantCategoryCode() {
     return merchantCategoryCode;
   }
 
@@ -450,15 +402,12 @@ public class CardTransaction   {
   }
 
   /**
-   * Get maskedPAN
+   * Masked Primary Account Number.
    * @return maskedPAN
-  **/
-  @ApiModelProperty(value = "")
+   **/
+  @Schema(example = "123456xxxxxx1234", description = "Masked Primary Account Number. ")
 
-@Size(max=35)
-
-  @JsonProperty("maskedPAN")
-  public String getMaskedPAN() {
+  @Size(max=35)   public String getMaskedPAN() {
     return maskedPAN;
   }
 
@@ -474,13 +423,10 @@ public class CardTransaction   {
   /**
    * Get transactionDetails
    * @return transactionDetails
-  **/
-  @ApiModelProperty(value = "")
+   **/
+  @Schema(description = "")
 
-@Size(max=1000)
-
-  @JsonProperty("transactionDetails")
-  public String getTransactionDetails() {
+  @Size(max=1000)   public String getTransactionDetails() {
     return transactionDetails;
   }
 
@@ -496,13 +442,10 @@ public class CardTransaction   {
   /**
    * Get invoiced
    * @return invoiced
-  **/
-  @ApiModelProperty(value = "")
+   **/
+  @Schema(description = "")
 
-
-
-  @JsonProperty("invoiced")
-  public Boolean isInvoiced() {
+    public Boolean isInvoiced() {
     return invoiced;
   }
 
@@ -516,15 +459,12 @@ public class CardTransaction   {
   }
 
   /**
-   * Get proprietaryBankTransactionCode
+   * Proprietary bank transaction code as used within a community or within an ASPSP e.g.  for MT94x based transaction reports.
    * @return proprietaryBankTransactionCode
-  **/
-  @ApiModelProperty(value = "")
+   **/
+  @Schema(description = "Proprietary bank transaction code as used within a community or within an ASPSP e.g.  for MT94x based transaction reports. ")
 
-@Size(max=35)
-
-  @JsonProperty("proprietaryBankTransactionCode")
-  public String getProprietaryBankTransactionCode() {
+  @Size(max=35)   public String getProprietaryBankTransactionCode() {
     return proprietaryBankTransactionCode;
   }
 
@@ -540,27 +480,28 @@ public class CardTransaction   {
     }
     if (o == null || getClass() != o.getClass()) {
       return false;
-}    CardTransaction cardTransaction = (CardTransaction) o;
+    }
+    CardTransaction cardTransaction = (CardTransaction) o;
     return Objects.equals(this.cardTransactionId, cardTransaction.cardTransactionId) &&
-    Objects.equals(this.terminalId, cardTransaction.terminalId) &&
-    Objects.equals(this.transactionDate, cardTransaction.transactionDate) &&
-    Objects.equals(this.acceptorTransactionDateTime, cardTransaction.acceptorTransactionDateTime) &&
-    Objects.equals(this.bookingDate, cardTransaction.bookingDate) &&
-    Objects.equals(this.valueDate, cardTransaction.valueDate) &&
-    Objects.equals(this.transactionAmount, cardTransaction.transactionAmount) &&
-    Objects.equals(this.grandTotalAmount, cardTransaction.grandTotalAmount) &&
-    Objects.equals(this.currencyExchange, cardTransaction.currencyExchange) &&
-    Objects.equals(this.originalAmount, cardTransaction.originalAmount) &&
-    Objects.equals(this.markupFee, cardTransaction.markupFee) &&
-    Objects.equals(this.markupFeePercentage, cardTransaction.markupFeePercentage) &&
-    Objects.equals(this.cardAcceptorId, cardTransaction.cardAcceptorId) &&
-    Objects.equals(this.cardAcceptorAddress, cardTransaction.cardAcceptorAddress) &&
-    Objects.equals(this.cardAcceptorPhone, cardTransaction.cardAcceptorPhone) &&
-    Objects.equals(this.merchantCategoryCode, cardTransaction.merchantCategoryCode) &&
-    Objects.equals(this.maskedPAN, cardTransaction.maskedPAN) &&
-    Objects.equals(this.transactionDetails, cardTransaction.transactionDetails) &&
-    Objects.equals(this.invoiced, cardTransaction.invoiced) &&
-    Objects.equals(this.proprietaryBankTransactionCode, cardTransaction.proprietaryBankTransactionCode);
+        Objects.equals(this.terminalId, cardTransaction.terminalId) &&
+        Objects.equals(this.transactionDate, cardTransaction.transactionDate) &&
+        Objects.equals(this.acceptorTransactionDateTime, cardTransaction.acceptorTransactionDateTime) &&
+        Objects.equals(this.bookingDate, cardTransaction.bookingDate) &&
+        Objects.equals(this.valueDate, cardTransaction.valueDate) &&
+        Objects.equals(this.transactionAmount, cardTransaction.transactionAmount) &&
+        Objects.equals(this.grandTotalAmount, cardTransaction.grandTotalAmount) &&
+        Objects.equals(this.currencyExchange, cardTransaction.currencyExchange) &&
+        Objects.equals(this.originalAmount, cardTransaction.originalAmount) &&
+        Objects.equals(this.markupFee, cardTransaction.markupFee) &&
+        Objects.equals(this.markupFeePercentage, cardTransaction.markupFeePercentage) &&
+        Objects.equals(this.cardAcceptorId, cardTransaction.cardAcceptorId) &&
+        Objects.equals(this.cardAcceptorAddress, cardTransaction.cardAcceptorAddress) &&
+        Objects.equals(this.cardAcceptorPhone, cardTransaction.cardAcceptorPhone) &&
+        Objects.equals(this.merchantCategoryCode, cardTransaction.merchantCategoryCode) &&
+        Objects.equals(this.maskedPAN, cardTransaction.maskedPAN) &&
+        Objects.equals(this.transactionDetails, cardTransaction.transactionDetails) &&
+        Objects.equals(this.invoiced, cardTransaction.invoiced) &&
+        Objects.equals(this.proprietaryBankTransactionCode, cardTransaction.proprietaryBankTransactionCode);
   }
 
   @Override
@@ -608,4 +549,3 @@ public class CardTransaction   {
     return o.toString().replace("\n", "\n    ");
   }
 }
-

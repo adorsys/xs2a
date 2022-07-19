@@ -1,22 +1,39 @@
+/*
+ * Copyright 2018-2022 adorsys GmbH & Co KG
+ *
+ * This program is free software: you can redistribute it and/or modify it
+ * under the terms of the GNU Affero General Public License as published
+ * by the Free Software Foundation, either version 3 of the License, or (at
+ * your option) any later version. This program is distributed in the hope that
+ * it will be useful, but WITHOUT ANY WARRANTY; without even the implied
+ * warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program. If not, see https://www.gnu.org/licenses/.
+ *
+ * This project is also available under a separate commercial license. You can
+ * contact us at psd2@adorsys.com.
+ */
+
 package de.adorsys.psd2.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import org.springframework.validation.annotation.Validated;
 
 import javax.validation.Valid;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 
 /**
  * NextGenPSD2 specific definition of reporting error information in case of a HTTP error code 401.
  */
-@ApiModel(description = "NextGenPSD2 specific definition of reporting error information in case of a HTTP error code 401. ")
+@Schema(description = "NextGenPSD2 specific definition of reporting error information in case of a HTTP error code 401. ")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2021-05-24T13:41:46.273636+03:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-05-06T12:59:08.054254+03:00[Europe/Kiev]")
+
 
 public class Error401NGLTB   {
   @JsonProperty("tppMessages")
@@ -24,7 +41,7 @@ public class Error401NGLTB   {
   private List<TppMessage401LTB> tppMessages = null;
 
   @JsonProperty("_links")
-  private Map _links = null;
+  private LinksAll _links = null;
 
   public Error401NGLTB tppMessages(List<TppMessage401LTB> tppMessages) {
     this.tppMessages = tppMessages;
@@ -42,14 +59,10 @@ public class Error401NGLTB   {
   /**
    * Get tppMessages
    * @return tppMessages
-  **/
-  @ApiModelProperty(value = "")
-
-  @Valid
-
-
-  @JsonProperty("tppMessages")
-  public List<TppMessage401LTB> getTppMessages() {
+   **/
+  @Schema(description = "")
+      @Valid
+    public List<TppMessage401LTB> getTppMessages() {
     return tppMessages;
   }
 
@@ -57,7 +70,7 @@ public class Error401NGLTB   {
     this.tppMessages = tppMessages;
   }
 
-  public Error401NGLTB _links(Map _links) {
+  public Error401NGLTB _links(LinksAll _links) {
     this._links = _links;
     return this;
   }
@@ -65,18 +78,15 @@ public class Error401NGLTB   {
   /**
    * Get _links
    * @return _links
-  **/
-  @ApiModelProperty(value = "")
+   **/
+  @Schema(description = "")
 
-  @Valid
-
-
-  @JsonProperty("_links")
-  public Map getLinks() {
+    @Valid
+    public LinksAll getLinks() {
     return _links;
   }
 
-  public void setLinks(Map _links) {
+  public void setLinks(LinksAll _links) {
     this._links = _links;
   }
 
@@ -88,9 +98,10 @@ public class Error401NGLTB   {
     }
     if (o == null || getClass() != o.getClass()) {
       return false;
-}    Error401NGLTB error401NGLTB = (Error401NGLTB) o;
+    }
+    Error401NGLTB error401NGLTB = (Error401NGLTB) o;
     return Objects.equals(this.tppMessages, error401NGLTB.tppMessages) &&
-    Objects.equals(this._links, error401NGLTB._links);
+        Objects.equals(this._links, error401NGLTB._links);
   }
 
   @Override
@@ -120,4 +131,3 @@ public class Error401NGLTB   {
     return o.toString().replace("\n", "\n    ");
   }
 }
-

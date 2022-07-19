@@ -20,23 +20,22 @@ package de.adorsys.psd2.consent.api.pis.proto;
 
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import de.adorsys.psd2.xs2a.core.tpp.TppRedirectUri;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
 @Data
 @AllArgsConstructor
-@ApiModel(description = "Pis payment cancellation request", value = "PisPaymentCancellationRequest")
+@Schema(description = "Pis payment cancellation request", name = "PisPaymentCancellationRequest")
 public class PisPaymentCancellationRequest {
-    @ApiModelProperty(value = "Payment type: BULK, SINGLE or PERIODIC.", required = true, example = "SINGLE")
+    @Schema(description = "Payment type: BULK, SINGLE or PERIODIC.", required = true, example = "SINGLE")
     private PaymentType paymentType;
-    @ApiModelProperty(value = "Payment product", required = true, example = "sepa-credit-transfers")
+    @Schema(description = "Payment product", required = true, example = "sepa-credit-transfers")
     private String paymentProduct;
-    @ApiModelProperty(value = "ASPSP identifier of the payment", required = true, example = "bf489af6-a2cb-4b75-b71d-d66d58b934d7")
+    @Schema(description = "ASPSP identifier of the payment", required = true, example = "bf489af6-a2cb-4b75-b71d-d66d58b934d7")
     private String encryptedPaymentId;
-    @ApiModelProperty(value = "TPP's choice of authorisation method", required = true, example = "TRUE | FALSE")
+    @Schema(description = "TPP's choice of authorisation method", required = true, example = "TRUE | FALSE")
     private Boolean tppExplicitAuthorisationPreferred;
-    @ApiModelProperty(value = "Tpp redirect URIs", required = true)
+    @Schema(description = "Tpp redirect URIs", required = true)
     private TppRedirectUri tppRedirectUri;
 }

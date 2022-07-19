@@ -1,8 +1,7 @@
 package de.adorsys.psd2.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import org.springframework.validation.annotation.Validated;
 
 import javax.validation.Valid;
@@ -11,11 +10,12 @@ import javax.validation.constraints.Size;
 import java.util.Objects;
 
 /**
- * JSON Request body for the \&quot;Confirmation of funds service\&quot;.  &lt;table&gt;  &lt;tr&gt;    &lt;td&gt;cardNumber&lt;/td&gt;    &lt;td&gt;String &lt;/td&gt;   &lt;td&gt;Optional&lt;/td&gt;   &lt;td&gt;Card Number of the card issued by the PIISP. Should be delivered if available.&lt;/td&gt; &lt;/tr&gt;  &lt;tr&gt;   &lt;td&gt;account&lt;/td&gt;   &lt;td&gt; Account Reference&lt;/td&gt;   &lt;td&gt;Mandatory&lt;/td&gt;   &lt;td&gt;PSU&#39;s account number.&lt;/td&gt; &lt;/tr&gt;  &lt;tr&gt;    &lt;td&gt;payee&lt;/td&gt;   &lt;td&gt;Max70Text&lt;/td&gt;   &lt;td&gt;Optional&lt;/td&gt;   &lt;td&gt;The merchant where the card is accepted as an information to the PSU.&lt;/td&gt; &lt;/tr&gt;  &lt;tr&gt;   &lt;td&gt;instructedAmount&lt;/td&gt;   &lt;td&gt;Amount&lt;/td&gt;   &lt;td&gt;Mandatory&lt;/td&gt;   &lt;td&gt;Transaction amount to be checked within the funds check mechanism.&lt;/td&gt; &lt;/tr&gt;  &lt;/table&gt;
+ * JSON Request body for the \&quot;Confirmation of funds service\&quot;.  &lt;table&gt;  &lt;tr&gt;    &lt;td&gt;cardNumber&lt;/td&gt;    &lt;td&gt;String &lt;/td&gt;   &lt;td&gt;Optional&lt;/td&gt;   &lt;td&gt;Card Number of the card issued by the PIISP. Should be delivered if available.&lt;/td&gt; &lt;/tr&gt;  &lt;tr&gt;   &lt;td&gt;account&lt;/td&gt;   &lt;td&gt; Account Reference&lt;/td&gt;   &lt;td&gt;Mandatory&lt;/td&gt;   &lt;td&gt;PSU&#x27;s account number.&lt;/td&gt; &lt;/tr&gt;  &lt;tr&gt;    &lt;td&gt;payee&lt;/td&gt;   &lt;td&gt;Max70Text&lt;/td&gt;   &lt;td&gt;Optional&lt;/td&gt;   &lt;td&gt;The merchant where the card is accepted as an information to the PSU.&lt;/td&gt; &lt;/tr&gt;  &lt;tr&gt;   &lt;td&gt;instructedAmount&lt;/td&gt;   &lt;td&gt;Amount&lt;/td&gt;   &lt;td&gt;Mandatory&lt;/td&gt;   &lt;td&gt;Transaction amount to be checked within the funds check mechanism.&lt;/td&gt; &lt;/tr&gt;  &lt;/table&gt;
  */
-@ApiModel(description = "JSON Request body for the \"Confirmation of funds service\".  <table>  <tr>    <td>cardNumber</td>    <td>String </td>   <td>Optional</td>   <td>Card Number of the card issued by the PIISP. Should be delivered if available.</td> </tr>  <tr>   <td>account</td>   <td> Account Reference</td>   <td>Mandatory</td>   <td>PSU's account number.</td> </tr>  <tr>    <td>payee</td>   <td>Max70Text</td>   <td>Optional</td>   <td>The merchant where the card is accepted as an information to the PSU.</td> </tr>  <tr>   <td>instructedAmount</td>   <td>Amount</td>   <td>Mandatory</td>   <td>Transaction amount to be checked within the funds check mechanism.</td> </tr>  </table> ")
+@Schema(description = "JSON Request body for the \"Confirmation of funds service\".  <table>  <tr>    <td>cardNumber</td>    <td>String </td>   <td>Optional</td>   <td>Card Number of the card issued by the PIISP. Should be delivered if available.</td> </tr>  <tr>   <td>account</td>   <td> Account Reference</td>   <td>Mandatory</td>   <td>PSU's account number.</td> </tr>  <tr>    <td>payee</td>   <td>Max70Text</td>   <td>Optional</td>   <td>The merchant where the card is accepted as an information to the PSU.</td> </tr>  <tr>   <td>instructedAmount</td>   <td>Amount</td>   <td>Mandatory</td>   <td>Transaction amount to be checked within the funds check mechanism.</td> </tr>  </table> ")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2021-11-05T12:22:49.487689+02:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-05-06T13:00:42.214155+03:00[Europe/Kiev]")
+
 
 public class ConfirmationOfFunds   {
   @JsonProperty("cardNumber")
@@ -38,13 +38,10 @@ public class ConfirmationOfFunds   {
   /**
    * Card Number of the card issued by the PIISP.  Should be delivered if available.
    * @return cardNumber
-  **/
-  @ApiModelProperty(value = "Card Number of the card issued by the PIISP.  Should be delivered if available. ")
+   **/
+  @Schema(description = "Card Number of the card issued by the PIISP.  Should be delivered if available. ")
 
-@Size(max=35)
-
-  @JsonProperty("cardNumber")
-  public String getCardNumber() {
+  @Size(max=35)   public String getCardNumber() {
     return cardNumber;
   }
 
@@ -60,15 +57,12 @@ public class ConfirmationOfFunds   {
   /**
    * Get account
    * @return account
-  **/
-  @ApiModelProperty(required = true, value = "")
-  @NotNull
+   **/
+  @Schema(required = true, description = "")
+      @NotNull
 
-  @Valid
-
-
-  @JsonProperty("account")
-  public AccountReference getAccount() {
+    @Valid
+    public AccountReference getAccount() {
     return account;
   }
 
@@ -84,13 +78,10 @@ public class ConfirmationOfFunds   {
   /**
    * Name payee.
    * @return payee
-  **/
-  @ApiModelProperty(value = "Name payee.")
+   **/
+  @Schema(description = "Name payee.")
 
-@Size(max=70)
-
-  @JsonProperty("payee")
-  public String getPayee() {
+  @Size(max=70)   public String getPayee() {
     return payee;
   }
 
@@ -106,15 +97,12 @@ public class ConfirmationOfFunds   {
   /**
    * Get instructedAmount
    * @return instructedAmount
-  **/
-  @ApiModelProperty(required = true, value = "")
-  @NotNull
+   **/
+  @Schema(required = true, description = "")
+      @NotNull
 
-  @Valid
-
-
-  @JsonProperty("instructedAmount")
-  public Amount getInstructedAmount() {
+    @Valid
+    public Amount getInstructedAmount() {
     return instructedAmount;
   }
 
@@ -130,11 +118,12 @@ public class ConfirmationOfFunds   {
     }
     if (o == null || getClass() != o.getClass()) {
       return false;
-}    ConfirmationOfFunds confirmationOfFunds = (ConfirmationOfFunds) o;
+    }
+    ConfirmationOfFunds confirmationOfFunds = (ConfirmationOfFunds) o;
     return Objects.equals(this.cardNumber, confirmationOfFunds.cardNumber) &&
-    Objects.equals(this.account, confirmationOfFunds.account) &&
-    Objects.equals(this.payee, confirmationOfFunds.payee) &&
-    Objects.equals(this.instructedAmount, confirmationOfFunds.instructedAmount);
+        Objects.equals(this.account, confirmationOfFunds.account) &&
+        Objects.equals(this.payee, confirmationOfFunds.payee) &&
+        Objects.equals(this.instructedAmount, confirmationOfFunds.instructedAmount);
   }
 
   @Override
@@ -166,4 +155,3 @@ public class ConfirmationOfFunds   {
     return o.toString().replace("\n", "\n    ");
   }
 }
-

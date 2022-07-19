@@ -7,12 +7,9 @@ import com.fasterxml.jackson.annotation.JsonValue;
  * Gets or Sets exchangeRateTypeCode
  */
 public enum ExchangeRateTypeCode {
-
   SPOT("SPOT"),
-
-  SALE("SALE"),
-
-  AGRD("AGRD");
+    SALE("SALE"),
+    AGRD("AGRD");
 
   private String value;
 
@@ -36,4 +33,3 @@ public enum ExchangeRateTypeCode {
     return null;
   }
 }
-

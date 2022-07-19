@@ -20,7 +20,7 @@ package de.adorsys.psd2.xs2a.exception.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import de.adorsys.psd2.xs2a.domain.HrefType;
-import io.swagger.annotations.ApiModel;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
@@ -36,7 +36,7 @@ import java.util.Map;
 @Data
 @NoArgsConstructor
 @SuperBuilder
-@ApiModel(description = "NextGenPSD2 specific definition of reporting error information in case of a HTTP error code 415, 429, 500. ")
+@Schema(description = "NextGenPSD2 specific definition of reporting error information in case of a HTTP error code 415, 429, 500. ")
 @Validated
 public class AbstractErrorNGAIS<T> {
     @JsonProperty("tppMessages")

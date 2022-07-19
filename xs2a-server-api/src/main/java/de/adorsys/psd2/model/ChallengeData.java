@@ -3,8 +3,7 @@ package de.adorsys.psd2.model;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonValue;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import org.springframework.validation.annotation.Validated;
 
 import javax.validation.Valid;
@@ -13,11 +12,12 @@ import java.util.List;
 import java.util.Objects;
 
 /**
- * It is contained in addition to the data element &#39;chosenScaMethod&#39; if challenge data is needed for SCA. In rare cases this attribute is also used in the context of the &#39;startAuthorisationWithPsuAuthentication&#39; link.
+ * It is contained in addition to the data element &#x27;chosenScaMethod&#x27; if challenge data is needed for SCA. In rare cases this attribute is also used in the context of the &#x27;startAuthorisationWithPsuAuthentication&#x27; link.
  */
-@ApiModel(description = "It is contained in addition to the data element 'chosenScaMethod' if challenge data is needed for SCA. In rare cases this attribute is also used in the context of the 'startAuthorisationWithPsuAuthentication' link. ")
+@Schema(description = "It is contained in addition to the data element 'chosenScaMethod' if challenge data is needed for SCA. In rare cases this attribute is also used in the context of the 'startAuthorisationWithPsuAuthentication' link. ")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2021-11-05T12:22:49.487689+02:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-05-06T13:00:42.214155+03:00[Europe/Kiev]")
+
 
 public class ChallengeData   {
   @JsonProperty("image")
@@ -63,7 +63,6 @@ public class ChallengeData   {
       return null;
     }
   }
-
   @JsonProperty("otpFormat")
   private OtpFormatEnum otpFormat = null;
 
@@ -78,13 +77,10 @@ public class ChallengeData   {
   /**
    * PNG data (max. 512 kilobyte) to be displayed to the PSU, Base64 encoding, cp. [RFC4648]. This attribute is used only, when PHOTO_OTP or CHIP_OTP is the selected SCA method.
    * @return image
-  **/
-  @ApiModelProperty(value = "PNG data (max. 512 kilobyte) to be displayed to the PSU, Base64 encoding, cp. [RFC4648]. This attribute is used only, when PHOTO_OTP or CHIP_OTP is the selected SCA method. ")
+   **/
+  @Schema(description = "PNG data (max. 512 kilobyte) to be displayed to the PSU, Base64 encoding, cp. [RFC4648]. This attribute is used only, when PHOTO_OTP or CHIP_OTP is the selected SCA method. ")
 
-
-
-  @JsonProperty("image")
-  public byte[] getImage() {
+    public byte[] getImage() {
     return image;
   }
 
@@ -108,13 +104,10 @@ public class ChallengeData   {
   /**
    * A collection of strings as challenge data.
    * @return data
-  **/
-  @ApiModelProperty(value = "A collection of strings as challenge data.")
+   **/
+  @Schema(description = "A collection of strings as challenge data.")
 
-
-
-  @JsonProperty("data")
-  public List<String> getData() {
+    public List<String> getData() {
     return data;
   }
 
@@ -130,13 +123,10 @@ public class ChallengeData   {
   /**
    * A link where the ASPSP will provides the challenge image for the TPP.
    * @return imageLink
-  **/
-  @ApiModelProperty(value = "A link where the ASPSP will provides the challenge image for the TPP.")
+   **/
+  @Schema(description = "A link where the ASPSP will provides the challenge image for the TPP.")
 
-
-
-  @JsonProperty("imageLink")
-  public String getImageLink() {
+    public String getImageLink() {
     return imageLink;
   }
 
@@ -152,13 +142,10 @@ public class ChallengeData   {
   /**
    * The maximal length for the OTP to be typed in by the PSU.
    * @return otpMaxLength
-  **/
-  @ApiModelProperty(value = "The maximal length for the OTP to be typed in by the PSU.")
+   **/
+  @Schema(description = "The maximal length for the OTP to be typed in by the PSU.")
 
-
-
-  @JsonProperty("otpMaxLength")
-  public Integer getOtpMaxLength() {
+    public Integer getOtpMaxLength() {
     return otpMaxLength;
   }
 
@@ -174,13 +161,10 @@ public class ChallengeData   {
   /**
    * The format type of the OTP to be typed in. The admitted values are \"characters\" or \"integer\".
    * @return otpFormat
-  **/
-  @ApiModelProperty(value = "The format type of the OTP to be typed in. The admitted values are \"characters\" or \"integer\".")
+   **/
+  @Schema(description = "The format type of the OTP to be typed in. The admitted values are \"characters\" or \"integer\".")
 
-
-
-  @JsonProperty("otpFormat")
-  public OtpFormatEnum getOtpFormat() {
+    public OtpFormatEnum getOtpFormat() {
     return otpFormat;
   }
 
@@ -196,13 +180,10 @@ public class ChallengeData   {
   /**
    * Additional explanation for the PSU to explain e.g. fallback mechanism for the chosen SCA method. The TPP is obliged to show this to the PSU.
    * @return additionalInformation
-  **/
-  @ApiModelProperty(value = "Additional explanation for the PSU to explain e.g. fallback mechanism for the chosen SCA method. The TPP is obliged to show this to the PSU. ")
+   **/
+  @Schema(description = "Additional explanation for the PSU to explain e.g. fallback mechanism for the chosen SCA method. The TPP is obliged to show this to the PSU. ")
 
-
-
-  @JsonProperty("additionalInformation")
-  public String getAdditionalInformation() {
+    public String getAdditionalInformation() {
     return additionalInformation;
   }
 
@@ -218,13 +199,14 @@ public class ChallengeData   {
     }
     if (o == null || getClass() != o.getClass()) {
       return false;
-}    ChallengeData challengeData = (ChallengeData) o;
+    }
+    ChallengeData challengeData = (ChallengeData) o;
     return Objects.equals(this.image, challengeData.image) &&
-    Objects.equals(this.data, challengeData.data) &&
-    Objects.equals(this.imageLink, challengeData.imageLink) &&
-    Objects.equals(this.otpMaxLength, challengeData.otpMaxLength) &&
-    Objects.equals(this.otpFormat, challengeData.otpFormat) &&
-    Objects.equals(this.additionalInformation, challengeData.additionalInformation);
+        Objects.equals(this.data, challengeData.data) &&
+        Objects.equals(this.imageLink, challengeData.imageLink) &&
+        Objects.equals(this.otpMaxLength, challengeData.otpMaxLength) &&
+        Objects.equals(this.otpFormat, challengeData.otpFormat) &&
+        Objects.equals(this.additionalInformation, challengeData.additionalInformation);
   }
 
   @Override
@@ -258,4 +240,3 @@ public class ChallengeData   {
     return o.toString().replace("\n", "\n    ");
   }
 }
-

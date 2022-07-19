@@ -21,10 +21,10 @@ package de.adorsys.psd2.aspsp.profile.web.controller;
 import de.adorsys.psd2.aspsp.profile.domain.migration.OldProfileConfiguration;
 import de.adorsys.psd2.aspsp.profile.service.AspspProfileConvertService;
 import de.adorsys.psd2.aspsp.profile.web.config.AspspProfileApiTagName;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiResponse;
-import io.swagger.annotations.ApiResponses;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Profile;
 import org.springframework.http.ResponseEntity;
@@ -37,15 +37,15 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping(path = "/api/v1/aspsp-profile/convert-profile", consumes = "application/x-yaml", produces = "application/x-yaml")
-@Api(value = "Convert old aspsp profile", tags = AspspProfileApiTagName.CONVERT_OLD_ASPSP_PROFILE)
+@Tag(description = "Convert old ASPSP profile", name = AspspProfileApiTagName.CONVERT_OLD_ASPSP_PROFILE)
 public class AspspProfileConvertController {
     private final AspspProfileConvertService convertService;
 
     @PostMapping(path = "/aspsp-settings")
-    @ApiOperation(value = "Converts old aspsp profile to the new format")
+    @Operation(description = "Converts old ASPSP profile to the new format")
     @ApiResponses(value = {
-        @ApiResponse(code = 200, message = "Ok"),
-        @ApiResponse(code = 400, message = "Bad request")})
+        @ApiResponse(responseCode = "200", description = "Ok"),
+        @ApiResponse(responseCode = "400", description = "Bad request")})
     public ResponseEntity<String> convertAspspSetting(@RequestBody OldProfileConfiguration oldConfiguration) {
         return ResponseEntity.ok(convertService.convertProfile(oldConfiguration));
     }

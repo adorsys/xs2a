@@ -1,8 +1,7 @@
 package de.adorsys.psd2.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import org.springframework.validation.annotation.Validated;
 
 import java.util.Objects;
@@ -10,9 +9,10 @@ import java.util.Objects;
 /**
  * PSU Data for Update PSU authentication.
  */
-@ApiModel(description = "PSU Data for Update PSU authentication.")
+@Schema(description = "PSU Data for Update PSU authentication.")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2021-11-05T12:22:49.487689+02:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-05-06T13:00:42.214155+03:00[Europe/Kiev]")
+
 
 public class PsuData   {
   @JsonProperty("password")
@@ -35,13 +35,10 @@ public class PsuData   {
   /**
    * Password.
    * @return password
-  **/
-  @ApiModelProperty(value = "Password.")
+   **/
+  @Schema(description = "Password.")
 
-
-
-  @JsonProperty("password")
-  public String getPassword() {
+    public String getPassword() {
     return password;
   }
 
@@ -57,13 +54,10 @@ public class PsuData   {
   /**
    * Encrypted password.
    * @return encryptedPassword
-  **/
-  @ApiModelProperty(value = "Encrypted password.")
+   **/
+  @Schema(description = "Encrypted password.")
 
-
-
-  @JsonProperty("encryptedPassword")
-  public String getEncryptedPassword() {
+    public String getEncryptedPassword() {
     return encryptedPassword;
   }
 
@@ -79,13 +73,10 @@ public class PsuData   {
   /**
    * Additional password in plaintext.
    * @return additionalPassword
-  **/
-  @ApiModelProperty(value = "Additional password in plaintext.")
+   **/
+  @Schema(description = "Additional password in plaintext.")
 
-
-
-  @JsonProperty("additionalPassword")
-  public String getAdditionalPassword() {
+    public String getAdditionalPassword() {
     return additionalPassword;
   }
 
@@ -101,13 +92,10 @@ public class PsuData   {
   /**
    * Additional encrypted password.
    * @return additionalEncryptedPassword
-  **/
-  @ApiModelProperty(value = "Additional encrypted password.")
+   **/
+  @Schema(description = "Additional encrypted password.")
 
-
-
-  @JsonProperty("additionalEncryptedPassword")
-  public String getAdditionalEncryptedPassword() {
+    public String getAdditionalEncryptedPassword() {
     return additionalEncryptedPassword;
   }
 
@@ -123,11 +111,12 @@ public class PsuData   {
     }
     if (o == null || getClass() != o.getClass()) {
       return false;
-}    PsuData psuData = (PsuData) o;
+    }
+    PsuData psuData = (PsuData) o;
     return Objects.equals(this.password, psuData.password) &&
-    Objects.equals(this.encryptedPassword, psuData.encryptedPassword) &&
-    Objects.equals(this.additionalPassword, psuData.additionalPassword) &&
-    Objects.equals(this.additionalEncryptedPassword, psuData.additionalEncryptedPassword);
+        Objects.equals(this.encryptedPassword, psuData.encryptedPassword) &&
+        Objects.equals(this.additionalPassword, psuData.additionalPassword) &&
+        Objects.equals(this.additionalEncryptedPassword, psuData.additionalEncryptedPassword);
   }
 
   @Override
@@ -159,4 +148,3 @@ public class PsuData   {
     return o.toString().replace("\n", "\n    ");
   }
 }
-

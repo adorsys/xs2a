@@ -40,6 +40,7 @@ import de.adorsys.psd2.xs2a.integration.builder.PsuIdDataBuilder;
 import de.adorsys.psd2.xs2a.integration.builder.TppInfoBuilder;
 import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.info.BuildProperties;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
@@ -86,6 +87,8 @@ public abstract class PaymentUpdateAuthorisationBase {
     protected PisCommonPaymentServiceEncrypted pisCommonPaymentServiceEncrypted;
     @MockBean
     protected AuthorisationServiceEncrypted authorisationServiceEncrypted;
+    @MockBean
+    private BuildProperties buildProperties;
 
     public void before() {
         given(aspspProfileService.getAspspSettings(null)).willReturn(AspspSettingsBuilder.buildAspspSettings());

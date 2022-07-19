@@ -20,19 +20,18 @@ package de.adorsys.psd2.xs2a.domain.account;
 
 import de.adorsys.psd2.xs2a.core.profile.AccountReference;
 import de.adorsys.psd2.xs2a.domain.Xs2aBalance;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
 import java.util.List;
 
 @Data
-@ApiModel(description = "Balances Report", value = "BalancesReport")
+@Schema(description = "Balances Report", name = "BalancesReport")
 public class Xs2aBalancesReport {
 
-    @ApiModelProperty(value = "BalanceList")
+    @Schema(description = "BalanceList")
     private List<Xs2aBalance> balances;
 
-    @ApiModelProperty(value = "Xs2aAccountReference")
+    @Schema(description = "Xs2aAccountReference")
     private AccountReference xs2aAccountReference;
 }

@@ -1,8 +1,25 @@
+/*
+ * Copyright 2018-2022 adorsys GmbH & Co KG
+ *
+ * This program is free software: you can redistribute it and/or modify it
+ * under the terms of the GNU Affero General Public License as published
+ * by the Free Software Foundation, either version 3 of the License, or (at
+ * your option) any later version. This program is distributed in the hope that
+ * it will be useful, but WITHOUT ANY WARRANTY; without even the implied
+ * warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program. If not, see https://www.gnu.org/licenses/.
+ *
+ * This project is also available under a separate commercial license. You can
+ * contact us at psd2@adorsys.com.
+ */
+
 package de.adorsys.psd2.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import org.springframework.validation.annotation.Validated;
 
 import javax.validation.Valid;
@@ -10,15 +27,15 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 
 /**
  * Standardised definition of reporting error information according to [RFC7807] in case of a HTTP error code 403 for Trusted Beneficiaries.
  */
-@ApiModel(description = "Standardised definition of reporting error information according to [RFC7807] in case of a HTTP error code 403 for Trusted Beneficiaries. ")
+@Schema(description = "Standardised definition of reporting error information according to [RFC7807] in case of a HTTP error code 403 for Trusted Beneficiaries. ")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2021-05-24T13:41:46.273636+03:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-05-06T12:59:08.054254+03:00[Europe/Kiev]")
+
 
 public class Error403LTB   {
   @JsonProperty("type")
@@ -38,7 +55,7 @@ public class Error403LTB   {
   private List<Error403LTBAdditionalErrors> additionalErrors = null;
 
   @JsonProperty("_links")
-  private Map _links = null;
+  private LinksAll _links = null;
 
   public Error403LTB type(String type) {
     this.type = type;
@@ -48,14 +65,11 @@ public class Error403LTB   {
   /**
    * A URI reference [RFC3986] that identifies the problem type. Remark For Future: These URI will be provided by NextGenPSD2 in future.
    * @return type
-  **/
-  @ApiModelProperty(required = true, value = "A URI reference [RFC3986] that identifies the problem type. Remark For Future: These URI will be provided by NextGenPSD2 in future. ")
-  @NotNull
+   **/
+  @Schema(required = true, description = "A URI reference [RFC3986] that identifies the problem type. Remark For Future: These URI will be provided by NextGenPSD2 in future. ")
+      @NotNull
 
-@Size(max=70)
-
-  @JsonProperty("type")
-  public String getType() {
+  @Size(max=70)   public String getType() {
     return type;
   }
 
@@ -71,13 +85,10 @@ public class Error403LTB   {
   /**
    * Short human readable description of error type. Could be in local language. To be provided by ASPSPs.
    * @return title
-  **/
-  @ApiModelProperty(value = "Short human readable description of error type. Could be in local language. To be provided by ASPSPs. ")
+   **/
+  @Schema(description = "Short human readable description of error type. Could be in local language. To be provided by ASPSPs. ")
 
-@Size(max=70)
-
-  @JsonProperty("title")
-  public String getTitle() {
+  @Size(max=70)   public String getTitle() {
     return title;
   }
 
@@ -93,13 +104,10 @@ public class Error403LTB   {
   /**
    * Detailed human readable text specific to this instance of the error. XPath might be used to point to the issue generating the error in addition. Remark for Future: In future, a dedicated field might be introduced for the XPath.
    * @return detail
-  **/
-  @ApiModelProperty(value = "Detailed human readable text specific to this instance of the error. XPath might be used to point to the issue generating the error in addition. Remark for Future: In future, a dedicated field might be introduced for the XPath. ")
+   **/
+  @Schema(description = "Detailed human readable text specific to this instance of the error. XPath might be used to point to the issue generating the error in addition. Remark for Future: In future, a dedicated field might be introduced for the XPath. ")
 
-@Size(max=500)
-
-  @JsonProperty("detail")
-  public String getDetail() {
+  @Size(max=500)   public String getDetail() {
     return detail;
   }
 
@@ -115,15 +123,12 @@ public class Error403LTB   {
   /**
    * Get code
    * @return code
-  **/
-  @ApiModelProperty(required = true, value = "")
-  @NotNull
+   **/
+  @Schema(required = true, description = "")
+      @NotNull
 
-  @Valid
-
-
-  @JsonProperty("code")
-  public MessageCode403LTB getCode() {
+    @Valid
+    public MessageCode403LTB getCode() {
     return code;
   }
 
@@ -147,14 +152,10 @@ public class Error403LTB   {
   /**
    * Array of Error Information Blocks.  Might be used if more than one error is to be communicated
    * @return additionalErrors
-  **/
-  @ApiModelProperty(value = "Array of Error Information Blocks.  Might be used if more than one error is to be communicated ")
-
-  @Valid
-
-
-  @JsonProperty("additionalErrors")
-  public List<Error403LTBAdditionalErrors> getAdditionalErrors() {
+   **/
+  @Schema(description = "Array of Error Information Blocks.  Might be used if more than one error is to be communicated ")
+      @Valid
+    public List<Error403LTBAdditionalErrors> getAdditionalErrors() {
     return additionalErrors;
   }
 
@@ -162,7 +163,7 @@ public class Error403LTB   {
     this.additionalErrors = additionalErrors;
   }
 
-  public Error403LTB _links(Map _links) {
+  public Error403LTB _links(LinksAll _links) {
     this._links = _links;
     return this;
   }
@@ -170,18 +171,15 @@ public class Error403LTB   {
   /**
    * Get _links
    * @return _links
-  **/
-  @ApiModelProperty(value = "")
+   **/
+  @Schema(description = "")
 
-  @Valid
-
-
-  @JsonProperty("_links")
-  public Map getLinks() {
+    @Valid
+    public LinksAll getLinks() {
     return _links;
   }
 
-  public void setLinks(Map _links) {
+  public void setLinks(LinksAll _links) {
     this._links = _links;
   }
 
@@ -193,13 +191,14 @@ public class Error403LTB   {
     }
     if (o == null || getClass() != o.getClass()) {
       return false;
-}    Error403LTB error403LTB = (Error403LTB) o;
+    }
+    Error403LTB error403LTB = (Error403LTB) o;
     return Objects.equals(this.type, error403LTB.type) &&
-    Objects.equals(this.title, error403LTB.title) &&
-    Objects.equals(this.detail, error403LTB.detail) &&
-    Objects.equals(this.code, error403LTB.code) &&
-    Objects.equals(this.additionalErrors, error403LTB.additionalErrors) &&
-    Objects.equals(this._links, error403LTB._links);
+        Objects.equals(this.title, error403LTB.title) &&
+        Objects.equals(this.detail, error403LTB.detail) &&
+        Objects.equals(this.code, error403LTB.code) &&
+        Objects.equals(this.additionalErrors, error403LTB.additionalErrors) &&
+        Objects.equals(this._links, error403LTB._links);
   }
 
   @Override
@@ -233,4 +232,3 @@ public class Error403LTB   {
     return o.toString().replace("\n", "\n    ");
   }
 }
-

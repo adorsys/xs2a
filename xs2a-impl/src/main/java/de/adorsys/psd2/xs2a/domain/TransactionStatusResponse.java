@@ -19,11 +19,11 @@
 package de.adorsys.psd2.xs2a.domain;
 
 import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
-import io.swagger.annotations.ApiModel;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Value;
 
 @Value
-@ApiModel(description = "Transactions Status response", value = "transactionStatus")
+@Schema(description = "Transactions Status response", name = "transactionStatus")
 public class TransactionStatusResponse {
     private TransactionStatus transactionStatus;
 }

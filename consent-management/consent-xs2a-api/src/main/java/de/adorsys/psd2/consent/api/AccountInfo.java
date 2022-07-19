@@ -19,8 +19,8 @@
 package de.adorsys.psd2.consent.api;
 
 import de.adorsys.psd2.xs2a.core.profile.AccountReferenceType;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
@@ -28,25 +28,26 @@ import lombok.Setter;
 @Getter
 @Setter
 @EqualsAndHashCode
-@ApiModel(description = "Account information", value = "AccountInfo")
+@Tag(description = "Account information", name = "AccountInfo")
 public class AccountInfo {
 
-    @ApiModelProperty(value = "RESOURCE-ID: This identification is denoting the addressed account.")
+    @Schema(description = "RESOURCE-ID: This identification is denoting the addressed account")
     private String resourceId;
 
-    @ApiModelProperty(value = "Aspsp-Account-ID: Bank specific account ID", example = "26bb59a3-2f63-4027-ad38-67d87e59611a")
+    @Schema(description = "Aspsp-Account-ID: Bank specific account ID", example = "26bb59a3-2f63-4027-ad38-67d87e59611a")
     private String aspspAccountId;
 
-    @ApiModelProperty(value = "Account-Identifier: This data element can be used in the body of the CreateConsentReq Request Message for retrieving account access consent from this payment account", example = "DE2310010010123456789")
+    @Schema(description = "Account-Identifier: This data element can be used in the body of the CreateConsentReq Request Message for retrieving account access consent from this payment account", example = "DE2310010010123456789")
     private String accountIdentifier;
 
-    @ApiModelProperty(value = "ISO 4217 currency code", example = "EUR")
+    @Schema(description = "ISO 4217 currency code", example = "EUR")
     private String currency;
 
-    @ApiModelProperty(value = "Type of the account reference: IBAN, BBAN, IBAN, BBAN, PAN, MASKED_PAN, MSISDN", required = true, example = "IBAN")
+    @Schema(description = "Type of the account reference: IBAN, BBAN, IBAN, BBAN, PAN, MASKED_PAN, MSISDN", required = true, example = "IBAN")
     private AccountReferenceType accountType;
 
-    private AccountInfo(){}
+    private AccountInfo() {
+    }
 
     public static AccountInfoBuilder builder() {
         return new AccountInfoBuilder();

@@ -1,11 +1,11 @@
 package de.adorsys.psd2.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import org.springframework.validation.annotation.Validated;
 
 import javax.validation.Valid;
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
 import java.util.Map;
@@ -14,9 +14,10 @@ import java.util.Objects;
 /**
  * Body of the JSON response for a successfull get consent request.
  */
-@ApiModel(description = "Body of the JSON response for a successfull get consent request.")
+@Schema(description = "Body of the JSON response for a successfull get consent request.")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2021-11-05T12:22:49.487689+02:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-05-06T13:00:42.214155+03:00[Europe/Kiev]")
+
 
 public class ConsentInformationResponse200Json   {
   @JsonProperty("access")
@@ -48,15 +49,12 @@ public class ConsentInformationResponse200Json   {
   /**
    * Get access
    * @return access
-  **/
-  @ApiModelProperty(required = true, value = "")
-  @NotNull
+   **/
+  @Schema(required = true, description = "")
+      @NotNull
 
-  @Valid
-
-
-  @JsonProperty("access")
-  public AccountAccess getAccess() {
+    @Valid
+    public AccountAccess getAccess() {
     return access;
   }
 
@@ -70,16 +68,13 @@ public class ConsentInformationResponse200Json   {
   }
 
   /**
-   * Get recurringIndicator
+   * \"true\", if the consent is for recurring access to the account data.  \"false\", if the consent is for one access to the account data.
    * @return recurringIndicator
-  **/
-  @ApiModelProperty(required = true, value = "")
-  @NotNull
+   **/
+  @Schema(example = "false", required = true, description = "\"true\", if the consent is for recurring access to the account data.  \"false\", if the consent is for one access to the account data. ")
+      @NotNull
 
-
-
-  @JsonProperty("recurringIndicator")
-  public Boolean getRecurringIndicator() {
+    public Boolean isRecurringIndicator() {
     return recurringIndicator;
   }
 
@@ -93,17 +88,14 @@ public class ConsentInformationResponse200Json   {
   }
 
   /**
-   * Get validUntil
+   * This parameter is defining a valid until date (including the mentioned date) for the requested consent.  The content is the local ASPSP date in ISO-Date format, e.g. 2017-10-30.  Future dates might get adjusted by ASPSP.   If a maximal available date is requested, a date in far future is to be used: \"9999-12-31\".   In both cases the consent object to be retrieved by the get consent request will contain the adjusted date.
    * @return validUntil
-  **/
-  @ApiModelProperty(required = true, value = "")
-  @NotNull
+   **/
+  @Schema(example = "Thu Dec 31 02:00:00 EET 2020", required = true, description = "This parameter is defining a valid until date (including the mentioned date) for the requested consent.  The content is the local ASPSP date in ISO-Date format, e.g. 2017-10-30.  Future dates might get adjusted by ASPSP.   If a maximal available date is requested, a date in far future is to be used: \"9999-12-31\".   In both cases the consent object to be retrieved by the get consent request will contain the adjusted date. ")
+      @NotNull
 
-  @Valid
-
-
-  @JsonProperty("validUntil")
-  public LocalDate getValidUntil() {
+    @Valid
+    public LocalDate getValidUntil() {
     return validUntil;
   }
 
@@ -117,16 +109,14 @@ public class ConsentInformationResponse200Json   {
   }
 
   /**
-   * Get frequencyPerDay
+   * This field indicates the requested maximum frequency for an access without PSU involvement per day. For a one-off access, this attribute is set to \"1\".  The frequency needs to be greater equal to one.   If not otherwise agreed bilaterally between TPP and ASPSP, the frequency is less equal to 4.
+   * minimum: 1
    * @return frequencyPerDay
-  **/
-  @ApiModelProperty(required = true, value = "")
-  @NotNull
+   **/
+  @Schema(example = "4", required = true, description = "This field indicates the requested maximum frequency for an access without PSU involvement per day. For a one-off access, this attribute is set to \"1\".  The frequency needs to be greater equal to one.   If not otherwise agreed bilaterally between TPP and ASPSP, the frequency is less equal to 4. ")
+      @NotNull
 
-
-
-  @JsonProperty("frequencyPerDay")
-  public Integer getFrequencyPerDay() {
+  @Min(1)  public Integer getFrequencyPerDay() {
     return frequencyPerDay;
   }
 
@@ -140,17 +130,14 @@ public class ConsentInformationResponse200Json   {
   }
 
   /**
-   * Get lastActionDate
+   * This date is containing the date of the last action on the consent object either through  the XS2A interface or the PSU/ASPSP interface having an impact on the status.
    * @return lastActionDate
-  **/
-  @ApiModelProperty(required = true, value = "")
-  @NotNull
+   **/
+  @Schema(example = "Sun Jul 01 03:00:00 EEST 2018", required = true, description = "This date is containing the date of the last action on the consent object either through  the XS2A interface or the PSU/ASPSP interface having an impact on the status. ")
+      @NotNull
 
-  @Valid
-
-
-  @JsonProperty("lastActionDate")
-  public LocalDate getLastActionDate() {
+    @Valid
+    public LocalDate getLastActionDate() {
     return lastActionDate;
   }
 
@@ -166,15 +153,12 @@ public class ConsentInformationResponse200Json   {
   /**
    * Get consentStatus
    * @return consentStatus
-  **/
-  @ApiModelProperty(required = true, value = "")
-  @NotNull
+   **/
+  @Schema(required = true, description = "")
+      @NotNull
 
-  @Valid
-
-
-  @JsonProperty("consentStatus")
-  public ConsentStatus getConsentStatus() {
+    @Valid
+    public ConsentStatus getConsentStatus() {
     return consentStatus;
   }
 
@@ -182,7 +166,7 @@ public class ConsentInformationResponse200Json   {
     this.consentStatus = consentStatus;
   }
 
-  public ConsentInformationResponse200Json _links(Map _links) {
+  public ConsentInformationResponse200Json _links(LinksGetConsent _links) {
     this._links = _links;
     return this;
   }
@@ -190,14 +174,11 @@ public class ConsentInformationResponse200Json   {
   /**
    * Get _links
    * @return _links
-  **/
-  @ApiModelProperty(value = "")
+   **/
+  @Schema(description = "")
 
-  @Valid
-
-
-  @JsonProperty("_links")
-  public Map getLinks() {
+    @Valid
+    public Map getLinks() {
     return _links;
   }
 
@@ -213,14 +194,15 @@ public class ConsentInformationResponse200Json   {
     }
     if (o == null || getClass() != o.getClass()) {
       return false;
-}    ConsentInformationResponse200Json consentInformationResponse200Json = (ConsentInformationResponse200Json) o;
+    }
+    ConsentInformationResponse200Json consentInformationResponse200Json = (ConsentInformationResponse200Json) o;
     return Objects.equals(this.access, consentInformationResponse200Json.access) &&
-    Objects.equals(this.recurringIndicator, consentInformationResponse200Json.recurringIndicator) &&
-    Objects.equals(this.validUntil, consentInformationResponse200Json.validUntil) &&
-    Objects.equals(this.frequencyPerDay, consentInformationResponse200Json.frequencyPerDay) &&
-    Objects.equals(this.lastActionDate, consentInformationResponse200Json.lastActionDate) &&
-    Objects.equals(this.consentStatus, consentInformationResponse200Json.consentStatus) &&
-    Objects.equals(this._links, consentInformationResponse200Json._links);
+        Objects.equals(this.recurringIndicator, consentInformationResponse200Json.recurringIndicator) &&
+        Objects.equals(this.validUntil, consentInformationResponse200Json.validUntil) &&
+        Objects.equals(this.frequencyPerDay, consentInformationResponse200Json.frequencyPerDay) &&
+        Objects.equals(this.lastActionDate, consentInformationResponse200Json.lastActionDate) &&
+        Objects.equals(this.consentStatus, consentInformationResponse200Json.consentStatus) &&
+        Objects.equals(this._links, consentInformationResponse200Json._links);
   }
 
   @Override
@@ -255,4 +237,3 @@ public class ConsentInformationResponse200Json   {
     return o.toString().replace("\n", "\n    ");
   }
 }
-

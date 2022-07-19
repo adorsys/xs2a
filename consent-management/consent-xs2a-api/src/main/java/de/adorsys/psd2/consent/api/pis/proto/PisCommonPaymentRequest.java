@@ -23,36 +23,35 @@ import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
 import java.util.List;
 
 @Data
-@ApiModel(description = "Pis payment initialisation consent request", value = "PisCommonPaymentRequest")
+@Schema(description = "Pis payment initialisation consent request", name = "PisCommonPaymentRequest")
 public class PisCommonPaymentRequest {
-    @ApiModelProperty(value = "Payment data", required = true)
+    @Schema(description = "Payment data", required = true)
     private List<PisPayment> payments;
 
-    @ApiModelProperty(value = "Payment product", required = true, example = "sepa-credit-transfers")
+    @Schema(description = "Payment product", required = true, example = "sepa-credit-transfers")
     private String paymentProduct;
 
-    @ApiModelProperty(value = "Payment type: BULK, SINGLE or PERIODIC.", required = true, example = "SINGLE")
+    @Schema(description = "Payment type: BULK, SINGLE or PERIODIC.", required = true, example = "SINGLE")
     private PaymentType paymentType;
 
-    @ApiModelProperty(value = "Tpp information", required = true)
+    @Schema(description = "Tpp information", required = true)
     private TppInfo tppInfo;
 
-    @ApiModelProperty(value = "Corresponding PSU", required = true)
+    @Schema(description = "Corresponding PSU", required = true)
     private List<PsuIdData> psuData;
 
-    @ApiModelProperty(value = "External Payment Id", example = "32454656712432")
+    @Schema(description = "External Payment Id", example = "32454656712432")
     private String paymentId;
 
-    @ApiModelProperty(value = "Transaction status", example = "ACCP")
+    @Schema(description = "Transaction status", example = "ACCP")
     private TransactionStatus transactionStatus;
 
-    @ApiModelProperty(value = "Payment info")
+    @Schema(description = "Payment info")
     private PisPaymentInfo paymentInfo;
 }

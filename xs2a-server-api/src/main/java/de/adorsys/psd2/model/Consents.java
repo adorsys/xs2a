@@ -1,11 +1,11 @@
 package de.adorsys.psd2.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import org.springframework.validation.annotation.Validated;
 
 import javax.validation.Valid;
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
 import java.util.Objects;
@@ -13,9 +13,10 @@ import java.util.Objects;
 /**
  * Content of the body of a consent request.
  */
-@ApiModel(description = "Content of the body of a consent request. ")
+@Schema(description = "Content of the body of a consent request. ")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2021-11-05T12:22:49.487689+02:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-05-06T13:00:42.214155+03:00[Europe/Kiev]")
+
 
 public class Consents   {
   @JsonProperty("access")
@@ -41,15 +42,12 @@ public class Consents   {
   /**
    * Get access
    * @return access
-  **/
-  @ApiModelProperty(required = true, value = "")
-  @NotNull
+   **/
+  @Schema(required = true, description = "")
+      @NotNull
 
-  @Valid
-
-
-  @JsonProperty("access")
-  public AccountAccess getAccess() {
+    @Valid
+    public AccountAccess getAccess() {
     return access;
   }
 
@@ -63,16 +61,13 @@ public class Consents   {
   }
 
   /**
-   * Get recurringIndicator
+   * \"true\", if the consent is for recurring access to the account data.  \"false\", if the consent is for one access to the account data.
    * @return recurringIndicator
-  **/
-  @ApiModelProperty(required = true, value = "")
-  @NotNull
+   **/
+  @Schema(example = "false", required = true, description = "\"true\", if the consent is for recurring access to the account data.  \"false\", if the consent is for one access to the account data. ")
+      @NotNull
 
-
-
-  @JsonProperty("recurringIndicator")
-  public Boolean getRecurringIndicator() {
+    public Boolean isRecurringIndicator() {
     return recurringIndicator;
   }
 
@@ -86,17 +81,14 @@ public class Consents   {
   }
 
   /**
-   * Get validUntil
+   * This parameter is defining a valid until date (including the mentioned date) for the requested consent.  The content is the local ASPSP date in ISO-Date format, e.g. 2017-10-30.  Future dates might get adjusted by ASPSP.   If a maximal available date is requested, a date in far future is to be used: \"9999-12-31\".   In both cases the consent object to be retrieved by the get consent request will contain the adjusted date.
    * @return validUntil
-  **/
-  @ApiModelProperty(required = true, value = "")
-  @NotNull
+   **/
+  @Schema(example = "Thu Dec 31 02:00:00 EET 2020", required = true, description = "This parameter is defining a valid until date (including the mentioned date) for the requested consent.  The content is the local ASPSP date in ISO-Date format, e.g. 2017-10-30.  Future dates might get adjusted by ASPSP.   If a maximal available date is requested, a date in far future is to be used: \"9999-12-31\".   In both cases the consent object to be retrieved by the get consent request will contain the adjusted date. ")
+      @NotNull
 
-  @Valid
-
-
-  @JsonProperty("validUntil")
-  public LocalDate getValidUntil() {
+    @Valid
+    public LocalDate getValidUntil() {
     return validUntil;
   }
 
@@ -110,16 +102,14 @@ public class Consents   {
   }
 
   /**
-   * Get frequencyPerDay
+   * This field indicates the requested maximum frequency for an access without PSU involvement per day. For a one-off access, this attribute is set to \"1\".  The frequency needs to be greater equal to one.   If not otherwise agreed bilaterally between TPP and ASPSP, the frequency is less equal to 4.
+   * minimum: 1
    * @return frequencyPerDay
-  **/
-  @ApiModelProperty(required = true, value = "")
-  @NotNull
+   **/
+  @Schema(example = "4", required = true, description = "This field indicates the requested maximum frequency for an access without PSU involvement per day. For a one-off access, this attribute is set to \"1\".  The frequency needs to be greater equal to one.   If not otherwise agreed bilaterally between TPP and ASPSP, the frequency is less equal to 4. ")
+      @NotNull
 
-
-
-  @JsonProperty("frequencyPerDay")
-  public Integer getFrequencyPerDay() {
+  @Min(1)  public Integer getFrequencyPerDay() {
     return frequencyPerDay;
   }
 
@@ -135,14 +125,11 @@ public class Consents   {
   /**
    * If \"true\" indicates that a payment initiation service will be addressed in the same \"session\".
    * @return combinedServiceIndicator
-  **/
-  @ApiModelProperty(required = true, value = "If \"true\" indicates that a payment initiation service will be addressed in the same \"session\". ")
-  @NotNull
+   **/
+  @Schema(example = "false", required = true, description = "If \"true\" indicates that a payment initiation service will be addressed in the same \"session\". ")
+      @NotNull
 
-
-
-  @JsonProperty("combinedServiceIndicator")
-  public Boolean isCombinedServiceIndicator() {
+    public Boolean isCombinedServiceIndicator() {
     return combinedServiceIndicator;
   }
 
@@ -158,12 +145,13 @@ public class Consents   {
     }
     if (o == null || getClass() != o.getClass()) {
       return false;
-}    Consents consents = (Consents) o;
+    }
+    Consents consents = (Consents) o;
     return Objects.equals(this.access, consents.access) &&
-    Objects.equals(this.recurringIndicator, consents.recurringIndicator) &&
-    Objects.equals(this.validUntil, consents.validUntil) &&
-    Objects.equals(this.frequencyPerDay, consents.frequencyPerDay) &&
-    Objects.equals(this.combinedServiceIndicator, consents.combinedServiceIndicator);
+        Objects.equals(this.recurringIndicator, consents.recurringIndicator) &&
+        Objects.equals(this.validUntil, consents.validUntil) &&
+        Objects.equals(this.frequencyPerDay, consents.frequencyPerDay) &&
+        Objects.equals(this.combinedServiceIndicator, consents.combinedServiceIndicator);
   }
 
   @Override
@@ -196,4 +184,3 @@ public class Consents   {
     return o.toString().replace("\n", "\n    ");
   }
 }
-

@@ -38,6 +38,7 @@ import de.adorsys.psd2.xs2a.service.ais.CardTransactionService;
 import de.adorsys.psd2.xs2a.service.mapper.CardAccountModelMapper;
 import de.adorsys.psd2.xs2a.service.mapper.ResponseMapper;
 import de.adorsys.psd2.xs2a.service.mapper.psd2.ResponseErrorMapper;
+import de.adorsys.psd2.xs2a.web.controller.psd2.CardAccountController;
 import org.apache.commons.io.IOUtils;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

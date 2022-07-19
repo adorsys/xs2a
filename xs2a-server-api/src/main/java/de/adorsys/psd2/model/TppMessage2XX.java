@@ -1,7 +1,7 @@
 package de.adorsys.psd2.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import org.springframework.validation.annotation.Validated;
 
 import javax.validation.Valid;
@@ -13,7 +13,8 @@ import java.util.Objects;
  * TppMessage2XX
  */
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2021-11-05T12:22:49.487689+02:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-05-06T13:00:42.214155+03:00[Europe/Kiev]")
+
 
 public class TppMessage2XX   {
   @JsonProperty("category")
@@ -36,15 +37,12 @@ public class TppMessage2XX   {
   /**
    * Get category
    * @return category
-  **/
-  @ApiModelProperty(required = true, value = "")
-  @NotNull
+   **/
+  @Schema(required = true, description = "")
+      @NotNull
 
-  @Valid
-
-
-  @JsonProperty("category")
-  public TppMessageCategory getCategory() {
+    @Valid
+    public TppMessageCategory getCategory() {
     return category;
   }
 
@@ -60,15 +58,12 @@ public class TppMessage2XX   {
   /**
    * Get code
    * @return code
-  **/
-  @ApiModelProperty(required = true, value = "")
-  @NotNull
+   **/
+  @Schema(required = true, description = "")
+      @NotNull
 
-  @Valid
-
-
-  @JsonProperty("code")
-  public MessageCode2XX getCode() {
+    @Valid
+    public MessageCode2XX getCode() {
     return code;
   }
 
@@ -84,13 +79,10 @@ public class TppMessage2XX   {
   /**
    * Get path
    * @return path
-  **/
-  @ApiModelProperty(value = "")
+   **/
+  @Schema(description = "")
 
-
-
-  @JsonProperty("path")
-  public String getPath() {
+    public String getPath() {
     return path;
   }
 
@@ -104,15 +96,12 @@ public class TppMessage2XX   {
   }
 
   /**
-   * Get text
+   * Additional explaining text to the TPP.
    * @return text
-  **/
-  @ApiModelProperty(value = "")
+   **/
+  @Schema(description = "Additional explaining text to the TPP.")
 
-@Size(max=500)
-
-  @JsonProperty("text")
-  public String getText() {
+  @Size(max=500)   public String getText() {
     return text;
   }
 
@@ -128,11 +117,12 @@ public class TppMessage2XX   {
     }
     if (o == null || getClass() != o.getClass()) {
       return false;
-}    TppMessage2XX tppMessage2XX = (TppMessage2XX) o;
+    }
+    TppMessage2XX tppMessage2XX = (TppMessage2XX) o;
     return Objects.equals(this.category, tppMessage2XX.category) &&
-    Objects.equals(this.code, tppMessage2XX.code) &&
-    Objects.equals(this.path, tppMessage2XX.path) &&
-    Objects.equals(this.text, tppMessage2XX.text);
+        Objects.equals(this.code, tppMessage2XX.code) &&
+        Objects.equals(this.path, tppMessage2XX.path) &&
+        Objects.equals(this.text, tppMessage2XX.text);
   }
 
   @Override
@@ -164,4 +154,3 @@ public class TppMessage2XX   {
     return o.toString().replace("\n", "\n    ");
   }
 }
-

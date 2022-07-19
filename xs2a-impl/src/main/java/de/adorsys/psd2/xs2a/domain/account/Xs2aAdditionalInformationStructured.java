@@ -18,12 +18,12 @@
 
 package de.adorsys.psd2.xs2a.domain.account;
 
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
 @Data
 public class Xs2aAdditionalInformationStructured {
 
-    @ApiModelProperty(value = "Details of underlying standing orders.")
+    @Schema(description = "Details of underlying standing orders.")
     private Xs2aStandingOrderDetails standingOrderDetails;
 }

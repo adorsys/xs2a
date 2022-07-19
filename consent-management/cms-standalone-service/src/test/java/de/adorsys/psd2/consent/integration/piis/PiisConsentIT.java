@@ -30,32 +30,37 @@ import de.adorsys.psd2.consent.domain.consent.ConsentEntity;
 import de.adorsys.psd2.consent.integration.config.IntegrationTestConfiguration;
 import de.adorsys.psd2.consent.repository.ConsentJpaRepository;
 import de.adorsys.psd2.core.data.AccountAccess;
+import de.adorsys.psd2.integration.test.BaseTest;
+import de.adorsys.psd2.integration.test.TestDBConfiguration;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
 import de.adorsys.psd2.xs2a.core.profile.AccountReference;
 import de.adorsys.psd2.xs2a.core.profile.AccountReferenceSelector;
 import de.adorsys.psd2.xs2a.core.profile.AccountReferenceType;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import org.jetbrains.annotations.NotNull;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import org.springframework.mock.web.MockHttpServletRequest;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.springframework.transaction.annotation.Transactional;
 
-import javax.persistence.EntityManager;
 import java.time.LocalDate;
+import java.time.OffsetDateTime;
 import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-@ActiveProfiles("integration-test")
+@ActiveProfiles("testcontainers-it")
 @ExtendWith(SpringExtension.class)
-@ContextConfiguration(classes = {IntegrationTestConfiguration.class, MockHttpServletRequest.class})
-@DataJpaTest
-class PiisConsentIT {
+@SpringBootTest
+@ContextConfiguration(classes = {TestDBConfiguration.class, IntegrationTestConfiguration.class},
+    initializers = {PiisConsentIT.Initializer.class})
+class PiisConsentIT extends BaseTest {
+
     private static final String PSU_ID = "ID";
     private static final String PSU_ID_TYPE = "TYPE";
     private static final String PSU_CORPORATE_ID = "CORPORATE_ID";
@@ -78,27 +83,32 @@ class PiisConsentIT {
     @Autowired
     private CmsAspspPiisService cmsAspspPiisServiceInternal;
     @Autowired
-    private EntityManager entityManager;
-    @Autowired
     private ConsentJpaRepository consentJpaRepository;
     @Autowired
     private PiisConsentService piisConsentService;
 
+    @BeforeEach
+    public void setUp() {
+        clearData();
+    }
+
     @Test
+    @Transactional
     void createPiisConsent_successWithNewStatus() {
         // When
         cmsAspspPiisServiceInternal.createConsent(buildPsuIdData(), buildCreatePiisConsentRequest(), DEFAULT_SERVICE_INSTANCE_ID);
-        flushAndClearPersistenceContext();
         Iterable<ConsentEntity> entities = consentJpaRepository.findAll();
         ConsentEntity savedEntity = entities.iterator().next();
 
         // Then
-        // First, we check that creation timestamp is equals to status change timestamp
-        assertEquals(savedEntity.getStatusChangeTimestamp(), savedEntity.getCreationTimestamp());
+        // First, we check that status change timestamp is equals to creation timestamp
+        OffsetDateTime expected = savedEntity.getCreationTimestamp();
+        OffsetDateTime actual = savedEntity.getStatusChangeTimestamp();
+        assertEquals(expected, actual);
 
         // When
-        cmsAspspPiisServiceInternal.terminateConsent(savedEntity.getExternalId(), DEFAULT_SERVICE_INSTANCE_ID);
-        flushAndClearPersistenceContext();
+        savedEntity.setConsentStatus(ConsentStatus.TERMINATED_BY_ASPSP);
+        consentJpaRepository.save(savedEntity);
 
         // Then
         // Second, we update the status and check it and the updated timestamp
@@ -120,7 +130,6 @@ class PiisConsentIT {
         cmsAspspPiisServiceInternal.createConsent(aspsp, request, DEFAULT_SERVICE_INSTANCE_ID);
         cmsAspspPiisServiceInternal.createConsent(aspsp1, request, DEFAULT_SERVICE_INSTANCE_ID);
         cmsAspspPiisServiceInternal.createConsent(aspsp1NoCorporateId, request, DEFAULT_SERVICE_INSTANCE_ID);
-        flushAndClearPersistenceContext();
 
         //Then
         PageData<List<CmsPiisConsent>> consentsAspsp = cmsAspspPiisServiceInternal.getConsentsForPsu(aspsp, DEFAULT_SERVICE_INSTANCE_ID, PAGE_INDEX, ITEMS_PER_PAGE);
@@ -192,13 +201,5 @@ class PiisConsentIT {
 
     private AccountReference buildAccountReference() {
         return new AccountReference(ASPSP_ACCOUNT_ID, ACCOUNT_ID, IBAN, BBAN, PAN, MASKED_PAN, MSISDN, EUR_CURRENCY, null);
-    }
-
-    /**
-     * Flush and clear the persistence context to force the call to the database
-     */
-    private void flushAndClearPersistenceContext() {
-        entityManager.flush();
-        entityManager.clear();
     }
 }

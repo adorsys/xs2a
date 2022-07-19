@@ -18,25 +18,24 @@
 
 package de.adorsys.psd2.xs2a.core.pis;
 
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
 import javax.validation.constraints.Size;
 
 @Data
-@ApiModel(description = "Remittance", value = "Remittance")
+@Schema(description = "Remittance")
 public class Remittance {
 
-    @ApiModelProperty(value = "the actual reference", required = true, example = "Ref Number Merchant")
+    @Schema(description = "the actual reference", required = true, example = "Ref Number Merchant")
     @Size(max = 35)
     private String reference;
 
-    @ApiModelProperty(value = "reference type", example = "reference type")
+    @Schema(description = "reference type", example = "reference type")
     @Size(max = 35)
     private String referenceType;
 
-    @ApiModelProperty(value = "reference issuer", example = "reference issuer")
+    @Schema(description = "reference issuer", example = "reference issuer")
     @Size(max = 35)
     private String referenceIssuer;
 }

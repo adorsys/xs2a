@@ -1,8 +1,7 @@
 package de.adorsys.psd2.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import org.springframework.validation.annotation.Validated;
 
 import javax.validation.Valid;
@@ -14,9 +13,10 @@ import java.util.Objects;
 /**
  * List of accounts with details.
  */
-@ApiModel(description = "List of accounts with details. ")
+@Schema(description = "List of accounts with details. ")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2021-11-05T12:22:49.487689+02:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-05-06T13:00:42.214155+03:00[Europe/Kiev]")
+
 
 public class AccountList   {
   @JsonProperty("accounts")
@@ -36,15 +36,11 @@ public class AccountList   {
   /**
    * Get accounts
    * @return accounts
-  **/
-  @ApiModelProperty(required = true, value = "")
-  @NotNull
-
-  @Valid
-
-
-  @JsonProperty("accounts")
-  public List<AccountDetails> getAccounts() {
+   **/
+  @Schema(required = true, description = "")
+      @NotNull
+    @Valid
+    public List<AccountDetails> getAccounts() {
     return accounts;
   }
 
@@ -60,7 +56,8 @@ public class AccountList   {
     }
     if (o == null || getClass() != o.getClass()) {
       return false;
-}    AccountList accountList = (AccountList) o;
+    }
+    AccountList accountList = (AccountList) o;
     return Objects.equals(this.accounts, accountList.accounts);
   }
 
@@ -90,4 +87,3 @@ public class AccountList   {
     return o.toString().replace("\n", "\n    ");
   }
 }
-

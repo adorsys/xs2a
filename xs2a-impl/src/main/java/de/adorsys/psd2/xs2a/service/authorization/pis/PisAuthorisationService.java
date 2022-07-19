@@ -80,7 +80,7 @@ public class PisAuthorisationService {
             authorisationServiceEncrypted.createAuthorisation(new PisAuthorisationParentHolder(xs2aCreateAuthorisationRequest.getPaymentId()), request);
 
         if (cmsResponse.hasError()) {
-            log.info("Payment-ID [{}]. Create PIS authorisation has failed: can't save authorisation to cms DB",
+            log.info("Payment-ID [{}]. Create PIS authorisation has failed.",
                      xs2aCreateAuthorisationRequest.getPaymentId());
             return null;
         }

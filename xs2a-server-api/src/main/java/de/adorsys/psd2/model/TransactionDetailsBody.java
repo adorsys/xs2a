@@ -1,8 +1,7 @@
 package de.adorsys.psd2.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import org.springframework.validation.annotation.Validated;
 
 import javax.validation.Valid;
@@ -12,9 +11,10 @@ import java.util.Objects;
 /**
  * Transaction details.
  */
-@ApiModel(description = "Transaction details.")
+@Schema(description = "Transaction details.")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2021-11-05T12:22:49.487689+02:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-05-06T13:00:42.214155+03:00[Europe/Kiev]")
+
 
 public class TransactionDetailsBody   {
   @JsonProperty("transactionDetails")
@@ -28,15 +28,12 @@ public class TransactionDetailsBody   {
   /**
    * Get transactionDetails
    * @return transactionDetails
-  **/
-  @ApiModelProperty(required = true, value = "")
-  @NotNull
+   **/
+  @Schema(required = true, description = "")
+      @NotNull
 
-  @Valid
-
-
-  @JsonProperty("transactionDetails")
-  public Transactions getTransactionDetails() {
+    @Valid
+    public Transactions getTransactionDetails() {
     return transactionDetails;
   }
 
@@ -52,7 +49,8 @@ public class TransactionDetailsBody   {
     }
     if (o == null || getClass() != o.getClass()) {
       return false;
-}    TransactionDetailsBody transactionDetailsBody = (TransactionDetailsBody) o;
+    }
+    TransactionDetailsBody transactionDetailsBody = (TransactionDetailsBody) o;
     return Objects.equals(this.transactionDetails, transactionDetailsBody.transactionDetails);
   }
 
@@ -82,4 +80,3 @@ public class TransactionDetailsBody   {
     return o.toString().replace("\n", "\n    ");
   }
 }
-

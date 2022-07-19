@@ -3,8 +3,7 @@ package de.adorsys.psd2.model;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonValue;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import org.springframework.validation.annotation.Validated;
 
 import javax.validation.Valid;
@@ -15,9 +14,10 @@ import java.util.Objects;
 /**
  * Requested access services for a consent.
  */
-@ApiModel(description = "Requested access services for a consent. ")
+@Schema(description = "Requested access services for a consent. ")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2021-11-05T12:22:49.487689+02:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-05-06T13:00:42.214155+03:00[Europe/Kiev]")
+
 
 public class AccountAccess   {
   @JsonProperty("accounts")
@@ -65,7 +65,6 @@ public class AccountAccess   {
       return null;
     }
   }
-
   @JsonProperty("availableAccounts")
   private AvailableAccountsEnum availableAccounts = null;
 
@@ -99,7 +98,6 @@ public class AccountAccess   {
       return null;
     }
   }
-
   @JsonProperty("availableAccountsWithBalance")
   private AvailableAccountsWithBalanceEnum availableAccountsWithBalance = null;
 
@@ -133,7 +131,6 @@ public class AccountAccess   {
       return null;
     }
   }
-
   @JsonProperty("allPsd2")
   private AllPsd2Enum allPsd2 = null;
 
@@ -157,14 +154,10 @@ public class AccountAccess   {
   /**
    * Is asking for detailed account information.   If the array is empty in a request, the TPP is asking for an accessible account list.  This may be restricted in a PSU/ASPSP authorization dialogue.  If the array is empty, also the arrays for balances, additionalInformation sub attributes or transactions shall be empty, if used.
    * @return accounts
-  **/
-  @ApiModelProperty(value = "Is asking for detailed account information.   If the array is empty in a request, the TPP is asking for an accessible account list.  This may be restricted in a PSU/ASPSP authorization dialogue.  If the array is empty, also the arrays for balances, additionalInformation sub attributes or transactions shall be empty, if used. ")
-
-  @Valid
-
-
-  @JsonProperty("accounts")
-  public List<AccountReference> getAccounts() {
+   **/
+  @Schema(description = "Is asking for detailed account information.   If the array is empty in a request, the TPP is asking for an accessible account list.  This may be restricted in a PSU/ASPSP authorization dialogue.  If the array is empty, also the arrays for balances, additionalInformation sub attributes or transactions shall be empty, if used. ")
+      @Valid
+    public List<AccountReference> getAccounts() {
     return accounts;
   }
 
@@ -188,14 +181,10 @@ public class AccountAccess   {
   /**
    * Is asking for balances of the addressed accounts.  If the array is empty in the request, the TPP is asking for the balances of all accessible account lists.  This may be restricted in a PSU/ASPSP authorization dialogue.  If the array is empty, also the arrays for accounts, additionalInformation sub attributes or transactions shall be empty, if used.
    * @return balances
-  **/
-  @ApiModelProperty(value = "Is asking for balances of the addressed accounts.  If the array is empty in the request, the TPP is asking for the balances of all accessible account lists.  This may be restricted in a PSU/ASPSP authorization dialogue.  If the array is empty, also the arrays for accounts, additionalInformation sub attributes or transactions shall be empty, if used. ")
-
-  @Valid
-
-
-  @JsonProperty("balances")
-  public List<AccountReference> getBalances() {
+   **/
+  @Schema(description = "Is asking for balances of the addressed accounts.  If the array is empty in the request, the TPP is asking for the balances of all accessible account lists.  This may be restricted in a PSU/ASPSP authorization dialogue.  If the array is empty, also the arrays for accounts, additionalInformation sub attributes or transactions shall be empty, if used. ")
+      @Valid
+    public List<AccountReference> getBalances() {
     return balances;
   }
 
@@ -219,14 +208,10 @@ public class AccountAccess   {
   /**
    * Is asking for transactions of the addressed accounts.   If the array is empty in the request, the TPP is asking for the transactions of all accessible account lists.  This may be restricted in a PSU/ASPSP authorization dialogue.  If the array is empty, also the arrays for accounts, additionalInformation sub attributes or balances shall be empty, if used.
    * @return transactions
-  **/
-  @ApiModelProperty(value = "Is asking for transactions of the addressed accounts.   If the array is empty in the request, the TPP is asking for the transactions of all accessible account lists.  This may be restricted in a PSU/ASPSP authorization dialogue.  If the array is empty, also the arrays for accounts, additionalInformation sub attributes or balances shall be empty, if used. ")
-
-  @Valid
-
-
-  @JsonProperty("transactions")
-  public List<AccountReference> getTransactions() {
+   **/
+  @Schema(description = "Is asking for transactions of the addressed accounts.   If the array is empty in the request, the TPP is asking for the transactions of all accessible account lists.  This may be restricted in a PSU/ASPSP authorization dialogue.  If the array is empty, also the arrays for accounts, additionalInformation sub attributes or balances shall be empty, if used. ")
+      @Valid
+    public List<AccountReference> getTransactions() {
     return transactions;
   }
 
@@ -242,14 +227,11 @@ public class AccountAccess   {
   /**
    * Get additionalInformation
    * @return additionalInformation
-  **/
-  @ApiModelProperty(value = "")
+   **/
+  @Schema(description = "")
 
-  @Valid
-
-
-  @JsonProperty("additionalInformation")
-  public AdditionalInformationAccess getAdditionalInformation() {
+    @Valid
+    public AdditionalInformationAccess getAdditionalInformation() {
     return additionalInformation;
   }
 
@@ -265,13 +247,10 @@ public class AccountAccess   {
   /**
    * Optional if supported by API provider.  The values \"allAccounts\" and \"allAccountsWithOwnerName\" are admitted.  The support of the \"allAccountsWithOwnerName\" value by the ASPSP is optional.
    * @return availableAccounts
-  **/
-  @ApiModelProperty(value = "Optional if supported by API provider.  The values \"allAccounts\" and \"allAccountsWithOwnerName\" are admitted.  The support of the \"allAccountsWithOwnerName\" value by the ASPSP is optional. ")
+   **/
+  @Schema(description = "Optional if supported by API provider.  The values \"allAccounts\" and \"allAccountsWithOwnerName\" are admitted.  The support of the \"allAccountsWithOwnerName\" value by the ASPSP is optional. ")
 
-
-
-  @JsonProperty("availableAccounts")
-  public AvailableAccountsEnum getAvailableAccounts() {
+    public AvailableAccountsEnum getAvailableAccounts() {
     return availableAccounts;
   }
 
@@ -287,13 +266,10 @@ public class AccountAccess   {
   /**
    * Optional if supported by API provider.  The values \"allAccounts\" and \"allAccountsWithOwnerName\" are admitted.  The support of the \"allAccountsWithOwnerName\" value by the ASPSP is optional.
    * @return availableAccountsWithBalance
-  **/
-  @ApiModelProperty(value = "Optional if supported by API provider.  The values \"allAccounts\" and \"allAccountsWithOwnerName\" are admitted.  The support of the \"allAccountsWithOwnerName\" value by the ASPSP is optional. ")
+   **/
+  @Schema(description = "Optional if supported by API provider.  The values \"allAccounts\" and \"allAccountsWithOwnerName\" are admitted.  The support of the \"allAccountsWithOwnerName\" value by the ASPSP is optional. ")
 
-
-
-  @JsonProperty("availableAccountsWithBalance")
-  public AvailableAccountsWithBalanceEnum getAvailableAccountsWithBalance() {
+    public AvailableAccountsWithBalanceEnum getAvailableAccountsWithBalance() {
     return availableAccountsWithBalance;
   }
 
@@ -309,13 +285,10 @@ public class AccountAccess   {
   /**
    * Optional if supported by API provider.  The values \"allAccounts\" and \"allAccountsWithOwnerName\" are admitted.  The support of the \"allAccountsWithOwnerName\" value by the ASPSP is optional.
    * @return allPsd2
-  **/
-  @ApiModelProperty(value = "Optional if supported by API provider.  The values \"allAccounts\" and \"allAccountsWithOwnerName\" are admitted.  The support of the \"allAccountsWithOwnerName\" value by the ASPSP is optional. ")
+   **/
+  @Schema(description = "Optional if supported by API provider.  The values \"allAccounts\" and \"allAccountsWithOwnerName\" are admitted.  The support of the \"allAccountsWithOwnerName\" value by the ASPSP is optional. ")
 
-
-
-  @JsonProperty("allPsd2")
-  public AllPsd2Enum getAllPsd2() {
+    public AllPsd2Enum getAllPsd2() {
     return allPsd2;
   }
 
@@ -339,13 +312,10 @@ public class AccountAccess   {
   /**
    * If the TPP requests access to accounts via availableAccounts (List of available accounts), global  or bank driven consents, the TPP may include this element to restrict access to the referred  account types. Absence of the element is interpreted as \"no restriction\" (therefore access to  accounts of all types is requested). The element may only occur, if each of the elements    - accounts    - balances    - transactions  is either not present or contains an empty array.
    * @return restrictedTo
-  **/
-  @ApiModelProperty(value = "If the TPP requests access to accounts via availableAccounts (List of available accounts), global  or bank driven consents, the TPP may include this element to restrict access to the referred  account types. Absence of the element is interpreted as \"no restriction\" (therefore access to  accounts of all types is requested). The element may only occur, if each of the elements    - accounts    - balances    - transactions  is either not present or contains an empty array.  ")
+   **/
+  @Schema(description = "If the TPP requests access to accounts via availableAccounts (List of available accounts), global  or bank driven consents, the TPP may include this element to restrict access to the referred  account types. Absence of the element is interpreted as \"no restriction\" (therefore access to  accounts of all types is requested). The element may only occur, if each of the elements    - accounts    - balances    - transactions  is either not present or contains an empty array.  ")
 
-
-
-  @JsonProperty("restrictedTo")
-  public List<String> getRestrictedTo() {
+    public List<String> getRestrictedTo() {
     return restrictedTo;
   }
 
@@ -361,15 +331,16 @@ public class AccountAccess   {
     }
     if (o == null || getClass() != o.getClass()) {
       return false;
-}    AccountAccess accountAccess = (AccountAccess) o;
+    }
+    AccountAccess accountAccess = (AccountAccess) o;
     return Objects.equals(this.accounts, accountAccess.accounts) &&
-    Objects.equals(this.balances, accountAccess.balances) &&
-    Objects.equals(this.transactions, accountAccess.transactions) &&
-    Objects.equals(this.additionalInformation, accountAccess.additionalInformation) &&
-    Objects.equals(this.availableAccounts, accountAccess.availableAccounts) &&
-    Objects.equals(this.availableAccountsWithBalance, accountAccess.availableAccountsWithBalance) &&
-    Objects.equals(this.allPsd2, accountAccess.allPsd2) &&
-    Objects.equals(this.restrictedTo, accountAccess.restrictedTo);
+        Objects.equals(this.balances, accountAccess.balances) &&
+        Objects.equals(this.transactions, accountAccess.transactions) &&
+        Objects.equals(this.additionalInformation, accountAccess.additionalInformation) &&
+        Objects.equals(this.availableAccounts, accountAccess.availableAccounts) &&
+        Objects.equals(this.availableAccountsWithBalance, accountAccess.availableAccountsWithBalance) &&
+        Objects.equals(this.allPsd2, accountAccess.allPsd2) &&
+        Objects.equals(this.restrictedTo, accountAccess.restrictedTo);
   }
 
   @Override
@@ -405,4 +376,3 @@ public class AccountAccess   {
     return o.toString().replace("\n", "\n    ");
   }
 }
-

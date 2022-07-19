@@ -29,19 +29,20 @@ import de.adorsys.psd2.consent.integration.config.IntegrationTestConfiguration;
 import de.adorsys.psd2.consent.psu.api.CmsPsuAisService;
 import de.adorsys.psd2.consent.repository.ConsentJpaRepository;
 import de.adorsys.psd2.core.data.AccountAccess;
+import de.adorsys.psd2.integration.test.BaseTest;
+import de.adorsys.psd2.integration.test.TestDBConfiguration;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
-import de.adorsys.xs2a.reader.JsonReader;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceException;
@@ -51,19 +52,21 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.when;
 
-@ActiveProfiles("integration-test")
+@ActiveProfiles("testcontainers-it")
 @ExtendWith(SpringExtension.class)
-@ContextConfiguration(classes = {IntegrationTestConfiguration.class, MockHttpServletRequest.class})
-@DataJpaTest
-class AisConsentIT {
+@SpringBootTest
+@ContextConfiguration(classes = {TestDBConfiguration.class, IntegrationTestConfiguration.class},
+    initializers = {AisConsentIT.Initializer.class})
+class AisConsentIT extends BaseTest {
+
     private static final String DEFAULT_SERVICE_INSTANCE_ID = "UNDEFINED";
     private static final Integer DEFAULT_PAGE_INDEX = 0;
     private static final Integer DEFAULT_ITEMS_PER_PAGE = 20;
 
     @Autowired
-    private ConsentService consentService;
-    @Autowired
     private EntityManager entityManager;
+    @Autowired
+    private ConsentService consentService;
     @Autowired
     private ConsentJpaRepository consentJpaRepository;
     @Autowired
@@ -72,22 +75,22 @@ class AisConsentIT {
     @MockBean
     private AspspProfileService aspspProfileService;
 
-    private final JsonReader jsonReader = new JsonReader();
-
     @BeforeEach
     public void setUp() {
+        clearData();
+
         AspspSettings aspspSettings = jsonReader.getObjectFromFile("json/aspect/aspsp-settings.json", AspspSettings.class);
         when(aspspProfileService.getAspspSettings(DEFAULT_SERVICE_INSTANCE_ID)).thenReturn(aspspSettings);
     }
 
     @Test
+    @Transactional
     void createAisConsent_successWithNewStatus() throws WrongChecksumException {
         // Given
         CmsConsent createAisConsentRequest = buildCreateAisConsentRequest();
 
         // When
         consentService.createConsent(createAisConsentRequest);
-        flushAndClearPersistenceContext();
         Iterable<ConsentEntity> entities = consentJpaRepository.findAll();
         ConsentEntity savedEntity = entities.iterator().next();
 
@@ -96,8 +99,8 @@ class AisConsentIT {
         assertEquals(savedEntity.getStatusChangeTimestamp(), savedEntity.getCreationTimestamp());
 
         // When
-        consentService.updateConsentStatusById(savedEntity.getExternalId(), ConsentStatus.EXPIRED);
-        flushAndClearPersistenceContext();
+        savedEntity.setConsentStatus(ConsentStatus.EXPIRED);
+        consentJpaRepository.save(savedEntity);
 
         // Then
         // Second, we update the status and check it and the updated timestamp
@@ -108,13 +111,13 @@ class AisConsentIT {
     }
 
     @Test
+    @Transactional
     void createAisConsent_successWithTheSameStatus() throws WrongChecksumException {
         // Given
         CmsConsent createAisConsentRequest = buildCreateAisConsentRequest();
 
         // When
         consentService.createConsent(createAisConsentRequest);
-        flushAndClearPersistenceContext();
         Iterable<ConsentEntity> entities = consentJpaRepository.findAll();
         ConsentEntity savedEntity = entities.iterator().next();
 
@@ -123,11 +126,11 @@ class AisConsentIT {
         assertEquals(savedEntity.getStatusChangeTimestamp(), savedEntity.getCreationTimestamp());
 
         // When
-        consentService.updateConsentStatusById(savedEntity.getExternalId(), ConsentStatus.RECEIVED);
-        flushAndClearPersistenceContext();
+        savedEntity.setConsentStatus(ConsentStatus.RECEIVED);
+        consentJpaRepository.save(savedEntity);
 
         // Then
-        // Second, we update the status for the same and check it and the updated timestamp
+        // Second, we update the status and check it and the updated timestamp
         entities = consentJpaRepository.findAll();
         ConsentEntity updatedEntity = entities.iterator().next();
         assertEquals(ConsentStatus.RECEIVED, updatedEntity.getConsentStatus());
@@ -135,13 +138,13 @@ class AisConsentIT {
     }
 
     @Test
+    @Transactional
     void createAisConsent_failShouldThrowException() throws WrongChecksumException {
         // Given
         CmsConsent createAisConsentRequest = buildCreateAisConsentRequest();
 
         // When
         consentService.createConsent(createAisConsentRequest);
-        flushAndClearPersistenceContext();
         Iterable<ConsentEntity> entities = consentJpaRepository.findAll();
         ConsentEntity savedEntity = entities.iterator().next();
 
@@ -154,7 +157,7 @@ class AisConsentIT {
         consentService.updateConsentStatusById(savedEntity.getExternalId(), null);
 
         assertThrows(
-            PersistenceException.class, this::flushAndClearPersistenceContext
+            PersistenceException.class, entityManager::flush
         );
     }
 
@@ -170,7 +173,6 @@ class AisConsentIT {
         consentService.createConsent(buildCreateAisConsentRequestWithPsuData(aspsp));
         consentService.createConsent(buildCreateAisConsentRequestWithPsuData(aspsp1));
         consentService.createConsent(buildCreateAisConsentRequestWithPsuData(aspsp1NoCorporateId));
-        flushAndClearPersistenceContext();
 
         //Then
         List<CmsAisAccountConsent> consentsAspsp = cmsPsuAisService.getConsentsForPsuAndAdditionalTppInfo(aspsp, DEFAULT_SERVICE_INSTANCE_ID, null, null, null, DEFAULT_PAGE_INDEX, DEFAULT_ITEMS_PER_PAGE);
@@ -204,13 +206,5 @@ class AisConsentIT {
         cmsConsent.setConsentData(jsonReader.getBytesFromFile("json/consent/integration/ais/ais-consent-data.json"));
         cmsConsent.setInstanceId(DEFAULT_SERVICE_INSTANCE_ID);
         return cmsConsent;
-    }
-
-    /**
-     * Flush and clear the persistence context to force the call to the database
-     */
-    private void flushAndClearPersistenceContext() {
-        entityManager.flush();
-        entityManager.clear();
     }
 }

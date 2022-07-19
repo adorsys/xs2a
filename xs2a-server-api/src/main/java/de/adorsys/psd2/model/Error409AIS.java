@@ -1,8 +1,7 @@
 package de.adorsys.psd2.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import org.springframework.validation.annotation.Validated;
 
 import javax.validation.Valid;
@@ -10,15 +9,15 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 
 /**
  * Standardised definition of reporting error information according to [RFC7807]  in case of a HTTP error code 409 for AIS.
  */
-@ApiModel(description = "Standardised definition of reporting error information according to [RFC7807]  in case of a HTTP error code 409 for AIS. ")
+@Schema(description = "Standardised definition of reporting error information according to [RFC7807]  in case of a HTTP error code 409 for AIS. ")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2021-11-05T12:22:49.487689+02:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-05-06T13:00:42.214155+03:00[Europe/Kiev]")
+
 
 public class Error409AIS   {
   @JsonProperty("type")
@@ -38,7 +37,7 @@ public class Error409AIS   {
   private List<Error409AISAdditionalErrors> additionalErrors = null;
 
   @JsonProperty("_links")
-  private Map _links = null;
+  private LinksAll _links = null;
 
   public Error409AIS type(String type) {
     this.type = type;
@@ -48,14 +47,11 @@ public class Error409AIS   {
   /**
    * A URI reference [RFC3986] that identifies the problem type.  Remark For Future: These URI will be provided by NextGenPSD2 in future.
    * @return type
-  **/
-  @ApiModelProperty(required = true, value = "A URI reference [RFC3986] that identifies the problem type.  Remark For Future: These URI will be provided by NextGenPSD2 in future. ")
-  @NotNull
+   **/
+  @Schema(required = true, description = "A URI reference [RFC3986] that identifies the problem type.  Remark For Future: These URI will be provided by NextGenPSD2 in future. ")
+      @NotNull
 
-@Size(max=70)
-
-  @JsonProperty("type")
-  public String getType() {
+  @Size(max=70)   public String getType() {
     return type;
   }
 
@@ -71,13 +67,10 @@ public class Error409AIS   {
   /**
    * Short human readable description of error type.  Could be in local language.  To be provided by ASPSPs.
    * @return title
-  **/
-  @ApiModelProperty(value = "Short human readable description of error type.  Could be in local language.  To be provided by ASPSPs. ")
+   **/
+  @Schema(description = "Short human readable description of error type.  Could be in local language.  To be provided by ASPSPs. ")
 
-@Size(max=70)
-
-  @JsonProperty("title")
-  public String getTitle() {
+  @Size(max=70)   public String getTitle() {
     return title;
   }
 
@@ -93,13 +86,10 @@ public class Error409AIS   {
   /**
    * Detailed human readable text specific to this instance of the error.  XPath might be used to point to the issue generating the error in addition. Remark for Future: In future, a dedicated field might be introduced for the XPath.
    * @return detail
-  **/
-  @ApiModelProperty(value = "Detailed human readable text specific to this instance of the error.  XPath might be used to point to the issue generating the error in addition. Remark for Future: In future, a dedicated field might be introduced for the XPath. ")
+   **/
+  @Schema(description = "Detailed human readable text specific to this instance of the error.  XPath might be used to point to the issue generating the error in addition. Remark for Future: In future, a dedicated field might be introduced for the XPath. ")
 
-@Size(max=500)
-
-  @JsonProperty("detail")
-  public String getDetail() {
+  @Size(max=500)   public String getDetail() {
     return detail;
   }
 
@@ -113,16 +103,13 @@ public class Error409AIS   {
   }
 
   /**
-   * Get code
+   * Message codes defined for AIS for HTTP Error code 409 (CONFLICT).
    * @return code
-  **/
-  @ApiModelProperty(required = true, value = "")
-  @NotNull
+   **/
+  @Schema(required = true, description = "Message codes defined for AIS for HTTP Error code 409 (CONFLICT).")
+      @NotNull
 
-
-
-  @JsonProperty("code")
-  public String getCode() {
+    public String getCode() {
     return code;
   }
 
@@ -146,14 +133,10 @@ public class Error409AIS   {
   /**
    * Array of Error Information Blocks.  Might be used if more than one error is to be communicated
    * @return additionalErrors
-  **/
-  @ApiModelProperty(value = "Array of Error Information Blocks.  Might be used if more than one error is to be communicated ")
-
-  @Valid
-
-
-  @JsonProperty("additionalErrors")
-  public List<Error409AISAdditionalErrors> getAdditionalErrors() {
+   **/
+  @Schema(description = "Array of Error Information Blocks.  Might be used if more than one error is to be communicated ")
+      @Valid
+    public List<Error409AISAdditionalErrors> getAdditionalErrors() {
     return additionalErrors;
   }
 
@@ -161,7 +144,7 @@ public class Error409AIS   {
     this.additionalErrors = additionalErrors;
   }
 
-  public Error409AIS _links(Map _links) {
+  public Error409AIS _links(LinksAll _links) {
     this._links = _links;
     return this;
   }
@@ -169,18 +152,15 @@ public class Error409AIS   {
   /**
    * Get _links
    * @return _links
-  **/
-  @ApiModelProperty(value = "")
+   **/
+  @Schema(description = "")
 
-  @Valid
-
-
-  @JsonProperty("_links")
-  public Map getLinks() {
+    @Valid
+    public LinksAll getLinks() {
     return _links;
   }
 
-  public void setLinks(Map _links) {
+  public void setLinks(LinksAll _links) {
     this._links = _links;
   }
 
@@ -192,13 +172,14 @@ public class Error409AIS   {
     }
     if (o == null || getClass() != o.getClass()) {
       return false;
-}    Error409AIS error409AIS = (Error409AIS) o;
+    }
+    Error409AIS error409AIS = (Error409AIS) o;
     return Objects.equals(this.type, error409AIS.type) &&
-    Objects.equals(this.title, error409AIS.title) &&
-    Objects.equals(this.detail, error409AIS.detail) &&
-    Objects.equals(this.code, error409AIS.code) &&
-    Objects.equals(this.additionalErrors, error409AIS.additionalErrors) &&
-    Objects.equals(this._links, error409AIS._links);
+        Objects.equals(this.title, error409AIS.title) &&
+        Objects.equals(this.detail, error409AIS.detail) &&
+        Objects.equals(this.code, error409AIS.code) &&
+        Objects.equals(this.additionalErrors, error409AIS.additionalErrors) &&
+        Objects.equals(this._links, error409AIS._links);
   }
 
   @Override
@@ -232,4 +213,3 @@ public class Error409AIS   {
     return o.toString().replace("\n", "\n    ");
   }
 }
-

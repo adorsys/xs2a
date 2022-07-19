@@ -1,8 +1,7 @@
 package de.adorsys.psd2.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import org.springframework.validation.annotation.Validated;
 
 import javax.validation.Valid;
@@ -10,14 +9,16 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 /**
  * Body of the JSON response for a successful create signing basket request.
  */
-@ApiModel(description = "Body of the JSON response for a successful create signing basket request.")
+@Schema(description = "Body of the JSON response for a successful create signing basket request.")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2021-11-05T12:22:49.487689+02:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-05-06T13:00:42.214155+03:00[Europe/Kiev]")
+
 
 public class SigningBasketResponse201   {
   @JsonProperty("transactionStatus")
@@ -36,7 +37,7 @@ public class SigningBasketResponse201   {
   private ChallengeData challengeData = null;
 
   @JsonProperty("_links")
-  private LinksSigningBasket _links = null;
+  private Map _links = null;
 
   @JsonProperty("psuMessage")
   private String psuMessage = null;
@@ -53,15 +54,12 @@ public class SigningBasketResponse201   {
   /**
    * Get transactionStatus
    * @return transactionStatus
-  **/
-  @ApiModelProperty(required = true, value = "")
-  @NotNull
+   **/
+  @Schema(required = true, description = "")
+      @NotNull
 
-  @Valid
-
-
-  @JsonProperty("transactionStatus")
-  public TransactionStatusSBS getTransactionStatus() {
+    @Valid
+    public TransactionStatusSBS getTransactionStatus() {
     return transactionStatus;
   }
 
@@ -75,16 +73,13 @@ public class SigningBasketResponse201   {
   }
 
   /**
-   * Get basketId
+   * Resource identification of the generated signing basket resource.
    * @return basketId
-  **/
-  @ApiModelProperty(required = true, value = "")
-  @NotNull
+   **/
+  @Schema(example = "1234-basket-567", required = true, description = "Resource identification of the generated signing basket resource.")
+      @NotNull
 
-
-
-  @JsonProperty("basketId")
-  public String getBasketId() {
+    public String getBasketId() {
     return basketId;
   }
 
@@ -100,14 +95,11 @@ public class SigningBasketResponse201   {
   /**
    * Get scaMethods
    * @return scaMethods
-  **/
-  @ApiModelProperty(value = "")
+   **/
+  @Schema(description = "")
 
-  @Valid
-
-
-  @JsonProperty("scaMethods")
-  public ScaMethods getScaMethods() {
+    @Valid
+    public ScaMethods getScaMethods() {
     return scaMethods;
   }
 
@@ -123,14 +115,11 @@ public class SigningBasketResponse201   {
   /**
    * Get chosenScaMethod
    * @return chosenScaMethod
-  **/
-  @ApiModelProperty(value = "")
+   **/
+  @Schema(description = "")
 
-  @Valid
-
-
-  @JsonProperty("chosenScaMethod")
-  public ChosenScaMethod getChosenScaMethod() {
+    @Valid
+    public ChosenScaMethod getChosenScaMethod() {
     return chosenScaMethod;
   }
 
@@ -146,14 +135,11 @@ public class SigningBasketResponse201   {
   /**
    * Get challengeData
    * @return challengeData
-  **/
-  @ApiModelProperty(value = "")
+   **/
+  @Schema(description = "")
 
-  @Valid
-
-
-  @JsonProperty("challengeData")
-  public ChallengeData getChallengeData() {
+    @Valid
+    public ChallengeData getChallengeData() {
     return challengeData;
   }
 
@@ -161,7 +147,7 @@ public class SigningBasketResponse201   {
     this.challengeData = challengeData;
   }
 
-  public SigningBasketResponse201 _links(LinksSigningBasket _links) {
+  public SigningBasketResponse201 _links(Map _links) {
     this._links = _links;
     return this;
   }
@@ -169,19 +155,16 @@ public class SigningBasketResponse201   {
   /**
    * Get _links
    * @return _links
-  **/
-  @ApiModelProperty(required = true, value = "")
-  @NotNull
+   **/
+  @Schema(required = true, description = "")
+      @NotNull
 
-  @Valid
-
-
-  @JsonProperty("_links")
-  public LinksSigningBasket getLinks() {
+    @Valid
+    public Map getLinks() {
     return _links;
   }
 
-  public void setLinks(LinksSigningBasket _links) {
+  public void setLinks(Map _links) {
     this._links = _links;
   }
 
@@ -191,15 +174,12 @@ public class SigningBasketResponse201   {
   }
 
   /**
-   * Get psuMessage
+   * Text to be displayed to the PSU.
    * @return psuMessage
-  **/
-  @ApiModelProperty(value = "")
+   **/
+  @Schema(description = "Text to be displayed to the PSU.")
 
-@Size(max=500)
-
-  @JsonProperty("psuMessage")
-  public String getPsuMessage() {
+  @Size(max=500)   public String getPsuMessage() {
     return psuMessage;
   }
 
@@ -223,14 +203,10 @@ public class SigningBasketResponse201   {
   /**
    * Get tppMessages
    * @return tppMessages
-  **/
-  @ApiModelProperty(value = "")
-
-  @Valid
-
-
-  @JsonProperty("tppMessages")
-  public List<TppMessage2XX> getTppMessages() {
+   **/
+  @Schema(description = "")
+      @Valid
+    public List<TppMessage2XX> getTppMessages() {
     return tppMessages;
   }
 
@@ -246,15 +222,16 @@ public class SigningBasketResponse201   {
     }
     if (o == null || getClass() != o.getClass()) {
       return false;
-}    SigningBasketResponse201 signingBasketResponse201 = (SigningBasketResponse201) o;
+    }
+    SigningBasketResponse201 signingBasketResponse201 = (SigningBasketResponse201) o;
     return Objects.equals(this.transactionStatus, signingBasketResponse201.transactionStatus) &&
-    Objects.equals(this.basketId, signingBasketResponse201.basketId) &&
-    Objects.equals(this.scaMethods, signingBasketResponse201.scaMethods) &&
-    Objects.equals(this.chosenScaMethod, signingBasketResponse201.chosenScaMethod) &&
-    Objects.equals(this.challengeData, signingBasketResponse201.challengeData) &&
-    Objects.equals(this._links, signingBasketResponse201._links) &&
-    Objects.equals(this.psuMessage, signingBasketResponse201.psuMessage) &&
-    Objects.equals(this.tppMessages, signingBasketResponse201.tppMessages);
+        Objects.equals(this.basketId, signingBasketResponse201.basketId) &&
+        Objects.equals(this.scaMethods, signingBasketResponse201.scaMethods) &&
+        Objects.equals(this.chosenScaMethod, signingBasketResponse201.chosenScaMethod) &&
+        Objects.equals(this.challengeData, signingBasketResponse201.challengeData) &&
+        Objects.equals(this._links, signingBasketResponse201._links) &&
+        Objects.equals(this.psuMessage, signingBasketResponse201.psuMessage) &&
+        Objects.equals(this.tppMessages, signingBasketResponse201.tppMessages);
   }
 
   @Override
@@ -290,4 +267,3 @@ public class SigningBasketResponse201   {
     return o.toString().replace("\n", "\n    ");
   }
 }
-

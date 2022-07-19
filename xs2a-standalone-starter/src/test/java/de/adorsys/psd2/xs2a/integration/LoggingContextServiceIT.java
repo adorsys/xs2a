@@ -32,6 +32,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InOrder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.info.BuildProperties;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -78,6 +79,8 @@ class LoggingContextServiceIT {
     private MockMvc mockMvc;
     @MockBean
     private LoggingContextService loggingContextService;
+    @MockBean
+    private BuildProperties buildProperties;
 
     @Qualifier("aspspProfileRestTemplate")
     @Autowired

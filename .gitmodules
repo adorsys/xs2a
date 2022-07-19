@@ -1,4 +1,0 @@
-[submodule "scripts/release/release-scripts"]
-	path = scripts/release-scripts
-	url = git@github.com:borisskert/release-scripts.git
-	branch = master

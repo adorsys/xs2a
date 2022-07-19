@@ -19,24 +19,28 @@
 package de.adorsys.psd2.consent.psu.api;
 
 import de.adorsys.psd2.consent.api.CmsConstant;
-import io.swagger.annotations.ApiImplicitParam;
-import io.swagger.annotations.ApiImplicitParams;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.Parameters;
+import io.swagger.v3.oas.annotations.enums.ParameterIn;
 
-import java.lang.annotation.*;
+import java.lang.annotation.Documented;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Inherited;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
 @Inherited
 @Documented
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
-@ApiImplicitParams({
-    @ApiImplicitParam(name = CmsConstant.HEADERS.PSU_ID, value = PsuHeadersDescription.PSU_ID, paramType = PsuHeadersDescription.PARAM_TYPE),
-    @ApiImplicitParam(name = CmsConstant.HEADERS.PSU_ID_TYPE, value = PsuHeadersDescription.PSU_ID_TYPE, paramType = PsuHeadersDescription.PARAM_TYPE),
-    @ApiImplicitParam(name = CmsConstant.HEADERS.PSU_CORPORATE_ID, value = PsuHeadersDescription.PSU_CORPORATE_ID, paramType = PsuHeadersDescription.PARAM_TYPE),
-    @ApiImplicitParam(name = CmsConstant.HEADERS.PSU_CORPORATE_ID_TYPE, value = PsuHeadersDescription.PSU_CORPORATE_ID_TYPE, paramType = PsuHeadersDescription.PARAM_TYPE)
+@Parameters({
+    @Parameter(name = CmsConstant.HEADERS.PSU_ID, description = PsuHeadersDescription.PSU_ID, in = ParameterIn.HEADER),
+    @Parameter(name = CmsConstant.HEADERS.PSU_ID_TYPE, description = PsuHeadersDescription.PSU_ID_TYPE, in = ParameterIn.HEADER),
+    @Parameter(name = CmsConstant.HEADERS.PSU_CORPORATE_ID, description = PsuHeadersDescription.PSU_CORPORATE_ID, in = ParameterIn.HEADER),
+    @Parameter(name = CmsConstant.HEADERS.PSU_CORPORATE_ID_TYPE, description = PsuHeadersDescription.PSU_CORPORATE_ID_TYPE, in = ParameterIn.HEADER)
 })
 public @interface PsuHeadersDescription {
-    String PARAM_TYPE = "header";
-
     String PSU_ID = "Client ID of the PSU in the ASPSP client interface. Might be mandated in the ASPSP's documentation. Is not contained if an OAuth2 based authentication was performed in a pre-step or an OAuth2 based SCA was performed in an preceding AIS service in the same session. ";
     String PSU_ID_TYPE = "Type of the PSU-ID, needed in scenarios where PSUs have several PSU-IDs as access possibility. ";
     String PSU_CORPORATE_ID = "Might be mandated in the ASPSP's documentation. Only used in a corporate context. ";

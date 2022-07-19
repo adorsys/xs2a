@@ -19,14 +19,14 @@
 package de.adorsys.psd2.xs2a.exception.model.error500;
 
 import de.adorsys.psd2.xs2a.exception.model.AbstractErrorNGAIS;
-import io.swagger.annotations.ApiModel;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 
 /**
  * NextGenPSD2 specific definition of reporting error information in case of a HTTP error code 500.
  */
-@ApiModel(description = "NextGenPSD2 specific definition of reporting error information in case of a HTTP error code 500. ")
+@Schema(description = "NextGenPSD2 specific definition of reporting error information in case of a HTTP error code 500. ")
 @SuperBuilder
 @NoArgsConstructor
 public class Error500NGPIS extends AbstractErrorNGAIS<TppMessage500PIS> {

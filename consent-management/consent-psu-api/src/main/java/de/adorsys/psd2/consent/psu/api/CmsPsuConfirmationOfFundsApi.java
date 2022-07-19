@@ -26,35 +26,41 @@ import de.adorsys.psd2.consent.api.piis.v2.CmsConfirmationOfFundsResponse;
 import de.adorsys.psd2.consent.psu.api.config.CmsPsuApiTagName;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.sca.AuthenticationDataHolder;
-import io.swagger.annotations.*;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import static de.adorsys.psd2.consent.psu.api.config.CmsPsuApiDefaultValue.DEFAULT_SERVICE_INSTANCE_ID;
 
 @RequestMapping(path = "psu-api/v2/piis/consent")
-@Api(value = "psu-api/v2/piis/consent", tags = CmsPsuApiTagName.CONFIRMATION_OF_FUNDS)
+@Tag(name = CmsPsuApiTagName.CONFIRMATION_OF_FUNDS, description = "CMS-PSU Confirmation Of Funds Controller")
 public interface CmsPsuConfirmationOfFundsApi {
 
     @PutMapping(path = "/{consent-id}/authorisation/{authorisation-id}/status/{status}")
-    @ApiOperation(value = "Updates a Status of Confirmation of Funds Consent Authorisation by its ID and PSU ID")
+    @Operation(description = "Updates a Status of Confirmation of Funds Consent Authorisation by its ID and PSU ID")
     @ApiResponses(value = {
-        @ApiResponse(code = 200, message = "OK"),
-        @ApiResponse(code = 400, message = "Bad Request"),
-        @ApiResponse(code = 408, message = "Request Timeout", response = CmsConfirmationOfFundsResponse.class)})
+        @ApiResponse(responseCode = "200", description = "OK"),
+        @ApiResponse(responseCode = "400", description = "Bad Request"),
+        @ApiResponse(responseCode = "408", description = "Request Timeout", content = @Content(schema = @Schema(implementation = CmsConfirmationOfFundsResponse.class)))})
     @PsuHeadersDescription
     ResponseEntity<Object> updateAuthorisationStatus(
-        @ApiParam(name = CmsConstant.PATH.CONSENT_ID,
-            value = "The confirmation of funds consent identification assigned to the created confirmation of funds consent.",
+        @Parameter(name = CmsConstant.PATH.CONSENT_ID,
+            description = "The confirmation of funds consent identification assigned to the created confirmation of funds consent",
             example = "bf489af6-a2cb-4b75-b71d-d66d58b934d7",
             required = true)
         @PathVariable(CmsConstant.PATH.CONSENT_ID) String consentId,
-        @ApiParam(value = "The following code values are permitted 'received', 'psuIdentified', 'psuAuthenticated', 'scaMethodSelected', 'started', 'finalised', 'failed', 'exempted', 'unconfirmed'. These values might be extended by ASPSP by more values.",
+        @Schema(description = "The following code values are permitted 'received', 'psuIdentified', 'psuAuthenticated', 'scaMethodSelected', 'started', 'finalised', 'failed', 'exempted', 'unconfirmed'. These values might be extended by ASPSP by more values.",
             allowableValues = "RECEIVED, PSUIDENTIFIED, PSUAUTHENTICATED, SCAMETHODSELECTED,  STARTED,  FINALISED, FAILED, EXEMPTED, UNCONFIRMED",
             required = true)
         @PathVariable(CmsConstant.PATH.STATUS) String status,
-        @ApiParam(name = CmsConstant.PATH.AUTHORISATION_ID,
-            value = "The confirmation of funds consent authorisation identification assigned to the created authorisation.",
+        @Parameter(name = CmsConstant.PATH.AUTHORISATION_ID,
+            description = "The confirmation of funds consent authorisation identification assigned to the created authorisation",
             example = "bf489af6-a2cb-4b75-b71d-d66d58b934d7",
             required = true)
         @PathVariable(CmsConstant.PATH.AUTHORISATION_ID) String authorisationId,
@@ -66,58 +72,57 @@ public interface CmsPsuConfirmationOfFundsApi {
         @RequestBody(required = false) AuthenticationDataHolder authenticationDataHolder);
 
     @GetMapping(path = "/redirect/{redirect-id}")
-    @ApiOperation(value = "Gets consent response by redirect ID")
+    @Operation(description = "Gets consent response by redirect ID")
     @ApiResponses(value = {
-        @ApiResponse(code = 200, message = "OK", response = CmsAisConsentResponse.class),
-        @ApiResponse(code = 404, message = "Not Found"),
-        @ApiResponse(code = 408, message = "Request Timeout", response = CmsAisConsentResponse.class)})
+        @ApiResponse(responseCode = "200", description = "OK", content = @Content(schema = @Schema(implementation = CmsAisConsentResponse.class))),
+        @ApiResponse(responseCode = "404", description = "Not Found"),
+        @ApiResponse(responseCode = "408", description = "Request Timeout", content = @Content(schema = @Schema(implementation = CmsAisConsentResponse.class)))})
     ResponseEntity<CmsConfirmationOfFundsResponse> getConsentByRedirectId(
-        @ApiParam(name = CmsConstant.PATH.REDIRECT_ID, value = "The redirect identification assigned to the created consent", required = true, example = "bf489af6-a2cb-4b75-b71d-d66d58b934d7")
+        @Parameter(name = CmsConstant.PATH.REDIRECT_ID, description = "The redirect identification assigned to the created consent", required = true, example = "bf489af6-a2cb-4b75-b71d-d66d58b934d7")
         @PathVariable(CmsConstant.PATH.REDIRECT_ID) String redirectId,
         @RequestHeader(value = CmsConstant.HEADERS.INSTANCE_ID, required = false, defaultValue = DEFAULT_SERVICE_INSTANCE_ID) String instanceId);
 
     @PutMapping(path = "/{consent-id}/authorisation/{authorisation-id}/psu-data")
-    @ApiOperation(value = "Updates PSU Data in Confirmation of Funds Consent, based on the trusted information about PSU known to ASPSP (i.e. after authorisation).")
+    @Operation(description = "Updates PSU Data in Confirmation of Funds Consent, based on the trusted information about PSU known to ASPSP (i.e. after authorisation).")
     @ApiResponses(value = {
-        @ApiResponse(code = 200, message = "OK"),
-        @ApiResponse(code = 400, message = "Bad Request"),
-        @ApiResponse(code = 408, message = "Request Timeout", response = CmsAisConsentResponse.class)
-    })
+        @ApiResponse(responseCode = "200", description = "OK"),
+        @ApiResponse(responseCode = "400", description = "Bad Request"),
+        @ApiResponse(responseCode = "408", description = "Request Timeout", content = @Content(schema = @Schema(implementation = CmsAisConsentResponse.class)))})
     ResponseEntity<Object> updatePsuDataInConsent(
         @SuppressWarnings("unused")
-        @ApiParam(name = CmsConstant.PATH.CONSENT_ID, value = "The consent identifier", example = "bf489af6-a2cb-4b75-b71d-d66d58b934d7", required = true)
+        @Parameter(name = CmsConstant.PATH.CONSENT_ID, description = "The consent identifier", example = "bf489af6-a2cb-4b75-b71d-d66d58b934d7", required = true)
         @PathVariable(CmsConstant.PATH.CONSENT_ID) String consentId,
-        @ApiParam(name = CmsConstant.PATH.AUTHORISATION_ID, value = "The authorisation identifier of the current authorisation session", example = "bf489af6-a2cb-4b75-b71d-d66d58b934d7", required = true)
+        @Parameter(name = CmsConstant.PATH.AUTHORISATION_ID, description = "The authorisation identifier of the current authorisation session", example = "bf489af6-a2cb-4b75-b71d-d66d58b934d7", required = true)
         @PathVariable(CmsConstant.PATH.AUTHORISATION_ID) String authorisationId,
         @RequestHeader(value = CmsConstant.HEADERS.INSTANCE_ID, required = false, defaultValue = DEFAULT_SERVICE_INSTANCE_ID) String instanceId,
         @RequestBody PsuIdData psuIdData);
 
 
     @GetMapping(path = "authorisation/{authorisation-id}")
-    @ApiOperation(value = "Get Confirmation of Funds Consent Authorisation by its ID")
+    @Operation(description = "Get Confirmation of Funds Consent Authorisation by its ID")
     @ApiResponses(value = {
-        @ApiResponse(code = 200, message = "OK", response = CmsPsuAuthorisation.class),
-        @ApiResponse(code = 400, message = "Bad request")})
+        @ApiResponse(responseCode = "200", description = "OK", content = @Content(schema = @Schema(implementation = CmsPsuAuthorisation.class))),
+        @ApiResponse(responseCode = "400", description = "Bad request")})
     ResponseEntity<CmsPsuConfirmationOfFundsAuthorisation> getAuthorisationByAuthorisationId(
-        @ApiParam(name = CmsConstant.PATH.AUTHORISATION_ID,
-            value = "The authorisation identification.",
+        @Parameter(name = CmsConstant.PATH.AUTHORISATION_ID,
+            description = "The authorisation identification",
             example = "bf489af6-a2cb-4b75-b71d-d66d58b934d7",
             required = true)
         @PathVariable(CmsConstant.PATH.AUTHORISATION_ID) String authorisationId,
         @RequestHeader(value = CmsConstant.HEADERS.INSTANCE_ID, required = false, defaultValue = DEFAULT_SERVICE_INSTANCE_ID) String instanceId);
 
     @PutMapping(path = "/{consent-id}/status/{status}")
-    @ApiOperation(value = "Updates a status of Confirmation of Funds Consent")
+    @Operation(description = "Updates a status of Confirmation of Funds Consent")
     @ApiResponses(value = {
-        @ApiResponse(code = 200, message = "OK"),
-        @ApiResponse(code = 404, message = "Not found")})
+        @ApiResponse(responseCode = "200", description = "OK"),
+        @ApiResponse(responseCode = "404", description = "Not found")})
     ResponseEntity<Void> updateConsentStatus(
-        @ApiParam(name = CmsConstant.PATH.CONSENT_ID,
-            value = "The confirmation of funds consent identification assigned to the created confirmation of funds consent.",
+        @Parameter(name = CmsConstant.PATH.CONSENT_ID,
+            description = "The confirmation of funds consent identification assigned to the created confirmation of funds consent",
             example = "bf489af6-a2cb-4b75-b71d-d66d58b934d7",
             required = true)
         @PathVariable(CmsConstant.PATH.CONSENT_ID) String consentId,
-        @ApiParam(value = "The following code values are permitted 'RECEIVED', 'REJECTED', 'VALID', 'REVOKED_BY_PSU', 'EXPIRED', 'TERMINATED_BY_TPP', 'TERMINATED_BY_ASPSP', 'PARTIALLY_AUTHORISED'. These values might be extended by ASPSP by more values.",
+        @Schema(description = "The following code values are permitted 'RECEIVED', 'REJECTED', 'VALID', 'REVOKED_BY_PSU', 'EXPIRED', 'TERMINATED_BY_TPP', 'TERMINATED_BY_ASPSP', 'PARTIALLY_AUTHORISED'. These values might be extended by ASPSP by more values.",
             allowableValues = "RECEIVED, REJECTED, VALID, REVOKED_BY_PSU, EXPIRED, TERMINATED_BY_TPP, TERMINATED_BY_ASPSP, PARTIALLY_AUTHORISED",
             required = true)
         @PathVariable(CmsConstant.PATH.STATUS) String status,
@@ -125,14 +130,14 @@ public interface CmsPsuConfirmationOfFundsApi {
 
 
     @GetMapping(path = "/{consent-id}")
-    @ApiOperation(value = "Returns confirmation of funds consent object by its ID.")
+    @Operation(description = "Returns confirmation of funds consent object by its ID.")
     @ApiResponses(value = {
-        @ApiResponse(code = 200, message = "OK", response = CmsAisAccountConsent.class),
-        @ApiResponse(code = 404, message = "Not Found")})
+        @ApiResponse(responseCode = "200", description = "OK", content = @Content(schema = @Schema(implementation = CmsAisAccountConsent.class))),
+        @ApiResponse(responseCode = "404", description = "Not Found")})
     @PsuHeadersDescription
     ResponseEntity<CmsConfirmationOfFundsConsent> getConsentByConsentId(
-        @ApiParam(name = CmsConstant.PATH.CONSENT_ID,
-            value = "The consent identification assigned to the created confirmation of funds consent.",
+        @Parameter(name = CmsConstant.PATH.CONSENT_ID,
+            description = "The consent identification assigned to the created confirmation of funds consent",
             example = "bf489af6-a2cb-4b75-b71d-d66d58b934d7",
             required = true)
         @PathVariable(CmsConstant.PATH.CONSENT_ID) String consentId,

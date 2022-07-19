@@ -22,9 +22,11 @@ import de.adorsys.psd2.aspsp.profile.domain.AspspSettings;
 import de.adorsys.psd2.aspsp.profile.service.AspspProfileService;
 import de.adorsys.psd2.aspsp.profile.web.config.AspspProfileApiTagName;
 import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiResponse;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -38,15 +40,15 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping(path = "/api/v1/aspsp-profile")
-@Api(value = "Aspsp profile", tags = AspspProfileApiTagName.ASPSP_PROFILE)
+@Tag(description = "ASPSP profile", name = AspspProfileApiTagName.ASPSP_PROFILE)
 public class AspspProfileController {
     public static final String DEFAULT_SERVICE_INSTANCE_ID = "";
 
     private final AspspProfileService aspspProfileService;
 
     @GetMapping
-    @ApiOperation(value = "Reads aspsp specific settings")
-    @ApiResponse(code = 200, message = "Ok", response = AspspSettings.class)
+    @Operation(description = "Reads ASPSP specific settings")
+    @ApiResponse(responseCode = "200", description = "Ok", content = @Content(schema = @Schema(implementation = AspspSettings.class)))
     public ResponseEntity<AspspSettings> getAspspSettings(
         @RequestHeader(value = "Instance-ID", required = false, defaultValue = DEFAULT_SERVICE_INSTANCE_ID) String instanceId
     ) {
@@ -54,8 +56,8 @@ public class AspspProfileController {
     }
 
     @GetMapping(path = "/sca-approaches")
-    @ApiOperation(value = "Reads list of sca approaches")
-    @ApiResponse(code = 200, message = "Ok", response = ScaApproach.class)
+    @Operation(description = "Reads list of SCA approaches")
+    @ApiResponse(responseCode = "200", description = "Ok", content = @Content(schema = @Schema(implementation = ScaApproach.class)))
     public ResponseEntity<List<ScaApproach>> getScaApproaches(
         @RequestHeader(value = "Instance-ID", required = false, defaultValue = DEFAULT_SERVICE_INSTANCE_ID) String instanceId
     ) {
@@ -63,8 +65,8 @@ public class AspspProfileController {
     }
 
     @GetMapping(path = "/multitenancy/enabled")
-    @ApiOperation(value = "Reads multitenncy supporting flag")
-    @ApiResponse(code = 200, message = "Ok", response = ScaApproach.class)
+    @Operation(description = "Reads multitenancy supporting flag")
+    @ApiResponse(responseCode = "200", description = "Ok", content = @Content(schema = @Schema(implementation = ScaApproach.class)))
     public ResponseEntity<Boolean> isMultitenancyEnabled() {
         return new ResponseEntity<>(aspspProfileService.isMultitenancyEnabled(), HttpStatus.OK);
     }

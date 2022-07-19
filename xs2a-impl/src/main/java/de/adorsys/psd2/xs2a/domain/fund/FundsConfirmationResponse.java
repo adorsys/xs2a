@@ -19,16 +19,15 @@
 package de.adorsys.psd2.xs2a.domain.fund;
 
 import de.adorsys.psd2.xs2a.core.domain.ErrorHolder;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
 @NoArgsConstructor
-@ApiModel(description = "FundsConfirmationResponse", value = "Funds confirmation response")
+@Schema(description = "FundsConfirmationResponse", name = "Funds confirmation response")
 public class FundsConfirmationResponse {
-    @ApiModelProperty(value = "Equals 'true' if sufficient funds are available at the time of the request, 'false' otherwise.", example = "true")
+    @Schema(description = "Equals 'true' if sufficient funds are available at the time of the request, 'false' otherwise.", example = "true")
     private boolean fundsAvailable;
     private ErrorHolder errorHolder;
 

@@ -1,8 +1,7 @@
 package de.adorsys.psd2.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import org.springframework.validation.annotation.Validated;
 
 import java.util.Objects;
@@ -10,9 +9,10 @@ import java.util.Objects;
 /**
  * Link to a resource.
  */
-@ApiModel(description = "Link to a resource.")
+@Schema(description = "Link to a resource.")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2021-11-05T12:22:49.487689+02:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-05-06T13:00:42.214155+03:00[Europe/Kiev]")
+
 
 public class HrefType   {
   @JsonProperty("href")
@@ -24,15 +24,12 @@ public class HrefType   {
   }
 
   /**
-   * Get href
+   * Link to a resource.
    * @return href
-  **/
-  @ApiModelProperty(value = "")
+   **/
+  @Schema(example = "/v1/payments/sepa-credit-transfers/1234-wertiq-983", description = "Link to a resource.")
 
-
-
-  @JsonProperty("href")
-  public String getHref() {
+    public String getHref() {
     return href;
   }
 
@@ -48,7 +45,8 @@ public class HrefType   {
     }
     if (o == null || getClass() != o.getClass()) {
       return false;
-}    HrefType hrefType = (HrefType) o;
+    }
+    HrefType hrefType = (HrefType) o;
     return Objects.equals(this.href, hrefType.href);
   }
 
@@ -78,4 +76,3 @@ public class HrefType   {
     return o.toString().replace("\n", "\n    ");
   }
 }
-

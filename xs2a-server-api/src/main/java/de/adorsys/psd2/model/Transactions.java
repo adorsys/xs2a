@@ -1,8 +1,7 @@
 package de.adorsys.psd2.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import org.springframework.validation.annotation.Validated;
 
 import javax.validation.Valid;
@@ -16,9 +15,10 @@ import java.util.Objects;
 /**
  * Transaction details.
  */
-@ApiModel(description = "Transaction details.")
+@Schema(description = "Transaction details.")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-01-31T18:01:42.990584+02:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-05-09T09:54:21.220655+03:00[Europe/Kiev]")
+
 
 public class Transactions   {
   @JsonProperty("transactionId")
@@ -123,15 +123,12 @@ public class Transactions   {
   }
 
   /**
-   * Get transactionId
+   * This identification is given by the attribute transactionId of the corresponding entry of a transaction list.
    * @return transactionId
-  **/
-  @ApiModelProperty(value = "")
+   **/
+  @Schema(example = "3dc3d5b3-7023-4848-9853-f5400a64e80f", description = "This identification is given by the attribute transactionId of the corresponding entry of a transaction list. ")
 
-
-
-  @JsonProperty("transactionId")
-  public String getTransactionId() {
+    public String getTransactionId() {
     return transactionId;
   }
 
@@ -145,15 +142,12 @@ public class Transactions   {
   }
 
   /**
-   * Get entryReference
+   * Is the identification of the transaction as used e.g. for reference for deltafunction on application level. The same identification as for example used within camt.05x messages.
    * @return entryReference
-  **/
-  @ApiModelProperty(value = "")
+   **/
+  @Schema(description = "Is the identification of the transaction as used e.g. for reference for deltafunction on application level. The same identification as for example used within camt.05x messages. ")
 
-@Size(max=35)
-
-  @JsonProperty("entryReference")
-  public String getEntryReference() {
+  @Size(max=35)   public String getEntryReference() {
     return entryReference;
   }
 
@@ -169,13 +163,10 @@ public class Transactions   {
   /**
    * Unique end to end identity.
    * @return endToEndId
-  **/
-  @ApiModelProperty(value = "Unique end to end identity.")
+   **/
+  @Schema(description = "Unique end to end identity.")
 
-@Size(max=35)
-
-  @JsonProperty("endToEndId")
-  public String getEndToEndId() {
+  @Size(max=35)   public String getEndToEndId() {
     return endToEndId;
   }
 
@@ -191,13 +182,10 @@ public class Transactions   {
   /**
    * If this indicator equals true, then the related entry is a batch entry.
    * @return batchIndicator
-  **/
-  @ApiModelProperty(value = "If this indicator equals true, then the related entry is a batch entry. ")
+   **/
+  @Schema(description = "If this indicator equals true, then the related entry is a batch entry. ")
 
-
-
-  @JsonProperty("batchIndicator")
-  public Boolean isBatchIndicator() {
+    public Boolean isBatchIndicator() {
     return batchIndicator;
   }
 
@@ -213,13 +201,10 @@ public class Transactions   {
   /**
    * Shall be used if and only if the batchIndicator is contained and equals true.
    * @return batchNumberOfTransactions
-  **/
-  @ApiModelProperty(value = "Shall be used if and only if the batchIndicator is contained and equals true. ")
+   **/
+  @Schema(description = "Shall be used if and only if the batchIndicator is contained and equals true. ")
 
-
-
-  @JsonProperty("batchNumberOfTransactions")
-  public Integer getBatchNumberOfTransactions() {
+    public Integer getBatchNumberOfTransactions() {
     return batchNumberOfTransactions;
   }
 
@@ -235,13 +220,10 @@ public class Transactions   {
   /**
    * Identification of Mandates, e.g. a SEPA Mandate ID.
    * @return mandateId
-  **/
-  @ApiModelProperty(value = "Identification of Mandates, e.g. a SEPA Mandate ID.")
+   **/
+  @Schema(description = "Identification of Mandates, e.g. a SEPA Mandate ID.")
 
-@Size(max=35)
-
-  @JsonProperty("mandateId")
-  public String getMandateId() {
+  @Size(max=35)   public String getMandateId() {
     return mandateId;
   }
 
@@ -257,13 +239,10 @@ public class Transactions   {
   /**
    * Identification of a Cheque.
    * @return checkId
-  **/
-  @ApiModelProperty(value = "Identification of a Cheque.")
+   **/
+  @Schema(description = "Identification of a Cheque.")
 
-@Size(max=35)
-
-  @JsonProperty("checkId")
-  public String getCheckId() {
+  @Size(max=35)   public String getCheckId() {
     return checkId;
   }
 
@@ -277,15 +256,12 @@ public class Transactions   {
   }
 
   /**
-   * Get creditorId
+   * Identification of Creditors, e.g. a SEPA Creditor ID.
    * @return creditorId
-  **/
-  @ApiModelProperty(value = "")
+   **/
+  @Schema(example = "Creditor Id 5678", description = "Identification of Creditors, e.g. a SEPA Creditor ID.")
 
-@Size(max=35)
-
-  @JsonProperty("creditorId")
-  public String getCreditorId() {
+  @Size(max=35)   public String getCreditorId() {
     return creditorId;
   }
 
@@ -299,16 +275,13 @@ public class Transactions   {
   }
 
   /**
-   * Get bookingDate
+   * The date when an entry is posted to an account on the ASPSPs books.
    * @return bookingDate
-  **/
-  @ApiModelProperty(value = "")
+   **/
+  @Schema(description = "The date when an entry is posted to an account on the ASPSPs books. ")
 
-  @Valid
-
-
-  @JsonProperty("bookingDate")
-  public LocalDate getBookingDate() {
+    @Valid
+    public LocalDate getBookingDate() {
     return bookingDate;
   }
 
@@ -324,14 +297,11 @@ public class Transactions   {
   /**
    * The Date at which assets become available to the account owner in case of a credit, or cease to be available to the account owner in case of a debit entry. **Usage:** If entry status is pending and value date is present, then the value date refers to an expected/requested value date.
    * @return valueDate
-  **/
-  @ApiModelProperty(value = "The Date at which assets become available to the account owner in case of a credit, or cease to be available to the account owner in case of a debit entry. **Usage:** If entry status is pending and value date is present, then the value date refers to an expected/requested value date.")
+   **/
+  @Schema(description = "The Date at which assets become available to the account owner in case of a credit, or cease to be available to the account owner in case of a debit entry. **Usage:** If entry status is pending and value date is present, then the value date refers to an expected/requested value date.")
 
-  @Valid
-
-
-  @JsonProperty("valueDate")
-  public LocalDate getValueDate() {
+    @Valid
+    public LocalDate getValueDate() {
     return valueDate;
   }
 
@@ -347,15 +317,12 @@ public class Transactions   {
   /**
    * Get transactionAmount
    * @return transactionAmount
-  **/
-  @ApiModelProperty(required = true, value = "")
-  @NotNull
+   **/
+  @Schema(required = true, description = "")
+      @NotNull
 
-  @Valid
-
-
-  @JsonProperty("transactionAmount")
-  public Amount getTransactionAmount() {
+    @Valid
+    public Amount getTransactionAmount() {
     return transactionAmount;
   }
 
@@ -371,14 +338,11 @@ public class Transactions   {
   /**
    * Get currencyExchange
    * @return currencyExchange
-  **/
-  @ApiModelProperty(value = "")
+   **/
+  @Schema(description = "")
 
-  @Valid
-
-
-  @JsonProperty("currencyExchange")
-  public ReportExchangeRateList getCurrencyExchange() {
+    @Valid
+    public ReportExchangeRateList getCurrencyExchange() {
     return currencyExchange;
   }
 
@@ -392,15 +356,12 @@ public class Transactions   {
   }
 
   /**
-   * Get creditorName
+   * Creditor name.
    * @return creditorName
-  **/
-  @ApiModelProperty(value = "")
+   **/
+  @Schema(example = "Creditor Name", description = "Creditor name.")
 
-@Size(max=70)
-
-  @JsonProperty("creditorName")
-  public String getCreditorName() {
+  @Size(max=70)   public String getCreditorName() {
     return creditorName;
   }
 
@@ -416,14 +377,11 @@ public class Transactions   {
   /**
    * Get creditorAccount
    * @return creditorAccount
-  **/
-  @ApiModelProperty(value = "")
+   **/
+  @Schema(description = "")
 
-  @Valid
-
-
-  @JsonProperty("creditorAccount")
-  public AccountReference getCreditorAccount() {
+    @Valid
+    public AccountReference getCreditorAccount() {
     return creditorAccount;
   }
 
@@ -437,15 +395,12 @@ public class Transactions   {
   }
 
   /**
-   * Get creditorAgent
+   * BICFI
    * @return creditorAgent
-  **/
-  @ApiModelProperty(value = "")
+   **/
+  @Schema(example = "AAAADEBBXXX", description = "BICFI ")
 
-@Pattern(regexp="[A-Z]{6,6}[A-Z2-9][A-NP-Z0-9]([A-Z0-9]{3,3}){0,1}")
-
-  @JsonProperty("creditorAgent")
-  public String getCreditorAgent() {
+  @Pattern(regexp="[A-Z]{6,6}[A-Z2-9][A-NP-Z0-9]([A-Z0-9]{3,3}){0,1}")   public String getCreditorAgent() {
     return creditorAgent;
   }
 
@@ -459,15 +414,12 @@ public class Transactions   {
   }
 
   /**
-   * Get ultimateCreditor
+   * Ultimate creditor.
    * @return ultimateCreditor
-  **/
-  @ApiModelProperty(value = "")
+   **/
+  @Schema(example = "Ultimate Creditor", description = "Ultimate creditor.")
 
-@Size(max=70)
-
-  @JsonProperty("ultimateCreditor")
-  public String getUltimateCreditor() {
+  @Size(max=70)   public String getUltimateCreditor() {
     return ultimateCreditor;
   }
 
@@ -481,15 +433,12 @@ public class Transactions   {
   }
 
   /**
-   * Get debtorName
+   * Debtor name.
    * @return debtorName
-  **/
-  @ApiModelProperty(value = "")
+   **/
+  @Schema(example = "Debtor Name", description = "Debtor name.")
 
-@Size(max=70)
-
-  @JsonProperty("debtorName")
-  public String getDebtorName() {
+  @Size(max=70)   public String getDebtorName() {
     return debtorName;
   }
 
@@ -505,14 +454,11 @@ public class Transactions   {
   /**
    * Get debtorAccount
    * @return debtorAccount
-  **/
-  @ApiModelProperty(value = "")
+   **/
+  @Schema(description = "")
 
-  @Valid
-
-
-  @JsonProperty("debtorAccount")
-  public AccountReference getDebtorAccount() {
+    @Valid
+    public AccountReference getDebtorAccount() {
     return debtorAccount;
   }
 
@@ -526,15 +472,12 @@ public class Transactions   {
   }
 
   /**
-   * Get debtorAgent
+   * BICFI
    * @return debtorAgent
-  **/
-  @ApiModelProperty(value = "")
+   **/
+  @Schema(example = "AAAADEBBXXX", description = "BICFI ")
 
-@Pattern(regexp="[A-Z]{6,6}[A-Z2-9][A-NP-Z0-9]([A-Z0-9]{3,3}){0,1}")
-
-  @JsonProperty("debtorAgent")
-  public String getDebtorAgent() {
+  @Pattern(regexp="[A-Z]{6,6}[A-Z2-9][A-NP-Z0-9]([A-Z0-9]{3,3}){0,1}")   public String getDebtorAgent() {
     return debtorAgent;
   }
 
@@ -548,15 +491,12 @@ public class Transactions   {
   }
 
   /**
-   * Get ultimateDebtor
+   * Ultimate debtor.
    * @return ultimateDebtor
-  **/
-  @ApiModelProperty(value = "")
+   **/
+  @Schema(example = "Ultimate Debtor", description = "Ultimate debtor.")
 
-@Size(max=70)
-
-  @JsonProperty("ultimateDebtor")
-  public String getUltimateDebtor() {
+  @Size(max=70)   public String getUltimateDebtor() {
     return ultimateDebtor;
   }
 
@@ -570,15 +510,12 @@ public class Transactions   {
   }
 
   /**
-   * Get remittanceInformationUnstructured
+   * Unstructured remittance information.
    * @return remittanceInformationUnstructured
-  **/
-  @ApiModelProperty(value = "")
+   **/
+  @Schema(example = "Ref Number Merchant", description = "Unstructured remittance information. ")
 
-@Size(max=140)
-
-  @JsonProperty("remittanceInformationUnstructured")
-  public String getRemittanceInformationUnstructured() {
+  @Size(max=140)   public String getRemittanceInformationUnstructured() {
     return remittanceInformationUnstructured;
   }
 
@@ -594,14 +531,11 @@ public class Transactions   {
   /**
    * Get remittanceInformationUnstructuredArray
    * @return remittanceInformationUnstructuredArray
-  **/
-  @ApiModelProperty(value = "")
+   **/
+  @Schema(description = "")
 
-  @Valid
-
-
-  @JsonProperty("remittanceInformationUnstructuredArray")
-  public RemittanceInformationUnstructuredArray getRemittanceInformationUnstructuredArray() {
+    @Valid
+    public RemittanceInformationUnstructuredArray getRemittanceInformationUnstructuredArray() {
     return remittanceInformationUnstructuredArray;
   }
 
@@ -617,14 +551,11 @@ public class Transactions   {
   /**
    * Get remittanceInformationStructured
    * @return remittanceInformationStructured
-  **/
-  @ApiModelProperty(value = "")
+   **/
+  @Schema(description = "")
 
-  @Valid
-
-
-  @JsonProperty("remittanceInformationStructured")
-  public RemittanceInformationStructuredMax140 getRemittanceInformationStructured() {
+    @Valid
+    public RemittanceInformationStructuredMax140 getRemittanceInformationStructured() {
     return remittanceInformationStructured;
   }
 
@@ -640,14 +571,11 @@ public class Transactions   {
   /**
    * Get remittanceInformationStructuredArray
    * @return remittanceInformationStructuredArray
-  **/
-  @ApiModelProperty(value = "")
+   **/
+  @Schema(description = "")
 
-  @Valid
-
-
-  @JsonProperty("remittanceInformationStructuredArray")
-  public RemittanceInformationStructuredArray getRemittanceInformationStructuredArray() {
+    @Valid
+    public RemittanceInformationStructuredArray getRemittanceInformationStructuredArray() {
     return remittanceInformationStructuredArray;
   }
 
@@ -663,14 +591,11 @@ public class Transactions   {
   /**
    * Get entryDetails
    * @return entryDetails
-  **/
-  @ApiModelProperty(value = "")
+   **/
+  @Schema(description = "")
 
-  @Valid
-
-
-  @JsonProperty("entryDetails")
-  public EntryDetails getEntryDetails() {
+    @Valid
+    public EntryDetails getEntryDetails() {
     return entryDetails;
   }
 
@@ -684,15 +609,12 @@ public class Transactions   {
   }
 
   /**
-   * Get additionalInformation
+   * Might be used by the ASPSP to transport additional transaction related information to the PSU
    * @return additionalInformation
-  **/
-  @ApiModelProperty(value = "")
+   **/
+  @Schema(example = "Some additional transaction related information.", description = "Might be used by the ASPSP to transport additional transaction related information to the PSU ")
 
-@Size(max=500)
-
-  @JsonProperty("additionalInformation")
-  public String getAdditionalInformation() {
+  @Size(max=500)   public String getAdditionalInformation() {
     return additionalInformation;
   }
 
@@ -708,14 +630,11 @@ public class Transactions   {
   /**
    * Get additionalInformationStructured
    * @return additionalInformationStructured
-  **/
-  @ApiModelProperty(value = "")
+   **/
+  @Schema(description = "")
 
-  @Valid
-
-
-  @JsonProperty("additionalInformationStructured")
-  public AdditionalInformationStructured getAdditionalInformationStructured() {
+    @Valid
+    public AdditionalInformationStructured getAdditionalInformationStructured() {
     return additionalInformationStructured;
   }
 
@@ -731,14 +650,11 @@ public class Transactions   {
   /**
    * Get purposeCode
    * @return purposeCode
-  **/
-  @ApiModelProperty(value = "")
+   **/
+  @Schema(description = "")
 
-  @Valid
-
-
-  @JsonProperty("purposeCode")
-  public PurposeCode getPurposeCode() {
+    @Valid
+    public PurposeCode getPurposeCode() {
     return purposeCode;
   }
 
@@ -752,15 +668,12 @@ public class Transactions   {
   }
 
   /**
-   * Get bankTransactionCode
+   * Bank transaction code as used by the ASPSP and using the sub elements of this structured code defined by ISO 20022.   This code type is concatenating the three ISO20022 Codes    * Domain Code,    * Family Code, and    * SubFamiliy Code  by hyphens, resulting in 'DomainCode'-'FamilyCode'-'SubFamilyCode'. For standing order reports the following codes are applicable:   * \"PMNT-ICDT-STDO\" for credit transfers,   * \"PMNT-IRCT-STDO\"  for instant credit transfers   * \"PMNT-ICDT-XBST\" for cross-border credit transfers   * \"PMNT-IRCT-XBST\" for cross-border real time credit transfers and   * \"PMNT-MCOP-OTHR\" for specific standing orders which have a dynamical amount to move left funds e.g. on month end to a saving account
    * @return bankTransactionCode
-  **/
-  @ApiModelProperty(value = "")
+   **/
+  @Schema(example = "PMNT-RDDT-ESDD", description = "Bank transaction code as used by the ASPSP and using the sub elements of this structured code defined by ISO 20022.   This code type is concatenating the three ISO20022 Codes    * Domain Code,    * Family Code, and    * SubFamiliy Code  by hyphens, resulting in 'DomainCode'-'FamilyCode'-'SubFamilyCode'. For standing order reports the following codes are applicable:   * \"PMNT-ICDT-STDO\" for credit transfers,   * \"PMNT-IRCT-STDO\"  for instant credit transfers   * \"PMNT-ICDT-XBST\" for cross-border credit transfers   * \"PMNT-IRCT-XBST\" for cross-border real time credit transfers and   * \"PMNT-MCOP-OTHR\" for specific standing orders which have a dynamical amount to move left funds e.g. on month end to a saving account ")
 
-
-
-  @JsonProperty("bankTransactionCode")
-  public String getBankTransactionCode() {
+    public String getBankTransactionCode() {
     return bankTransactionCode;
   }
 
@@ -774,15 +687,12 @@ public class Transactions   {
   }
 
   /**
-   * Get proprietaryBankTransactionCode
+   * Proprietary bank transaction code as used within a community or within an ASPSP e.g.  for MT94x based transaction reports.
    * @return proprietaryBankTransactionCode
-  **/
-  @ApiModelProperty(value = "")
+   **/
+  @Schema(description = "Proprietary bank transaction code as used within a community or within an ASPSP e.g.  for MT94x based transaction reports. ")
 
-@Size(max=35)
-
-  @JsonProperty("proprietaryBankTransactionCode")
-  public String getProprietaryBankTransactionCode() {
+  @Size(max=35)   public String getProprietaryBankTransactionCode() {
     return proprietaryBankTransactionCode;
   }
 
@@ -798,14 +708,11 @@ public class Transactions   {
   /**
    * Get balanceAfterTransaction
    * @return balanceAfterTransaction
-  **/
-  @ApiModelProperty(value = "")
+   **/
+  @Schema(description = "")
 
-  @Valid
-
-
-  @JsonProperty("balanceAfterTransaction")
-  public Balance getBalanceAfterTransaction() {
+    @Valid
+    public Balance getBalanceAfterTransaction() {
     return balanceAfterTransaction;
   }
 
@@ -813,7 +720,7 @@ public class Transactions   {
     this.balanceAfterTransaction = balanceAfterTransaction;
   }
 
-  public Transactions _links(Map _links) {
+  public Transactions _links(LinksTransactionDetails _links) {
     this._links = _links;
     return this;
   }
@@ -821,14 +728,11 @@ public class Transactions   {
   /**
    * Get _links
    * @return _links
-  **/
-  @ApiModelProperty(value = "")
+   **/
+  @Schema(description = "")
 
-  @Valid
-
-
-  @JsonProperty("_links")
-  public Map getLinks() {
+    @Valid
+    public Map getLinks() {
     return _links;
   }
 
@@ -844,39 +748,40 @@ public class Transactions   {
     }
     if (o == null || getClass() != o.getClass()) {
       return false;
-}    Transactions transactions = (Transactions) o;
+    }
+    Transactions transactions = (Transactions) o;
     return Objects.equals(this.transactionId, transactions.transactionId) &&
-    Objects.equals(this.entryReference, transactions.entryReference) &&
-    Objects.equals(this.endToEndId, transactions.endToEndId) &&
-    Objects.equals(this.batchIndicator, transactions.batchIndicator) &&
-    Objects.equals(this.batchNumberOfTransactions, transactions.batchNumberOfTransactions) &&
-    Objects.equals(this.mandateId, transactions.mandateId) &&
-    Objects.equals(this.checkId, transactions.checkId) &&
-    Objects.equals(this.creditorId, transactions.creditorId) &&
-    Objects.equals(this.bookingDate, transactions.bookingDate) &&
-    Objects.equals(this.valueDate, transactions.valueDate) &&
-    Objects.equals(this.transactionAmount, transactions.transactionAmount) &&
-    Objects.equals(this.currencyExchange, transactions.currencyExchange) &&
-    Objects.equals(this.creditorName, transactions.creditorName) &&
-    Objects.equals(this.creditorAccount, transactions.creditorAccount) &&
-    Objects.equals(this.creditorAgent, transactions.creditorAgent) &&
-    Objects.equals(this.ultimateCreditor, transactions.ultimateCreditor) &&
-    Objects.equals(this.debtorName, transactions.debtorName) &&
-    Objects.equals(this.debtorAccount, transactions.debtorAccount) &&
-    Objects.equals(this.debtorAgent, transactions.debtorAgent) &&
-    Objects.equals(this.ultimateDebtor, transactions.ultimateDebtor) &&
-    Objects.equals(this.remittanceInformationUnstructured, transactions.remittanceInformationUnstructured) &&
-    Objects.equals(this.remittanceInformationUnstructuredArray, transactions.remittanceInformationUnstructuredArray) &&
-    Objects.equals(this.remittanceInformationStructured, transactions.remittanceInformationStructured) &&
-    Objects.equals(this.remittanceInformationStructuredArray, transactions.remittanceInformationStructuredArray) &&
-    Objects.equals(this.entryDetails, transactions.entryDetails) &&
-    Objects.equals(this.additionalInformation, transactions.additionalInformation) &&
-    Objects.equals(this.additionalInformationStructured, transactions.additionalInformationStructured) &&
-    Objects.equals(this.purposeCode, transactions.purposeCode) &&
-    Objects.equals(this.bankTransactionCode, transactions.bankTransactionCode) &&
-    Objects.equals(this.proprietaryBankTransactionCode, transactions.proprietaryBankTransactionCode) &&
-    Objects.equals(this.balanceAfterTransaction, transactions.balanceAfterTransaction) &&
-    Objects.equals(this._links, transactions._links);
+        Objects.equals(this.entryReference, transactions.entryReference) &&
+        Objects.equals(this.endToEndId, transactions.endToEndId) &&
+        Objects.equals(this.batchIndicator, transactions.batchIndicator) &&
+        Objects.equals(this.batchNumberOfTransactions, transactions.batchNumberOfTransactions) &&
+        Objects.equals(this.mandateId, transactions.mandateId) &&
+        Objects.equals(this.checkId, transactions.checkId) &&
+        Objects.equals(this.creditorId, transactions.creditorId) &&
+        Objects.equals(this.bookingDate, transactions.bookingDate) &&
+        Objects.equals(this.valueDate, transactions.valueDate) &&
+        Objects.equals(this.transactionAmount, transactions.transactionAmount) &&
+        Objects.equals(this.currencyExchange, transactions.currencyExchange) &&
+        Objects.equals(this.creditorName, transactions.creditorName) &&
+        Objects.equals(this.creditorAccount, transactions.creditorAccount) &&
+        Objects.equals(this.creditorAgent, transactions.creditorAgent) &&
+        Objects.equals(this.ultimateCreditor, transactions.ultimateCreditor) &&
+        Objects.equals(this.debtorName, transactions.debtorName) &&
+        Objects.equals(this.debtorAccount, transactions.debtorAccount) &&
+        Objects.equals(this.debtorAgent, transactions.debtorAgent) &&
+        Objects.equals(this.ultimateDebtor, transactions.ultimateDebtor) &&
+        Objects.equals(this.remittanceInformationUnstructured, transactions.remittanceInformationUnstructured) &&
+        Objects.equals(this.remittanceInformationUnstructuredArray, transactions.remittanceInformationUnstructuredArray) &&
+        Objects.equals(this.remittanceInformationStructured, transactions.remittanceInformationStructured) &&
+        Objects.equals(this.remittanceInformationStructuredArray, transactions.remittanceInformationStructuredArray) &&
+        Objects.equals(this.entryDetails, transactions.entryDetails) &&
+        Objects.equals(this.additionalInformation, transactions.additionalInformation) &&
+        Objects.equals(this.additionalInformationStructured, transactions.additionalInformationStructured) &&
+        Objects.equals(this.purposeCode, transactions.purposeCode) &&
+        Objects.equals(this.bankTransactionCode, transactions.bankTransactionCode) &&
+        Objects.equals(this.proprietaryBankTransactionCode, transactions.proprietaryBankTransactionCode) &&
+        Objects.equals(this.balanceAfterTransaction, transactions.balanceAfterTransaction) &&
+        Objects.equals(this._links, transactions._links);
   }
 
   @Override
@@ -936,4 +841,3 @@ public class Transactions   {
     return o.toString().replace("\n", "\n    ");
   }
 }
-

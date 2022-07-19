@@ -1,8 +1,7 @@
 package de.adorsys.psd2.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import org.springframework.validation.annotation.Validated;
 
 import javax.validation.Valid;
@@ -11,9 +10,10 @@ import java.util.Objects;
 /**
  * JSON Body of a establish signing basket request. The body shall contain at least one entry.
  */
-@ApiModel(description = "JSON Body of a establish signing basket request. The body shall contain at least one entry. ")
+@Schema(description = "JSON Body of a establish signing basket request. The body shall contain at least one entry. ")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2021-11-05T12:22:49.487689+02:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-05-06T13:00:42.214155+03:00[Europe/Kiev]")
+
 
 public class SigningBasket   {
   @JsonProperty("paymentIds")
@@ -30,14 +30,11 @@ public class SigningBasket   {
   /**
    * Get paymentIds
    * @return paymentIds
-  **/
-  @ApiModelProperty(value = "")
+   **/
+  @Schema(description = "")
 
-  @Valid
-
-
-  @JsonProperty("paymentIds")
-  public PaymentIdList getPaymentIds() {
+    @Valid
+    public PaymentIdList getPaymentIds() {
     return paymentIds;
   }
 
@@ -53,14 +50,11 @@ public class SigningBasket   {
   /**
    * Get consentIds
    * @return consentIds
-  **/
-  @ApiModelProperty(value = "")
+   **/
+  @Schema(description = "")
 
-  @Valid
-
-
-  @JsonProperty("consentIds")
-  public ConsentIdList getConsentIds() {
+    @Valid
+    public ConsentIdList getConsentIds() {
     return consentIds;
   }
 
@@ -76,9 +70,10 @@ public class SigningBasket   {
     }
     if (o == null || getClass() != o.getClass()) {
       return false;
-}    SigningBasket signingBasket = (SigningBasket) o;
+    }
+    SigningBasket signingBasket = (SigningBasket) o;
     return Objects.equals(this.paymentIds, signingBasket.paymentIds) &&
-    Objects.equals(this.consentIds, signingBasket.consentIds);
+        Objects.equals(this.consentIds, signingBasket.consentIds);
   }
 
   @Override
@@ -108,4 +103,3 @@ public class SigningBasket   {
     return o.toString().replace("\n", "\n    ");
   }
 }
-

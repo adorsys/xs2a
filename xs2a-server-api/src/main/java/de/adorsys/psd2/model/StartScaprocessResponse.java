@@ -1,8 +1,7 @@
 package de.adorsys.psd2.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import org.springframework.validation.annotation.Validated;
 
 import javax.validation.Valid;
@@ -16,9 +15,10 @@ import java.util.Objects;
 /**
  * Body of the JSON response for a Start SCA authorisation request.
  */
-@ApiModel(description = "Body of the JSON response for a Start SCA authorisation request.")
+@Schema(description = "Body of the JSON response for a Start SCA authorisation request.")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2021-11-05T12:22:49.487689+02:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-05-06T13:00:42.214155+03:00[Europe/Kiev]")
+
 
 public class StartScaprocessResponse   {
   @JsonProperty("scaStatus")
@@ -54,15 +54,12 @@ public class StartScaprocessResponse   {
   /**
    * Get scaStatus
    * @return scaStatus
-  **/
-  @ApiModelProperty(required = true, value = "")
-  @NotNull
+   **/
+  @Schema(required = true, description = "")
+      @NotNull
 
-  @Valid
-
-
-  @JsonProperty("scaStatus")
-  public ScaStatus getScaStatus() {
+    @Valid
+    public ScaStatus getScaStatus() {
     return scaStatus;
   }
 
@@ -76,16 +73,13 @@ public class StartScaprocessResponse   {
   }
 
   /**
-   * Get authorisationId
+   * Resource identification of the related SCA.
    * @return authorisationId
-  **/
-  @ApiModelProperty(required = true, value = "")
-  @NotNull
+   **/
+  @Schema(example = "123auth456", required = true, description = "Resource identification of the related SCA.")
+      @NotNull
 
-
-
-  @JsonProperty("authorisationId")
-  public String getAuthorisationId() {
+    public String getAuthorisationId() {
     return authorisationId;
   }
 
@@ -101,14 +95,11 @@ public class StartScaprocessResponse   {
   /**
    * Get scaMethods
    * @return scaMethods
-  **/
-  @ApiModelProperty(value = "")
+   **/
+  @Schema(description = "")
 
-  @Valid
-
-
-  @JsonProperty("scaMethods")
-  public ScaMethods getScaMethods() {
+    @Valid
+    public ScaMethods getScaMethods() {
     return scaMethods;
   }
 
@@ -124,14 +115,11 @@ public class StartScaprocessResponse   {
   /**
    * Get chosenScaMethod
    * @return chosenScaMethod
-  **/
-  @ApiModelProperty(value = "")
+   **/
+  @Schema(description = "")
 
-  @Valid
-
-
-  @JsonProperty("chosenScaMethod")
-  public ChosenScaMethod getChosenScaMethod() {
+    @Valid
+    public ChosenScaMethod getChosenScaMethod() {
     return chosenScaMethod;
   }
 
@@ -147,14 +135,11 @@ public class StartScaprocessResponse   {
   /**
    * Get challengeData
    * @return challengeData
-  **/
-  @ApiModelProperty(value = "")
+   **/
+  @Schema(description = "")
 
-  @Valid
-
-
-  @JsonProperty("challengeData")
-  public ChallengeData getChallengeData() {
+    @Valid
+    public ChallengeData getChallengeData() {
     return challengeData;
   }
 
@@ -162,7 +147,7 @@ public class StartScaprocessResponse   {
     this.challengeData = challengeData;
   }
 
-  public StartScaprocessResponse _links(Map _links) {
+  public StartScaprocessResponse _links(LinksStartScaProcess _links) {
     this._links = _links;
     return this;
   }
@@ -170,15 +155,12 @@ public class StartScaprocessResponse   {
   /**
    * Get _links
    * @return _links
-  **/
-  @ApiModelProperty(required = true, value = "")
-  @NotNull
+   **/
+  @Schema(required = true, description = "")
+      @NotNull
 
-  @Valid
-
-
-  @JsonProperty("_links")
-  public Map getLinks() {
+    @Valid
+    public Map getLinks() {
     return _links;
   }
 
@@ -192,15 +174,12 @@ public class StartScaprocessResponse   {
   }
 
   /**
-   * Get psuMessage
+   * Text to be displayed to the PSU.
    * @return psuMessage
-  **/
-  @ApiModelProperty(value = "")
+   **/
+  @Schema(description = "Text to be displayed to the PSU.")
 
-@Size(max=500)
-
-  @JsonProperty("psuMessage")
-  public String getPsuMessage() {
+  @Size(max=500)   public String getPsuMessage() {
     return psuMessage;
   }
 
@@ -224,14 +203,10 @@ public class StartScaprocessResponse   {
   /**
    * Messages to the TPP on operational issues.
    * @return tppMessages
-  **/
-  @ApiModelProperty(value = "Messages to the TPP on operational issues.")
-
-  @Valid
-
-
-  @JsonProperty("tppMessages")
-  public List<TppMessageGeneric> getTppMessages() {
+   **/
+  @Schema(description = "Messages to the TPP on operational issues.")
+      @Valid
+    public List<TppMessageGeneric> getTppMessages() {
     return tppMessages;
   }
 
@@ -247,15 +222,16 @@ public class StartScaprocessResponse   {
     }
     if (o == null || getClass() != o.getClass()) {
       return false;
-}    StartScaprocessResponse startScaprocessResponse = (StartScaprocessResponse) o;
+    }
+    StartScaprocessResponse startScaprocessResponse = (StartScaprocessResponse) o;
     return Objects.equals(this.scaStatus, startScaprocessResponse.scaStatus) &&
-    Objects.equals(this.authorisationId, startScaprocessResponse.authorisationId) &&
-    Objects.equals(this.scaMethods, startScaprocessResponse.scaMethods) &&
-    Objects.equals(this.chosenScaMethod, startScaprocessResponse.chosenScaMethod) &&
-    Objects.equals(this.challengeData, startScaprocessResponse.challengeData) &&
-    Objects.equals(this._links, startScaprocessResponse._links) &&
-    Objects.equals(this.psuMessage, startScaprocessResponse.psuMessage) &&
-    Objects.equals(this.tppMessages, startScaprocessResponse.tppMessages);
+        Objects.equals(this.authorisationId, startScaprocessResponse.authorisationId) &&
+        Objects.equals(this.scaMethods, startScaprocessResponse.scaMethods) &&
+        Objects.equals(this.chosenScaMethod, startScaprocessResponse.chosenScaMethod) &&
+        Objects.equals(this.challengeData, startScaprocessResponse.challengeData) &&
+        Objects.equals(this._links, startScaprocessResponse._links) &&
+        Objects.equals(this.psuMessage, startScaprocessResponse.psuMessage) &&
+        Objects.equals(this.tppMessages, startScaprocessResponse.tppMessages);
   }
 
   @Override
@@ -291,4 +267,3 @@ public class StartScaprocessResponse   {
     return o.toString().replace("\n", "\n    ");
   }
 }
-

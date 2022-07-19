@@ -45,7 +45,7 @@ public class CmsCreateConsentResponseService {
         }
 
         if (response.hasError()) {
-            log.info("Consent cannot be created, because can't save to cms DB");
+            log.info("Consent creation failed in CMS.");
             return Xs2aResponse.<CmsCreateConsentResponse>builder()
                        .build();
         }

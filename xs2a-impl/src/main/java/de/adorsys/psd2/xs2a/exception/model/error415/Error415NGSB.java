@@ -19,14 +19,14 @@
 package de.adorsys.psd2.xs2a.exception.model.error415;
 
 import de.adorsys.psd2.xs2a.exception.model.AbstractErrorNGAIS;
-import io.swagger.annotations.ApiModel;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 
 /**
  * NextGenPSD2 specific definition of reporting error information in case of a HTTP error code 415.
  */
-@ApiModel(description = "NextGenPSD2 specific definition of reporting error information in case of a HTTP error code 415. ")
+@Schema(description = "NextGenPSD2 specific definition of reporting error information in case of a HTTP error code 415. ")
 @SuperBuilder
 @NoArgsConstructor
 public class Error415NGSB extends AbstractErrorNGAIS<TppMessage415SB> {

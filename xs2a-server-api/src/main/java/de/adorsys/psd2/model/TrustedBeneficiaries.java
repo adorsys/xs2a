@@ -1,8 +1,7 @@
 package de.adorsys.psd2.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import org.springframework.validation.annotation.Validated;
 
 import javax.validation.Valid;
@@ -12,9 +11,10 @@ import java.util.Objects;
 /**
  * Array of Trusted Beneficiaries.
  */
-@ApiModel(description = "Array of Trusted Beneficiaries.")
+@Schema(description = "Array of Trusted Beneficiaries.")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2021-05-24T13:41:46.273636+03:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-05-06T12:59:08.054254+03:00[Europe/Kiev]")
+
 
 public class TrustedBeneficiaries   {
   @JsonProperty("trustedBeneficiaries")
@@ -28,15 +28,12 @@ public class TrustedBeneficiaries   {
   /**
    * Get trustedBeneficiaries
    * @return trustedBeneficiaries
-  **/
-  @ApiModelProperty(required = true, value = "")
-  @NotNull
+   **/
+  @Schema(required = true, description = "")
+      @NotNull
 
-  @Valid
-
-
-  @JsonProperty("trustedBeneficiaries")
-  public TrustedBeneficiariesList getTrustedBeneficiaries() {
+    @Valid
+    public TrustedBeneficiariesList getTrustedBeneficiaries() {
     return trustedBeneficiaries;
   }
 
@@ -52,7 +49,8 @@ public class TrustedBeneficiaries   {
     }
     if (o == null || getClass() != o.getClass()) {
       return false;
-}    TrustedBeneficiaries trustedBeneficiaries = (TrustedBeneficiaries) o;
+    }
+    TrustedBeneficiaries trustedBeneficiaries = (TrustedBeneficiaries) o;
     return Objects.equals(this.trustedBeneficiaries, trustedBeneficiaries.trustedBeneficiaries);
   }
 
@@ -82,4 +80,3 @@ public class TrustedBeneficiaries   {
     return o.toString().replace("\n", "\n    ");
   }
 }
-

@@ -28,7 +28,7 @@
             <password>${env.SONATYPE_PASSWORD}</password>
         </server>
         <server>
-            <!-- privatte artifact repository-->
+            <!-- private artifact repository-->
             <id>gitlab-maven</id>
             <configuration>
                 <httpHeaders>

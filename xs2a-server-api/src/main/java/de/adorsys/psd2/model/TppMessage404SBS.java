@@ -1,7 +1,7 @@
 package de.adorsys.psd2.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import org.springframework.validation.annotation.Validated;
 
 import javax.validation.Valid;
@@ -13,7 +13,8 @@ import java.util.Objects;
  * TppMessage404SBS
  */
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2021-11-05T12:22:49.487689+02:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-05-06T13:00:42.214155+03:00[Europe/Kiev]")
+
 
 public class TppMessage404SBS   {
   @JsonProperty("category")
@@ -36,15 +37,12 @@ public class TppMessage404SBS   {
   /**
    * Get category
    * @return category
-  **/
-  @ApiModelProperty(required = true, value = "")
-  @NotNull
+   **/
+  @Schema(required = true, description = "")
+      @NotNull
 
-  @Valid
-
-
-  @JsonProperty("category")
-  public TppMessageCategory getCategory() {
+    @Valid
+    public TppMessageCategory getCategory() {
     return category;
   }
 
@@ -58,16 +56,13 @@ public class TppMessage404SBS   {
   }
 
   /**
-   * Get code
+   * Message codes defined for signing baskets for HTTP Error code 404 (NOT FOUND).
    * @return code
-  **/
-  @ApiModelProperty(required = true, value = "")
-  @NotNull
+   **/
+  @Schema(required = true, description = "Message codes defined for signing baskets for HTTP Error code 404 (NOT FOUND).")
+      @NotNull
 
-
-
-  @JsonProperty("code")
-  public String getCode() {
+    public String getCode() {
     return code;
   }
 
@@ -83,13 +78,10 @@ public class TppMessage404SBS   {
   /**
    * Get path
    * @return path
-  **/
-  @ApiModelProperty(value = "")
+   **/
+  @Schema(description = "")
 
-
-
-  @JsonProperty("path")
-  public String getPath() {
+    public String getPath() {
     return path;
   }
 
@@ -103,15 +95,12 @@ public class TppMessage404SBS   {
   }
 
   /**
-   * Get text
+   * Additional explaining text to the TPP.
    * @return text
-  **/
-  @ApiModelProperty(value = "")
+   **/
+  @Schema(description = "Additional explaining text to the TPP.")
 
-@Size(max=500)
-
-  @JsonProperty("text")
-  public String getText() {
+  @Size(max=500)   public String getText() {
     return text;
   }
 
@@ -127,11 +116,12 @@ public class TppMessage404SBS   {
     }
     if (o == null || getClass() != o.getClass()) {
       return false;
-}    TppMessage404SBS tppMessage404SBS = (TppMessage404SBS) o;
+    }
+    TppMessage404SBS tppMessage404SBS = (TppMessage404SBS) o;
     return Objects.equals(this.category, tppMessage404SBS.category) &&
-    Objects.equals(this.code, tppMessage404SBS.code) &&
-    Objects.equals(this.path, tppMessage404SBS.path) &&
-    Objects.equals(this.text, tppMessage404SBS.text);
+        Objects.equals(this.code, tppMessage404SBS.code) &&
+        Objects.equals(this.path, tppMessage404SBS.path) &&
+        Objects.equals(this.text, tppMessage404SBS.text);
   }
 
   @Override
@@ -163,4 +153,3 @@ public class TppMessage404SBS   {
     return o.toString().replace("\n", "\n    ");
   }
 }
-

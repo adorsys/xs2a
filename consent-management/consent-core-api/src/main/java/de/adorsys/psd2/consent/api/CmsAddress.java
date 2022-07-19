@@ -18,25 +18,24 @@
 
 package de.adorsys.psd2.consent.api;
 
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
 @Data
-@ApiModel(description = "Address", value = "CmsAddress")
+@Schema(description = "Address", name = "CmsAddress")
 public class CmsAddress {
-    @ApiModelProperty(value = "Street name", example = "Herrnstraße")
+    @Schema(description = "Street name", example = "Herrnstraße")
     private String streetName;
 
-    @ApiModelProperty(value = "Building number", example = "123-34")
+    @Schema(description = "Building number", example = "123-34")
     private String buildingNumber;
 
-    @ApiModelProperty(value = "Town name", example = "Nürnberg")
+    @Schema(description = "Town name", example = "Nürnberg")
     private String townName;
 
-    @ApiModelProperty(value = "Post code", example = "90431")
+    @Schema(description = "Post code", example = "90431")
     private String postCode;
 
-    @ApiModelProperty(value = "Country", example = "Germany")
+    @Schema(description = "Country", example = "Germany")
     private String country;
 }

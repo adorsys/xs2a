@@ -19,8 +19,7 @@
 package de.adorsys.psd2.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import org.springframework.validation.annotation.Validated;
 
 import javax.validation.Valid;
@@ -32,9 +31,10 @@ import java.util.Objects;
 /**
  * Body of the JSON response for a confirmation of funds content request.
  */
-@ApiModel(description = "Body of the JSON response for a confirmation of funds content request.")
+@Schema(description = "Body of the JSON response for a confirmation of funds content request.")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2020-07-01T15:25:06.394043+03:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-05-06T13:00:06.283258+03:00[Europe/Kiev]")
+
 
 public class ConsentConfirmationOfFundsContentResponse   {
   @JsonProperty("account")
@@ -63,15 +63,12 @@ public class ConsentConfirmationOfFundsContentResponse   {
   /**
    * Get account
    * @return account
-  **/
-  @ApiModelProperty(required = true, value = "")
-  @NotNull
+   **/
+  @Schema(required = true, description = "")
+      @NotNull
 
-  @Valid
-
-
-  @JsonProperty("account")
-  public AccountReference getAccount() {
+    @Valid
+    public AccountReference getAccount() {
     return account;
   }
 
@@ -85,15 +82,12 @@ public class ConsentConfirmationOfFundsContentResponse   {
   }
 
   /**
-   * Get cardNumber
+   * Card Number of the card issued by the PIISP. Should be delivered if available.
    * @return cardNumber
-  **/
-  @ApiModelProperty(value = "")
+   **/
+  @Schema(description = "Card Number of the card issued by the PIISP. Should be delivered if available.")
 
-@Size(max=35)
-
-  @JsonProperty("cardNumber")
-  public String getCardNumber() {
+  @Size(max=35)   public String getCardNumber() {
     return cardNumber;
   }
 
@@ -107,16 +101,13 @@ public class ConsentConfirmationOfFundsContentResponse   {
   }
 
   /**
-   * Get cardExpiryDate
+   * Expiry date of the card issued by the PIISP.
    * @return cardExpiryDate
-  **/
-  @ApiModelProperty(value = "")
+   **/
+  @Schema(example = "Sun Jul 01 03:00:00 EEST 2018", description = "Expiry date of the card issued by the PIISP. ")
 
-  @Valid
-
-
-  @JsonProperty("cardExpiryDate")
-  public LocalDate getCardExpiryDate() {
+    @Valid
+    public LocalDate getCardExpiryDate() {
     return cardExpiryDate;
   }
 
@@ -130,15 +121,12 @@ public class ConsentConfirmationOfFundsContentResponse   {
   }
 
   /**
-   * Get cardInformation
+   * Addtional explanation for the card product.
    * @return cardInformation
-  **/
-  @ApiModelProperty(value = "")
+   **/
+  @Schema(description = "Addtional explanation for the card product.")
 
-@Size(max=140)
-
-  @JsonProperty("cardInformation")
-  public String getCardInformation() {
+  @Size(max=140)   public String getCardInformation() {
     return cardInformation;
   }
 
@@ -152,15 +140,12 @@ public class ConsentConfirmationOfFundsContentResponse   {
   }
 
   /**
-   * Get registrationInformation
+   * Addtional information about the registration process for the PSU, e. g. a reference to the TPP / PSU contract.
    * @return registrationInformation
-  **/
-  @ApiModelProperty(value = "")
+   **/
+  @Schema(description = "Addtional information about the registration process for the PSU, e. g. a reference to the TPP / PSU contract.")
 
-@Size(max=140)
-
-  @JsonProperty("registrationInformation")
-  public String getRegistrationInformation() {
+  @Size(max=140)   public String getRegistrationInformation() {
     return registrationInformation;
   }
 
@@ -176,15 +161,12 @@ public class ConsentConfirmationOfFundsContentResponse   {
   /**
    * Get consentStatus
    * @return consentStatus
-  **/
-  @ApiModelProperty(required = true, value = "")
-  @NotNull
+   **/
+  @Schema(required = true, description = "")
+      @NotNull
 
-  @Valid
-
-
-  @JsonProperty("consentStatus")
-  public ConsentStatus getConsentStatus() {
+    @Valid
+    public ConsentStatus getConsentStatus() {
     return consentStatus;
   }
 
@@ -241,4 +223,3 @@ public class ConsentConfirmationOfFundsContentResponse   {
     return o.toString().replace("\n", "\n    ");
   }
 }
-

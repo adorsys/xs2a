@@ -20,8 +20,9 @@ package de.adorsys.psd2.consent.api.config;
 
 public class InternalCmsXs2aApiTagName {
     public static final String AIS_CONSENTS = "AIS, Consents";
+    public static final String AIS_CONSENTS_TRANSACTIONS = "AIS, Consent transactions";
     public static final String AIS_PSU_DATA = "AIS, PSU Data";
-    public static final String ASPSP_CONSENT_DATA = "Aspsp Consent Data";
+    public static final String ASPSP_CONSENT_DATA = "ASPSP Consent Data";
     public static final String AUTHORISATIONS = "Authorisations";
     public static final String CONSENTS = "Consents";
     public static final String EVENTS = "Events";

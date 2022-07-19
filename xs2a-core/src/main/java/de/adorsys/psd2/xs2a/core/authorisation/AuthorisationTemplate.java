@@ -19,7 +19,7 @@
 package de.adorsys.psd2.xs2a.core.authorisation;
 
 import de.adorsys.psd2.xs2a.core.tpp.TppRedirectUri;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 import org.jetbrains.annotations.Nullable;
 
@@ -27,10 +27,10 @@ import org.jetbrains.annotations.Nullable;
 public class AuthorisationTemplate {
 
     @Nullable
-    @ApiModelProperty(value = "TPP redirect URIs")
+    @Schema(description = "TPP redirect URIs")
     private TppRedirectUri tppRedirectUri;
 
     @Nullable
-    @ApiModelProperty(value = "Cancel TPP redirect URIs")
+    @Schema(description = "Cancel TPP redirect URIs")
     private TppRedirectUri cancelTppRedirectUri;
 }

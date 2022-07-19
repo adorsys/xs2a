@@ -22,32 +22,31 @@ import de.adorsys.psd2.xs2a.core.authorisation.AuthorisationType;
 import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
 @Data
-@ApiModel(description = "Update authorization request", value = "UpdateAuthorisationRequest")
+@Schema(description = "Update authorisation request", name = "UpdateAuthorisationRequest")
 public class UpdateAuthorisationRequest {
 
-    @ApiModelProperty(value = "Cms authorisation type", required = true)
+    @Schema(description = "CMS authorisation type", required = true)
     private AuthorisationType authorisationType;
 
-    @ApiModelProperty(value = "Corresponding PSU", required = true)
+    @Schema(description = "Corresponding PSU", required = true)
     private PsuIdData psuData;
 
-    @ApiModelProperty(value = "The following code values are permitted 'received', 'psuIdentified', 'psuAuthenticated', 'scaMethodSelected', 'started', 'finalised' 'failed' 'exempted'.", required = true, example = "STARTED")
+    @Schema(description = "The following code values are permitted 'received', 'psuIdentified', 'psuAuthenticated', 'scaMethodSelected', 'started', 'finalised' 'failed' 'exempted'.", required = true, example = "STARTED")
     private ScaStatus scaStatus;
 
-    @ApiModelProperty(value = "An identification provided by the ASPSP for the later identification of the authentication method selection.")
+    @Schema(description = "An identification provided by the ASPSP for the later identification of the authentication method selection.")
     private String authenticationMethodId;
 
-    @ApiModelProperty(value = "Password")
+    @Schema(description = "Password")
     private String password;
 
-    @ApiModelProperty(value = "SCA authentication data")
+    @Schema(description = "SCA authentication data")
     private String scaAuthenticationData;
 
-    @ApiModelProperty(value = "SCA approach")
+    @Schema(description = "SCA approach")
     private ScaApproach scaApproach;
 }

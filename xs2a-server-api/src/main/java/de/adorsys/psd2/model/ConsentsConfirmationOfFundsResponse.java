@@ -19,8 +19,7 @@
 package de.adorsys.psd2.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import org.springframework.validation.annotation.Validated;
 
 import javax.validation.Valid;
@@ -34,11 +33,12 @@ import java.util.Objects;
 /**
  * Body of the JSON response for a Start single SCA authorisation request.
  */
-@ApiModel(description = "Body of the JSON response for a Start single SCA authorisation request.")
+@Schema(description = "Body of the JSON response for a Start single SCA authorisation request.")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2021-07-06T15:08:52.622411+03:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-05-06T13:00:06.283258+03:00[Europe/Kiev]")
 
-public class ConsentsConfirmationOfFundsResponse   {
+
+public class ConsentsConfirmationOfFundsResponse {
   @JsonProperty("consentStatus")
   private ConsentStatus consentStatus = null;
 
@@ -75,15 +75,12 @@ public class ConsentsConfirmationOfFundsResponse   {
   /**
    * Get consentStatus
    * @return consentStatus
-  **/
-  @ApiModelProperty(required = true, value = "")
-  @NotNull
+   **/
+  @Schema(required = true, description = "")
+      @NotNull
 
-  @Valid
-
-
-  @JsonProperty("consentStatus")
-  public ConsentStatus getConsentStatus() {
+    @Valid
+    public ConsentStatus getConsentStatus() {
     return consentStatus;
   }
 
@@ -97,16 +94,13 @@ public class ConsentsConfirmationOfFundsResponse   {
   }
 
   /**
-   * Get consentId
+   * ID of the corresponding consent object as returned by an Account Information Consent Request.
    * @return consentId
-  **/
-  @ApiModelProperty(required = true, value = "")
-  @NotNull
+   **/
+  @Schema(required = true, description = "ID of the corresponding consent object as returned by an Account Information Consent Request. ")
+      @NotNull
 
-
-
-  @JsonProperty("consentId")
-  public String getConsentId() {
+    public String getConsentId() {
     return consentId;
   }
 
@@ -122,14 +116,11 @@ public class ConsentsConfirmationOfFundsResponse   {
   /**
    * Get scaMethods
    * @return scaMethods
-  **/
-  @ApiModelProperty(value = "")
+   **/
+  @Schema(description = "")
 
-  @Valid
-
-
-  @JsonProperty("scaMethods")
-  public ScaMethods getScaMethods() {
+    @Valid
+    public ScaMethods getScaMethods() {
     return scaMethods;
   }
 
@@ -145,14 +136,11 @@ public class ConsentsConfirmationOfFundsResponse   {
   /**
    * Get chosenScaMethod
    * @return chosenScaMethod
-  **/
-  @ApiModelProperty(value = "")
+   **/
+  @Schema(description = "")
 
-  @Valid
-
-
-  @JsonProperty("chosenScaMethod")
-  public ChosenScaMethod getChosenScaMethod() {
+    @Valid
+    public ChosenScaMethod getChosenScaMethod() {
     return chosenScaMethod;
   }
 
@@ -168,14 +156,11 @@ public class ConsentsConfirmationOfFundsResponse   {
   /**
    * Get challengeData
    * @return challengeData
-  **/
-  @ApiModelProperty(value = "")
+   **/
+  @Schema(description = "")
 
-  @Valid
-
-
-  @JsonProperty("challengeData")
-  public ChallengeData getChallengeData() {
+    @Valid
+    public ChallengeData getChallengeData() {
     return challengeData;
   }
 
@@ -183,7 +168,7 @@ public class ConsentsConfirmationOfFundsResponse   {
     this.challengeData = challengeData;
   }
 
-  public ConsentsConfirmationOfFundsResponse _links(Map _links) {
+  public ConsentsConfirmationOfFundsResponse _links(LinksStartScaProcessSingleSca _links) {
     this._links = _links;
     return this;
   }
@@ -191,15 +176,12 @@ public class ConsentsConfirmationOfFundsResponse   {
   /**
    * Get _links
    * @return _links
-  **/
-  @ApiModelProperty(required = true, value = "")
-  @NotNull
+   **/
+  @Schema(required = true, description = "")
+      @NotNull
 
-  @Valid
-
-
-  @JsonProperty("_links")
-  public Map getLinks() {
+    @Valid
+    public Map getLinks() {
     return _links;
   }
 
@@ -213,15 +195,12 @@ public class ConsentsConfirmationOfFundsResponse   {
   }
 
   /**
-   * Get psuMessage
+   * Text to be displayed to the PSU
    * @return psuMessage
-  **/
-  @ApiModelProperty(value = "")
+   **/
+  @Schema(description = "Text to be displayed to the PSU")
 
-@Size(max=512)
-
-  @JsonProperty("psuMessage")
-  public String getPsuMessage() {
+  @Size(max=512)   public String getPsuMessage() {
     return psuMessage;
   }
 
@@ -237,14 +216,11 @@ public class ConsentsConfirmationOfFundsResponse   {
   /**
    * Get scaStatus
    * @return scaStatus
-  **/
-  @ApiModelProperty(value = "")
+   **/
+  @Schema(description = "")
 
-  @Valid
-
-
-  @JsonProperty("scaStatus")
-  public ScaStatus getScaStatus() {
+    @Valid
+    public ScaStatus getScaStatus() {
     return scaStatus;
   }
 
@@ -268,14 +244,10 @@ public class ConsentsConfirmationOfFundsResponse   {
   /**
    * Messages to the TPP on operational issues.
    * @return tppMessage
-  **/
-  @ApiModelProperty(value = "Messages to the TPP on operational issues.")
-
-  @Valid
-
-
-  @JsonProperty("tppMessage")
-  public List<TppMessageGeneric> getTppMessage() {
+   **/
+  @Schema(description = "Messages to the TPP on operational issues.")
+      @Valid
+    public List<TppMessageGeneric> getTppMessage() {
     return tppMessage;
   }
 
@@ -291,16 +263,17 @@ public class ConsentsConfirmationOfFundsResponse   {
     }
     if (o == null || getClass() != o.getClass()) {
       return false;
-}    ConsentsConfirmationOfFundsResponse consentsConfirmationOfFundsResponse = (ConsentsConfirmationOfFundsResponse) o;
+    }
+    ConsentsConfirmationOfFundsResponse consentsConfirmationOfFundsResponse = (ConsentsConfirmationOfFundsResponse) o;
     return Objects.equals(this.consentStatus, consentsConfirmationOfFundsResponse.consentStatus) &&
-    Objects.equals(this.consentId, consentsConfirmationOfFundsResponse.consentId) &&
-    Objects.equals(this.scaMethods, consentsConfirmationOfFundsResponse.scaMethods) &&
-    Objects.equals(this.chosenScaMethod, consentsConfirmationOfFundsResponse.chosenScaMethod) &&
-    Objects.equals(this.challengeData, consentsConfirmationOfFundsResponse.challengeData) &&
-    Objects.equals(this._links, consentsConfirmationOfFundsResponse._links) &&
-    Objects.equals(this.psuMessage, consentsConfirmationOfFundsResponse.psuMessage) &&
-    Objects.equals(this.scaStatus, consentsConfirmationOfFundsResponse.scaStatus) &&
-    Objects.equals(this.tppMessage, consentsConfirmationOfFundsResponse.tppMessage);
+        Objects.equals(this.consentId, consentsConfirmationOfFundsResponse.consentId) &&
+        Objects.equals(this.scaMethods, consentsConfirmationOfFundsResponse.scaMethods) &&
+        Objects.equals(this.chosenScaMethod, consentsConfirmationOfFundsResponse.chosenScaMethod) &&
+        Objects.equals(this.challengeData, consentsConfirmationOfFundsResponse.challengeData) &&
+        Objects.equals(this._links, consentsConfirmationOfFundsResponse._links) &&
+        Objects.equals(this.psuMessage, consentsConfirmationOfFundsResponse.psuMessage) &&
+        Objects.equals(this.scaStatus, consentsConfirmationOfFundsResponse.scaStatus) &&
+        Objects.equals(this.tppMessage, consentsConfirmationOfFundsResponse.tppMessage);
   }
 
   @Override
@@ -337,4 +310,3 @@ public class ConsentsConfirmationOfFundsResponse   {
     return o.toString().replace("\n", "\n    ");
   }
 }
-

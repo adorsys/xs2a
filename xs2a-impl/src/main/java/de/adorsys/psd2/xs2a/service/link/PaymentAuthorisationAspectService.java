@@ -29,7 +29,7 @@ import de.adorsys.psd2.xs2a.service.RequestProviderService;
 import de.adorsys.psd2.xs2a.service.ScaApproachResolver;
 import de.adorsys.psd2.xs2a.service.profile.AspspProfileServiceWrapper;
 import de.adorsys.psd2.xs2a.web.RedirectLinkBuilder;
-import de.adorsys.psd2.xs2a.web.controller.PaymentController;
+import de.adorsys.psd2.xs2a.web.controller.psd2.PaymentController;
 import de.adorsys.psd2.xs2a.web.link.CreatePisAuthorisationLinks;
 import de.adorsys.psd2.xs2a.web.link.UpdatePisAuthorisationLinks;
 import de.adorsys.psd2.xs2a.web.link.UpdatePisPsuDataLinks;

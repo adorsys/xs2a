@@ -18,15 +18,14 @@
 
 package de.adorsys.psd2.consent.api;
 
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Value;
 
 @Value
-@ApiModel(description = "Sca method", value = "CmsScaMethod")
+@Schema(description = "SCA method", name = "CmsScaMethod")
 public class CmsScaMethod {
-    @ApiModelProperty(value = "Authentication method id")
+    @Schema(description = "Authentication method ID")
     private String authenticationMethodId;
-    @ApiModelProperty(value = "Indication whether current sca method requires decoupled SCA")
+    @Schema(description = "Indication whether current SCA method requires decoupled SCA")
     private boolean decoupled;
 }

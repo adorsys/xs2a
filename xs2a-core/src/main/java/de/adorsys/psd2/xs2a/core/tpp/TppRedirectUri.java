@@ -18,7 +18,7 @@
 
 package de.adorsys.psd2.xs2a.core.tpp;
 
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Value;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -29,10 +29,10 @@ import org.jetbrains.annotations.Nullable;
 @Value
 public class TppRedirectUri {
     @NotNull
-    @ApiModelProperty(value = "Redirect URI", example = "Redirect URI", required = true)
+    @Schema(description = "Redirect URI", example = "Redirect URI", required = true)
     private final String uri;
 
     @Nullable
-    @ApiModelProperty(value = "Nok redirect URI", example = "Nok redirect URI")
+    @Schema(description = "Nok redirect URI", example = "Nok redirect URI")
     private String nokUri;
 }

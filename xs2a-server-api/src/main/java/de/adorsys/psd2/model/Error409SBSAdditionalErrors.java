@@ -1,19 +1,20 @@
 package de.adorsys.psd2.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import org.springframework.validation.annotation.Validated;
 
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.util.Objects;
 
 /**
  * This is a data element to support the declaration of additional errors in the context of [RFC7807].
  */
-@ApiModel(description = "This is a data element to support the declaration of additional errors in the context of [RFC7807].")
+@Schema(description = "This is a data element to support the declaration of additional errors in the context of [RFC7807].")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2021-11-05T12:22:49.487689+02:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-05-06T13:00:42.214155+03:00[Europe/Kiev]")
+
 
 public class Error409SBSAdditionalErrors   {
   @JsonProperty("title")
@@ -31,15 +32,12 @@ public class Error409SBSAdditionalErrors   {
   }
 
   /**
-   * Get title
+   * Short human readable description of error type.  Could be in local language.  To be provided by ASPSPs.
    * @return title
-  **/
-  @ApiModelProperty(value = "")
+   **/
+  @Schema(description = "Short human readable description of error type.  Could be in local language.  To be provided by ASPSPs. ")
 
-@Size(max=70)
-
-  @JsonProperty("title")
-  public String getTitle() {
+  @Size(max=70)   public String getTitle() {
     return title;
   }
 
@@ -53,15 +51,12 @@ public class Error409SBSAdditionalErrors   {
   }
 
   /**
-   * Get detail
+   * Detailed human readable text specific to this instance of the error.  XPath might be used to point to the issue generating the error in addition. Remark for Future: In future, a dedicated field might be introduced for the XPath.
    * @return detail
-  **/
-  @ApiModelProperty(value = "")
+   **/
+  @Schema(description = "Detailed human readable text specific to this instance of the error.  XPath might be used to point to the issue generating the error in addition. Remark for Future: In future, a dedicated field might be introduced for the XPath. ")
 
-@Size(max=500)
-
-  @JsonProperty("detail")
-  public String getDetail() {
+  @Size(max=500)   public String getDetail() {
     return detail;
   }
 
@@ -75,15 +70,13 @@ public class Error409SBSAdditionalErrors   {
   }
 
   /**
-   * Get code
+   * Message codes defined for signing baskets for HTTP Error code 409 (CONFLICT).
    * @return code
-  **/
-  @ApiModelProperty(value = "")
+   **/
+  @Schema(required = true, description = "Message codes defined for signing baskets for HTTP Error code 409 (CONFLICT).")
+      @NotNull
 
-
-
-  @JsonProperty("code")
-  public String getCode() {
+    public String getCode() {
     return code;
   }
 
@@ -99,10 +92,11 @@ public class Error409SBSAdditionalErrors   {
     }
     if (o == null || getClass() != o.getClass()) {
       return false;
-}    Error409SBSAdditionalErrors error409SBSAdditionalErrors = (Error409SBSAdditionalErrors) o;
+    }
+    Error409SBSAdditionalErrors error409SBSAdditionalErrors = (Error409SBSAdditionalErrors) o;
     return Objects.equals(this.title, error409SBSAdditionalErrors.title) &&
-    Objects.equals(this.detail, error409SBSAdditionalErrors.detail) &&
-    Objects.equals(this.code, error409SBSAdditionalErrors.code);
+        Objects.equals(this.detail, error409SBSAdditionalErrors.detail) &&
+        Objects.equals(this.code, error409SBSAdditionalErrors.code);
   }
 
   @Override
@@ -133,4 +127,3 @@ public class Error409SBSAdditionalErrors   {
     return o.toString().replace("\n", "\n    ");
   }
 }
-

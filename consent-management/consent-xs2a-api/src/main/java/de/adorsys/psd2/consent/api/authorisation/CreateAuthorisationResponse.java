@@ -21,19 +21,18 @@ package de.adorsys.psd2.consent.api.authorisation;
 import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import org.jetbrains.annotations.NotNull;
 
 @Data
 @AllArgsConstructor
-@ApiModel(description = "PIS authorisation", value = "CreateAuthorisationResponse")
+@Schema(description = "PIS authorisation", name = "CreateAuthorisationResponse")
 public class CreateAuthorisationResponse {
 
     @NotNull
-    @ApiModelProperty(value = "ID of the Authorisation", required = true, example = "6dc3d5b3-5023-7848-3853-f7200a64e80d")
+    @Schema(description = "ID of the Authorisation", required = true, example = "6dc3d5b3-5023-7848-3853-f7200a64e80d")
     private String authorizationId;
 
     private ScaStatus scaStatus;

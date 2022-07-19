@@ -1,8 +1,7 @@
 package de.adorsys.psd2.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import org.springframework.validation.annotation.Validated;
 
 import javax.validation.Valid;
@@ -12,9 +11,10 @@ import java.util.Objects;
 /**
  * Body of the JSON response for a successful read transaction list request. This account report contains transactions resulting from the query parameters.
  */
-@ApiModel(description = "Body of the JSON response for a successful read transaction list request. This account report contains transactions resulting from the query parameters. ")
+@Schema(description = "Body of the JSON response for a successful read transaction list request. This account report contains transactions resulting from the query parameters. ")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2021-11-05T12:22:49.487689+02:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-05-06T13:00:42.214155+03:00[Europe/Kiev]")
+
 
 public class TransactionsResponse200Json   {
   @JsonProperty("account")
@@ -37,14 +37,11 @@ public class TransactionsResponse200Json   {
   /**
    * Get account
    * @return account
-  **/
-  @ApiModelProperty(value = "")
+   **/
+  @Schema(description = "")
 
-  @Valid
-
-
-  @JsonProperty("account")
-  public AccountReference getAccount() {
+    @Valid
+    public AccountReference getAccount() {
     return account;
   }
 
@@ -60,14 +57,11 @@ public class TransactionsResponse200Json   {
   /**
    * Get transactions
    * @return transactions
-  **/
-  @ApiModelProperty(value = "")
+   **/
+  @Schema(description = "")
 
-  @Valid
-
-
-  @JsonProperty("transactions")
-  public AccountReport getTransactions() {
+    @Valid
+    public AccountReport getTransactions() {
     return transactions;
   }
 
@@ -83,14 +77,11 @@ public class TransactionsResponse200Json   {
   /**
    * Get balances
    * @return balances
-  **/
-  @ApiModelProperty(value = "")
+   **/
+  @Schema(description = "")
 
-  @Valid
-
-
-  @JsonProperty("balances")
-  public BalanceList getBalances() {
+    @Valid
+    public BalanceList getBalances() {
     return balances;
   }
 
@@ -98,7 +89,7 @@ public class TransactionsResponse200Json   {
     this.balances = balances;
   }
 
-  public TransactionsResponse200Json _links(Map _links) {
+  public TransactionsResponse200Json _links(LinksDownload _links) {
     this._links = _links;
     return this;
   }
@@ -106,14 +97,11 @@ public class TransactionsResponse200Json   {
   /**
    * Get _links
    * @return _links
-  **/
-  @ApiModelProperty(value = "")
+   **/
+  @Schema(description = "")
 
-  @Valid
-
-
-  @JsonProperty("_links")
-  public Map getLinks() {
+    @Valid
+    public Map getLinks() {
     return _links;
   }
 
@@ -129,11 +117,12 @@ public class TransactionsResponse200Json   {
     }
     if (o == null || getClass() != o.getClass()) {
       return false;
-}    TransactionsResponse200Json transactionsResponse200Json = (TransactionsResponse200Json) o;
+    }
+    TransactionsResponse200Json transactionsResponse200Json = (TransactionsResponse200Json) o;
     return Objects.equals(this.account, transactionsResponse200Json.account) &&
-    Objects.equals(this.transactions, transactionsResponse200Json.transactions) &&
-    Objects.equals(this.balances, transactionsResponse200Json.balances) &&
-    Objects.equals(this._links, transactionsResponse200Json._links);
+        Objects.equals(this.transactions, transactionsResponse200Json.transactions) &&
+        Objects.equals(this.balances, transactionsResponse200Json.balances) &&
+        Objects.equals(this._links, transactionsResponse200Json._links);
   }
 
   @Override
@@ -165,4 +154,3 @@ public class TransactionsResponse200Json   {
     return o.toString().replace("\n", "\n    ");
   }
 }
-

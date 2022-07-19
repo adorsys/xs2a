@@ -20,13 +20,13 @@ package de.adorsys.psd2.xs2a.domain;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import io.swagger.annotations.ApiModel;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
-@ApiModel(description = "CashAccountType", value = "Cash Account Type")
+@Schema(description = "CashAccountType", name = "Cash Account Type")
 public enum CashAccountType {
     CACC("Current"),  // Account used to post debits and credits when no specific account has been nominated
     CASH("CashPayment"),  // Account used for the payment of cash

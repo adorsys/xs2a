@@ -20,44 +20,48 @@ package de.adorsys.psd2.consent.aspsp.api;
 
 import de.adorsys.psd2.consent.aspsp.api.config.CmsAspspApiTagName;
 import de.adorsys.psd2.xs2a.core.tpp.TppStopListRecord;
-import io.swagger.annotations.*;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import static de.adorsys.psd2.consent.aspsp.api.config.CmsPsuApiDefaultValue.DEFAULT_SERVICE_INSTANCE_ID;
 
 @RequestMapping(path = "aspsp-api/v1/tpp/stop-list")
-@Api(value = "aspsp-api/v1/tpp/stop-list", tags = CmsAspspApiTagName.ASPSP_TPP_STOP_LIST)
+@Tag(name = CmsAspspApiTagName.ASPSP_TPP_STOP_LIST, description = "Provides access to the consent management system TPP Stop List")
 public interface CmsAspspStopListApi {
 
     @GetMapping
-    @ApiOperation(value = "Returns TPP stop list record by TPP authorisation number")
+    @Operation(description = "Returns TPP stop list record by TPP authorisation number")
     @ApiResponses(value = {
-        @ApiResponse(code = 200, message = "OK"),
-        @ApiResponse(code = 404, message = "Not Found")})
+        @ApiResponse(responseCode = "200", description = "OK"),
+        @ApiResponse(responseCode = "404", description = "Not Found")})
     ResponseEntity<TppStopListRecord> getTppStopListRecord(
-        @ApiParam(value = "ID of TPP", example = "12345987")
+        @Parameter(description = "ID of TPP", example = "PSDDE-FAKENCA-87B2AC")
         @RequestHeader(value = "tpp-authorisation-number") String tppAuthorisationNumber,
-        @ApiParam(value = "Service instance id", example = "instance id")
+        @Parameter(description = "Service instance ID", example = "instance id")
         @RequestHeader(value = "instance-id", required = false, defaultValue = DEFAULT_SERVICE_INSTANCE_ID) String instanceId);
 
     @PutMapping(path = "/block")
-    @ApiOperation(value = "Blocks TPP by TPP authorisation number and lock period")
-    @ApiResponse(code = 200, message = "OK")
+    @Operation(description = "Blocks TPP by TPP authorisation number and lock period")
+    @ApiResponse(responseCode = "200", description = "OK")
     ResponseEntity<Boolean> blockTpp(
-        @ApiParam(value = "ID of TPP", example = "12345987")
+        @Parameter(description = "ID of TPP", example = "PSDDE-FAKENCA-87B2AC")
         @RequestHeader(value = "tpp-authorisation-number") String tppAuthorisationNumber,
-        @ApiParam(value = "Service instance id", example = "instance id")
+        @Parameter(description = "Service instance ID", example = "instance id")
         @RequestHeader(value = "instance-id", required = false, defaultValue = DEFAULT_SERVICE_INSTANCE_ID) String instanceId,
-        @ApiParam(value = "Period of TPP locking (in milliseconds)", example = "1000")
+        @Parameter(description = "Period of TPP locking (in milliseconds)", example = "1000")
         @RequestHeader(value = "lock-period", required = false) Long lockPeriod);
 
     @DeleteMapping(path = "/unblock")
-    @ApiOperation(value = "Unblocks TPP by TPP authorisation number")
-    @ApiResponse(code = 200, message = "OK")
+    @Operation(description = "Unblocks TPP by TPP authorisation number")
+    @ApiResponse(responseCode = "200", description = "OK")
     ResponseEntity<Boolean> unblockTpp(
-        @ApiParam(value = "ID of TPP", example = "12345987")
+        @Parameter(description = "ID of TPP", example = "PSDDE-FAKENCA-87B2AC")
         @RequestHeader(value = "tpp-authorisation-number") String tppAuthorisationNumber,
-        @ApiParam(value = "Service instance id", example = "instance id")
+        @Parameter(description = "Service instance ID", example = "instance id")
         @RequestHeader(value = "instance-id", required = false, defaultValue = DEFAULT_SERVICE_INSTANCE_ID) String instanceId);
 }

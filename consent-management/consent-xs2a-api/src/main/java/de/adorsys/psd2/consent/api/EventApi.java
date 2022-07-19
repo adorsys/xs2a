@@ -20,23 +20,23 @@ package de.adorsys.psd2.consent.api;
 
 import de.adorsys.psd2.consent.api.config.InternalCmsXs2aApiTagName;
 import de.adorsys.psd2.event.service.model.EventBO;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiResponse;
-import io.swagger.annotations.ApiResponses;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 @RequestMapping(path = "api/v1/events")
-@Api(value = "api/v1/events", tags = InternalCmsXs2aApiTagName.EVENTS)
+@Tag(name = InternalCmsXs2aApiTagName.EVENTS, description = "Provides access to the consent management system for Events")
 public interface EventApi {
 
     @PostMapping(path = "/")
-    @ApiOperation(value = "Creates new event")
+    @Operation(description = "Creates new event")
     @ApiResponses(value = {
-        @ApiResponse(code = 200, message = "OK"),
-        @ApiResponse(code = 400, message = "Bad Request")})
+        @ApiResponse(responseCode = "200", description = "OK"),
+        @ApiResponse(responseCode = "400", description = "Bad Request")})
     ResponseEntity<Void> recordEvent(@RequestBody EventBO event);
 }

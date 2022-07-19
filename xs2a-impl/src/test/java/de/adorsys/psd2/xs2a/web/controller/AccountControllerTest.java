@@ -18,17 +18,16 @@
 
 package de.adorsys.psd2.xs2a.web.controller;
 
-import de.adorsys.psd2.model.*;
+import de.adorsys.psd2.model.AccountDetails;
+import de.adorsys.psd2.model.AccountList;
+import de.adorsys.psd2.model.AccountReport;
+import de.adorsys.psd2.model.ReadAccountBalanceResponse200;
 import de.adorsys.psd2.xs2a.core.domain.TppMessageInformation;
 import de.adorsys.psd2.xs2a.core.error.ErrorType;
 import de.adorsys.psd2.xs2a.core.error.MessageError;
 import de.adorsys.psd2.xs2a.core.error.MessageErrorCode;
 import de.adorsys.psd2.xs2a.core.pis.Xs2aAmount;
-import de.adorsys.psd2.xs2a.domain.BalanceType;
-import de.adorsys.psd2.xs2a.domain.CashAccountType;
-import de.adorsys.psd2.xs2a.domain.Transactions;
 import de.adorsys.psd2.xs2a.domain.*;
-import de.adorsys.psd2.xs2a.domain.account.AccountStatus;
 import de.adorsys.psd2.xs2a.domain.account.*;
 import de.adorsys.psd2.xs2a.service.ais.*;
 import de.adorsys.psd2.xs2a.service.mapper.AccountModelMapper;
@@ -36,6 +35,7 @@ import de.adorsys.psd2.xs2a.service.mapper.ResponseMapper;
 import de.adorsys.psd2.xs2a.service.mapper.TransactionModelMapper;
 import de.adorsys.psd2.xs2a.service.mapper.TrustedBeneficiariesModelMapper;
 import de.adorsys.psd2.xs2a.service.mapper.psd2.ResponseErrorMapper;
+import de.adorsys.psd2.xs2a.web.controller.psd2.AccountController;
 import de.adorsys.psd2.xs2a.web.controller.util.RequestUriHandler;
 import de.adorsys.psd2.xs2a.web.error.TppErrorMessageWriter;
 import de.adorsys.xs2a.reader.JsonReader;
@@ -260,48 +260,6 @@ class AccountControllerTest {
         // Then
         assertThat(result.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
     }
-
-    @Test
-    void getTrustedBeneficiaries_Fail() {
-        // Given
-        ResponseObject<Xs2aTrustedBeneficiariesList> xs2aResponse = ResponseObject.<Xs2aTrustedBeneficiariesList>builder()
-                                                                        .fail(MESSAGE_ERROR_AIS_404)
-                                                                        .build();
-
-        when(trustedBeneficiariesService.getTrustedBeneficiaries(WRONG_CONSENT_ID, WRONG_ACCOUNT_ID, REQUEST_URI)).thenReturn(xs2aResponse);
-        when(request.getRequestURI()).thenReturn(REQUEST_URI);
-        when(requestUriHandler.trimEndingSlash(REQUEST_URI)).thenReturn(REQUEST_URI);
-        when(responseErrorMapper.generateErrorResponse(MESSAGE_ERROR_AIS_404))
-            .thenReturn(new ResponseEntity<>(HttpStatus.NOT_FOUND));
-
-        // When
-        ResponseEntity<?> actual = accountController.listOfTrustedBeneficiaries(null, WRONG_CONSENT_ID, WRONG_ACCOUNT_ID, null, null);
-        // Then
-        assertThat(actual.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
-    }
-
-    @Test
-    void getTrustedBeneficiaries_ResultTest() {
-        // Given
-        Xs2aTrustedBeneficiariesList xs2aBeneficiaries = jsonReader.getObjectFromFile(XS2A_BENEFICIARIES_JSON, Xs2aTrustedBeneficiariesList.class);
-        ResponseObject<Xs2aTrustedBeneficiariesList> xs2aResponse = ResponseObject.<Xs2aTrustedBeneficiariesList>builder()
-                                                                        .body(xs2aBeneficiaries)
-                                                                        .build();
-
-        when(trustedBeneficiariesService.getTrustedBeneficiaries(CONSENT_ID, ACCOUNT_ID, REQUEST_URI)).thenReturn(xs2aResponse);
-        when(request.getRequestURI()).thenReturn(REQUEST_URI);
-        when(requestUriHandler.trimEndingSlash(REQUEST_URI)).thenReturn(REQUEST_URI);
-
-        TrustedBeneficiariesList expected = jsonReader.getObjectFromFile(BENEFICIARIES_JSON, TrustedBeneficiariesList.class);
-
-        doReturn(new ResponseEntity<>(expected, HttpStatus.OK)).when(responseMapper).ok(any(), any());
-
-        // When
-        TrustedBeneficiariesList actual = (TrustedBeneficiariesList) accountController.listOfTrustedBeneficiaries(null, CONSENT_ID, ACCOUNT_ID, null, null).getBody();
-        // Then
-        assertThat(actual).isEqualTo(expected);
-    }
-
 
     @Test
     void getTransactions_ResultTest() {

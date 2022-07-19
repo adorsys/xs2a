@@ -1,43 +1,43 @@
 package de.adorsys.psd2.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import org.springframework.validation.annotation.Validated;
 
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 import java.util.Objects;
 
 /**
- * Equals \&quot;true\&quot; if sufficient funds are available at the time of the request,  \&quot;false\&quot; otherwise.
+ * InlineResponse2003
  */
-@ApiModel(description = "Equals \"true\" if sufficient funds are available at the time of the request,  \"false\" otherwise. ")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2021-11-05T12:22:49.487689+02:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-05-06T13:00:42.214155+03:00[Europe/Kiev]")
+
 
 public class InlineResponse2003   {
-  @JsonProperty("fundsAvailable")
-  private Boolean fundsAvailable = null;
+  @JsonProperty("account")
+  private AccountDetails account = null;
 
-  public InlineResponse2003 fundsAvailable(Boolean fundsAvailable) {
-    this.fundsAvailable = fundsAvailable;
+  public InlineResponse2003 account(AccountDetails account) {
+    this.account = account;
     return this;
   }
 
   /**
-   * Get fundsAvailable
-   * @return fundsAvailable
-  **/
-  @ApiModelProperty(value = "")
+   * Get account
+   * @return account
+   **/
+  @Schema(required = true, description = "")
+      @NotNull
 
-
-
-  @JsonProperty("fundsAvailable")
-  public Boolean getFundsAvailable() {
-    return fundsAvailable;
+    @Valid
+    public AccountDetails getAccount() {
+    return account;
   }
 
-  public void setFundsAvailable(Boolean fundsAvailable) {
-    this.fundsAvailable = fundsAvailable;
+  public void setAccount(AccountDetails account) {
+    this.account = account;
   }
 
 
@@ -48,13 +48,14 @@ public class InlineResponse2003   {
     }
     if (o == null || getClass() != o.getClass()) {
       return false;
-}    InlineResponse2003 inlineResponse2003 = (InlineResponse2003) o;
-    return Objects.equals(this.fundsAvailable, inlineResponse2003.fundsAvailable);
+    }
+    InlineResponse2003 inlineResponse2003 = (InlineResponse2003) o;
+    return Objects.equals(this.account, inlineResponse2003.account);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(fundsAvailable);
+    return Objects.hash(account);
   }
 
   @Override
@@ -62,7 +63,7 @@ public class InlineResponse2003   {
     StringBuilder sb = new StringBuilder();
     sb.append("class InlineResponse2003 {\n");
 
-    sb.append("    fundsAvailable: ").append(toIndentedString(fundsAvailable)).append("\n");
+    sb.append("    account: ").append(toIndentedString(account)).append("\n");
     sb.append("}");
     return sb.toString();
   }
@@ -78,4 +79,3 @@ public class InlineResponse2003   {
     return o.toString().replace("\n", "\n    ");
   }
 }
-

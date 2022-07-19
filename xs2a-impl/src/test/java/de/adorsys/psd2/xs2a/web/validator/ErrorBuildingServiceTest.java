@@ -40,8 +40,7 @@ import org.springframework.mock.web.MockHttpServletResponse;
 
 import java.io.IOException;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.when;
 
@@ -93,7 +92,7 @@ class ErrorBuildingServiceTest {
         assertNotNull(outputMessage);
         assertEquals(RESPONSE_TEXT, outputMessage);
         assertEquals(STATUS_CODE_400, response.getStatus());
-        assertEquals(JSON, response.getContentType());
+        assertTrue(MediaType.APPLICATION_JSON.isCompatibleWith(MediaType.parseMediaType(response.getContentType())));
 
         MessageError actualMessageError = messageErrorCaptor.getValue();
         assertEquals(ERROR_PIS_400, actualMessageError.getErrorType());
@@ -114,8 +113,7 @@ class ErrorBuildingServiceTest {
         assertNotNull(outputMessage);
         assertEquals(RESPONSE_TEXT, outputMessage);
         assertEquals(STATUS_CODE_400, response.getStatus());
-        assertEquals(JSON, response.getContentType());
-        assertEquals(JSON, response.getContentType());
+        assertTrue(MediaType.APPLICATION_JSON.isCompatibleWith(MediaType.parseMediaType(response.getContentType())));
 
         MessageError actualMessageError = messageErrorCaptor.getValue();
         assertEquals(ERROR_PIS_400, actualMessageError.getErrorType());

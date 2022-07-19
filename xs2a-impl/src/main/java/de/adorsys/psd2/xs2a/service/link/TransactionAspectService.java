@@ -23,7 +23,7 @@ import de.adorsys.psd2.xs2a.domain.account.Xs2aAccountReport;
 import de.adorsys.psd2.xs2a.domain.account.Xs2aTransactionsReport;
 import de.adorsys.psd2.xs2a.domain.account.Xs2aTransactionsReportByPeriodRequest;
 import de.adorsys.psd2.xs2a.service.profile.AspspProfileServiceWrapper;
-import de.adorsys.psd2.xs2a.web.controller.AccountController;
+import de.adorsys.psd2.xs2a.web.controller.psd2.AccountController;
 import de.adorsys.psd2.xs2a.web.link.TransactionsReportDownloadLinks;
 import de.adorsys.psd2.xs2a.web.link.Xs2aAccountReportLinks;
 import org.springframework.beans.factory.annotation.Autowired;

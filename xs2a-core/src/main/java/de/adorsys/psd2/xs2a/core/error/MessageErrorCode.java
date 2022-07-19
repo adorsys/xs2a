@@ -21,7 +21,7 @@ package de.adorsys.psd2.xs2a.core.error;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonValue;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -65,13 +65,13 @@ public enum MessageErrorCode {
     },
 
     FORMAT_ERROR(400),  // Format of certain request fields are not matching the XS2A requirements
-    FORMAT_ERROR_IMPLICIT_SB(400){
+    FORMAT_ERROR_IMPLICIT_SB(400) {
         @Override
         public String getName() {
             return FORMAT_ERROR_NAME;
         }
     }, // 'TPP-Explicit-Authorisation-Preferred' header should be true for signing basket
-    FORMAT_ERROR_OVERSIZE_SB(400){
+    FORMAT_ERROR_OVERSIZE_SB(400) {
         @Override
         public String getName() {
             return FORMAT_ERROR_NAME;
@@ -730,7 +730,7 @@ public enum MessageErrorCode {
             .forEach(errorCode -> container.put(errorCode.getName(), errorCode));
     }
 
-    @ApiModelProperty(value = "code", example = "400")
+    @Schema(description = "code", example = "400")
     private int code;
 
     @JsonCreator
