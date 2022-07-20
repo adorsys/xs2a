@@ -1,0 +1,16 @@
+= Release notes v.12.7
+
+== Table of Contents
+
+* Bumped dependency version
+
+* Changed response body for Get transactions list request
+
+== Bumped dependency version
+
+Version of gson was bumped up to 2.8.9.
+
+== Changed response body for Get transactions list request
+
+From now on, response body contains `transactions` object with empty transaction lists for requested `transactionStatus`
+in case of non found transactions for the requested period.
