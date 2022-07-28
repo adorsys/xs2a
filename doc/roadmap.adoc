@@ -1,128 +1,44 @@
 = Roadmap
 
-Starting 13th of September 2021 XS2A-core Team is providing development within two branches:
+Starting the 1st of August 2022 XS2A-core Team is providing development within two branches:
 
-*Stable branch 12.x*
+*Stable branch 14.x*
 
-Stable branch will contain bugfixing and possibly necessary changes to support mandatory endpoints defined by Berlin Group NextGenPSD2 Spec 1.3.9 with all Errata files. Will be supported till 14.06.2022
+Stable branch will contain bugfixing and possibly necessary changes to support mandatory endpoints defined by Berlin Group NextGenPSD2 Spec 1.3.11 with all Errata files. Will be supported at least till 31.12.2022
 
-*Development branch 13.x*
+*Development branch 15.x*
 
 Development branch is oriented on implementation of new features and optional endpoints.
-No backward compatibility with 12.x is guaranteed. Will be released as Stable version 14.x on 14.06.2022
+No backward compatibility with 14.x is guaranteed. Will be released as Stable version 16.x after 31.12.2022
 
-[cols="1,1,3,3,3"]
+[cols="1,3,3,2"]
 |====
-|release date|version 10.x (Stable)|version 12.x (Stable)|version 13.x (Development)|XS2A extention (commercial)
+|release date|version 14.x (Stable)|version 15.x (Development)| XS2A extention (commercial)
 
-|13.09.2021| | 12.0| 13.0| |
+|01.08.2022| 14.0| 15.0| |
 
-a|
+a| * All fixes and updates from v.13.7:
 
-a| * All fixes and updates from v.11.11
+** Bumped dependency versions
 
-a| * All fixes and updates from v.11.11
+** Changed response body for Get transactions list request
 
-a|
+** Migrated project to OpenAPI 3.0
 
-|03.11.2021| | 12.1| 13.1| |
+** Changed logic for Confirmation of Funds requests
 
-a|
-
-a| * CMS performance improvement
-* Update UML diagrams for PIS flows 0Auth
-* Refactoring according to BG yaml-file v.1.3.9:
-- Refactor trusted beneficiaries endpoint
-- Rename subelement otherAccountIdentification to Other
-- Restore TppMessage2XX object
-- Refactor PIIS consentId_HEADER_optional
-- Revert data model for Remittances
-- Update HTTP Response Code for Message Code "FUNDS_NOT_AVAILABLE"
-
-a| * CMS performance improvement
-* Update UML diagrams for PIS flows 0Auth
+a| * All fixes and updates from v.14.0
 
 a|
 
-|17.11.2021| | 12.2| 13.2| |
+|*For future development*|  *14.x*| *15.x*| *XS2A extentions (commercial)*
 
-a|
+| | | |AIS - current & savings accounts plugin
 
-a| * Documentation and UML diagramms update for PIS and payment cancellation on Github
+| | | |AIS - push notification services plugin
 
-a| * All fixes and updates from v.12.2
-* Migrate to YAML open API version 1.3.11 from 01.10.2021:
-- New subelements for card transactions
-- Card Account Details, subelement "details": Format changed to "Max1000Text"
-- Added Element "monthsOfExecution" to initiate payments that are executed only in certain months of each year
-- Subelement "contractIdentification": Format changed to "Max35Text"
-- Error Code "REQUIRED_KID_MISSING" renamed to "KID_MISSING"
+| | | |Signing Basket plugin
 
-a|
-
-|06.12.2021| | 12.3| 13.3| |
-
-a|
-
-a| * Documentation update (clarification to the new license model)
-
-a| * All fixes and updates from v.12.3
-* Added CardAccount to CashAccountType and SpiAccountType
-* Implemented validation for the field monthsOfExecution for Periodic payments
-
-a|
-
-|20.12.2021| | 12.4| 13.4| |
-
-a|
-
-a| * Documentation update (roadmap)
-
-a| * All updates from v.12.4
-
-a|
-
-|28.03.2022| | 12.5| 13.5| |
-
-a|
-
-a| * Fixed PIIS flow
-
-* Bumped dependency versions
-
-* Fixed bug in CMS consent export flow
-
-* Fixed bug in CardAccountModelMapper
-
-a| * All fixes and updates from v.12.3
-
-* Finalisation of BG yaml file v.1.3.11 implementation
-
-* Implemented passing of remittance related fields to SPI
-
-* Implemented event recording in a separate thread
-
-a|
-
-|20.05.2022| | 12.6| 13.6| |
-
-a|
-
-a| * Bumped dependency versions
-
-a| * All fixes and updates from v.12.6
-
-a|
-
-|*For future development*| |*12.x*|*13.x*| *XS2A extentions (commercial)*
-
-| | | | |AIS - current & savings accounts plugin
-
-| | | | |AIS - push notification services plugin
-
-| | | | |Signing Basket plugin
-
-| | | | |Multiple consents plugin
-
+| | | |Multiple consents plugin
 
 |====
