@@ -1,0 +1,9 @@
+= Release notes v.15.0
+
+== Table of Contents
+
+* Updated documentation
+
+== Updated documentation
+
+Updated roadmap and release policy files.
