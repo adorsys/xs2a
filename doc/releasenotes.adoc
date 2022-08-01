@@ -6,6 +6,14 @@ For Versioning policy see xref:version_policy.adoc[Versioning, Release and Suppo
 
 For upcoming versions see our xref:roadmap.adoc[Roadmap].
 
+=== Mainline 15.x (Development. Planned to be released after 31.12.2022 as 16.0 Stable version)
+
+* xref:release_notes/Release_notes_15.0.adoc[Version 15.0 (release date: 01.08.2022)]
+
+=== Mainline 14.x (Stable. Supported minimum till 31.12.2022)
+
+* xref:release_notes/Release_notes_14.0.adoc[Version 14.0 (release date: 01.08.2022)]
+
 === Mainline 13.x (Development. Planned to be released 14.06.2022 as 14.0 Stable version)
 
 * xref:release_notes/Release_notes_13.7.adoc[Version 13.7 (release date: 20.07.2022)]
