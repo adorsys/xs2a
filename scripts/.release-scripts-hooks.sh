@@ -32,9 +32,9 @@ function get_remote_repo_name {
 # Hook method to define the develop branch name
 # Returns the develop branch name as text
 function get_develop_branch_name {
-  if [[ "$1" =~ ^12\..* ]]
+  if [[ "$1" =~ ^14\..* ]]
   then
-    echo "support-12.x"
+    echo "support-14.x"
   else
     echo "develop"
   fi
@@ -45,7 +45,7 @@ function get_develop_branch_name {
 function get_master_branch_name {
   if [[ "$1"  =~ ^12\..* ]]
   then
-    echo "master-12.x"
+    echo "master-14.x"
   else
     echo "master"
   fi
