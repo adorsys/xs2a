@@ -39,7 +39,7 @@ variables:
   # Private Openshift Images #
   ############################
 
-  OPENSHIFT_NAMESPACE_SUPPORT12X: "adorsys-xs2a-support12x"
+  OPENSHIFT_NAMESPACE_SUPPORT14X: "adorsys-xs2a-support14x"
 
   ###########################
   # Build variables         #
@@ -315,18 +315,18 @@ Deploy to Openshift (support-14.x):
     GIT_STRATEGY: none
     DOCKERHUB_REGISTRY: gitlab-registry.adorsys.de
     DOCKERHUB_NAMESPACE: "adorsys/xs2a/aspsp-xs2a"
-    DOCKER_TAG: support # Dockerhub source tag
-    OPENSHIFT_NAMESPACE: ${OPENSHIFT_NAMESPACE_SUPPORT12X} # Openshift target namespace
+    DOCKER_TAG: support14x # Dockerhub source tag
+    OPENSHIFT_NAMESPACE: ${OPENSHIFT_NAMESPACE_SUPPORT14X} # Openshift target namespace
   <<: *deploy_openshift
 
 # Build MASTER image and deploy to DEMO
 
-Push to DockerHub (support tag):
+Push to DockerHub (support14x tag):
   stage: "Package"
   only:
     - support-14.x
   variables:
-    DOCKER_TAG: support
+    DOCKER_TAG: support14x
     DOCKERHUB_REGISTRY: gitlab-registry.adorsys.de
     DOCKERHUB_NAMESPACE: "adorsys/xs2a/aspsp-xs2a"
   <<: *push_dockerhub_images_private
