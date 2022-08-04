@@ -40,8 +40,10 @@ public class UpdatePisCancellationPsuDataLinks extends AbstractLinks {//NOSONAR
 
         if (isScaStatusMethodAuthenticated(scaStatus)) {
             setSelectAuthenticationMethod(authorisationLink);
-        } else if (isScaStatusMethodSelected(chosenScaMethod, scaStatus) || isDecoupledScaApproach(request)) {
+        } else if (isScaStatusMethodSelected(chosenScaMethod, scaStatus) && isEmbeddedScaApproach(request.getAuthorisationId())) {
             setAuthoriseTransaction(authorisationLink);
+        } else if (isScaStatusFinalised(scaStatus)) {
+            setScaStatus(authorisationLink);
         } else if (isScaStatusMethodIdentified(scaStatus)) {
             setUpdatePsuAuthentication(authorisationLink);
         }
@@ -52,7 +54,11 @@ public class UpdatePisCancellationPsuDataLinks extends AbstractLinks {//NOSONAR
                          request.getPaymentProduct(), request.getPaymentId(), request.getAuthorisationId());
     }
 
-    private boolean isDecoupledScaApproach(PaymentAuthorisationParameters request) {
-        return scaApproachResolver.getScaApproach(request.getAuthorisationId()) == ScaApproach.DECOUPLED;
+    private boolean isEmbeddedScaApproach(String authorisationId) {
+        return scaApproachResolver.getScaApproach(authorisationId) == ScaApproach.EMBEDDED;
+    }
+
+    private boolean isScaStatusFinalised(ScaStatus scaStatus) {
+        return scaStatus == ScaStatus.FINALISED;
     }
 }
