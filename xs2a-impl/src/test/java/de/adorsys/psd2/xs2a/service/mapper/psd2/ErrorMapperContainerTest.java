@@ -54,18 +54,20 @@ class ErrorMapperContainerTest {
         when(messageService.getMessage(any())).thenReturn(FORMAT_ERROR);
 
         ErrorMapperContainer errorMapperContainer = new ErrorMapperContainer(pis400ErrorMapper, null, null,
-                                                                             null, null, null,
-                                                                             null, null, null,
-                                                                             null, null, null,
-                                                                             null, null, null,
-                                                                             null, null, null,
-                                                                             null, null, null,
-                                                                             null, null, null,
-                                                                             null, null, null,
-                                                                             null, null, null,
-                                                                             null, null, null,
-                                                                             null, null, null,
-                                                                             null, null);
+            null, null, null,
+            null, null, null,
+            null, null, null,
+            null, null, null,
+            null, null, null,
+            null, null, null,
+            null, null, null,
+            null, null, null,
+            null, null, null,
+            null, null, null,
+            null, null, null,
+            null, null, null,
+            null, null, null,
+            null);
 
         errorMapperContainer.fillErrorMapperContainer();
 

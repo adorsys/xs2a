@@ -34,7 +34,9 @@ public enum ErrorType {
     PIS_409(ServiceType.PIS, 409),
     PIS_415(ServiceType.PIS, 415),
     PIS_500(ServiceType.PIS, 500),
+    PIS_503(ServiceType.PIS, 503),
     PIS_CANC_405(ServiceType.PIS, 405),
+    PIS_CANC_503(ServiceType.PIS, 503),
 
     PIIS_400(ServiceType.PIIS, 400),
     PIIS_401(ServiceType.PIIS, 401),
@@ -46,6 +48,7 @@ public enum ErrorType {
     PIIS_415(ServiceType.PIIS, 415),
     PIIS_429(ServiceType.PIIS, 429),
     PIIS_500(ServiceType.PIIS, 500),
+    PIIS_503(ServiceType.PIIS, 503),
 
     AIS_400(ServiceType.AIS, 400),
     AIS_401(ServiceType.AIS, 401),
@@ -57,6 +60,7 @@ public enum ErrorType {
     AIS_415(ServiceType.AIS, 415),
     AIS_429(ServiceType.AIS, 429),
     AIS_500(ServiceType.AIS, 500),
+    AIS_503(ServiceType.AIS, 503),
 
     SB_400(ServiceType.SB, 400),
     SB_401(ServiceType.SB, 401),
@@ -65,7 +69,8 @@ public enum ErrorType {
     SB_405(ServiceType.SB, 405),
     SB_409(ServiceType.SB, 409),
     SB_415(ServiceType.SB, 415),
-    SB_500(ServiceType.SB, 500);
+    SB_500(ServiceType.SB, 500),
+    SB_503(ServiceType.SB, 503);
 
     @Getter
     private ServiceType serviceType;
@@ -79,8 +84,8 @@ public enum ErrorType {
 
     public static Optional<ErrorType> getByServiceTypeAndErrorCode(ServiceType serviceType, int errorCode) {
         return Arrays.stream(ErrorType.values())
-                   .filter(et -> et.getServiceType().equals(serviceType))
-                   .filter(et -> et.getErrorCode() == errorCode)
-                   .findFirst();
+            .filter(et -> et.getServiceType().equals(serviceType))
+            .filter(et -> et.getErrorCode() == errorCode)
+            .findFirst();
     }
 }
