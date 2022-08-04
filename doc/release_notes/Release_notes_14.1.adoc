@@ -1,0 +1,9 @@
+= Release notes v.14.1
+
+== Table of Contents
+
+* Fixed error mapping
+
+== Fixed error mapping
+
+Fixed 503 HTTP error code handling from SPI level.
