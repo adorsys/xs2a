@@ -4,6 +4,12 @@
 
 * Fixed error mapping
 
+* Fixed links in PIS Cancellation
+
 == Fixed error mapping
 
 Fixed 503 HTTP error code handling from SPI level.
+
+== Fixed links in PIS Cancellation
+
+From now on, PIS Authorisation links and PIS Cancellation Authorisation links have common building mechanism and conditions.
