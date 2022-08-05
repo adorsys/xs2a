@@ -29,6 +29,8 @@ import java.util.List;
 @Data
 @Entity(name = "tpp_info")
 @NoArgsConstructor
+// TODO: remove 'extends InstanceDependableEntity' in release 15.4 https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/-/issues/1794
+// Deprecated instance_id
 public class TppInfoEntity extends InstanceDependableEntity {
     @Id
     @Column(name = "tpp_info_id")

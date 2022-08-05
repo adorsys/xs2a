@@ -6,6 +6,8 @@
 
 * Fixed links in PIS Cancellation
 
+* Marked `instance_id` column in `tpp_info` table as deprecated
+
 == Fixed error mapping
 
 Fixed 503 HTTP error code handling from SPI level.
@@ -13,3 +15,7 @@ Fixed 503 HTTP error code handling from SPI level.
 == Fixed links in PIS Cancellation
 
 From now on, PIS Authorisation links and PIS Cancellation Authorisation links have common building mechanism and conditions.
+
+== Marked `instance_id` column in `tpp_info` table as deprecated
+
+Starting from 15.1 `instance_id` column in `tpp_info` table is marked as deprecated and will be deleted in release 15.4.
