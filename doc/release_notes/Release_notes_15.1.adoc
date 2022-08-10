@@ -8,6 +8,8 @@
 
 * Marked `instance_id` column in `tpp_info` table as deprecated
 
+* Extended role validation in XS2A endpoints
+
 == Fixed error mapping
 
 Fixed 503 HTTP error code handling from SPI level.
@@ -19,3 +21,7 @@ From now on, PIS Authorisation links and PIS Cancellation Authorisation links ha
 == Marked `instance_id` column in `tpp_info` table as deprecated
 
 Starting from 15.1 `instance_id` column in `tpp_info` table is marked as deprecated and will be deleted in release 15.4.
+
+== Extended role validation in XS2A endpoints
+
+From now on, TPP role validation for `TPP-Roles-Allowed` header is improved and can handle not only endpoints like `http://server-name/v1/payments/sepa-credit-transfers`, but also `http://server-name/bank-api/v1/payments/sepa-credit-transfers`. This is implemented according to the `4.4 XS2A Interface API Structure` of Berlingroup Implementation Guidelines.

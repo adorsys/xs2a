@@ -52,6 +52,18 @@ class TppRoleValidationServiceTest {
     }
 
     @Test
+    void shouldFail_when_noRole() {
+        MockHttpServletRequest request = new MockHttpServletRequest();
+        request.setMethod("GET");
+        request.setRequestURI("/v1/accounts");
+
+        TppInfo tppInfo = buildTppInfo(TppRole.AISP);
+        tppInfo.setTppRoles(null);
+
+        assertThat(tppRoleValidationService.hasAccess(tppInfo, request)).isFalse();
+    }
+
+    @Test
     void shouldFail_when_wrongRole() {
         MockHttpServletRequest request = new MockHttpServletRequest();
         request.setMethod("POST");
