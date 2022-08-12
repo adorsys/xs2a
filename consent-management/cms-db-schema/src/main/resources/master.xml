@@ -153,4 +153,5 @@
     <include relativeToChangelogFile="true" file="migration/0123-add-additional-info-to-consent-tpp-information.xml"/>
     <include relativeToChangelogFile="true" file="migration/0124-refactor-aspsp-account-access-table.xml"/>
     <include relativeToChangelogFile="true" file="migration/0125-refactor-account-access-table.xml"/>
+    <include relativeToChangelogFile="true" file="migration/0126-remove-deprecated-consent-tables.xml"/>
 </databaseChangeLog>

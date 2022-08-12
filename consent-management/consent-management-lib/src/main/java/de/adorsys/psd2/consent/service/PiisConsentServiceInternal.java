@@ -25,7 +25,6 @@ import de.adorsys.psd2.consent.domain.consent.ConsentEntity;
 import de.adorsys.psd2.consent.repository.ConsentJpaRepository;
 import de.adorsys.psd2.consent.repository.specification.PiisConsentEntitySpecification;
 import de.adorsys.psd2.consent.service.mapper.CmsConsentMapper;
-import de.adorsys.psd2.consent.service.migration.PiisConsentLazyMigrationService;
 import de.adorsys.psd2.xs2a.core.profile.AccountReferenceSelector;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -48,7 +47,6 @@ public class PiisConsentServiceInternal implements PiisConsentService {
     private final ConsentJpaRepository consentJpaRepository;
     private final CmsConsentMapper cmsConsentMapper;
     private final PiisConsentEntitySpecification piisConsentEntitySpecification;
-    private final PiisConsentLazyMigrationService piisConsentLazyMigrationService;
 
     @Override
     @Transactional
@@ -60,7 +58,6 @@ public class PiisConsentServiceInternal implements PiisConsentService {
                             : piisConsentEntitySpecification.byCurrencyAndAccountReferenceSelector(currency, accountReferenceSelector);
 
         List<CmsConsent> consents = consentJpaRepository.findAll(specification).stream()
-            .map( piisConsentLazyMigrationService::migrateIfNeeded )
             .map( consentEntity -> cmsConsentMapper.mapToCmsConsent(consentEntity, Collections.emptyList(), Collections.emptyMap()) )
             .collect(Collectors.toList());
 

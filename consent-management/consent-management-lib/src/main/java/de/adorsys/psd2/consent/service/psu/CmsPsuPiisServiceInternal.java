@@ -25,7 +25,6 @@ import de.adorsys.psd2.consent.repository.ConsentJpaRepository;
 import de.adorsys.psd2.consent.repository.specification.PiisConsentEntitySpecification;
 import de.adorsys.psd2.consent.service.mapper.PiisConsentMapper;
 import de.adorsys.psd2.consent.service.mapper.PsuDataMapper;
-import de.adorsys.psd2.consent.service.migration.PiisConsentLazyMigrationService;
 import de.adorsys.psd2.consent.service.psu.util.PageRequestBuilder;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
@@ -51,14 +50,12 @@ public class CmsPsuPiisServiceInternal implements CmsPsuPiisService {
     private final PiisConsentMapper piisConsentMapper;
     private final PsuDataMapper psuDataMapper;
     private final PiisConsentEntitySpecification piisConsentEntitySpecification;
-    private final PiisConsentLazyMigrationService piisConsentLazyMigrationService;
     private final PageRequestBuilder pageRequestBuilder;
 
     @Override
     public @NotNull Optional<CmsPiisConsent> getConsent(@NotNull PsuIdData psuIdData, @NotNull String consentId, @NotNull String instanceId) {
         return consentJpaRepository.findOne(piisConsentEntitySpecification.byConsentIdAndInstanceId(consentId, instanceId))
                    .filter(con -> isPsuIdDataContentEquals(con, psuIdData))
-                   .map(piisConsentLazyMigrationService::migrateIfNeeded)
                    .map(piisConsentMapper::mapToCmsPiisConsent);
     }
 
@@ -67,14 +64,12 @@ public class CmsPsuPiisServiceInternal implements CmsPsuPiisService {
         if (pageIndex == null && itemsPerPage == null) {
             return consentJpaRepository.findAll(piisConsentEntitySpecification.byPsuDataAndInstanceId(psuIdData, instanceId)).stream()
                        .filter(con -> isPsuIdDataContentEquals(con, psuIdData))
-                       .map(piisConsentLazyMigrationService::migrateIfNeeded)
                        .map(piisConsentMapper::mapToCmsPiisConsent)
                        .collect(Collectors.toList());
         }
         Pageable pageRequest = pageRequestBuilder.getPageable(pageIndex, itemsPerPage);
         return consentJpaRepository.findAll(piisConsentEntitySpecification.byPsuDataAndInstanceId(psuIdData, instanceId), pageRequest).stream()
                    .filter(con -> isPsuIdDataContentEquals(con, psuIdData))
-                   .map(piisConsentLazyMigrationService::migrateIfNeeded)
                    .map(piisConsentMapper::mapToCmsPiisConsent)
                    .collect(Collectors.toList());
     }

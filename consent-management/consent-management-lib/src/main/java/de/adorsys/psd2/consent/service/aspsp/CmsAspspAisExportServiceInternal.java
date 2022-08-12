@@ -27,7 +27,6 @@ import de.adorsys.psd2.consent.repository.AuthorisationRepository;
 import de.adorsys.psd2.consent.repository.ConsentJpaRepository;
 import de.adorsys.psd2.consent.repository.specification.AisConsentSpecification;
 import de.adorsys.psd2.consent.service.mapper.AisConsentMapper;
-import de.adorsys.psd2.consent.service.migration.AisConsentLazyMigrationService;
 import de.adorsys.psd2.consent.service.psu.util.PageRequestBuilder;
 import de.adorsys.psd2.xs2a.core.authorisation.AuthorisationType;
 import de.adorsys.psd2.xs2a.core.consent.ConsentType;
@@ -62,11 +61,9 @@ public class CmsAspspAisExportServiceInternal implements CmsAspspAisExportServic
     private final ConsentJpaRepository consentJpaRepository;
     private final AisConsentMapper aisConsentMapper;
     private final AuthorisationRepository authorisationRepository;
-    private final AisConsentLazyMigrationService aisConsentLazyMigrationService;
     private final PageRequestBuilder pageRequestBuilder;
 
     @Override
-    @Transactional
     public PageData<Collection<CmsAisAccountConsent>> exportConsentsByTpp(String tppAuthorisationNumber,
                                                                           @Nullable LocalDate createDateFrom,
                                                                           @Nullable LocalDate createDateTo,
@@ -84,7 +81,6 @@ public class CmsAspspAisExportServiceInternal implements CmsAspspAisExportServic
     }
 
     @Override
-    @Transactional
     public PageData<Collection<CmsAisAccountConsent>> exportConsentsByPsuAndAdditionalTppInfo(PsuIdData psuIdData, @Nullable LocalDate createDateFrom,
                                                                                               @Nullable LocalDate createDateTo,
                                                                                               @NotNull String instanceId,
@@ -102,7 +98,6 @@ public class CmsAspspAisExportServiceInternal implements CmsAspspAisExportServic
     }
 
     @Override
-    @Transactional
     public PageData<Collection<CmsAisAccountConsent>> exportConsentsByAccountIdAndAdditionalTppInfo(@NotNull String aspspAccountId,
                                                                                                     @Nullable LocalDate createDateFrom,
                                                                                                     @Nullable LocalDate createDateTo,
@@ -136,9 +131,7 @@ public class CmsAspspAisExportServiceInternal implements CmsAspspAisExportServic
     }
 
     private PageData<Collection<CmsAisAccountConsent>> mapToPageData(Page<ConsentEntity> entities) {
-        return new PageData<>(entities
-                                  .stream()
-                                  .map(aisConsentLazyMigrationService::migrateIfNeeded)
+        return new PageData<>(entities.stream()
                                   .map(this::mapToCmsAisAccountConsentWithAuthorisations)
                                   .collect(Collectors.toList()),
                               entities.getPageable().getPageNumber(),
