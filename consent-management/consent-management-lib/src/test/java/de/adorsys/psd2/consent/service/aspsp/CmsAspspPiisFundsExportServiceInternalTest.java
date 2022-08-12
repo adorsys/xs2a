@@ -25,7 +25,6 @@ import de.adorsys.psd2.consent.domain.consent.ConsentEntity;
 import de.adorsys.psd2.consent.repository.ConsentJpaRepository;
 import de.adorsys.psd2.consent.repository.specification.PiisConsentEntitySpecification;
 import de.adorsys.psd2.consent.service.mapper.PiisConsentMapper;
-import de.adorsys.psd2.consent.service.migration.PiisConsentLazyMigrationService;
 import de.adorsys.psd2.consent.service.psu.util.PageRequestBuilder;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import org.junit.jupiter.api.BeforeEach;
@@ -80,8 +79,6 @@ class CmsAspspPiisFundsExportServiceInternalTest {
     @Mock
     private PiisConsentMapper piisConsentMapper;
     @Mock
-    private PiisConsentLazyMigrationService piisConsentLazyMigrationService;
-    @Mock
     private PageRequestBuilder pageRequestBuilder;
 
     private PsuIdData psuIdData;
@@ -109,7 +106,6 @@ class CmsAspspPiisFundsExportServiceInternalTest {
         CmsPiisConsent cmsPiisConsent = buildCmsPiisConsent();
         when(piisConsentMapper.mapToCmsPiisConsent(consentEntity)).thenReturn(cmsPiisConsent);
         when(pageRequestBuilder.getPageable(PAGE_INDEX, ITEMS_PER_PAGE)).thenReturn(PAGE_REQUEST);
-        when(piisConsentLazyMigrationService.migrateIfNeeded(consentEntity)).thenReturn(consentEntity);
 
         // When
         PageData<Collection<CmsPiisConsent>> piisConsentsPage =
@@ -142,7 +138,6 @@ class CmsAspspPiisFundsExportServiceInternalTest {
         CmsPiisConsent cmsPiisConsent = buildCmsPiisConsent();
         when(piisConsentMapper.mapToCmsPiisConsent(consentEntity)).thenReturn(cmsPiisConsent);
         when(pageRequestBuilder.getPageable(PAGE_INDEX, ITEMS_PER_PAGE)).thenReturn(PAGE_REQUEST);
-        when(piisConsentLazyMigrationService.migrateIfNeeded(consentEntity)).thenReturn(consentEntity);
 
         // When
         PageData<Collection<CmsPiisConsent>> piisConsentsPage =
@@ -231,7 +226,6 @@ class CmsAspspPiisFundsExportServiceInternalTest {
         CmsPiisConsent cmsPiisConsent = buildCmsPiisConsent();
         when(piisConsentMapper.mapToCmsPiisConsent(consentEntity)).thenReturn(cmsPiisConsent);
         when(pageRequestBuilder.getPageable(PAGE_INDEX, ITEMS_PER_PAGE)).thenReturn(PAGE_REQUEST);
-        when(piisConsentLazyMigrationService.migrateIfNeeded(consentEntity)).thenReturn(consentEntity);
 
         // When
         PageData<Collection<CmsPiisConsent>> piisConsentsPage =
@@ -264,7 +258,6 @@ class CmsAspspPiisFundsExportServiceInternalTest {
         CmsPiisConsent cmsPiisConsent = buildCmsPiisConsent();
         when(piisConsentMapper.mapToCmsPiisConsent(consentEntity)).thenReturn(cmsPiisConsent);
         when(pageRequestBuilder.getPageable(PAGE_INDEX, ITEMS_PER_PAGE)).thenReturn(PAGE_REQUEST);
-        when(piisConsentLazyMigrationService.migrateIfNeeded(consentEntity)).thenReturn(consentEntity);
 
         // When
         PageData<Collection<CmsPiisConsent>> piisConsentsPage =
@@ -352,7 +345,6 @@ class CmsAspspPiisFundsExportServiceInternalTest {
         CmsPiisConsent cmsPiisConsent = buildCmsPiisConsent();
         when(piisConsentMapper.mapToCmsPiisConsent(consentEntity)).thenReturn(cmsPiisConsent);
         when(pageRequestBuilder.getPageable(PAGE_INDEX, ITEMS_PER_PAGE)).thenReturn(PAGE_REQUEST);
-        when(piisConsentLazyMigrationService.migrateIfNeeded(consentEntity)).thenReturn(consentEntity);
 
         // When
         PageData<Collection<CmsPiisConsent>> piisConsentsPage =
@@ -385,7 +377,6 @@ class CmsAspspPiisFundsExportServiceInternalTest {
         CmsPiisConsent cmsPiisConsent = buildCmsPiisConsent();
         when(piisConsentMapper.mapToCmsPiisConsent(consentEntity)).thenReturn(cmsPiisConsent);
         when(pageRequestBuilder.getPageable(PAGE_INDEX, ITEMS_PER_PAGE)).thenReturn(PAGE_REQUEST);
-        when(piisConsentLazyMigrationService.migrateIfNeeded(consentEntity)).thenReturn(consentEntity);
 
         // When
         PageData<Collection<CmsPiisConsent>> piisConsentsPage =

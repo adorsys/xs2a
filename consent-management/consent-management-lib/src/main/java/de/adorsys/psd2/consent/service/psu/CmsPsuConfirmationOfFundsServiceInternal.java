@@ -30,7 +30,6 @@ import de.adorsys.psd2.consent.service.authorisation.CmsConsentAuthorisationServ
 import de.adorsys.psd2.consent.service.mapper.CmsConfirmationOfFundsMapper;
 import de.adorsys.psd2.consent.service.mapper.CmsPsuAuthorisationMapper;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
-import de.adorsys.psd2.xs2a.core.consent.ConsentType;
 import de.adorsys.psd2.xs2a.core.exception.AuthorisationIsExpiredException;
 import de.adorsys.psd2.xs2a.core.exception.RedirectUrlIsExpiredException;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
@@ -82,7 +81,7 @@ public class CmsPsuConfirmationOfFundsServiceInternal implements CmsPsuConfirmat
     @Transactional
     public boolean updatePsuDataInConsent(@NotNull PsuIdData psuIdData, @NotNull String authorisationId, @NotNull String instanceId) throws AuthorisationIsExpiredException {
         return consentAuthorisationService.getAuthorisationByAuthorisationId(authorisationId, instanceId)
-                   .map(auth -> cmsPsuConsentServiceInternal.updatePsuData(auth, psuIdData, ConsentType.PIIS_ASPSP))
+                   .map(auth -> cmsPsuConsentServiceInternal.updatePsuData(auth, psuIdData))
                    .orElseGet(() -> {
                        log.info("Authorisation ID [{}], Instance ID: [{}]. Update PSU  in consent failed, because authorisation not found",
                                 authorisationId, instanceId);

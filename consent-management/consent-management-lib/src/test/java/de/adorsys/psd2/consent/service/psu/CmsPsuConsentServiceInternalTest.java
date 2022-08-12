@@ -25,7 +25,6 @@ import de.adorsys.psd2.consent.domain.consent.ConsentEntity;
 import de.adorsys.psd2.consent.repository.AuthorisationRepository;
 import de.adorsys.psd2.consent.repository.ConsentJpaRepository;
 import de.adorsys.psd2.consent.service.mapper.PsuDataMapper;
-import de.adorsys.psd2.consent.service.migration.AisConsentLazyMigrationService;
 import de.adorsys.psd2.consent.service.psu.util.PsuDataUpdater;
 import de.adorsys.psd2.core.data.ais.AisConsentData;
 import de.adorsys.psd2.core.mapper.ConsentDataMapper;
@@ -50,8 +49,12 @@ import java.time.ZoneOffset;
 import java.util.Collections;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class CmsPsuConsentServiceInternalTest {
@@ -70,8 +73,6 @@ class CmsPsuConsentServiceInternalTest {
     private CmsPsuService cmsPsuService;
     @Mock
     private AuthorisationRepository authorisationRepository;
-    @Mock
-    private AisConsentLazyMigrationService aisConsentLazyMigrationService;
     @Mock
     private PsuDataUpdater psuDataUpdater;
 
@@ -95,11 +96,10 @@ class CmsPsuConsentServiceInternalTest {
             .thenReturn(buildPsuData(""));
         AuthorisationEntity authorisation = buildAisConsentAuthorisation(null);
         //When
-        boolean updatePsuData = cmsPsuConsentServiceInternal.updatePsuData(authorisation, psuIdData, ConsentType.AIS);
+        boolean updatePsuData = cmsPsuConsentServiceInternal.updatePsuData(authorisation, psuIdData);
         //Then
         assertFalse(updatePsuData);
         verify(authorisationRepository, never()).save(authorisation);
-        verify(aisConsentLazyMigrationService, never()).migrateIfNeeded(consentEntity);
     }
 
     @ParameterizedTest
@@ -110,20 +110,15 @@ class CmsPsuConsentServiceInternalTest {
             .thenReturn(psuData);
         when(consentJpaRepository.findByExternalId(EXTERNAL_CONSENT_ID))
             .thenReturn(Optional.of(consentEntity));
-        if (consentType == ConsentType.AIS) {
-            when(aisConsentLazyMigrationService.migrateIfNeeded(consentEntity))
-                .thenReturn(consentEntity);
-        }
 
         when(cmsPsuService.definePsuDataForAuthorisation(psuData, Collections.singletonList(psuData)))
             .thenReturn(Optional.of(psuData));
         AuthorisationEntity authorisation = buildAisConsentAuthorisation(null);
         //When
-        boolean updatePsuData = cmsPsuConsentServiceInternal.updatePsuData(authorisation, psuIdData, consentType);
+        boolean updatePsuData = cmsPsuConsentServiceInternal.updatePsuData(authorisation, psuIdData);
         //Then
         assertTrue(updatePsuData);
         verify(authorisationRepository, never()).save(authorisation);
-        verify(aisConsentLazyMigrationService, consentType == ConsentType.AIS ? atLeastOnce() : never()).migrateIfNeeded(consentEntity);
         assertEquals(psuData, authorisation.getPsuData());
     }
 
@@ -138,10 +133,9 @@ class CmsPsuConsentServiceInternalTest {
         AuthorisationEntity authorisation = buildAisConsentAuthorisation(psuData);
         when(psuDataUpdater.updatePsuDataEntity(psuData, psuDataRequest)).thenReturn(psuData);
         //When
-        boolean updatePsuData = cmsPsuConsentServiceInternal.updatePsuData(authorisation, psuIdData, ConsentType.AIS);
+        boolean updatePsuData = cmsPsuConsentServiceInternal.updatePsuData(authorisation, psuIdData);
         //Then
         assertTrue(updatePsuData);
-        verify(aisConsentLazyMigrationService, never()).migrateIfNeeded(consentEntity);
         assertEquals(psuData, authorisation.getPsuData());
     }
 
@@ -154,11 +148,10 @@ class CmsPsuConsentServiceInternalTest {
             .thenReturn(Optional.empty());
         AuthorisationEntity authorisation = buildAisConsentAuthorisation(null);
         //When
-        boolean updatePsuData = cmsPsuConsentServiceInternal.updatePsuData(authorisation, psuIdData, ConsentType.AIS);
+        boolean updatePsuData = cmsPsuConsentServiceInternal.updatePsuData(authorisation, psuIdData);
         //Then
         assertFalse(updatePsuData);
         verify(authorisationRepository, never()).save(authorisation);
-        verify(aisConsentLazyMigrationService, never()).migrateIfNeeded(consentEntity);
     }
 
     private AdditionalPsuData buildAdditionalPsuData(Long id) {

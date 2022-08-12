@@ -34,7 +34,6 @@ import de.adorsys.psd2.consent.repository.ConsentJpaRepository;
 import de.adorsys.psd2.consent.repository.TppInfoRepository;
 import de.adorsys.psd2.consent.service.mapper.CmsConsentMapper;
 import de.adorsys.psd2.consent.service.mapper.PsuDataMapper;
-import de.adorsys.psd2.consent.service.migration.AisConsentLazyMigrationService;
 import de.adorsys.psd2.consent.service.psu.CmsPsuService;
 import de.adorsys.psd2.xs2a.core.authorisation.AuthorisationType;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
@@ -47,7 +46,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
-import java.util.*;
+import java.util.Collections;
+import java.util.EnumSet;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import static de.adorsys.psd2.consent.api.CmsError.LOGICAL_ERROR;
@@ -68,7 +72,6 @@ public class ConsentServiceInternal implements ConsentService {
     private final CmsPsuService cmsPsuService;
     private final AisConsentUsageService aisConsentUsageService;
     private final CmsConsentMapper cmsConsentMapper;
-    private final AisConsentLazyMigrationService aisConsentLazyMigrationService;
     private final AspspProfileService aspspProfileService;
 
     /**
@@ -183,7 +186,6 @@ public class ConsentServiceInternal implements ConsentService {
         }
 
         ConsentEntity consentEntity = consentEntityOptional.get();
-        consentEntity = aisConsentLazyMigrationService.migrateIfNeeded(consentEntity);
 
         List<AuthorisationEntity> authorisations = authorisationRepository.findAllByParentExternalIdAndType(consentEntity.getExternalId(), AuthorisationType.CONSENT);
         CmsConsent cmsConsent = cmsConsentMapper.mapToCmsConsent(consentEntity, authorisations, aisConsentUsageService.getUsageCounterMap(consentEntity));

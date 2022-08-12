@@ -41,7 +41,6 @@ import de.adorsys.psd2.consent.repository.ConsentJpaRepository;
 import de.adorsys.psd2.consent.repository.TppInfoRepository;
 import de.adorsys.psd2.consent.service.mapper.CmsConsentMapper;
 import de.adorsys.psd2.consent.service.mapper.PsuDataMapper;
-import de.adorsys.psd2.consent.service.migration.AisConsentLazyMigrationService;
 import de.adorsys.psd2.consent.service.psu.CmsPsuService;
 import de.adorsys.psd2.xs2a.core.authorisation.AuthorisationType;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
@@ -58,7 +57,11 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.LocalDate;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.EnumSet;
+import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -106,8 +109,6 @@ class ConsentServiceInternalTest {
     @Mock
     private TppInfoRepository tppInfoRepository;
     @Mock
-    private AisConsentLazyMigrationService aisConsentLazyMigrationService;
-    @Mock
     private CmsConsentMapper cmsConsentMapper;
     @Mock
     private AisConsentVerifyingRepository aisConsentVerifyingRepository;
@@ -128,10 +129,6 @@ class ConsentServiceInternalTest {
         // Given
         when(consentJpaRepository.findByExternalId(any()))
             .thenReturn(Optional.of(consentEntity));
-        when(aisConsentConfirmationExpirationService.checkAndUpdateOnConfirmationExpiration(consentEntity))
-            .thenReturn(consentEntity);
-        when(aisConsentLazyMigrationService.migrateIfNeeded(any(ConsentEntity.class)))
-            .thenReturn(consentEntity);
         when(cmsConsentMapper.mapToCmsConsent(consentEntity, authorisationEntities, Collections.emptyMap()))
             .thenReturn(buildCmsConsent());
         when(consentJpaRepository.findByExternalId(EXTERNAL_CONSENT_ID))
@@ -156,8 +153,6 @@ class ConsentServiceInternalTest {
             .thenReturn(Optional.of(consentEntity));
         when(aisConsentConfirmationExpirationService.checkAndUpdateOnConfirmationExpiration(consentEntity))
             .thenReturn(consentEntity);
-        when(aisConsentLazyMigrationService.migrateIfNeeded(any(ConsentEntity.class)))
-            .thenReturn(consentEntity);
         when(cmsConsentMapper.mapToCmsConsent(consentEntity, authorisationEntities, Collections.emptyMap()))
             .thenReturn(buildCmsConsent());
         when(authorisationRepository.findAllByParentExternalIdAndType(EXTERNAL_CONSENT_ID, AuthorisationType.CONSENT))
@@ -177,8 +172,6 @@ class ConsentServiceInternalTest {
             .thenReturn(Optional.of(consentEntity));
         when(aisConsentConfirmationExpirationService.checkAndUpdateOnConfirmationExpiration(consentEntity))
             .thenReturn(consentEntity);
-        when(aisConsentLazyMigrationService.migrateIfNeeded(any(ConsentEntity.class)))
-            .thenReturn(consentEntity);
         when(cmsConsentMapper.mapToCmsConsent(consentEntity, authorisationEntities, Collections.emptyMap()))
             .thenReturn(buildCmsConsent());
         when(authorisationRepository.findAllByParentExternalIdAndType(EXTERNAL_CONSENT_ID, AuthorisationType.CONSENT))
@@ -197,8 +190,6 @@ class ConsentServiceInternalTest {
         // Given
         ConsentEntity consent = buildUsedNonRecurringConsent();
 
-        when(aisConsentLazyMigrationService.migrateIfNeeded(any(ConsentEntity.class)))
-            .thenReturn(consent);
 
         when(consentJpaRepository.findByExternalId(EXTERNAL_CONSENT_ID))
             .thenReturn(Optional.of(consent));
