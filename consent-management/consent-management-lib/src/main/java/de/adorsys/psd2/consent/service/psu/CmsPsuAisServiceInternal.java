@@ -45,7 +45,6 @@ import de.adorsys.psd2.consent.service.mapper.AccessMapper;
 import de.adorsys.psd2.consent.service.mapper.AisConsentMapper;
 import de.adorsys.psd2.consent.service.mapper.CmsPsuAuthorisationMapper;
 import de.adorsys.psd2.consent.service.mapper.PsuDataMapper;
-import de.adorsys.psd2.consent.service.migration.AisConsentLazyMigrationService;
 import de.adorsys.psd2.consent.service.psu.util.PageRequestBuilder;
 import de.adorsys.psd2.consent.service.psu.util.PsuDataUpdater;
 import de.adorsys.psd2.core.data.AccountAccess;
@@ -54,7 +53,6 @@ import de.adorsys.psd2.core.mapper.ConsentDataMapper;
 import de.adorsys.psd2.xs2a.core.ais.AccountAccessType;
 import de.adorsys.psd2.xs2a.core.authorisation.AuthorisationType;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
-import de.adorsys.psd2.xs2a.core.consent.ConsentType;
 import de.adorsys.psd2.xs2a.core.exception.AuthorisationIsExpiredException;
 import de.adorsys.psd2.xs2a.core.exception.RedirectUrlIsExpiredException;
 import de.adorsys.psd2.xs2a.core.profile.AdditionalInformationAccess;
@@ -98,7 +96,6 @@ public class CmsPsuAisServiceInternal implements CmsPsuAisService {
     private final CmsPsuAuthorisationMapper cmsPsuAuthorisationMapper;
     private final AisConsentConfirmationExpirationService aisConsentConfirmationExpirationService;
     private final ConsentDataMapper consentDataMapper;
-    private final AisConsentLazyMigrationService aisConsentLazyMigrationService;
     private final AccessMapper accessMapper;
     private final PsuDataUpdater psuDataUpdater;
     private final CmsConsentAuthorisationServiceInternal consentAuthorisationService;
@@ -110,7 +107,7 @@ public class CmsPsuAisServiceInternal implements CmsPsuAisService {
     @Transactional
     public boolean updatePsuDataInConsent(@NotNull PsuIdData psuIdData, @NotNull String authorisationId, @NotNull String instanceId) throws AuthorisationIsExpiredException {
         return getAuthorisationByExternalId(authorisationId, instanceId)
-                   .map(auth -> cmsPsuConsentServiceInternal.updatePsuData(auth, psuIdData, ConsentType.AIS))
+                   .map(auth -> cmsPsuConsentServiceInternal.updatePsuData(auth, psuIdData))
                    .orElseGet(() -> {
                        log.info("Authorisation ID [{}], Instance ID: [{}]. Update PSU  in consent failed, because authorisation not found",
                                 authorisationId, instanceId);
@@ -148,7 +145,6 @@ public class CmsPsuAisServiceInternal implements CmsPsuAisService {
     @Transactional
     public @NotNull Optional<CmsAisAccountConsent> getConsent(@NotNull PsuIdData psuIdData, @NotNull String consentId, @NotNull String instanceId) {
         return consentJpaRepository.findOne(aisConsentSpecification.byConsentIdAndInstanceId(consentId, instanceId))
-                   .map(aisConsentLazyMigrationService::migrateIfNeeded)
                    .map(this::checkAndUpdateOnExpiration)
                    .map(this::mapToCmsAisAccountConsentWithAuthorisations);
     }
@@ -224,7 +220,6 @@ public class CmsPsuAisServiceInternal implements CmsPsuAisService {
         Pageable pageRequest = pageRequestBuilder.getPageable(pageIndex, itemsPerPage);
         return consentJpaRepository.findAll(aisConsentSpecification.byPsuDataInListAndInstanceIdAndAdditionalTppInfo(psuIdData, instanceId, additionalTppInfo, consentStatuses, accountNumbers), pageRequest)
                    .stream()
-                   .map(aisConsentLazyMigrationService::migrateIfNeeded)
                    .map(this::mapToCmsAisAccountConsentWithAuthorisations)
                    .collect(Collectors.toList());
     }
@@ -341,8 +336,7 @@ public class CmsPsuAisServiceInternal implements CmsPsuAisService {
         Optional<ConsentEntity> aisConsentOptional = consentJpaRepository.findOne(aisConsentSpecification.byConsentIdAndInstanceId(consentId, instanceId));
 
         if (aisConsentOptional.isPresent()) {
-            ConsentEntity entity = aisConsentLazyMigrationService.migrateIfNeeded(aisConsentOptional.get());
-            return updateConsentStatus(entity, status);
+            return updateConsentStatus(aisConsentOptional.get(), status);
         }
 
         log.info("Consent ID [{}], Instance ID: [{}]. Change consent status failed, because AIS consent not found",
@@ -360,7 +354,6 @@ public class CmsPsuAisServiceInternal implements CmsPsuAisService {
 
     private Optional<ConsentEntity> getActualAisConsent(String consentId, String instanceId) {
         return consentJpaRepository.findOne(aisConsentSpecification.byConsentIdAndInstanceId(consentId, instanceId))
-                   .map(aisConsentLazyMigrationService::migrateIfNeeded)
                    .filter(c -> !c.getConsentStatus().isFinalisedStatus());
     }
 
@@ -388,7 +381,6 @@ public class CmsPsuAisServiceInternal implements CmsPsuAisService {
         }
 
         ConsentEntity aisConsent = aisConsentOptional.get();
-        aisConsent = aisConsentLazyMigrationService.migrateIfNeeded(aisConsent);
 
         CmsAisAccountConsent aisAccountConsent = mapToCmsAisAccountConsentWithAuthorisations(aisConsent);
         return Optional.of(new CmsAisConsentResponse(aisAccountConsent, redirectId, authorisation.getTppOkRedirectUri(),

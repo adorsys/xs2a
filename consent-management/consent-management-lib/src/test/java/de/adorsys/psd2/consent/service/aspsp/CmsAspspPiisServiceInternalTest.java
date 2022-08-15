@@ -31,7 +31,6 @@ import de.adorsys.psd2.consent.repository.ConsentJpaRepository;
 import de.adorsys.psd2.consent.repository.TppInfoRepository;
 import de.adorsys.psd2.consent.repository.specification.PiisConsentEntitySpecification;
 import de.adorsys.psd2.consent.service.mapper.PiisConsentMapper;
-import de.adorsys.psd2.consent.service.migration.PiisConsentLazyMigrationService;
 import de.adorsys.psd2.consent.service.psu.util.PageRequestBuilder;
 import de.adorsys.psd2.core.mapper.ConsentDataMapper;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
@@ -42,7 +41,11 @@ import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.*;
+import org.mockito.ArgumentCaptor;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
@@ -51,10 +54,16 @@ import org.springframework.data.jpa.domain.Specification;
 import java.time.LocalDate;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.*;
 
 
@@ -80,8 +89,6 @@ class CmsAspspPiisServiceInternalTest {
     private ConsentDataMapper consentDataMapper;
     @Mock
     private TppInfoRepository tppInfoRepository;
-    @Mock
-    private PiisConsentLazyMigrationService piisConsentLazyMigrationService;
     @Mock
     private ConsentJpaRepository consentJpaRepository;
     @Mock
@@ -145,7 +152,6 @@ class CmsAspspPiisServiceInternalTest {
         List<ConsentEntity> piisConsentEntities = Arrays.asList(buildPiisConsentEntity(), buildPiisConsentEntity());
         //noinspection unchecked
         when(consentJpaRepository.findAll(any(Specification.class))).thenReturn(piisConsentEntities);
-        when(piisConsentLazyMigrationService.migrateIfNeeded(piisConsentEntities)).thenReturn(piisConsentEntities);
 
         @SuppressWarnings("unchecked")
         ArgumentCaptor<List<ConsentEntity>> argumentCaptor = ArgumentCaptor.forClass(List.class);
@@ -188,7 +194,6 @@ class CmsAspspPiisServiceInternalTest {
             .thenReturn(mockSpecification);
         List<ConsentEntity> piisConsentEntities = Arrays.asList(buildPiisConsentEntity(ConsentStatus.TERMINATED_BY_ASPSP), buildPiisConsentEntity());
         when(consentJpaRepository.findAll(mockSpecification)).thenReturn(piisConsentEntities);
-        when(piisConsentLazyMigrationService.migrateIfNeeded(piisConsentEntities)).thenReturn(piisConsentEntities);
 
         @SuppressWarnings("unchecked")
         ArgumentCaptor<List<ConsentEntity>> argumentCaptor = ArgumentCaptor.forClass(List.class);
@@ -321,7 +326,6 @@ class CmsAspspPiisServiceInternalTest {
         List<ConsentEntity> piisConsentEntities = Collections.singletonList(buildPiisConsentEntity());
         when(consentJpaRepository.findAll(any(Specification.class), eq(PageRequest.of(0, 20))))
             .thenReturn(new PageImpl<>(piisConsentEntities, PageRequest.of(0, 20), 1));
-        when(piisConsentLazyMigrationService.migrateIfNeeded(buildPiisConsentEntity())).thenReturn(buildPiisConsentEntity());
         when(piisConsentMapper.mapToCmsPiisConsent(buildPiisConsentEntity())).thenReturn(buildCmsPiisConsent());
         CmsPiisConsent expected = buildCmsPiisConsent();
 
@@ -344,7 +348,6 @@ class CmsAspspPiisServiceInternalTest {
         List<ConsentEntity> piisConsentEntities = Collections.singletonList(buildPiisConsentEntity());
         when(consentJpaRepository.findAll(any(Specification.class), eq(PageRequest.of(0, 20))))
             .thenReturn(new PageImpl<>(piisConsentEntities, PageRequest.of(0, 20), 1));
-        when(piisConsentLazyMigrationService.migrateIfNeeded(buildPiisConsentEntity())).thenReturn(buildPiisConsentEntity());
         when(piisConsentMapper.mapToCmsPiisConsent(buildPiisConsentEntity())).thenReturn(buildCmsPiisConsent());
         CmsPiisConsent expected = buildCmsPiisConsent();
 
@@ -397,19 +400,15 @@ class CmsAspspPiisServiceInternalTest {
             .thenReturn((root, criteriaQuery, criteriaBuilder) -> null);
         //noinspection unchecked
         when(consentJpaRepository.findOne(any(Specification.class))).thenReturn(Optional.of(buildPiisConsentEntity()));
-        ArgumentCaptor<ConsentEntity> argumentCaptor = ArgumentCaptor.forClass(ConsentEntity.class);
         ConsentEntity modified = buildPiisConsentEntity();
         modified.setLastActionDate(LocalDate.now());
         modified.setConsentStatus(ConsentStatus.TERMINATED_BY_ASPSP);
-        when(piisConsentLazyMigrationService.migrateIfNeeded(any(ConsentEntity.class))).thenReturn(modified);
 
         // When
         boolean actual = cmsAspspPiisServiceInternal.terminateConsent(CONSENT_EXTERNAL_ID, DEFAULT_SERVICE_INSTANCE_ID);
 
         // Then
         assertTrue(actual);
-        verify(piisConsentLazyMigrationService).migrateIfNeeded(argumentCaptor.capture());
-        assertEquals(ConsentStatus.TERMINATED_BY_ASPSP, argumentCaptor.getValue().getConsentStatus());
         verify(piisConsentEntitySpecification, times(1))
             .byConsentIdAndInstanceId(CONSENT_EXTERNAL_ID, DEFAULT_SERVICE_INSTANCE_ID);
     }

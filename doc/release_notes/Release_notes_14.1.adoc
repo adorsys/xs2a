@@ -6,6 +6,10 @@
 
 * Fixed links in PIS Cancellation
 
+* Removed deprecated AisConsent and PiisConsentEntity entities, removed LazyMigrationService for consents
+
+* Improved performance for consents export in CmsAspspAisExportApi
+
 == Fixed error mapping
 
 Fixed 503 HTTP error code handling from SPI level.
@@ -13,3 +17,12 @@ Fixed 503 HTTP error code handling from SPI level.
 == Fixed links in PIS Cancellation
 
 From now on, PIS Authorisation links and PIS Cancellation Authorisation links have common building mechanism and conditions.
+
+== Removed deprecated AisConsent and PiisConsentEntity entities, removed LazyMigrationService for consents
+
+Deprecated entities AisConsent and PiisConsentEntity and corresponding LazyMigrationServices were removed completely from project,
+liquibase migration was added.
+
+== Improved performance for consents export in CmsAspspAisExportApi
+
+Consents export logic was changed due to removal of needless LazyMigrationServices, as a result consents export performance was increased.

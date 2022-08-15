@@ -25,7 +25,6 @@ import de.adorsys.psd2.consent.domain.consent.ConsentEntity;
 import de.adorsys.psd2.consent.repository.ConsentJpaRepository;
 import de.adorsys.psd2.consent.repository.specification.PiisConsentEntitySpecification;
 import de.adorsys.psd2.consent.service.mapper.CmsConsentMapper;
-import de.adorsys.psd2.consent.service.migration.PiisConsentLazyMigrationService;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
 import de.adorsys.psd2.xs2a.core.profile.AccountReferenceSelector;
 import de.adorsys.psd2.xs2a.core.profile.AccountReferenceType;
@@ -43,7 +42,9 @@ import java.util.Collections;
 import java.util.Currency;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -69,8 +70,6 @@ class PiisConsentServiceInternalTest {
     private CmsConsentMapper cmsConsentMapper;
     @Mock
     private PiisConsentEntitySpecification piisConsentEntitySpecification;
-    @Mock
-    private PiisConsentLazyMigrationService piisConsentLazyMigrationService;
 
     @Test
     void getPiisConsentListByAccountIdentifier() {
@@ -83,8 +82,6 @@ class PiisConsentServiceInternalTest {
         CmsConsent validConsent = buildCmsConsent();
         when(cmsConsentMapper.mapToCmsConsent(validConsentEntity, Collections.emptyList(), Collections.emptyMap()))
             .thenReturn(validConsent);
-        when(piisConsentLazyMigrationService.migrateIfNeeded(validConsentEntity))
-            .thenReturn(validConsentEntity);
         CmsConsent expected = buildCmsConsent();
 
         // When
@@ -109,8 +106,6 @@ class PiisConsentServiceInternalTest {
         CmsConsent validConsent = buildCmsConsent();
         when(cmsConsentMapper.mapToCmsConsent(validConsentEntity, Collections.emptyList(), Collections.emptyMap()))
             .thenReturn(validConsent);
-        when(piisConsentLazyMigrationService.migrateIfNeeded(validConsentEntity))
-            .thenReturn(validConsentEntity);
         CmsConsent expected = buildCmsConsent();
 
         // When
