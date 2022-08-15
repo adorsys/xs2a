@@ -23,9 +23,7 @@ import de.adorsys.psd2.consent.domain.PsuData;
 import de.adorsys.psd2.consent.domain.consent.ConsentEntity;
 import de.adorsys.psd2.consent.repository.ConsentJpaRepository;
 import de.adorsys.psd2.consent.service.mapper.PsuDataMapper;
-import de.adorsys.psd2.consent.service.migration.AisConsentLazyMigrationService;
 import de.adorsys.psd2.consent.service.psu.util.PsuDataUpdater;
-import de.adorsys.psd2.xs2a.core.consent.ConsentType;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -42,10 +40,9 @@ class CmsPsuConsentServiceInternal {
     private final PsuDataMapper psuDataMapper;
     private final ConsentJpaRepository consentJpaRepository;
     private final CmsPsuService cmsPsuService;
-    private final AisConsentLazyMigrationService aisConsentLazyMigrationService;
     private final PsuDataUpdater psuDataUpdater;
 
-    boolean updatePsuData(AuthorisationEntity authorisation, PsuIdData psuIdData, ConsentType consentType) {
+    boolean updatePsuData(AuthorisationEntity authorisation, PsuIdData psuIdData) {
         PsuData newPsuData = psuDataMapper.mapToPsuData(psuIdData, authorisation.getInstanceId());
 
         if (newPsuData == null || StringUtils.isBlank(newPsuData.getPsuId())) {
@@ -68,9 +65,6 @@ class CmsPsuConsentServiceInternal {
             }
 
             ConsentEntity consentEntity = consentOptional.get();
-            if (consentType == ConsentType.AIS) {
-                consentEntity = aisConsentLazyMigrationService.migrateIfNeeded(consentEntity);
-            }
 
             List<PsuData> psuDataList = consentEntity.getPsuDataList();
             Optional<PsuData> psuDataOptional = cmsPsuService.definePsuDataForAuthorisation(newPsuData, psuDataList);

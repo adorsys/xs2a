@@ -29,7 +29,6 @@ import de.adorsys.psd2.consent.repository.ConsentJpaRepository;
 import de.adorsys.psd2.consent.repository.TppInfoRepository;
 import de.adorsys.psd2.consent.repository.specification.PiisConsentEntitySpecification;
 import de.adorsys.psd2.consent.service.mapper.PiisConsentMapper;
-import de.adorsys.psd2.consent.service.migration.PiisConsentLazyMigrationService;
 import de.adorsys.psd2.consent.service.psu.util.PageRequestBuilder;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
 import de.adorsys.psd2.xs2a.core.profile.AccountReference;
@@ -61,7 +60,6 @@ public class CmsAspspPiisServiceInternal implements CmsAspspPiisService {
     private final TppInfoRepository tppInfoRepository;
     private final PiisConsentEntitySpecification piisConsentEntitySpecification;
     private final PiisConsentMapper piisConsentMapper;
-    private final PiisConsentLazyMigrationService piisConsentLazyMigrationService;
     private final PageRequestBuilder pageRequestBuilder;
     private final AspspAccountAccessRepository aspspAccountAccessRepository;
 
@@ -114,11 +112,8 @@ public class CmsAspspPiisServiceInternal implements CmsAspspPiisService {
             return false;
         }
 
-
         ConsentEntity entity = entityOptional.get();
         changeStatusAndLastActionDate(entity, TERMINATED_BY_ASPSP);
-
-        piisConsentLazyMigrationService.migrateIfNeeded(entity);
 
         return true;
     }
@@ -129,7 +124,6 @@ public class CmsAspspPiisServiceInternal implements CmsAspspPiisService {
                                                          .byPsuIdDataAndAuthorisationNumberAndAccountReferenceAndInstanceId(psuIdData, request.getTppAuthorisationNumber(), accountReference, instanceId);
 
         List<ConsentEntity> piisConsentEntities = consentJpaRepository.findAll(specification);
-        piisConsentEntities = piisConsentLazyMigrationService.migrateIfNeeded(piisConsentEntities);
         List<ConsentEntity> consentsToRevoke = piisConsentEntities.stream()
                                                    .filter(c -> !c.getConsentStatus().isFinalisedStatus())
                                                    .collect(Collectors.toList());
@@ -166,7 +160,6 @@ public class CmsAspspPiisServiceInternal implements CmsAspspPiisService {
     private PageData<List<CmsPiisConsent>> mapToPageData(Page<ConsentEntity> entities) {
         return new PageData<>(entities
                                   .stream()
-                                  .map(piisConsentLazyMigrationService::migrateIfNeeded)
                                   .map(piisConsentMapper::mapToCmsPiisConsent)
                                   .collect(Collectors.toList()),
                               entities.getPageable().getPageNumber(),

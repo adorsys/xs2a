@@ -6,6 +6,14 @@
 
 * Fixed links in PIS Cancellation
 
+* Marked `instance_id` column in `tpp_info` table as deprecated
+
+* Extended role validation in XS2A endpoints
+
+* Removed deprecated AisConsent and PiisConsentEntity entities, removed LazyMigrationService for consents
+
+* Improved performance for consents export in CmsAspspAisExportApi
+
 == Fixed error mapping
 
 Fixed 503 HTTP error code handling from SPI level.
@@ -13,3 +21,22 @@ Fixed 503 HTTP error code handling from SPI level.
 == Fixed links in PIS Cancellation
 
 From now on, PIS Authorisation links and PIS Cancellation Authorisation links have common building mechanism and conditions.
+
+== Marked `instance_id` column in `tpp_info` table as deprecated
+
+Starting from 15.1 `instance_id` column in `tpp_info` table is marked as deprecated and will be deleted in release 15.4.
+
+== Extended role validation in XS2A endpoints
+
+From now on, TPP role validation for `TPP-Roles-Allowed` header is improved and can handle not only endpoints like
+`http://server-name/v1/payments/sepa-credit-transfers`, but also `http://server-name/bank-api/v1/payments/sepa-credit-transfers`.
+This is implemented according to the `4.4 XS2A Interface API Structure` of BerlinGroup Implementation Guidelines.
+
+== Removed deprecated AisConsent and PiisConsentEntity entities, removed LazyMigrationService for consents
+
+Deprecated entities AisConsent and PiisConsentEntity and corresponding LazyMigrationServices were removed completely from project,
+liquibase migration was added.
+
+== Improved performance for consents export in CmsAspspAisExportApi
+
+Consents export logic was changed due to removal of needless LazyMigrationServices, as a result consents export performance was increased.

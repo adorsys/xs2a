@@ -25,7 +25,6 @@ import de.adorsys.psd2.consent.domain.consent.ConsentEntity;
 import de.adorsys.psd2.consent.repository.ConsentJpaRepository;
 import de.adorsys.psd2.consent.repository.specification.PiisConsentEntitySpecification;
 import de.adorsys.psd2.consent.service.mapper.PiisConsentMapper;
-import de.adorsys.psd2.consent.service.migration.PiisConsentLazyMigrationService;
 import de.adorsys.psd2.consent.service.psu.util.PageRequestBuilder;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import lombok.RequiredArgsConstructor;
@@ -52,7 +51,6 @@ public class CmsAspspPiisFundsExportServiceInternal implements CmsAspspPiisFunds
     private final ConsentJpaRepository consentJpaRepository;
     private final PiisConsentEntitySpecification piisConsentEntitySpecification;
     private final PiisConsentMapper piisConsentMapper;
-    private final PiisConsentLazyMigrationService piisConsentLazyMigrationService;
     private final PageRequestBuilder pageRequestBuilder;
 
     @Override
@@ -111,7 +109,6 @@ public class CmsAspspPiisFundsExportServiceInternal implements CmsAspspPiisFunds
     private PageData<Collection<CmsPiisConsent>> mapToPageData(Page<ConsentEntity> entities) {
         return new PageData<>(entities
                                   .stream()
-                                  .map(piisConsentLazyMigrationService::migrateIfNeeded)
                                   .map(piisConsentMapper::mapToCmsPiisConsent)
                                   .collect(Collectors.toList()),
                               entities.getPageable().getPageNumber(),

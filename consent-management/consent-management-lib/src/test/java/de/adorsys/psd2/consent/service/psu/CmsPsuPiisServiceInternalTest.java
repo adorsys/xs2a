@@ -25,7 +25,6 @@ import de.adorsys.psd2.consent.repository.ConsentJpaRepository;
 import de.adorsys.psd2.consent.repository.specification.PiisConsentEntitySpecification;
 import de.adorsys.psd2.consent.service.mapper.PiisConsentMapper;
 import de.adorsys.psd2.consent.service.mapper.PsuDataMapper;
-import de.adorsys.psd2.consent.service.migration.PiisConsentLazyMigrationService;
 import de.adorsys.psd2.consent.service.psu.util.PageRequestBuilder;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
@@ -45,7 +44,9 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -74,8 +75,6 @@ class CmsPsuPiisServiceInternalTest {
     @Mock
     private PsuDataMapper psuDataMapper;
     @Mock
-    private PiisConsentLazyMigrationService piisConsentLazyMigrationService;
-    @Mock
     private PageRequestBuilder pageRequestBuilder;
     @Mock
     private Specification specification;
@@ -100,7 +99,6 @@ class CmsPsuPiisServiceInternalTest {
         when(piisConsentEntitySpecification.byConsentIdAndInstanceId(EXTERNAL_CONSENT_ID, DEFAULT_SERVICE_INSTANCE_ID))
             .thenReturn((root, criteriaQuery, criteriaBuilder) -> null);
         when(consentJpaRepository.findOne(any())).thenReturn(Optional.ofNullable(piisConsentEntity));
-        when(piisConsentLazyMigrationService.migrateIfNeeded(piisConsentEntity)).thenReturn(piisConsentEntity);
 
         // When
         Optional<CmsPiisConsent> consent = cmsPsuPiisServiceInternal.getConsent(psuIdData, EXTERNAL_CONSENT_ID, DEFAULT_SERVICE_INSTANCE_ID);
@@ -119,7 +117,6 @@ class CmsPsuPiisServiceInternalTest {
         when(piisConsentEntitySpecification.byConsentIdAndInstanceId(EXTERNAL_CONSENT_ID, DEFAULT_SERVICE_INSTANCE_ID))
             .thenReturn((root, criteriaQuery, criteriaBuilder) -> null);
         when(consentJpaRepository.findOne(any())).thenReturn(Optional.ofNullable(piisConsentEntity));
-        when(piisConsentLazyMigrationService.migrateIfNeeded(piisConsentEntity)).thenReturn(piisConsentEntity);
         PsuIdData psuIdDataWithIp = jsonReader.getObjectFromFile("json/service/psu/piis/psu-data-ip-address.json", PsuIdData.class);
 
         // When
