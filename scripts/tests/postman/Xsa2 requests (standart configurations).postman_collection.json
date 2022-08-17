@@ -1,7 +1,7 @@
 {
 	"info": {
 		"_postman_id": "1d604b6f-3707-4936-b4da-7797c7f4bd11",
-		"name": "XS2A requests 13x",
+		"name": "XS2A requests 15x",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
 		"_exporter_id": "15259246"
 	},
@@ -11559,10 +11559,10 @@
 													"pm.test(\"Result validator\", () => {",
 													"      pm.expect(jsonData).to.have.property('_links');",
 													"       pm.expect(jsonData).to.have.property('tppMessages');",
-													"       pm.expect(jsonData._links.account.href).to.be.eq('Mock spi account link from the bank');",
+													"       pm.expect(jsonData._links.account.href).to.be.eq('Mocked account link from SPI');",
 													"       pm.expect(jsonData.tppMessages[0].category).to.be.eq('WARNING');",
 													"       pm.expect(jsonData.tppMessages[0].code).to.be.eq('WARNING');",
-													"       pm.expect(jsonData.tppMessages[0].text).to.be.eq('Mocked tpp message from the bank');",
+													"       pm.expect(jsonData.tppMessages[0].text).to.be.eq('Mocked tpp message from SPI');",
 													"});"
 												],
 												"type": "text/javascript"
@@ -28638,10 +28638,10 @@
 													"pm.test(\"Result validator\", () => {",
 													"      pm.expect(jsonData).to.have.property('_links');",
 													"       pm.expect(jsonData).to.have.property('tppMessages');",
-													"       pm.expect(jsonData._links.account.href).to.be.eq('Mock spi account link from the bank');",
+													"       pm.expect(jsonData._links.account.href).to.be.eq('Mocked account link from SPI');",
 													"       pm.expect(jsonData.tppMessages[0].category).to.be.eq('WARNING');",
 													"       pm.expect(jsonData.tppMessages[0].code).to.be.eq('WARNING');",
-													"       pm.expect(jsonData.tppMessages[0].text).to.be.eq('Mocked tpp message from the bank');",
+													"       pm.expect(jsonData.tppMessages[0].text).to.be.eq('Mocked tpp message from SPI');",
 													"});"
 												],
 												"type": "text/javascript"
@@ -68246,10 +68246,10 @@
 															"pm.test(\"Result validator\", () => {",
 															"      pm.expect(jsonData).to.have.property('_links');",
 															"       pm.expect(jsonData).to.have.property('tppMessages');",
-															"       pm.expect(jsonData._links.account.href).to.be.eq('Mock spi account link from the bank');",
+															"       pm.expect(jsonData._links.account.href).to.be.eq('Mocked account link from SPI');",
 															"       pm.expect(jsonData.tppMessages[0].category).to.be.eq('WARNING');",
 															"       pm.expect(jsonData.tppMessages[0].code).to.be.eq('WARNING');",
-															"       pm.expect(jsonData.tppMessages[0].text).to.be.eq('Mocked tpp message from the bank');",
+															"       pm.expect(jsonData.tppMessages[0].text).to.be.eq('Mocked tpp message from SPI');",
 															"});"
 														],
 														"type": "text/javascript"
@@ -68361,9 +68361,9 @@
 															"pm.test(\"Result validator\", () => {",
 															"      pm.expect(jsonData).to.have.property('_links');",
 															"       pm.expect(jsonData).to.have.property('tppMessages');",
-															"       pm.expect(jsonData._links.account.href).to.be.eq('Mock spi account link from the bank');",
+															"       pm.expect(jsonData._links.account.href).to.be.eq('Mocked account link from SPI');",
 															"       pm.expect(jsonData.tppMessages[0].category).to.be.eq('WARNING');",
-															"       pm.expect(jsonData.tppMessages[0].text).to.be.eq('Mocked tpp message from the bank');",
+															"       pm.expect(jsonData.tppMessages[0].text).to.be.eq('Mocked tpp message from SPI');",
 															"});"
 														],
 														"type": "text/javascript"
@@ -88859,10 +88859,10 @@
 													"pm.test(\"Result validator\", () => {",
 													"      pm.expect(jsonData).to.have.property('_links');",
 													"       pm.expect(jsonData).to.have.property('tppMessages');",
-													"       pm.expect(jsonData._links.account.href).to.be.eq('Mock spi account link from the bank');",
+													"       pm.expect(jsonData._links.account.href).to.be.eq('Mocked account link from SPI');",
 													"       pm.expect(jsonData.tppMessages[0].category).to.be.eq('WARNING');",
 													"       pm.expect(jsonData.tppMessages[0].code).to.be.eq('WARNING');",
-													"       pm.expect(jsonData.tppMessages[0].text).to.be.eq('Mocked tpp message from the bank');",
+													"       pm.expect(jsonData.tppMessages[0].text).to.be.eq('Mocked tpp message from SPI');",
 													"});"
 												],
 												"type": "text/javascript"
@@ -88992,9 +88992,9 @@
 													"pm.test(\"Result validator\", () => {",
 													"      pm.expect(jsonData).to.have.property('_links');",
 													"       pm.expect(jsonData).to.have.property('tppMessages');",
-													"       pm.expect(jsonData._links.account.href).to.be.eq('Mock spi account link from the bank');",
+													"       pm.expect(jsonData._links.account.href).to.be.eq('Mocked account link from SPI');",
 													"       pm.expect(jsonData.tppMessages[0].category).to.be.eq('WARNING');",
-													"       pm.expect(jsonData.tppMessages[0].text).to.be.eq('Mocked tpp message from the bank');",
+													"       pm.expect(jsonData.tppMessages[0].text).to.be.eq('Mocked tpp message from SPI');",
 													"});"
 												],
 												"type": "text/javascript"
@@ -89378,10 +89378,10 @@
 													"pm.test(\"Result validator\", () => {",
 													"      pm.expect(jsonData).to.have.property('_links');",
 													"       pm.expect(jsonData).to.have.property('tppMessages');",
-													"       pm.expect(jsonData._links.account.href).to.be.eq('Mock spi account link from the bank');",
+													"       pm.expect(jsonData._links.account.href).to.be.eq('Mocked account link from SPI');",
 													"       pm.expect(jsonData.tppMessages[0].category).to.be.eq('WARNING');",
 													"       pm.expect(jsonData.tppMessages[0].code).to.be.eq('WARNING');",
-													"       pm.expect(jsonData.tppMessages[0].text).to.be.eq('Mocked tpp message from the bank');",
+													"       pm.expect(jsonData.tppMessages[0].text).to.be.eq('Mocked tpp message from SPI');",
 													"});"
 												],
 												"type": "text/javascript"
@@ -89501,9 +89501,9 @@
 													"pm.test(\"Result validator\", () => {",
 													"      pm.expect(jsonData).to.have.property('_links');",
 													"       pm.expect(jsonData).to.have.property('tppMessages');",
-													"       pm.expect(jsonData._links.account.href).to.be.eq('Mock spi account link from the bank');",
+													"       pm.expect(jsonData._links.account.href).to.be.eq('Mocked account link from SPI');",
 													"       pm.expect(jsonData.tppMessages[0].category).to.be.eq('WARNING');",
-													"       pm.expect(jsonData.tppMessages[0].text).to.be.eq('Mocked tpp message from the bank');",
+													"       pm.expect(jsonData.tppMessages[0].text).to.be.eq('Mocked tpp message from SPI');",
 													"});"
 												],
 												"type": "text/javascript"
@@ -89887,10 +89887,10 @@
 													"pm.test(\"Result validator\", () => {",
 													"      pm.expect(jsonData).to.have.property('_links');",
 													"       pm.expect(jsonData).to.have.property('tppMessages');",
-													"       pm.expect(jsonData._links.account.href).to.be.eq('Mock spi account link from the bank');",
+													"       pm.expect(jsonData._links.account.href).to.be.eq('Mocked account link from SPI');",
 													"       pm.expect(jsonData.tppMessages[0].category).to.be.eq('WARNING');",
 													"       pm.expect(jsonData.tppMessages[0].code).to.be.eq('WARNING');",
-													"       pm.expect(jsonData.tppMessages[0].text).to.be.eq('Mocked tpp message from the bank');",
+													"       pm.expect(jsonData.tppMessages[0].text).to.be.eq('Mocked tpp message from SPI');",
 													"});"
 												],
 												"type": "text/javascript"
@@ -90010,9 +90010,9 @@
 													"pm.test(\"Result validator\", () => {",
 													"      pm.expect(jsonData).to.have.property('_links');",
 													"       pm.expect(jsonData).to.have.property('tppMessages');",
-													"       pm.expect(jsonData._links.account.href).to.be.eq('Mock spi account link from the bank');",
+													"       pm.expect(jsonData._links.account.href).to.be.eq('Mocked account link from SPI');",
 													"       pm.expect(jsonData.tppMessages[0].category).to.be.eq('WARNING');",
-													"       pm.expect(jsonData.tppMessages[0].text).to.be.eq('Mocked tpp message from the bank');",
+													"       pm.expect(jsonData.tppMessages[0].text).to.be.eq('Mocked tpp message from SPI');",
 													"});"
 												],
 												"type": "text/javascript"
@@ -90269,10 +90269,10 @@
 											"pm.test(\"Result validator\", () => {",
 											"      pm.expect(jsonData).to.have.property('_links');",
 											"       pm.expect(jsonData).to.have.property('tppMessages');",
-											"       pm.expect(jsonData._links.account.href).to.be.eq('Mock spi account link from the bank');",
+											"       pm.expect(jsonData._links.account.href).to.be.eq('Mocked account link from SPI');",
 											"       pm.expect(jsonData.tppMessages[0].category).to.be.eq('WARNING');",
 											"       pm.expect(jsonData.tppMessages[0].code).to.be.eq('WARNING');",
-											"       pm.expect(jsonData.tppMessages[0].text).to.be.eq('Mocked tpp message from the bank');",
+											"       pm.expect(jsonData.tppMessages[0].text).to.be.eq('Mocked tpp message from SPI');",
 											"});"
 										],
 										"type": "text/javascript"
@@ -90330,9 +90330,9 @@
 											"pm.test(\"Result validator\", () => {",
 											"      pm.expect(jsonData).to.have.property('_links');",
 											"       pm.expect(jsonData).to.have.property('tppMessages');",
-											"       pm.expect(jsonData._links.account.href).to.be.eq('Mock spi account link from the bank');",
+											"       pm.expect(jsonData._links.account.href).to.be.eq('Mocked account link from SPI');",
 											"       pm.expect(jsonData.tppMessages[0].category).to.be.eq('WARNING');",
-											"       pm.expect(jsonData.tppMessages[0].text).to.be.eq('Mocked tpp message from the bank');",
+											"       pm.expect(jsonData.tppMessages[0].text).to.be.eq('Mocked tpp message from SPI');",
 											"});"
 										],
 										"type": "text/javascript"
