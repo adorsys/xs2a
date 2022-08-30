@@ -18,10 +18,6 @@
 
 package de.adorsys.psd2.xs2a.spi.domain.payment;
 
-import de.adorsys.psd2.xs2a.core.pis.FrequencyCode;
-import de.adorsys.psd2.xs2a.core.pis.PisDayOfExecution;
-import de.adorsys.psd2.xs2a.core.pis.PisExecutionRule;
-import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
@@ -35,9 +31,9 @@ import java.util.List;
 public class SpiPeriodicPayment extends SpiSinglePayment {
     private LocalDate startDate;
     private LocalDate endDate;
-    private PisExecutionRule executionRule;
-    private FrequencyCode frequency;
-    private PisDayOfExecution dayOfExecution;
+    private SpiPisExecutionRule executionRule;
+    private SpiFrequencyCode frequency;
+    private SpiPisDayOfExecution dayOfExecution;
     private List<String> monthsOfExecution;
     private String contentType;
 
@@ -46,7 +42,7 @@ public class SpiPeriodicPayment extends SpiSinglePayment {
     }
 
     @Override
-    public final PaymentType getPaymentType() {
-        return PaymentType.PERIODIC;
+    public final SpiPaymentType getPaymentType() {
+        return SpiPaymentType.PERIODIC;
     }
 }

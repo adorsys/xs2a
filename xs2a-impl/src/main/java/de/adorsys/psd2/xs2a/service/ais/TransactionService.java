@@ -44,12 +44,7 @@ import de.adorsys.psd2.xs2a.service.consent.Xs2aAccountService;
 import de.adorsys.psd2.xs2a.service.consent.Xs2aAisConsentService;
 import de.adorsys.psd2.xs2a.service.event.Xs2aEventService;
 import de.adorsys.psd2.xs2a.service.mapper.cms_xs2a_mappers.Xs2aAisConsentMapper;
-import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiErrorMapper;
-import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiToXs2aAccountReferenceMapper;
-import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiToXs2aBalanceMapper;
-import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiToXs2aDownloadTransactionsMapper;
-import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiToXs2aTransactionMapper;
-import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiTransactionListToXs2aAccountReportMapper;
+import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.*;
 import de.adorsys.psd2.xs2a.service.profile.AspspProfileServiceWrapper;
 import de.adorsys.psd2.xs2a.service.spi.SpiAspspConsentDataProviderFactory;
 import de.adorsys.psd2.xs2a.service.validator.ValueValidatorService;
@@ -65,6 +60,7 @@ import de.adorsys.psd2.xs2a.spi.domain.account.SpiTransactionLinks;
 import de.adorsys.psd2.xs2a.spi.domain.account.SpiTransactionReport;
 import de.adorsys.psd2.xs2a.spi.domain.account.SpiTransactionReportParameters;
 import de.adorsys.psd2.xs2a.spi.domain.account.SpiTransactionsDownloadResponse;
+import de.adorsys.psd2.xs2a.spi.domain.error.SpiMessageErrorCode;
 import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponse;
 import de.adorsys.psd2.xs2a.spi.service.AccountSpi;
 import lombok.AllArgsConstructor;
@@ -79,7 +75,9 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static de.adorsys.psd2.xs2a.core.error.ErrorType.AIS_400;
-import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.*;
+import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.CONSENT_UNKNOWN_400;
+import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.FORMAT_ERROR_UNKNOWN_ACCOUNT;
+import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.REQUESTED_FORMATS_INVALID;
 @Slf4j
 @Service
 @AllArgsConstructor
@@ -101,6 +99,7 @@ public class TransactionService {
     private final AspspProfileServiceWrapper aspspProfileService;
     private final Xs2aEventService xs2aEventService;
     private final SpiErrorMapper spiErrorMapper;
+    private final Xs2aToSpiConsentMapper xs2aToSpiConsentMapper;
 
     private final GetTransactionsReportValidator getTransactionsReportValidator;
     private final DownloadTransactionsReportValidator downloadTransactionsReportValidator;
@@ -316,7 +315,7 @@ public class TransactionService {
             !aspspProfileService.isTransactionsWithoutBalancesSupported() || request.isWithBalance();
 
         return new SpiTransactionReportParameters(request.getAcceptHeader(), isTransactionsShouldContainBalances, request.getDateFrom(), request.getDateTo(),
-                                                  request.getBookingStatus(), request.getEntryReferenceFrom(), request.getDeltaList(),
+                                                  xs2aToSpiConsentMapper.mapToSpiAisBookingStatus(request.getBookingStatus()), request.getEntryReferenceFrom(), request.getDeltaList(),
                                                   request.getPageIndex(), request.getItemsPerPage());
     }
 
@@ -328,7 +327,7 @@ public class TransactionService {
     private ResponseObject<Xs2aTransactionsReport> checkSpiResponseForTransactionsReport(Xs2aTransactionsReportByPeriodRequest request,
                                                                                          SpiResponse<SpiTransactionReport> spiResponse) {
         // in this particular call we use NOT_SUPPORTED to indicate that requested Content-type is not ok for us
-        if (spiResponse.getErrors().get(0).getErrorCode() == SERVICE_NOT_SUPPORTED) {
+        if (spiResponse.getErrors().get(0).getErrorCode() == SpiMessageErrorCode.SERVICE_NOT_SUPPORTED) {
             log.info("Account-ID [{}], Consent-ID: [{}]. Get transactions report by period failed: requested content-type not json or text.",
                      request.getAccountId(), request.getConsentId());
             return ResponseObject.<Xs2aTransactionsReport>builder()

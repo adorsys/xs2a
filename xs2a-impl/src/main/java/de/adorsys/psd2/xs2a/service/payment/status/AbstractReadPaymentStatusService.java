@@ -24,11 +24,13 @@ import de.adorsys.psd2.xs2a.core.domain.TppMessageInformation;
 import de.adorsys.psd2.xs2a.core.error.ErrorType;
 import de.adorsys.psd2.xs2a.core.error.MessageErrorCode;
 import de.adorsys.psd2.xs2a.core.mapper.ServiceType;
+import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
 import de.adorsys.psd2.xs2a.domain.pis.ReadPaymentStatusResponse;
 import de.adorsys.psd2.xs2a.service.mapper.MediaTypeMapper;
 import de.adorsys.psd2.xs2a.service.mapper.payment.SpiPaymentFactory;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiErrorMapper;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiToXs2aLinksMapper;
+import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiToXs2aTppMessageInformationMapper;
 import de.adorsys.psd2.xs2a.service.spi.SpiAspspConsentDataProviderFactory;
 import de.adorsys.psd2.xs2a.spi.domain.SpiAspspConsentDataProvider;
 import de.adorsys.psd2.xs2a.spi.domain.SpiContextData;
@@ -53,6 +55,7 @@ public abstract class AbstractReadPaymentStatusService implements ReadPaymentSta
     private final MediaTypeMapper mediaTypeMapper;
     private final SpiPaymentFactory spiPaymentFactory;
     private final SpiToXs2aLinksMapper spiToXs2aLinksMapper;
+    private final SpiToXs2aTppMessageInformationMapper tppMessageInformationMapper;
 
     @Override
     public ReadPaymentStatusResponse readPaymentStatus(CommonPaymentData commonPaymentData, SpiContextData spiContextData, @NotNull String encryptedPaymentId, String acceptMediaType) {
@@ -84,11 +87,11 @@ public abstract class AbstractReadPaymentStatusService implements ReadPaymentSta
         }
 
         SpiGetPaymentStatusResponse payload = spiResponse.getPayload();
-        return new ReadPaymentStatusResponse(payload.getTransactionStatus(), payload.getFundsAvailable(),
+        return new ReadPaymentStatusResponse(TransactionStatus.valueOf(payload.getTransactionStatus().name()), payload.getFundsAvailable(),
                                              mediaTypeMapper.mapToMediaType(payload.getResponseContentType()),
                                              payload.getPaymentStatusRaw(), payload.getPsuMessage(),
                                              spiToXs2aLinksMapper.toXs2aLinks(payload.getLinks()),
-                                             payload.getTppMessageInformation()
+                                             tppMessageInformationMapper.toTppMessageInformationSet(payload.getTppMessageInformation())
 
         );
     }

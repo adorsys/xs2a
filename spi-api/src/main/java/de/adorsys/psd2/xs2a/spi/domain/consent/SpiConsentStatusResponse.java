@@ -18,7 +18,6 @@
 
 package de.adorsys.psd2.xs2a.spi.domain.consent;
 
-import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
 import lombok.Value;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -26,7 +25,7 @@ import org.jetbrains.annotations.Nullable;
 @Value
 public class SpiConsentStatusResponse {
     @NotNull
-    private ConsentStatus consentStatus;
+    private SpiConsentStatus consentStatus;
 
     @Nullable
     private String psuMessage;

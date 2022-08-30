@@ -18,8 +18,6 @@
 
 package de.adorsys.psd2.xs2a.service.payment.support;
 
-import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
-import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import de.adorsys.psd2.xs2a.service.payment.support.mapper.spi.SpiPaymentMapper;
 import de.adorsys.psd2.xs2a.service.profile.StandardPaymentProductsResolver;
 import de.adorsys.psd2.xs2a.spi.domain.SpiAspspConsentDataProvider;
@@ -27,8 +25,10 @@ import de.adorsys.psd2.xs2a.spi.domain.SpiContextData;
 import de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiScaConfirmation;
 import de.adorsys.psd2.xs2a.spi.domain.payment.SpiBulkPayment;
 import de.adorsys.psd2.xs2a.spi.domain.payment.SpiPaymentInfo;
+import de.adorsys.psd2.xs2a.spi.domain.payment.SpiPaymentType;
 import de.adorsys.psd2.xs2a.spi.domain.payment.SpiPeriodicPayment;
 import de.adorsys.psd2.xs2a.spi.domain.payment.SpiSinglePayment;
+import de.adorsys.psd2.xs2a.spi.domain.payment.SpiTransactionStatus;
 import de.adorsys.psd2.xs2a.spi.domain.payment.response.SpiPaymentExecutionResponse;
 import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponse;
 import de.adorsys.psd2.xs2a.spi.service.BulkPaymentSpi;
@@ -43,7 +43,9 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class PisExecutePaymentServiceSupportImplTest {
@@ -55,7 +57,7 @@ class PisExecutePaymentServiceSupportImplTest {
     private static final SpiBulkPayment SPI_BULK_PAYMENT = new SpiBulkPayment();
     private static final SpiScaConfirmation SPI_SCA_CONFIRMATION = new SpiScaConfirmation();
     private static final SpiPaymentExecutionResponse SPI_PAYMENT_EXECUTION_RESPONSE =
-        new SpiPaymentExecutionResponse(TransactionStatus.ACCP);
+        new SpiPaymentExecutionResponse(SpiTransactionStatus.ACCP);
 
     @Mock
     private StandardPaymentProductsResolver standardPaymentProductsResolver;
@@ -81,7 +83,7 @@ class PisExecutePaymentServiceSupportImplTest {
         // Given
         when(standardPaymentProductsResolver.isRawPaymentProduct(RAW_PAYMENT_PRODUCT)).thenReturn(true);
 
-        SpiPaymentInfo rawSpiPayment = buildSpiPaymentInfo(RAW_PAYMENT_PRODUCT, PaymentType.SINGLE);
+        SpiPaymentInfo rawSpiPayment = buildSpiPaymentInfo(RAW_PAYMENT_PRODUCT, SpiPaymentType.SINGLE);
 
         SpiResponse<SpiPaymentExecutionResponse> expectedResponse = buildSpiResponse();
         when(commonPaymentSpi.verifyScaAuthorisationAndExecutePaymentWithPaymentResponse(SPI_CONTEXT_DATA, SPI_SCA_CONFIRMATION, rawSpiPayment, mockSpiAspspConsentDataProvider))
@@ -102,7 +104,7 @@ class PisExecutePaymentServiceSupportImplTest {
     @Test
     void verifyScaAuthorisationAndExecutePayment_single() {
         // Given
-        SpiPaymentInfo standardSpiPayment = buildSpiPaymentInfo(STANDARD_PAYMENT_PRODUCT, PaymentType.SINGLE);
+        SpiPaymentInfo standardSpiPayment = buildSpiPaymentInfo(STANDARD_PAYMENT_PRODUCT, SpiPaymentType.SINGLE);
 
         when(spiPaymentMapper.mapToSpiSinglePayment(standardSpiPayment)).thenReturn(SPI_SINGLE_PAYMENT);
 
@@ -125,7 +127,7 @@ class PisExecutePaymentServiceSupportImplTest {
     @Test
     void verifyScaAuthorisationAndExecutePayment_periodic() {
         // Given
-        SpiPaymentInfo standardSpiPayment = buildSpiPaymentInfo(STANDARD_PAYMENT_PRODUCT, PaymentType.PERIODIC);
+        SpiPaymentInfo standardSpiPayment = buildSpiPaymentInfo(STANDARD_PAYMENT_PRODUCT, SpiPaymentType.PERIODIC);
 
         when(spiPaymentMapper.mapToSpiPeriodicPayment(standardSpiPayment)).thenReturn(SPI_PERIODIC_PAYMENT);
 
@@ -148,7 +150,7 @@ class PisExecutePaymentServiceSupportImplTest {
     @Test
     void verifyScaAuthorisationAndExecutePayment_bulk() {
         // Given
-        SpiPaymentInfo standardSpiPayment = buildSpiPaymentInfo(STANDARD_PAYMENT_PRODUCT, PaymentType.BULK);
+        SpiPaymentInfo standardSpiPayment = buildSpiPaymentInfo(STANDARD_PAYMENT_PRODUCT, SpiPaymentType.BULK);
 
         when(spiPaymentMapper.mapToSpiBulkPayment(standardSpiPayment)).thenReturn(SPI_BULK_PAYMENT);
 
@@ -174,7 +176,7 @@ class PisExecutePaymentServiceSupportImplTest {
         // Given
         when(standardPaymentProductsResolver.isRawPaymentProduct(RAW_PAYMENT_PRODUCT)).thenReturn(true);
 
-        SpiPaymentInfo rawSpiPayment = buildSpiPaymentInfo(RAW_PAYMENT_PRODUCT, PaymentType.SINGLE);
+        SpiPaymentInfo rawSpiPayment = buildSpiPaymentInfo(RAW_PAYMENT_PRODUCT, SpiPaymentType.SINGLE);
 
         SpiResponse<SpiPaymentExecutionResponse> expectedResponse = buildSpiExecutionResponse();
         when(commonPaymentSpi.executePaymentWithoutSca(SPI_CONTEXT_DATA, rawSpiPayment, mockSpiAspspConsentDataProvider))
@@ -195,7 +197,7 @@ class PisExecutePaymentServiceSupportImplTest {
     @Test
     void executePaymentWithoutSca_single() {
         // Given
-        SpiPaymentInfo standardSpiPayment = buildSpiPaymentInfo(STANDARD_PAYMENT_PRODUCT, PaymentType.SINGLE);
+        SpiPaymentInfo standardSpiPayment = buildSpiPaymentInfo(STANDARD_PAYMENT_PRODUCT, SpiPaymentType.SINGLE);
 
         when(spiPaymentMapper.mapToSpiSinglePayment(standardSpiPayment)).thenReturn(SPI_SINGLE_PAYMENT);
 
@@ -218,7 +220,7 @@ class PisExecutePaymentServiceSupportImplTest {
     @Test
     void executePaymentWithoutSca_periodic() {
         // Given
-        SpiPaymentInfo standardSpiPayment = buildSpiPaymentInfo(STANDARD_PAYMENT_PRODUCT, PaymentType.PERIODIC);
+        SpiPaymentInfo standardSpiPayment = buildSpiPaymentInfo(STANDARD_PAYMENT_PRODUCT, SpiPaymentType.PERIODIC);
 
         when(spiPaymentMapper.mapToSpiPeriodicPayment(standardSpiPayment)).thenReturn(SPI_PERIODIC_PAYMENT);
 
@@ -241,7 +243,7 @@ class PisExecutePaymentServiceSupportImplTest {
     @Test
     void executePaymentWithoutSca_bulk() {
         // Given
-        SpiPaymentInfo standardSpiPayment = buildSpiPaymentInfo(STANDARD_PAYMENT_PRODUCT, PaymentType.BULK);
+        SpiPaymentInfo standardSpiPayment = buildSpiPaymentInfo(STANDARD_PAYMENT_PRODUCT, SpiPaymentType.BULK);
 
         when(spiPaymentMapper.mapToSpiBulkPayment(standardSpiPayment)).thenReturn(SPI_BULK_PAYMENT);
 
@@ -273,7 +275,7 @@ class PisExecutePaymentServiceSupportImplTest {
                    .build();
     }
 
-    private SpiPaymentInfo buildSpiPaymentInfo(String paymentProduct, PaymentType paymentType) {
+    private SpiPaymentInfo buildSpiPaymentInfo(String paymentProduct, SpiPaymentType paymentType) {
         SpiPaymentInfo spiPaymentInfo = new SpiPaymentInfo(paymentProduct);
         spiPaymentInfo.setPaymentType(paymentType);
         return spiPaymentInfo;

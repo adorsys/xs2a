@@ -18,11 +18,11 @@
 
 package de.adorsys.psd2.xs2a.spi.domain.payment.response;
 
-import de.adorsys.psd2.xs2a.core.domain.TppMessageInformation;
-import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
-import de.adorsys.psd2.xs2a.core.sca.ChallengeData;
+import de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiAuthenticationObject;
 import de.adorsys.psd2.xs2a.spi.domain.common.SpiAmount;
-import de.adorsys.psd2.xs2a.spi.domain.common.SpiAuthenticationObject;
+import de.adorsys.psd2.xs2a.spi.domain.common.SpiTppMessageInformation;
+import de.adorsys.psd2.xs2a.spi.domain.payment.SpiTransactionStatus;
+import de.adorsys.psd2.xs2a.spi.domain.sca.SpiChallengeData;
 import lombok.Data;
 
 import java.util.List;
@@ -30,16 +30,16 @@ import java.util.Set;
 
 @Data
 public abstract class SpiPaymentInitiationResponse {
-    private TransactionStatus transactionStatus;
+    private SpiTransactionStatus transactionStatus;
     private String paymentId;
     private SpiAmount spiTransactionFees;
     private Boolean spiTransactionFeeIndicator;
     private boolean multilevelScaRequired;
     private List<SpiAuthenticationObject> scaMethods;
     private String chosenScaMethod;
-    private ChallengeData challengeData;
+    private SpiChallengeData challengeData;
     private String psuMessage;
-    private Set<TppMessageInformation> tppMessages;
+    private Set<SpiTppMessageInformation> tppMessages;
     private String aspspAccountId;
     private SpiAmount currencyConversionFee;
     private SpiAmount estimatedTotalAmount;

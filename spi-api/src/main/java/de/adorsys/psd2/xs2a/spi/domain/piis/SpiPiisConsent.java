@@ -18,10 +18,10 @@
 
 package de.adorsys.psd2.xs2a.spi.domain.piis;
 
-import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
-import de.adorsys.psd2.xs2a.core.consent.ConsentType;
 import de.adorsys.psd2.xs2a.spi.domain.SpiConsent;
 import de.adorsys.psd2.xs2a.spi.domain.account.SpiAccountReference;
+import de.adorsys.psd2.xs2a.spi.domain.consent.SpiConsentStatus;
+import de.adorsys.psd2.xs2a.spi.domain.consent.SpiConsentType;
 import de.adorsys.psd2.xs2a.spi.domain.psu.SpiPsuData;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -41,7 +41,7 @@ public class SpiPiisConsent implements SpiConsent {
     private LocalDate lastActionDate;
     private LocalDate expireDate;
     private List<SpiPsuData> psuData;
-    private ConsentStatus consentStatus;
+    private SpiConsentStatus consentStatus;
     private SpiAccountReference account;
     private OffsetDateTime creationTimestamp;
     private String instanceId;
@@ -51,5 +51,5 @@ public class SpiPiisConsent implements SpiConsent {
     private String registrationInformation;
     private OffsetDateTime statusChangeTimestamp;
     private String tppAuthorisationNumber;
-    private ConsentType consentType;
+    private SpiConsentType consentType;
 }

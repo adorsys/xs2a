@@ -19,7 +19,7 @@
 package de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers;
 
 import de.adorsys.psd2.xs2a.core.sca.ChallengeData;
-import de.adorsys.psd2.xs2a.spi.domain.common.SpiChallengeData;
+import de.adorsys.psd2.xs2a.spi.domain.sca.SpiChallengeData;
 import org.mapstruct.Mapper;
 
 @Mapper(componentModel = "spring")

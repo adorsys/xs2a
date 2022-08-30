@@ -18,10 +18,10 @@
 
 package de.adorsys.psd2.xs2a.spi.service;
 
-import de.adorsys.psd2.xs2a.core.error.MessageErrorCode;
-import de.adorsys.psd2.xs2a.core.error.TppMessage;
 import de.adorsys.psd2.xs2a.spi.domain.SpiAspspConsentDataProvider;
 import de.adorsys.psd2.xs2a.spi.domain.SpiContextData;
+import de.adorsys.psd2.xs2a.spi.domain.error.SpiMessageErrorCode;
+import de.adorsys.psd2.xs2a.spi.domain.error.SpiTppMessage;
 import de.adorsys.psd2.xs2a.spi.domain.payment.SpiPeriodicPayment;
 import de.adorsys.psd2.xs2a.spi.domain.payment.response.SpiGetPaymentStatusResponse;
 import de.adorsys.psd2.xs2a.spi.domain.payment.response.SpiPeriodicPaymentInitiationResponse;
@@ -36,7 +36,7 @@ public interface PeriodicPaymentSpi extends PaymentSpi<SpiPeriodicPayment, SpiPe
     @NotNull
     default SpiResponse<SpiPeriodicPaymentInitiationResponse> initiatePayment(@NotNull SpiContextData contextData, @NotNull SpiPeriodicPayment payment, @NotNull SpiAspspConsentDataProvider aspspConsentDataProvider) {
         return SpiResponse.<SpiPeriodicPaymentInitiationResponse>builder()
-                   .error(new TppMessage(MessageErrorCode.SERVICE_NOT_SUPPORTED))
+                   .error(new SpiTppMessage(SpiMessageErrorCode.SERVICE_NOT_SUPPORTED))
                    .build();
     }
 
@@ -44,7 +44,7 @@ public interface PeriodicPaymentSpi extends PaymentSpi<SpiPeriodicPayment, SpiPe
     @NotNull
     default SpiResponse<SpiPeriodicPayment> getPaymentById(@NotNull SpiContextData contextData, @NotNull String acceptMediaType, @NotNull SpiPeriodicPayment payment, @NotNull SpiAspspConsentDataProvider aspspConsentDataProvider) {
         return SpiResponse.<SpiPeriodicPayment>builder()
-                   .error(new TppMessage(MessageErrorCode.SERVICE_NOT_SUPPORTED))
+                   .error(new SpiTppMessage(SpiMessageErrorCode.SERVICE_NOT_SUPPORTED))
                    .build();
     }
 
@@ -52,7 +52,7 @@ public interface PeriodicPaymentSpi extends PaymentSpi<SpiPeriodicPayment, SpiPe
     @NotNull
     default SpiResponse<SpiGetPaymentStatusResponse> getPaymentStatusById(@NotNull SpiContextData contextData, @NotNull String acceptMediaType, @NotNull SpiPeriodicPayment payment, @NotNull SpiAspspConsentDataProvider aspspConsentDataProvider) {
         return SpiResponse.<SpiGetPaymentStatusResponse>builder()
-                   .error(new TppMessage(MessageErrorCode.SERVICE_NOT_SUPPORTED))
+                   .error(new SpiTppMessage(SpiMessageErrorCode.SERVICE_NOT_SUPPORTED))
                    .build();
     }
 }

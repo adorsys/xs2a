@@ -33,7 +33,6 @@ import de.adorsys.psd2.xs2a.core.domain.TppMessageInformation;
 import de.adorsys.psd2.xs2a.core.error.ErrorType;
 import de.adorsys.psd2.xs2a.core.error.MessageError;
 import de.adorsys.psd2.xs2a.core.error.MessageErrorCode;
-import de.adorsys.psd2.xs2a.core.error.TppMessage;
 import de.adorsys.psd2.xs2a.core.mapper.ServiceType;
 import de.adorsys.psd2.xs2a.core.profile.AccountReference;
 import de.adorsys.psd2.xs2a.core.service.validator.ValidationResult;
@@ -59,6 +58,8 @@ import de.adorsys.psd2.xs2a.spi.domain.SpiContextData;
 import de.adorsys.psd2.xs2a.spi.domain.account.SpiAccountConsent;
 import de.adorsys.psd2.xs2a.spi.domain.account.SpiAccountReference;
 import de.adorsys.psd2.xs2a.spi.domain.account.SpiCardAccountDetails;
+import de.adorsys.psd2.xs2a.spi.domain.error.SpiMessageErrorCode;
+import de.adorsys.psd2.xs2a.spi.domain.error.SpiTppMessage;
 import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponse;
 import de.adorsys.psd2.xs2a.spi.service.CardAccountSpi;
 import de.adorsys.psd2.xs2a.util.reader.TestSpiDataProvider;
@@ -611,14 +612,14 @@ class CardAccountServiceTest {
     // Needed because SpiResponse is final, so it's impossible to mock it
     private SpiResponse<List<SpiCardAccountDetails>> buildErrorSpiResponse() {
         return SpiResponse.<List<SpiCardAccountDetails>>builder()
-                   .error(new TppMessage(FORMAT_ERROR))
+                   .error(new SpiTppMessage(SpiMessageErrorCode.FORMAT_ERROR))
                    .build();
     }
 
     // Needed because SpiResponse is final, so it's impossible to mock it
     private SpiResponse<SpiCardAccountDetails> buildErrorSpiResponseDetails() {
         return SpiResponse.<SpiCardAccountDetails>builder()
-                   .error(new TppMessage(FORMAT_ERROR))
+                   .error(new SpiTppMessage(SpiMessageErrorCode.FORMAT_ERROR))
                    .build();
     }
 

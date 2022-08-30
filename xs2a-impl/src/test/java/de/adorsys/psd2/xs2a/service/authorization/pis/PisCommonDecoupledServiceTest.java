@@ -22,13 +22,13 @@ import de.adorsys.psd2.xs2a.core.domain.ErrorHolder;
 import de.adorsys.psd2.xs2a.core.domain.TppMessageInformation;
 import de.adorsys.psd2.xs2a.core.error.ErrorType;
 import de.adorsys.psd2.xs2a.core.error.MessageErrorCode;
-import de.adorsys.psd2.xs2a.core.error.TppMessage;
 import de.adorsys.psd2.xs2a.core.mapper.ServiceType;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.domain.consent.pis.PaymentAuthorisationParameters;
 import de.adorsys.psd2.xs2a.domain.consent.pis.Xs2aUpdatePisCommonPaymentPsuDataResponse;
 import de.adorsys.psd2.xs2a.service.context.SpiContextDataProvider;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiErrorMapper;
+import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiToXs2aAuthorizationMapper;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiToXs2aCurrencyConversionInfoMapper;
 import de.adorsys.psd2.xs2a.service.spi.SpiAspspConsentDataProviderFactory;
 import de.adorsys.psd2.xs2a.spi.domain.SpiAspspConsentDataProvider;
@@ -36,8 +36,11 @@ import de.adorsys.psd2.xs2a.spi.domain.SpiContextData;
 import de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiAuthorisationDecoupledScaResponse;
 import de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiCurrencyConversionInfo;
 import de.adorsys.psd2.xs2a.spi.domain.common.SpiAmount;
+import de.adorsys.psd2.xs2a.spi.domain.error.SpiMessageErrorCode;
+import de.adorsys.psd2.xs2a.spi.domain.error.SpiTppMessage;
 import de.adorsys.psd2.xs2a.spi.domain.payment.SpiSinglePayment;
 import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponse;
+import de.adorsys.psd2.xs2a.spi.domain.sca.SpiScaStatus;
 import de.adorsys.psd2.xs2a.spi.service.CurrencyConversionInfoSpi;
 import de.adorsys.psd2.xs2a.spi.service.PaymentAuthorisationSpi;
 import de.adorsys.psd2.xs2a.spi.service.PaymentCancellationSpi;
@@ -93,6 +96,8 @@ class PisCommonDecoupledServiceTest {
     private CurrencyConversionInfoSpi currencyConversionInfoSpi;
     @Mock
     private SpiToXs2aCurrencyConversionInfoMapper spiToXs2aCurrencyConversionInfoMapper;
+    @Mock
+    private SpiToXs2aAuthorizationMapper spiToXs2aAuthorizationMapper;
 
     @BeforeEach
     void init() {
@@ -113,6 +118,7 @@ class PisCommonDecoupledServiceTest {
             .thenReturn(SpiResponse.<SpiCurrencyConversionInfo>builder()
                             .payload(spiCurrencyConversionInfo)
                             .build());
+        when(spiToXs2aAuthorizationMapper.mapToScaStatus(SpiScaStatus.SCAMETHODSELECTED)).thenReturn(SCAMETHODSELECTED);
 
         // When
         Xs2aUpdatePisCommonPaymentPsuDataResponse actualResponse = pisCommonDecoupledService.proceedDecoupledInitiation(UPDATE_PIS_COMMON_PAYMENT_REQUEST, SPI_SINGLE_PAYMENT, null);
@@ -155,6 +161,7 @@ class PisCommonDecoupledServiceTest {
             .thenReturn(SpiResponse.<SpiCurrencyConversionInfo>builder()
                             .payload(spiCurrencyConversionInfo)
                             .build());
+        when(spiToXs2aAuthorizationMapper.mapToScaStatus(SpiScaStatus.SCAMETHODSELECTED)).thenReturn(SCAMETHODSELECTED);
 
         // When
         Xs2aUpdatePisCommonPaymentPsuDataResponse actualResponse = pisCommonDecoupledService.proceedDecoupledInitiation(UPDATE_PIS_COMMON_PAYMENT_REQUEST_AUTH_METHOD_ID, SPI_SINGLE_PAYMENT, AUTHENTICATION_METHOD_ID);
@@ -191,6 +198,7 @@ class PisCommonDecoupledServiceTest {
         // Given
         when(paymentCancellationSpi.startScaDecoupled(SPI_CONTEXT_DATA, AUTHORISATION_ID, AUTHENTICATION_METHOD_ID, SPI_SINGLE_PAYMENT, spiAspspConsentDataProvider))
             .thenReturn(AUTH_DECOUPLED_RESPONSE);
+        when(spiToXs2aAuthorizationMapper.mapToScaStatus(SpiScaStatus.SCAMETHODSELECTED)).thenReturn(SCAMETHODSELECTED);
 
         // When
         Xs2aUpdatePisCommonPaymentPsuDataResponse actualResponse = pisCommonDecoupledService.proceedDecoupledCancellation(UPDATE_PIS_COMMON_PAYMENT_REQUEST_AUTH_METHOD_ID, SPI_SINGLE_PAYMENT, AUTHENTICATION_METHOD_ID);
@@ -230,7 +238,7 @@ class PisCommonDecoupledServiceTest {
     }
 
     private static SpiResponse<SpiAuthorisationDecoupledScaResponse> buildSpiResponse() {
-        SpiAuthorisationDecoupledScaResponse response = new SpiAuthorisationDecoupledScaResponse(SCAMETHODSELECTED, DECOUPLED_PSU_MESSAGE);
+        SpiAuthorisationDecoupledScaResponse response = new SpiAuthorisationDecoupledScaResponse(SpiScaStatus.SCAMETHODSELECTED, DECOUPLED_PSU_MESSAGE);
         return SpiResponse.<SpiAuthorisationDecoupledScaResponse>builder()
                    .payload(response)
                    .build();
@@ -238,7 +246,7 @@ class PisCommonDecoupledServiceTest {
 
     private static SpiResponse<SpiAuthorisationDecoupledScaResponse> buildSpiResponseFail() {
         return SpiResponse.<SpiAuthorisationDecoupledScaResponse>builder()
-                   .error(new TppMessage(MessageErrorCode.SERVICE_NOT_SUPPORTED))
+                   .error(new SpiTppMessage(SpiMessageErrorCode.SERVICE_NOT_SUPPORTED))
                    .build();
     }
 

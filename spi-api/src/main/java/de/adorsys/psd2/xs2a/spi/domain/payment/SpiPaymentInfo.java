@@ -20,8 +20,6 @@ package de.adorsys.psd2.xs2a.spi.domain.payment;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
-import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import de.adorsys.psd2.xs2a.spi.domain.psu.SpiPsuData;
 import de.adorsys.psd2.xs2a.spi.service.SpiPayment;
 import lombok.Data;
@@ -36,8 +34,8 @@ import java.util.List;
 public class SpiPaymentInfo implements SpiPayment {
     private String paymentId;
     private String paymentProduct;
-    private PaymentType paymentType;
-    private TransactionStatus status;
+    private SpiPaymentType paymentType;
+    private SpiTransactionStatus status;
     private byte[] paymentData;
     private List<SpiPsuData> psuDataList;
     private OffsetDateTime statusChangeTimestamp;
@@ -51,12 +49,12 @@ public class SpiPaymentInfo implements SpiPayment {
     }
 
     @Override
-    public TransactionStatus getPaymentStatus() {
+    public SpiTransactionStatus getPaymentStatus() {
         return status;
     }
 
     @Override
-    public void setPaymentStatus(TransactionStatus status) {
+    public void setPaymentStatus(SpiTransactionStatus status) {
         this.status = status;
     }
 

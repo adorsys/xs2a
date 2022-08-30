@@ -18,11 +18,11 @@
 
 package de.adorsys.psd2.xs2a.payment.common;
 
-import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
 import de.adorsys.psd2.xs2a.spi.domain.SpiAspspConsentDataProvider;
 import de.adorsys.psd2.xs2a.spi.domain.SpiContextData;
 import de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiScaConfirmation;
 import de.adorsys.psd2.xs2a.spi.domain.payment.SpiPaymentInfo;
+import de.adorsys.psd2.xs2a.spi.domain.payment.SpiTransactionStatus;
 import de.adorsys.psd2.xs2a.spi.domain.payment.response.SpiPaymentExecutionResponse;
 import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponse;
 import de.adorsys.psd2.xs2a.spi.service.CommonPaymentSpi;
@@ -56,7 +56,7 @@ class PisExecutePaymentServiceCommonImplTest {
         SpiPaymentInfo payment = new SpiPaymentInfo(PAYMENT_PRODUCT);
 
         SpiResponse<SpiPaymentExecutionResponse> commonServiceResponse = SpiResponse.<SpiPaymentExecutionResponse>builder()
-                                                                             .payload(new SpiPaymentExecutionResponse(TransactionStatus.ACSP))
+                                                                             .payload(new SpiPaymentExecutionResponse(SpiTransactionStatus.ACSP))
                                                                              .build();
         when(commonPaymentSpi.verifyScaAuthorisationAndExecutePaymentWithPaymentResponse(spiContextData, spiScaConfirmation, payment, spiAspspConsentDataProvider))
             .thenReturn(commonServiceResponse);
@@ -78,7 +78,7 @@ class PisExecutePaymentServiceCommonImplTest {
         SpiPaymentInfo payment = new SpiPaymentInfo(PAYMENT_PRODUCT);
 
         SpiResponse<SpiPaymentExecutionResponse> commonServiceResponse = SpiResponse.<SpiPaymentExecutionResponse>builder()
-                                                                             .payload(new SpiPaymentExecutionResponse(TransactionStatus.ACSP))
+                                                                             .payload(new SpiPaymentExecutionResponse(SpiTransactionStatus.ACSP))
                                                                              .build();
         when(commonPaymentSpi.executePaymentWithoutSca(spiContextData, payment, spiAspspConsentDataProvider))
             .thenReturn(commonServiceResponse);

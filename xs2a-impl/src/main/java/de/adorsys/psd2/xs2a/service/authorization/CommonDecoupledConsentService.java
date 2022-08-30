@@ -26,6 +26,7 @@ import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import de.adorsys.psd2.xs2a.domain.consent.UpdateConsentPsuDataResponse;
 import de.adorsys.psd2.xs2a.service.context.SpiContextDataProvider;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiErrorMapper;
+import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiToXs2aAuthorizationMapper;
 import de.adorsys.psd2.xs2a.service.spi.SpiAspspConsentDataProviderFactory;
 import de.adorsys.psd2.xs2a.spi.domain.SpiAspspConsentDataProvider;
 import de.adorsys.psd2.xs2a.spi.domain.SpiConsent;
@@ -44,6 +45,7 @@ public abstract class CommonDecoupledConsentService<T extends SpiConsent> {
     private final SpiAspspConsentDataProviderFactory aspspConsentDataProviderFactory;
     private final SpiContextDataProvider spiContextDataProvider;
     private final Xs2aAuthorisationService authorisationService;
+    private final SpiToXs2aAuthorizationMapper spiToXs2aAuthorizationMapper;
 
     public UpdateConsentPsuDataResponse proceedDecoupledApproach(String consentId, String authorisationId, T spiConsent,
                                                                  String authenticationMethodId, PsuIdData psuData) {
@@ -67,7 +69,7 @@ public abstract class CommonDecoupledConsentService<T extends SpiConsent> {
         SpiAuthorisationDecoupledScaResponse spiAuthorisationDecoupledScaResponse = spiResponse.getPayload();
 
         UpdateConsentPsuDataResponse response = new UpdateConsentPsuDataResponse(
-            spiAuthorisationDecoupledScaResponse.getScaStatus(),
+            spiToXs2aAuthorizationMapper.mapToScaStatus(spiAuthorisationDecoupledScaResponse.getScaStatus()),
             consentId, authorisationId, psuData);
         response.setPsuMessage(spiResponse.getPayload().getPsuMessage());
         return response;

@@ -28,6 +28,8 @@ import de.adorsys.psd2.xs2a.service.authorization.Xs2aAuthorisationService;
 import de.adorsys.psd2.xs2a.service.consent.Xs2aPiisConsentService;
 import de.adorsys.psd2.xs2a.service.context.SpiContextDataProvider;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiErrorMapper;
+import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiToXs2aAuthorizationMapper;
+import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiToXs2aConsentMapper;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.Xs2aToSpiPiisConsentMapper;
 import de.adorsys.psd2.xs2a.service.profile.AspspProfileServiceWrapper;
 import de.adorsys.psd2.xs2a.service.spi.SpiAspspConsentDataProviderFactory;
@@ -55,8 +57,11 @@ public class PiisAuthorisationConfirmationService extends ConsentAuthorisationCo
                                                 AuthorisationServiceEncrypted authorisationServiceEncrypted,
                                                 Xs2aPiisConsentService xs2aPiisConsentService,
                                                 PiisConsentSpi piisConsentSpi,
-                                                Xs2aToSpiPiisConsentMapper piisConsentMapper) {
-        super(aspspProfileServiceWrapper, spiContextDataProvider, aspspConsentDataProviderFactory, authorisationService, spiErrorMapper, authorisationServiceEncrypted);
+                                                Xs2aToSpiPiisConsentMapper piisConsentMapper,
+                                                SpiToXs2aConsentMapper spiToXs2aConsentMapper,
+                                                SpiToXs2aAuthorizationMapper spiToXs2aAuthorizationMapper) {
+        super(aspspProfileServiceWrapper, spiContextDataProvider, aspspConsentDataProviderFactory, authorisationService,
+              spiErrorMapper, authorisationServiceEncrypted, spiToXs2aConsentMapper, spiToXs2aAuthorizationMapper);
         this.xs2aPiisConsentService = xs2aPiisConsentService;
         this.piisConsentSpi = piisConsentSpi;
         this.piisConsentMapper = piisConsentMapper;

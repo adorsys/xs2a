@@ -55,9 +55,7 @@ import de.adorsys.psd2.xs2a.service.consent.Xs2aAisConsentService;
 import de.adorsys.psd2.xs2a.service.context.SpiContextDataProvider;
 import de.adorsys.psd2.xs2a.service.event.Xs2aEventService;
 import de.adorsys.psd2.xs2a.service.mapper.cms_xs2a_mappers.Xs2aAisConsentMapper;
-import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiErrorMapper;
-import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiToXs2aAccountAccessMapper;
-import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiToXs2aLinksMapper;
+import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.*;
 import de.adorsys.psd2.xs2a.service.profile.AspspProfileServiceWrapper;
 import de.adorsys.psd2.xs2a.service.spi.InitialSpiAspspConsentDataProvider;
 import de.adorsys.psd2.xs2a.service.spi.SpiAspspConsentDataProviderFactory;
@@ -65,6 +63,7 @@ import de.adorsys.psd2.xs2a.spi.domain.SpiAspspConsentDataProvider;
 import de.adorsys.psd2.xs2a.spi.domain.SpiContextData;
 import de.adorsys.psd2.xs2a.spi.domain.account.SpiAccountConsent;
 import de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiScaStatusResponse;
+import de.adorsys.psd2.xs2a.spi.domain.common.SpiTppMessageInformation;
 import de.adorsys.psd2.xs2a.spi.domain.consent.SpiConsentStatusResponse;
 import de.adorsys.psd2.xs2a.spi.domain.consent.SpiInitiateAisConsentResponse;
 import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponse;
@@ -75,7 +74,11 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
-import java.util.*;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.Set;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 import static de.adorsys.psd2.xs2a.core.domain.TppMessageInformation.of;
@@ -97,6 +100,10 @@ public class ConsentService {
     private final SpiToXs2aLinksMapper spiToXs2aLinksMapper;
     private final SpiErrorMapper spiErrorMapper;
     private final ScaMethodsMapper scaMethodsMapper;
+    private final SpiToXs2aTppMessageInformationMapper tppMessageInformationMapper;
+    private final SpiToXs2aConsentMapper spiToXs2aConsentMapper;
+    private final Xs2aToSpiAuthorizationMapper xs2aToSpiAuthorizationMapper;
+    private final SpiToXs2aAuthorizationMapper spiToXs2aAuthorizationMapper;
 
     private final ConsentValidationService consentValidationService;
     private final ConsentAuthorisationService consentAuthorisationService;
@@ -210,7 +217,8 @@ public class ConsentService {
 
     private void enrichTppMessages(CreateConsentReq requestAfterCheck, SpiInitiateAisConsentResponse spiResponsePayload, CreateConsentResponse createConsentResponse) {
         if (spiResponsePayload.getTppMessages() != null) {
-            createConsentResponse.getTppMessageInformation().addAll(spiResponsePayload.getTppMessages());
+            Set<SpiTppMessageInformation> spiTppMessages = spiResponsePayload.getTppMessages();
+            createConsentResponse.getTppMessageInformation().addAll(tppMessageInformationMapper.toTppMessageInformationSet(spiTppMessages));
         }
         createConsentResponse.getTppMessageInformation().addAll(consentValidationService.buildWarningMessages(requestAfterCheck));
     }
@@ -281,7 +289,7 @@ public class ConsentService {
         }
 
         SpiConsentStatusResponse spiPayload = spiResponse.getPayload();
-        ConsentStatus spiConsentStatus = spiPayload.getConsentStatus();
+        ConsentStatus spiConsentStatus = spiToXs2aConsentMapper.mapToConsentStatus(spiPayload.getConsentStatus());
         aisConsentService.updateConsentStatus(consentId, spiConsentStatus);
         loggingContextService.storeConsentStatus(spiConsentStatus);
 
@@ -386,7 +394,7 @@ public class ConsentService {
                        .build();
         }
 
-        ConsentStatus consentStatus = spiConsentStatus.getPayload().getConsentStatus();
+        ConsentStatus consentStatus = spiToXs2aConsentMapper.mapToConsentStatus(spiConsentStatus.getPayload().getConsentStatus());
         aisConsentService.updateConsentStatus(consentId, consentStatus);
         loggingContextService.storeConsentStatus(consent.getConsentStatus());
 
@@ -436,7 +444,7 @@ public class ConsentService {
         ScaStatus scaStatus = cmsScaStatusResponse.getBody().getScaStatus();
         SpiAccountConsent spiAccountConsent = aisConsentMapper.mapToSpiAccountConsent(cmsScaStatusResponse.getBody().getAccountConsent());
 
-        SpiResponse<SpiScaStatusResponse> spiScaInformation = aisConsentSpi.getScaStatus(scaStatus, contextData, authorisationId, spiAccountConsent, spiAspspConsentDataProvider);
+        SpiResponse<SpiScaStatusResponse> spiScaInformation = aisConsentSpi.getScaStatus(xs2aToSpiAuthorizationMapper.mapToSpiScaStatus(scaStatus), contextData, authorisationId, spiAccountConsent, spiAspspConsentDataProvider);
 
         if (spiScaInformation.hasError()) {
             ErrorHolder errorHolder = spiErrorMapper.mapToErrorHolder(spiScaInformation, ServiceType.AIS);
@@ -447,19 +455,22 @@ public class ConsentService {
         }
 
         SpiScaStatusResponse spiScaInformationPayload = spiScaInformation.getPayload();
+        ScaStatus newScaStatus = spiToXs2aAuthorizationMapper.mapToScaStatus(spiScaInformationPayload.getScaStatus());
 
-        if (scaStatus.isNotFinalisedStatus() && scaStatus != spiScaInformationPayload.getScaStatus()) {
-            scaStatus = spiScaInformationPayload.getScaStatus();
+        if (scaStatus.isNotFinalisedStatus() && scaStatus != newScaStatus) {
+            scaStatus = newScaStatus;
             xs2aAuthorisationService.updateAuthorisationStatus(authorisationId, scaStatus);
             log.info("Authorisation-ID [{}], Consent-ID [{}]. SCA status was changed to [{}] from SPI.", authorisationId, consentId, scaStatus);
         }
 
-        Boolean beneficiaryFlag = scaStatus.isFinalisedStatus() ? spiScaInformationPayload.getTrustedBeneficiaryFlag() : null;
+        Boolean beneficiaryFlag = scaStatus.isFinalisedStatus()
+                                      ? spiScaInformationPayload.getTrustedBeneficiaryFlag()
+                                      : null;
         Xs2aScaStatusResponse response = new Xs2aScaStatusResponse(scaStatus,
                                                                    beneficiaryFlag,
                                                                    spiScaInformationPayload.getPsuMessage(),
                                                                    spiToXs2aLinksMapper.toXs2aLinks(spiScaInformationPayload.getLinks()),
-                                                                   spiScaInformationPayload.getTppMessageInformation()
+                                                                   tppMessageInformationMapper.toTppMessageInformationSet(spiScaInformationPayload.getTppMessageInformation())
         );
 
         return ResponseObject.<Xs2aScaStatusResponse>builder()
