@@ -24,7 +24,7 @@ import de.adorsys.psd2.xs2a.domain.pis.CommonPaymentInitiationResponse;
 import de.adorsys.psd2.xs2a.service.context.SpiContextDataProvider;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiErrorMapper;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiToXs2aPaymentMapper;
-import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.Xs2aToSpiPaymentInfo;
+import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.Xs2aToSpiPaymentInfoMapper;
 import de.adorsys.psd2.xs2a.service.spi.InitialSpiAspspConsentDataProvider;
 import de.adorsys.psd2.xs2a.service.spi.SpiAspspConsentDataProviderFactory;
 import de.adorsys.psd2.xs2a.spi.domain.SpiContextData;
@@ -36,16 +36,16 @@ import org.springframework.stereotype.Service;
 @Service
 public class CommonPaymentInitiationService extends AbstractPaymentInitiationService<CommonPayment, SpiPaymentInitiationResponse> {
     private final SpiToXs2aPaymentMapper spiToXs2aPaymentMapper;
-    private final Xs2aToSpiPaymentInfo xs2aToSpiPaymentInfo;
+    private final Xs2aToSpiPaymentInfoMapper xs2aToSpiPaymentInfoMapper;
     private final CommonPaymentSpi commonPaymentSpi;
 
     public CommonPaymentInitiationService(SpiContextDataProvider spiContextDataProvider,
                                           SpiAspspConsentDataProviderFactory aspspConsentDataProviderFactory,
                                           SpiErrorMapper spiErrorMapper, SpiToXs2aPaymentMapper spiToXs2aPaymentMapper,
-                                          Xs2aToSpiPaymentInfo xs2aToSpiPaymentInfo, CommonPaymentSpi commonPaymentSpi) {
+                                          Xs2aToSpiPaymentInfoMapper xs2aToSpiPaymentInfoMapper, CommonPaymentSpi commonPaymentSpi) {
         super(spiContextDataProvider, aspspConsentDataProviderFactory, spiErrorMapper);
         this.spiToXs2aPaymentMapper = spiToXs2aPaymentMapper;
-        this.xs2aToSpiPaymentInfo = xs2aToSpiPaymentInfo;
+        this.xs2aToSpiPaymentInfoMapper = xs2aToSpiPaymentInfoMapper;
         this.commonPaymentSpi = commonPaymentSpi;
     }
 
@@ -53,7 +53,7 @@ public class CommonPaymentInitiationService extends AbstractPaymentInitiationSer
     protected SpiResponse<SpiPaymentInitiationResponse> initiateSpiPayment(SpiContextData spiContextData, CommonPayment payment, String paymentProduct,
                                                                            InitialSpiAspspConsentDataProvider aspspConsentDataProvider) {
         return commonPaymentSpi.initiatePayment(spiContextData,
-                                                xs2aToSpiPaymentInfo.mapToSpiPaymentRequest(payment, paymentProduct),
+                                                xs2aToSpiPaymentInfoMapper.mapToSpiPaymentInfo(payment, paymentProduct),
                                                 aspspConsentDataProvider);
     }
 

@@ -18,10 +18,10 @@
 
 package de.adorsys.psd2.xs2a.spi.domain.account;
 
-import de.adorsys.psd2.xs2a.core.pis.FrequencyCode;
-import de.adorsys.psd2.xs2a.core.pis.PisDayOfExecution;
-import de.adorsys.psd2.xs2a.core.pis.PisExecutionRule;
 import de.adorsys.psd2.xs2a.spi.domain.common.SpiAmount;
+import de.adorsys.psd2.xs2a.spi.domain.payment.SpiFrequencyCode;
+import de.adorsys.psd2.xs2a.spi.domain.payment.SpiPisDayOfExecution;
+import de.adorsys.psd2.xs2a.spi.domain.payment.SpiPisExecutionRule;
 import lombok.Value;
 
 import java.time.LocalDate;
@@ -32,11 +32,11 @@ public class SpiStandingOrderDetails {
 
     private LocalDate startDate;
     private LocalDate endDate;
-    private PisExecutionRule executionRule;
+    private SpiPisExecutionRule executionRule;
     private Boolean withinAMonthFlag;
-    private FrequencyCode frequency;
+    private SpiFrequencyCode frequency;
     private List<String> monthsOfExecution;
     private Integer multiplicator;
-    private PisDayOfExecution dayOfExecution;
+    private SpiPisDayOfExecution dayOfExecution;
     private SpiAmount limitAmount;
 }

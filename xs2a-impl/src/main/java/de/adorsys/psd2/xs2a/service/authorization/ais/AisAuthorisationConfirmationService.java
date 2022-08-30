@@ -30,6 +30,8 @@ import de.adorsys.psd2.xs2a.service.consent.Xs2aAisConsentService;
 import de.adorsys.psd2.xs2a.service.context.SpiContextDataProvider;
 import de.adorsys.psd2.xs2a.service.mapper.cms_xs2a_mappers.Xs2aAisConsentMapper;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiErrorMapper;
+import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiToXs2aAuthorizationMapper;
+import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiToXs2aConsentMapper;
 import de.adorsys.psd2.xs2a.service.profile.AspspProfileServiceWrapper;
 import de.adorsys.psd2.xs2a.service.spi.SpiAspspConsentDataProviderFactory;
 import de.adorsys.psd2.xs2a.spi.domain.SpiAspspConsentDataProvider;
@@ -56,8 +58,11 @@ public class AisAuthorisationConfirmationService extends ConsentAuthorisationCon
                                                AuthorisationServiceEncrypted authorisationServiceEncrypted,
                                                Xs2aAisConsentService aisConsentService,
                                                AisConsentSpi aisConsentSpi,
-                                               Xs2aAisConsentMapper aisConsentMapper) {
-        super(aspspProfileServiceWrapper, spiContextDataProvider, aspspConsentDataProviderFactory, authorisationService, spiErrorMapper, authorisationServiceEncrypted);
+                                               Xs2aAisConsentMapper aisConsentMapper,
+                                               SpiToXs2aConsentMapper spiToXs2aConsentMapper,
+                                               SpiToXs2aAuthorizationMapper spiToXs2aAuthorizationMapper) {
+        super(aspspProfileServiceWrapper, spiContextDataProvider, aspspConsentDataProviderFactory, authorisationService,
+              spiErrorMapper, authorisationServiceEncrypted, spiToXs2aConsentMapper, spiToXs2aAuthorizationMapper);
         this.aisConsentService = aisConsentService;
         this.aisConsentSpi = aisConsentSpi;
         this.aisConsentMapper = aisConsentMapper;

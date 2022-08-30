@@ -32,6 +32,8 @@ public class Xs2aToSpiPeriodicPaymentMapper {
     private final Xs2aToSpiAccountReferenceMapper xs2aToSpiAccountReferenceMapper;
     private final Xs2aToSpiPsuDataMapper xs2aToSpiPsuDataMapper;
     private final RemittanceMapper remittanceMapper;
+    private final Xs2aToSpiPisMapper xs2aToSpiPisMapper;
+    private final Xs2aToSpiTransactionMapper xs2aToSpiTransactionMapper;
 
     public SpiPeriodicPayment mapToSpiPeriodicPayment(PeriodicPayment payment, String paymentProduct) {
         SpiPeriodicPayment periodic = new SpiPeriodicPayment(paymentProduct);
@@ -46,12 +48,10 @@ public class Xs2aToSpiPeriodicPaymentMapper {
         periodic.setCreditorAddress(xs2aToSpiAddressMapper.mapToSpiAddress(payment.getCreditorAddress()));
         periodic.setStartDate(payment.getStartDate());
         periodic.setEndDate(payment.getEndDate());
-        periodic.setExecutionRule(payment.getExecutionRule());
-        if (payment.getTransactionStatus() != null) {
-            periodic.setPaymentStatus(payment.getTransactionStatus());
-        }
-        periodic.setFrequency(payment.getFrequency());
-        periodic.setDayOfExecution(payment.getDayOfExecution());
+        periodic.setExecutionRule(xs2aToSpiPisMapper.mapToSpiPisExecutionRule(payment.getExecutionRule()));
+        periodic.setPaymentStatus(xs2aToSpiTransactionMapper.mapToSpiTransactionStatus(payment.getTransactionStatus()));
+        periodic.setFrequency(xs2aToSpiPisMapper.mapToSpiFrequencyCode(payment.getFrequency()));
+        periodic.setDayOfExecution(xs2aToSpiPisMapper.mapToSpiPisDayOfExecution(payment.getDayOfExecution()));
         periodic.setMonthsOfExecution(payment.getMonthsOfExecution());
         periodic.setRequestedExecutionTime(payment.getRequestedExecutionTime());
         periodic.setRequestedExecutionDate(payment.getRequestedExecutionDate());
@@ -59,7 +59,7 @@ public class Xs2aToSpiPeriodicPaymentMapper {
         periodic.setStatusChangeTimestamp(payment.getStatusChangeTimestamp());
         periodic.setUltimateDebtor(payment.getUltimateDebtor());
         periodic.setUltimateCreditor(payment.getUltimateCreditor());
-        periodic.setPurposeCode(payment.getPurposeCode());
+        periodic.setPurposeCode(xs2aToSpiPisMapper.mapToSpiPisPurposeCode(payment.getPurposeCode()));
         periodic.setRemittanceInformationUnstructured(payment.getRemittanceInformationUnstructured());
         periodic.setRemittanceInformationUnstructuredArray(payment.getRemittanceInformationUnstructuredArray());
         periodic.setRemittanceInformationStructured(remittanceMapper.mapToSpiRemittance(payment.getRemittanceInformationStructured()));

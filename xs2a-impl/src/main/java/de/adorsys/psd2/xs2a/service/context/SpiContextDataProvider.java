@@ -23,6 +23,7 @@ import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
 import de.adorsys.psd2.xs2a.service.RequestProviderService;
 import de.adorsys.psd2.xs2a.service.TppService;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.Xs2aToSpiPsuDataMapper;
+import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.Xs2aToSpiTppInfoMapper;
 import de.adorsys.psd2.xs2a.spi.domain.SpiContextData;
 import de.adorsys.psd2.xs2a.spi.domain.psu.SpiPsuData;
 import lombok.RequiredArgsConstructor;
@@ -35,6 +36,7 @@ public class SpiContextDataProvider {
     private final TppService tppService;
     private final RequestProviderService requestProviderService;
     private final Xs2aToSpiPsuDataMapper psuDataMapper;
+    private final Xs2aToSpiTppInfoMapper spiTppInfoMapper;
 
     public SpiContextData provide() {
         return provideWithPsuIdData(requestProviderService.getPsuIdData());
@@ -47,7 +49,7 @@ public class SpiContextDataProvider {
 
     public SpiContextData provide(PsuIdData psuIdData, TppInfo tppInfo) {
         SpiPsuData spiPsuData = psuDataMapper.mapToSpiPsuData(psuIdData);
-        return new SpiContextData(spiPsuData, tppInfo, requestProviderService.getRequestId(),
+        return new SpiContextData(spiPsuData, spiTppInfoMapper.mapToSpiTppInfo(tppInfo), requestProviderService.getRequestId(),
                                   requestProviderService.getInternalRequestId(), requestProviderService.getOAuth2Token(),
                                   requestProviderService.getTppBrandLoggingInformationHeader(),
                                   requestProviderService.getTppRejectionNoFundsPreferred(),

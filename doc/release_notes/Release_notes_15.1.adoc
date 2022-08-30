@@ -14,6 +14,8 @@
 
 * Improved performance for consents export in CmsAspspAisExportApi
 
+* Removed xs2a-core dependency from spi-api module
+
 == Fixed error mapping
 
 Fixed 503 HTTP error code handling from SPI level.
@@ -40,3 +42,7 @@ liquibase migration was added.
 == Improved performance for consents export in CmsAspspAisExportApi
 
 Consents export logic was changed due to removal of needless LazyMigrationServices, as a result consents export performance was increased.
+
+== Removed xs2a-core dependency from spi-api module
+
+All xs2a-core models were removed from spi-api module, new models and mappers were implemented.

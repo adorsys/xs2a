@@ -18,13 +18,13 @@
 
 package de.adorsys.psd2.xs2a.spi.domain.payment.response;
 
-import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
-import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
+import de.adorsys.psd2.xs2a.spi.domain.payment.SpiTransactionStatus;
+import de.adorsys.psd2.xs2a.spi.domain.sca.SpiScaStatus;
 import lombok.Value;
 import org.jetbrains.annotations.NotNull;
 
 @Value
 public class SpiPaymentConfirmationCodeValidationResponse {
-    @NotNull private ScaStatus scaStatus;
-    @NotNull private TransactionStatus transactionStatus;
+    @NotNull private SpiScaStatus scaStatus;
+    @NotNull private SpiTransactionStatus transactionStatus;
 }

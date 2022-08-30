@@ -18,9 +18,9 @@
 
 package de.adorsys.psd2.xs2a.spi.domain.payment.response;
 
-import de.adorsys.psd2.xs2a.core.domain.TppMessageInformation;
-import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
 import de.adorsys.psd2.xs2a.spi.domain.common.SpiLinks;
+import de.adorsys.psd2.xs2a.spi.domain.common.SpiTppMessageInformation;
+import de.adorsys.psd2.xs2a.spi.domain.payment.SpiTransactionStatus;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import org.jetbrains.annotations.NotNull;
@@ -41,7 +41,7 @@ public class SpiGetPaymentStatusResponse {
      * The current transaction status of the requested payment.
      */
     @NotNull
-    private TransactionStatus transactionStatus;
+    private SpiTransactionStatus transactionStatus;
 
     /**
      * The funds available check indicates, whether funds are available for said customer. The data element is contained
@@ -69,5 +69,5 @@ public class SpiGetPaymentStatusResponse {
     @Nullable
     private String psuMessage;
     private final SpiLinks links;
-    private final Set<TppMessageInformation> tppMessageInformation;
+    private final Set<SpiTppMessageInformation> tppMessageInformation;
 }

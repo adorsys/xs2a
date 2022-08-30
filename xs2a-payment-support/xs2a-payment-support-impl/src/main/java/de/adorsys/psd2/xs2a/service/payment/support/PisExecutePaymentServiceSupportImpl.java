@@ -29,7 +29,12 @@ import de.adorsys.psd2.xs2a.spi.domain.payment.SpiPaymentInfo;
 import de.adorsys.psd2.xs2a.spi.domain.payment.response.SpiPaymentExecutionResponse;
 import de.adorsys.psd2.xs2a.spi.domain.payment.response.SpiPaymentInitiationResponse;
 import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponse;
-import de.adorsys.psd2.xs2a.spi.service.*;
+import de.adorsys.psd2.xs2a.spi.service.BulkPaymentSpi;
+import de.adorsys.psd2.xs2a.spi.service.CommonPaymentSpi;
+import de.adorsys.psd2.xs2a.spi.service.PaymentSpi;
+import de.adorsys.psd2.xs2a.spi.service.PeriodicPaymentSpi;
+import de.adorsys.psd2.xs2a.spi.service.SinglePaymentSpi;
+import de.adorsys.psd2.xs2a.spi.service.SpiPayment;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -52,7 +57,7 @@ public class PisExecutePaymentServiceSupportImpl implements PisExecutePaymentSer
             return verifyScaAndExecutePaymentWithPaymentResponse(commonPaymentSpi, (SpiPaymentInfo) payment, spiScaConfirmation, contextData, spiAspspConsentDataProvider);
         }
 
-        PaymentType paymentType = payment.getPaymentType();
+        PaymentType paymentType = PaymentType.valueOf(payment.getPaymentType().name());
         if (PaymentType.SINGLE == paymentType) {
             return verifyScaAndExecutePaymentWithPaymentResponse(singlePaymentSpi, spiPaymentMapper.mapToSpiSinglePayment(payment), spiScaConfirmation, contextData, spiAspspConsentDataProvider);
         } else if (PaymentType.PERIODIC == paymentType) {
@@ -68,7 +73,7 @@ public class PisExecutePaymentServiceSupportImpl implements PisExecutePaymentSer
             return executeWithoutSca(commonPaymentSpi, (SpiPaymentInfo) payment, contextData, aspspConsentDataProvider);
         }
 
-        PaymentType paymentType = payment.getPaymentType();
+        PaymentType paymentType = PaymentType.valueOf(payment.getPaymentType().name());
         if (PaymentType.SINGLE == paymentType) {
             return executeWithoutSca(singlePaymentSpi, spiPaymentMapper.mapToSpiSinglePayment(payment), contextData, aspspConsentDataProvider);
         } else if (PaymentType.PERIODIC == paymentType) {

@@ -21,7 +21,9 @@ package de.adorsys.psd2.xs2a.service.payment.cancel;
 import de.adorsys.psd2.consent.api.pis.PisCommonPaymentResponse;
 import de.adorsys.psd2.consent.api.pis.proto.PisPaymentCancellationRequest;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.Xs2aToSpiPaymentInfoMapper;
+import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.Xs2aToSpiPisMapperImpl;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.Xs2aToSpiPsuDataMapper;
+import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.Xs2aToSpiTransactionMapperImpl;
 import de.adorsys.psd2.xs2a.service.payment.CancelPaymentService;
 import de.adorsys.psd2.xs2a.spi.domain.payment.SpiPaymentInfo;
 import de.adorsys.xs2a.reader.JsonReader;
@@ -29,12 +31,18 @@ import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.*;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Captor;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class CancelCommonPaymentServiceTest {
@@ -46,7 +54,7 @@ class CancelCommonPaymentServiceTest {
     @Mock
     private CancelPaymentService cancelPaymentService;
     @Spy
-    private final Xs2aToSpiPaymentInfoMapper xs2aToSpiPaymentInfoMapper = new Xs2aToSpiPaymentInfoMapper(new Xs2aToSpiPsuDataMapper());
+    private final Xs2aToSpiPaymentInfoMapper xs2aToSpiPaymentInfoMapper = new Xs2aToSpiPaymentInfoMapper(new Xs2aToSpiPsuDataMapper(), new Xs2aToSpiPisMapperImpl(), new Xs2aToSpiTransactionMapperImpl());
 
     @Captor
     private ArgumentCaptor<SpiPaymentInfo> spiPaymentInfoCaptor;

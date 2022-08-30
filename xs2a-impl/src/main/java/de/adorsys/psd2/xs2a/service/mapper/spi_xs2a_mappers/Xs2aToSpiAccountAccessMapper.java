@@ -19,9 +19,11 @@
 package de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers;
 
 import de.adorsys.psd2.core.data.ais.AisConsent;
+import de.adorsys.psd2.xs2a.core.ais.AccountAccessType;
 import de.adorsys.psd2.xs2a.core.profile.AdditionalInformationAccess;
 import de.adorsys.psd2.xs2a.spi.domain.account.SpiAdditionalInformationAccess;
 import de.adorsys.psd2.xs2a.spi.domain.consent.SpiAccountAccess;
+import de.adorsys.psd2.xs2a.spi.domain.consent.SpiAccountAccessType;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -37,9 +39,9 @@ public class Xs2aToSpiAccountAccessMapper {
             xs2aToSpiAccountReferenceMapper.mapToSpiAccountReferences(aisConsent.getAccess().getAccounts()),
             xs2aToSpiAccountReferenceMapper.mapToSpiAccountReferences(aisConsent.getAccess().getBalances()),
             xs2aToSpiAccountReferenceMapper.mapToSpiAccountReferences(aisConsent.getAccess().getTransactions()),
-            aisConsent.getConsentData().getAvailableAccounts(),
-            aisConsent.getConsentData().getAllPsd2(),
-            aisConsent.getConsentData().getAvailableAccountsWithBalance(),
+            mapToSpiAccountAccessType(aisConsent.getConsentData().getAvailableAccounts()),
+            mapToSpiAccountAccessType(aisConsent.getConsentData().getAllPsd2()),
+            mapToSpiAccountAccessType(aisConsent.getConsentData().getAvailableAccountsWithBalance()),
             mapToSpiAdditionalInformationAccess(aisConsent.getAccess().getAdditionalInformationAccess())
         );
     }
@@ -49,5 +51,11 @@ public class Xs2aToSpiAccountAccessMapper {
                    .map(info -> new SpiAdditionalInformationAccess(xs2aToSpiAccountReferenceMapper.mapToSpiAccountReferencesOrDefault(info.getOwnerName(), null),
                                                                    xs2aToSpiAccountReferenceMapper.mapToSpiAccountReferencesOrDefault(info.getTrustedBeneficiaries(), null)))
                    .orElse(null);
+    }
+
+    private SpiAccountAccessType mapToSpiAccountAccessType(AccountAccessType accountAccessType) {
+        return accountAccessType == null
+                   ? null
+                   : SpiAccountAccessType.getByDescription(accountAccessType.getDescription()).orElse(null);
     }
 }

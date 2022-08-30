@@ -20,6 +20,8 @@ package de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers;
 
 import de.adorsys.psd2.consent.api.pis.PisCommonPaymentResponse;
 import de.adorsys.psd2.xs2a.spi.domain.payment.SpiPaymentInfo;
+import de.adorsys.psd2.xs2a.spi.domain.payment.SpiPaymentType;
+import de.adorsys.psd2.xs2a.spi.domain.payment.SpiTransactionStatus;
 import de.adorsys.psd2.xs2a.spi.service.SpiPayment;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -32,8 +34,8 @@ public class Xs2aToSpiPaymentMapper {
     public SpiPayment mapToSpiPayment(PisCommonPaymentResponse commonPaymentResponse) {
         SpiPaymentInfo spiPaymentInfo = new SpiPaymentInfo(commonPaymentResponse.getPaymentProduct());
         spiPaymentInfo.setPaymentId(commonPaymentResponse.getExternalId());
-        spiPaymentInfo.setPaymentType(commonPaymentResponse.getPaymentType());
-        spiPaymentInfo.setStatus(commonPaymentResponse.getTransactionStatus());
+        spiPaymentInfo.setPaymentType(SpiPaymentType.valueOf(commonPaymentResponse.getPaymentType().name()));
+        spiPaymentInfo.setStatus(SpiTransactionStatus.valueOf(commonPaymentResponse.getTransactionStatus().name()));
         spiPaymentInfo.setPaymentData(commonPaymentResponse.getPaymentData());
         spiPaymentInfo.setPsuDataList(xs2aToSpiPsuDataMapper.mapToSpiPsuDataList(commonPaymentResponse.getPsuData()));
         spiPaymentInfo.setStatusChangeTimestamp(commonPaymentResponse.getStatusChangeTimestamp());

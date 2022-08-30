@@ -19,6 +19,7 @@
 package de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers;
 
 import de.adorsys.psd2.core.payment.model.PurposeCode;
+import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
 import de.adorsys.psd2.xs2a.domain.EntryDetails;
 import de.adorsys.psd2.xs2a.domain.TransactionInfo;
 import de.adorsys.psd2.xs2a.domain.Transactions;
@@ -26,6 +27,7 @@ import de.adorsys.psd2.xs2a.domain.code.BankTransactionCode;
 import de.adorsys.psd2.xs2a.spi.domain.account.SpiEntryDetails;
 import de.adorsys.psd2.xs2a.spi.domain.account.SpiTransaction;
 import de.adorsys.psd2.xs2a.spi.domain.account.SpiTransactionInfo;
+import de.adorsys.psd2.xs2a.spi.domain.payment.SpiTransactionStatus;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
@@ -54,4 +56,6 @@ public interface SpiToXs2aTransactionMapper {
     @Mapping(target = "remittanceInformationStructuredArray", source = "remittanceInformationStructuredArray")
     @Mapping(target = "remittanceInformationStructured", source = "remittanceInformationStructured")
     TransactionInfo mapToTransactionInfo(SpiTransactionInfo spiTransactionInfo);
+
+    TransactionStatus mapToTransactionStatus(SpiTransactionStatus spiTransactionStatus);
 }

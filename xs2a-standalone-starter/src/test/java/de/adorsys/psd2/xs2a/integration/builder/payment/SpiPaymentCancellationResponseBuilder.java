@@ -18,11 +18,11 @@
 
 package de.adorsys.psd2.xs2a.integration.builder.payment;
 
-import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
+import de.adorsys.psd2.xs2a.spi.domain.payment.SpiTransactionStatus;
 import de.adorsys.psd2.xs2a.spi.domain.payment.response.SpiPaymentCancellationResponse;
 
 public class SpiPaymentCancellationResponseBuilder {
-    private static final TransactionStatus TRANSACTION_STATUS = TransactionStatus.ACSP;
+    private static final SpiTransactionStatus TRANSACTION_STATUS = SpiTransactionStatus.ACSP;
 
     public static SpiPaymentCancellationResponse buildSpiPaymentCancellationResponse(boolean cancellationAuthorisationMandated) {
         SpiPaymentCancellationResponse response = new SpiPaymentCancellationResponse();
