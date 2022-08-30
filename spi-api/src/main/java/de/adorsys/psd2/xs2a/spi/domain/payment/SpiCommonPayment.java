@@ -18,6 +18,8 @@
 
 package de.adorsys.psd2.xs2a.spi.domain.payment;
 
+import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
+import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import de.adorsys.psd2.xs2a.spi.domain.psu.SpiPsuData;
 import de.adorsys.psd2.xs2a.spi.service.SpiPayment;
 import lombok.Data;
@@ -28,9 +30,9 @@ import java.util.List;
 @Data
 public class SpiCommonPayment implements SpiPayment {
     private String paymentId;
-    private SpiPaymentType paymentType;
+    private PaymentType paymentType;
     private String paymentProduct;
-    private SpiTransactionStatus paymentStatus;
+    private TransactionStatus paymentStatus;
     private OffsetDateTime statusChangeTimestamp;
     private List<SpiPsuData> psuDataList;
     private String contentType;

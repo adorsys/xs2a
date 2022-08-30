@@ -18,8 +18,8 @@
 
 package de.adorsys.psd2.xs2a.spi.domain;
 
-import de.adorsys.psd2.xs2a.spi.domain.consent.SpiConsentType;
+import de.adorsys.psd2.xs2a.core.consent.ConsentType;
 
 public interface SpiConsent {
-    SpiConsentType getConsentType();
+    ConsentType getConsentType();
 }

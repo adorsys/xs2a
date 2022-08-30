@@ -18,8 +18,8 @@
 
 package de.adorsys.psd2.xs2a.spi.domain.consent;
 
-import de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiAuthenticationObject;
-import de.adorsys.psd2.xs2a.spi.domain.common.SpiTppMessageInformation;
+import de.adorsys.psd2.xs2a.core.domain.TppMessageInformation;
+import de.adorsys.psd2.xs2a.spi.domain.common.SpiAuthenticationObject;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -38,5 +38,5 @@ public class SpiInitiateAisConsentResponse {
     private boolean multilevelScaRequired;
     private String psuMessage;
     private List<SpiAuthenticationObject> scaMethods;
-    private Set<SpiTppMessageInformation> tppMessages;
+    private Set<TppMessageInformation> tppMessages;
 }

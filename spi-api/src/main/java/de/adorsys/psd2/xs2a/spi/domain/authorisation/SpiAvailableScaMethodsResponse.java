@@ -18,6 +18,7 @@
 
 package de.adorsys.psd2.xs2a.spi.domain.authorisation;
 
+import de.adorsys.psd2.xs2a.core.authorisation.AuthenticationObject;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Value;
@@ -30,9 +31,9 @@ import java.util.List;
 @EqualsAndHashCode(callSuper = true)
 public class SpiAvailableScaMethodsResponse extends SpiWithExemptionResponse {
 
-    private List<SpiAuthenticationObject> availableScaMethods;
+    private List<AuthenticationObject> availableScaMethods;
 
-    public SpiAvailableScaMethodsResponse(boolean scaExempted, List<SpiAuthenticationObject> availableScaMethods) {
+    public SpiAvailableScaMethodsResponse(boolean scaExempted, List<AuthenticationObject> availableScaMethods) {
         super(scaExempted);
         this.availableScaMethods = new ArrayList<>(availableScaMethods);
     }

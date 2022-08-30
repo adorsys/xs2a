@@ -16,23 +16,9 @@
  * contact us at psd2@adorsys.com.
  */
 
-package de.adorsys.psd2.xs2a.spi.domain.tpp;
+package de.adorsys.psd2.xs2a.spi.domain.common;
 
-import io.swagger.v3.oas.annotations.media.Schema;
-import lombok.Value;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-/**
- * TPP redirect URIs, used in Redirect SCA approach.
- */
-@Value
-public class SpiTppRedirectUri {
-    @NotNull
-    @Schema(description = "Redirect URI", example = "Redirect URI", required = true)
-    private final String uri;
-
-    @Nullable
-    @Schema(description = "Nok redirect URI", example = "Nok redirect URI")
-    private String nokUri;
+public enum SpiOtpFormat {
+    CHARACTERS,
+    INTEGER;
 }

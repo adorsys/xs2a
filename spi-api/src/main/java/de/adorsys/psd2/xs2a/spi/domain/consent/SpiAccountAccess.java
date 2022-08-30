@@ -18,6 +18,7 @@
 
 package de.adorsys.psd2.xs2a.spi.domain.consent;
 
+import de.adorsys.psd2.xs2a.core.ais.AccountAccessType;
 import de.adorsys.psd2.xs2a.spi.domain.account.SpiAccountReference;
 import de.adorsys.psd2.xs2a.spi.domain.account.SpiAdditionalInformationAccess;
 import lombok.AllArgsConstructor;
@@ -34,9 +35,9 @@ public class SpiAccountAccess {
     private List<SpiAccountReference> accounts;
     private List<SpiAccountReference> balances;
     private List<SpiAccountReference> transactions;
-    private SpiAccountAccessType availableAccounts;
-    private SpiAccountAccessType allPsd2;
-    private SpiAccountAccessType availableAccountsWithBalance;
+    private AccountAccessType availableAccounts;
+    private AccountAccessType allPsd2;
+    private AccountAccessType availableAccountsWithBalance;
     private SpiAdditionalInformationAccess spiAdditionalInformationAccess;
 
     public boolean isEmpty() {

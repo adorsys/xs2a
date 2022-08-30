@@ -16,11 +16,20 @@
  * contact us at psd2@adorsys.com.
  */
 
-package de.adorsys.psd2.xs2a.spi.domain.tpp;
+package de.adorsys.psd2.xs2a.spi.domain.common;
 
-public enum SpiTppRole {
-    PISP,
-    AISP,
-    PIISP,
-    ASPSP
+import lombok.AllArgsConstructor;
+import lombok.Data;
+
+import java.util.List;
+
+@Data
+@AllArgsConstructor
+public class SpiChallengeData {
+    private byte[] image;
+    private List<String> data;
+    private String imageLink;
+    private Integer otpMaxLength;
+    private SpiOtpFormat otpFormat;
+    private String additionalInformation;
 }

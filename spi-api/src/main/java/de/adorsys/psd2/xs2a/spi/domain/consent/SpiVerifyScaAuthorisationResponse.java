@@ -18,6 +18,7 @@
 
 package de.adorsys.psd2.xs2a.spi.domain.consent;
 
+import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
 import de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiAuthorisationStatus;
 import lombok.Value;
 import org.jetbrains.annotations.NotNull;
@@ -25,15 +26,15 @@ import org.jetbrains.annotations.NotNull;
 @Value
 public class SpiVerifyScaAuthorisationResponse {
     @NotNull
-    private SpiConsentStatus consentStatus;
+    private ConsentStatus consentStatus;
     private SpiAuthorisationStatus spiAuthorisationStatus;
 
-    public SpiVerifyScaAuthorisationResponse(@NotNull SpiConsentStatus consentStatus) {
+    public SpiVerifyScaAuthorisationResponse(@NotNull ConsentStatus consentStatus) {
         this.consentStatus = consentStatus;
         spiAuthorisationStatus = null;
     }
 
-    public SpiVerifyScaAuthorisationResponse(@NotNull SpiConsentStatus consentStatus, SpiAuthorisationStatus spiAuthorisationStatus) {
+    public SpiVerifyScaAuthorisationResponse(@NotNull ConsentStatus consentStatus, SpiAuthorisationStatus spiAuthorisationStatus) {
         this.consentStatus = consentStatus;
         this.spiAuthorisationStatus = spiAuthorisationStatus;
     }

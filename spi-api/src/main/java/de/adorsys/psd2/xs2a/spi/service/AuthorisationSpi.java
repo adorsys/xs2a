@@ -18,20 +18,15 @@
 
 package de.adorsys.psd2.xs2a.spi.service;
 
+import de.adorsys.psd2.xs2a.core.error.MessageErrorCode;
+import de.adorsys.psd2.xs2a.core.error.TppMessage;
+import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
+import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import de.adorsys.psd2.xs2a.spi.domain.SpiAspspConsentDataProvider;
 import de.adorsys.psd2.xs2a.spi.domain.SpiContextData;
-import de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiAuthorisationDecoupledScaResponse;
-import de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiAuthorizationCodeResult;
-import de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiAvailableScaMethodsResponse;
-import de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiPsuAuthorisationResponse;
-import de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiScaStatusResponse;
-import de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiStartAuthorisationResponse;
-import de.adorsys.psd2.xs2a.spi.domain.error.SpiMessageErrorCode;
-import de.adorsys.psd2.xs2a.spi.domain.error.SpiTppMessage;
+import de.adorsys.psd2.xs2a.spi.domain.authorisation.*;
 import de.adorsys.psd2.xs2a.spi.domain.psu.SpiPsuData;
 import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponse;
-import de.adorsys.psd2.xs2a.spi.domain.sca.SpiScaApproach;
-import de.adorsys.psd2.xs2a.spi.domain.sca.SpiScaStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -54,8 +49,8 @@ interface AuthorisationSpi<T> {
      * @param aspspConsentDataProvider Provides access to read/write encrypted data to be stored in the consent management system.
      * @return Returns an object containing scaApproach, scaStatus, psuMessage, tppMessages from the bank.
      */
-    default SpiResponse<SpiStartAuthorisationResponse> startAuthorisation(@NotNull SpiContextData contextData, @NotNull SpiScaApproach scaApproach,
-                                                                          @NotNull SpiScaStatus scaStatus, @NotNull String authorisationId,
+    default SpiResponse<SpiStartAuthorisationResponse> startAuthorisation(@NotNull SpiContextData contextData, @NotNull ScaApproach scaApproach,
+                                                                          @NotNull ScaStatus scaStatus, @NotNull String authorisationId,
                                                                           T businessObject, @NotNull SpiAspspConsentDataProvider aspspConsentDataProvider) {
         return SpiResponse.<SpiStartAuthorisationResponse>builder()
                    .payload(new SpiStartAuthorisationResponse(scaApproach, scaStatus, null, null))
@@ -110,7 +105,7 @@ interface AuthorisationSpi<T> {
     @NotNull
     default SpiResponse<SpiAuthorisationDecoupledScaResponse> startScaDecoupled(@NotNull SpiContextData contextData, @NotNull String authorisationId, @Nullable String authenticationMethodId, @NotNull T businessObject, @NotNull SpiAspspConsentDataProvider aspspConsentDataProvider) {
         return SpiResponse.<SpiAuthorisationDecoupledScaResponse>builder()
-                   .error(new SpiTppMessage(SpiMessageErrorCode.SERVICE_NOT_SUPPORTED))
+                   .error(new TppMessage(MessageErrorCode.SERVICE_NOT_SUPPORTED))
                    .build();
     }
 
@@ -124,7 +119,7 @@ interface AuthorisationSpi<T> {
      * @param aspspConsentDataProvider Provides access to read/write encrypted data to be stored in the consent management system.
      * @return Returns response object, containing a SCA information from ASPSP
      */
-    SpiResponse<SpiScaStatusResponse> getScaStatus(@NotNull SpiScaStatus scaStatus,
+    SpiResponse<SpiScaStatusResponse> getScaStatus(@NotNull ScaStatus scaStatus,
                                                    @NotNull SpiContextData contextData,
                                                    @NotNull String authorisationId,
                                                    @NotNull T businessObject,
