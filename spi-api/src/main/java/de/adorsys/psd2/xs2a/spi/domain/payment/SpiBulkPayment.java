@@ -18,6 +18,8 @@
 
 package de.adorsys.psd2.xs2a.spi.domain.payment;
 
+import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
+import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import de.adorsys.psd2.xs2a.spi.domain.account.SpiAccountReference;
 import de.adorsys.psd2.xs2a.spi.domain.psu.SpiPsuData;
 import de.adorsys.psd2.xs2a.spi.service.SpiPayment;
@@ -35,7 +37,7 @@ public class SpiBulkPayment implements SpiPayment {
     private String debtorName;
     private LocalDate requestedExecutionDate;
     private OffsetDateTime requestedExecutionTime;
-    private SpiTransactionStatus paymentStatus;
+    private TransactionStatus paymentStatus;
     private List<SpiSinglePayment> payments;
     private String paymentProduct;
     private List<SpiPsuData> psuDataList;
@@ -45,8 +47,8 @@ public class SpiBulkPayment implements SpiPayment {
     private String instanceId;
 
     @Override
-    public SpiPaymentType getPaymentType() {
-        return SpiPaymentType.BULK;
+    public PaymentType getPaymentType() {
+        return PaymentType.BULK;
     }
 
     @Override
@@ -55,12 +57,12 @@ public class SpiBulkPayment implements SpiPayment {
     }
 
     @Override
-    public SpiTransactionStatus getPaymentStatus() {
+    public TransactionStatus getPaymentStatus() {
         return paymentStatus;
     }
 
     @Override
-    public void setPaymentStatus(SpiTransactionStatus paymentStatus) {
+    public void setPaymentStatus(TransactionStatus paymentStatus) {
         this.paymentStatus = paymentStatus;
     }
 }

@@ -145,7 +145,7 @@ public class PisAuthorisationConfirmationService {
         if (spiResponse.isSuccessful()) {
             SpiPaymentConfirmationCodeValidationResponse payload = spiResponse.getPayload();
             authorisationServiceEncrypted.updateAuthorisation(request.getAuthorisationId(), updatePaymentRequest);
-            xs2aUpdatePaymentAfterSpiService.updatePaymentStatus(request.getPaymentId(), TransactionStatus.valueOf(payload.getTransactionStatus().name()));
+            xs2aUpdatePaymentAfterSpiService.updatePaymentStatus(request.getPaymentId(), payload.getTransactionStatus());
         }
 
         return response;
@@ -164,7 +164,7 @@ public class PisAuthorisationConfirmationService {
                                                                                               SpiPaymentConfirmationCodeValidationResponse spiConfirmationResponse,
                                                                                               Xs2aCurrencyConversionInfo xs2aCurrencyConversionInfo) {
         return new Xs2aUpdatePisCommonPaymentPsuDataResponse(
-            ScaStatus.valueOf(spiConfirmationResponse.getScaStatus().name()), request.getPaymentId(), request.getAuthorisationId(),
+            spiConfirmationResponse.getScaStatus(), request.getPaymentId(), request.getAuthorisationId(),
             request.getPsuData(), xs2aCurrencyConversionInfo);
     }
 
@@ -186,11 +186,11 @@ public class PisAuthorisationConfirmationService {
             xs2aUpdatePisCommonPaymentPsuDataResponse = buildConfirmationCodeSpiErrorResponse(spiResponse, request.getPaymentId(), request.getAuthorisationId(), request.getPsuData());
         } else {
             SpiPaymentConfirmationCodeValidationResponse codeValidationResponse = spiResponse.getPayload();
-            xs2aUpdatePaymentAfterSpiService.updatePaymentStatus(request.getPaymentId(), TransactionStatus.valueOf(codeValidationResponse.getTransactionStatus().name()));
+            xs2aUpdatePaymentAfterSpiService.updatePaymentStatus(request.getPaymentId(), codeValidationResponse.getTransactionStatus());
 
             Xs2aCurrencyConversionInfo xs2aCurrencyConversionInfo = getCurrencyConversionInfo(contextData, payment, authorisationResponse.getAuthorisationId(), aspspConsentDataProvider);
             xs2aUpdatePisCommonPaymentPsuDataResponse = new Xs2aUpdatePisCommonPaymentPsuDataResponse(
-                ScaStatus.valueOf(codeValidationResponse.getScaStatus().name()),
+                codeValidationResponse.getScaStatus(),
                 request.getPaymentId(),
                 request.getAuthorisationId(),
                 request.getPsuData(),

@@ -18,11 +18,11 @@
 
 package de.adorsys.psd2.stub.impl;
 
+import de.adorsys.psd2.xs2a.core.ais.BookingStatus;
 import de.adorsys.psd2.xs2a.spi.domain.SpiAspspConsentDataProvider;
 import de.adorsys.psd2.xs2a.spi.domain.SpiContextData;
 import de.adorsys.psd2.xs2a.spi.domain.account.*;
 import de.adorsys.psd2.xs2a.spi.domain.common.SpiAmount;
-import de.adorsys.psd2.xs2a.spi.domain.consent.SpiAisBookingStatus;
 import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponse;
 import de.adorsys.psd2.xs2a.spi.service.CardAccountSpi;
 import lombok.extern.slf4j.Slf4j;
@@ -30,12 +30,7 @@ import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.time.Month;
-import java.time.OffsetDateTime;
-import java.time.ZoneOffset;
+import java.time.*;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Currency;
@@ -77,9 +72,9 @@ public class CardAccountSpiMockImpl implements CardAccountSpi {
     public SpiResponse<SpiCardTransactionReport> requestCardTransactionsForAccount(@NotNull SpiContextData contextData, @NotNull SpiTransactionReportParameters spiCardTransactionReportParameters, @NotNull SpiAccountReference accountReference, @NotNull SpiAccountConsent accountConsent, @NotNull SpiAspspConsentDataProvider aspspConsentDataProvider) {
         log.info("CardAccountSpi#requestCardTransactionsForAccount: contextData {}, acceptMediaType {}, dateFrom {}, dateTo {}, bookingStatus {}, accountReference {}, accountConsent-id {}, aspspConsentData {}", contextData, spiCardTransactionReportParameters.getAcceptMediaType(), spiCardTransactionReportParameters.getDateFrom(), spiCardTransactionReportParameters.getDateTo(), spiCardTransactionReportParameters.getBookingStatus(), accountReference, accountConsent.getId(), aspspConsentDataProvider.loadAspspConsentData());
 
-        List<SpiCardTransaction> transactions = SpiAisBookingStatus.INFORMATION == spiCardTransactionReportParameters.getBookingStatus()
-                                                    ? buildSpiInformationTransactionList()
-                                                    : buildSpiTransactionList();
+        List<SpiCardTransaction> transactions = BookingStatus.INFORMATION == spiCardTransactionReportParameters.getBookingStatus() ?
+                                                    buildSpiInformationTransactionList() :
+                                                    buildSpiTransactionList();
 
         return SpiResponse.<SpiCardTransactionReport>builder()
                    .payload(new SpiCardTransactionReport("dGVzdA==", transactions, Collections.singletonList(buildSpiAccountBalance()), "application/json", null))

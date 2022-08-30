@@ -25,10 +25,7 @@ import de.adorsys.psd2.xs2a.domain.consent.PaymentScaStatus;
 import de.adorsys.psd2.xs2a.service.authorization.Xs2aAuthorisationService;
 import de.adorsys.psd2.xs2a.service.context.SpiContextDataProvider;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiErrorMapper;
-import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiToXs2aAuthorizationMapper;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiToXs2aLinksMapper;
-import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiToXs2aTppMessageInformationMapper;
-import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.Xs2aToSpiAuthorizationMapper;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.Xs2aToSpiPaymentMapper;
 import de.adorsys.psd2.xs2a.service.spi.SpiAspspConsentDataProviderFactory;
 import de.adorsys.psd2.xs2a.spi.domain.SpiAspspConsentDataProvider;
@@ -44,7 +41,6 @@ import org.springframework.stereotype.Service;
 public class PaymentServiceForAuthorisationImpl extends PaymentServiceForAuthorisation {
     private final PaymentAuthorisationSpi paymentAuthorisationSpi;
     private final PaymentAuthorisationService paymentAuthorisationService;
-    private final Xs2aToSpiAuthorizationMapper xs2aToSpiAuthorizationMapper;
 
     public PaymentServiceForAuthorisationImpl(SpiContextDataProvider spiContextDataProvider,
                                               SpiAspspConsentDataProviderFactory aspspConsentDataProviderFactory,
@@ -52,15 +48,10 @@ public class PaymentServiceForAuthorisationImpl extends PaymentServiceForAuthori
                                               PaymentAuthorisationService paymentAuthorisationService,
                                               RequestProviderService requestProviderService, Xs2aAuthorisationService xs2aAuthorisationService,
                                               Xs2aToSpiPaymentMapper xs2aToSpiPaymentMapper,
-                                              SpiToXs2aLinksMapper spiToXs2aLinksMapper,
-                                              SpiToXs2aTppMessageInformationMapper tppMessageInformationMapper,
-                                              SpiToXs2aAuthorizationMapper spiToXs2aAuthorizationMapper,
-                                              Xs2aToSpiAuthorizationMapper xs2aToSpiAuthorizationMapper) {
-        super(spiContextDataProvider, aspspConsentDataProviderFactory, spiErrorMapper, requestProviderService, xs2aAuthorisationService,
-              xs2aToSpiPaymentMapper, spiToXs2aLinksMapper, tppMessageInformationMapper, spiToXs2aAuthorizationMapper);
+                                              SpiToXs2aLinksMapper spiToXs2aLinksMapper) {
+        super(spiContextDataProvider, aspspConsentDataProviderFactory, spiErrorMapper, requestProviderService, xs2aAuthorisationService, xs2aToSpiPaymentMapper, spiToXs2aLinksMapper);
         this.paymentAuthorisationSpi = paymentAuthorisationSpi;
         this.paymentAuthorisationService = paymentAuthorisationService;
-        this.xs2aToSpiAuthorizationMapper = xs2aToSpiAuthorizationMapper;
     }
 
     @Override
@@ -74,7 +65,7 @@ public class PaymentServiceForAuthorisationImpl extends PaymentServiceForAuthori
     SpiResponse<SpiScaStatusResponse> getScaStatus(@NotNull ScaStatus scaStatus, @NotNull SpiContextData contextData,
                                                    @NotNull String authorisationId, @NotNull SpiPayment businessObject,
                                                    @NotNull SpiAspspConsentDataProvider aspspConsentDataProvider) {
-        return paymentAuthorisationSpi.getScaStatus(xs2aToSpiAuthorizationMapper.mapToSpiScaStatus(scaStatus), contextData, authorisationId, businessObject,
+        return paymentAuthorisationSpi.getScaStatus(scaStatus, contextData, authorisationId, businessObject,
                                                     aspspConsentDataProvider);
     }
 }

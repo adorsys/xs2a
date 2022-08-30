@@ -33,8 +33,6 @@ import de.adorsys.psd2.xs2a.domain.consent.ConsentAuthorisationsParameters;
 import de.adorsys.psd2.xs2a.domain.consent.UpdateConsentPsuDataResponse;
 import de.adorsys.psd2.xs2a.service.context.SpiContextDataProvider;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiErrorMapper;
-import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiToXs2aAuthorizationMapper;
-import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiToXs2aConsentMapper;
 import de.adorsys.psd2.xs2a.service.profile.AspspProfileServiceWrapper;
 import de.adorsys.psd2.xs2a.service.spi.SpiAspspConsentDataProviderFactory;
 import de.adorsys.psd2.xs2a.spi.domain.SpiAspspConsentDataProvider;
@@ -61,8 +59,6 @@ public abstract class ConsentAuthorisationConfirmationService<T extends Consent>
     private final Xs2aAuthorisationService authorisationService;
     private final SpiErrorMapper spiErrorMapper;
     private final AuthorisationServiceEncrypted authorisationServiceEncrypted;
-    private final SpiToXs2aConsentMapper spiToXs2aConsentMapper;
-    private final SpiToXs2aAuthorizationMapper spiToXs2aAuthorizationMapper;
 
     /**
      * Checks authorisation confirmation data. Has two possible flows:
@@ -129,19 +125,17 @@ public abstract class ConsentAuthorisationConfirmationService<T extends Consent>
         }
 
         SpiConsentConfirmationCodeValidationResponse confirmationCodeValidationResponse = spiResponse.getPayload();
-        ScaStatus scaStatus = spiToXs2aAuthorizationMapper.mapToScaStatus(confirmationCodeValidationResponse.getScaStatus());
         UpdateConsentPsuDataResponse response = codeCorrect
-                                                    ? new UpdateConsentPsuDataResponse(scaStatus,
+                                                    ? new UpdateConsentPsuDataResponse(confirmationCodeValidationResponse.getScaStatus(),
                                                                                        consentId,
                                                                                        authorisationId,
                                                                                        psuData)
                                                     : buildScaConfirmationCodeErrorResponse(consentId, authorisationId, psuData);
 
         if (spiResponse.isSuccessful()) {
-            ConsentStatus consentStatus = spiToXs2aConsentMapper.mapToConsentStatus(confirmationCodeValidationResponse.getConsentStatus());
-            authorisationService.updateAuthorisationStatus(authorisationId, scaStatus);
-            updateConsentStatus(consentId, consentStatus);
-            if (ConsentStatus.VALID == consentStatus) {
+            authorisationService.updateAuthorisationStatus(authorisationId, confirmationCodeValidationResponse.getScaStatus());
+            updateConsentStatus(consentId, confirmationCodeValidationResponse.getConsentStatus());
+            if (ConsentStatus.VALID == confirmationCodeValidationResponse.getConsentStatus()) {
                 findAndTerminateOldConsents(consentId, consentOptional.get());
             }
         }
@@ -171,13 +165,12 @@ public abstract class ConsentAuthorisationConfirmationService<T extends Consent>
             updateConsentPsuDataResponse = buildConfirmationCodeSpiErrorResponse(spiResponse, consentId, authorisationId, request.getPsuData());
         } else {
             SpiConsentConfirmationCodeValidationResponse confirmationCodeValidationResponse = spiResponse.getPayload();
-            ConsentStatus consentStatus = spiToXs2aConsentMapper.mapToConsentStatus(confirmationCodeValidationResponse.getConsentStatus());
-            updateConsentStatus(consentId, consentStatus);
-            updateConsentPsuDataResponse = new UpdateConsentPsuDataResponse(ScaStatus.valueOf(confirmationCodeValidationResponse.getScaStatus().name()),
+            updateConsentStatus(consentId, confirmationCodeValidationResponse.getConsentStatus());
+            updateConsentPsuDataResponse = new UpdateConsentPsuDataResponse(confirmationCodeValidationResponse.getScaStatus(),
                                                                             consentId,
                                                                             authorisationId,
                                                                             request.getPsuData());
-            if (ConsentStatus.VALID == consentStatus) {
+            if (ConsentStatus.VALID == confirmationCodeValidationResponse.getConsentStatus()) {
                 findAndTerminateOldConsents(consentId, consentOptional.get());
             }
         }

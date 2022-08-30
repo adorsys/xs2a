@@ -20,7 +20,7 @@ package de.adorsys.psd2.xs2a.web.mapper;
 
 import de.adorsys.psd2.model.AuthenticationObject;
 import de.adorsys.psd2.model.ScaMethods;
-import de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiAuthenticationObject;
+import de.adorsys.psd2.xs2a.spi.domain.common.SpiAuthenticationObject;
 import org.mapstruct.Mapper;
 
 import java.util.List;

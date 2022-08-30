@@ -24,6 +24,7 @@ import de.adorsys.psd2.xs2a.core.error.ErrorType;
 import de.adorsys.psd2.xs2a.core.error.MessageErrorCode;
 import de.adorsys.psd2.xs2a.core.error.TppMessage;
 import de.adorsys.psd2.xs2a.core.mapper.ServiceType;
+import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.domain.pis.PaymentInitiationResponse;
 import de.adorsys.psd2.xs2a.domain.pis.SinglePayment;
@@ -36,10 +37,7 @@ import de.adorsys.psd2.xs2a.service.payment.support.TestSpiDataProvider;
 import de.adorsys.psd2.xs2a.service.spi.InitialSpiAspspConsentDataProvider;
 import de.adorsys.psd2.xs2a.service.spi.SpiAspspConsentDataProviderFactory;
 import de.adorsys.psd2.xs2a.spi.domain.SpiContextData;
-import de.adorsys.psd2.xs2a.spi.domain.error.SpiMessageErrorCode;
-import de.adorsys.psd2.xs2a.spi.domain.error.SpiTppMessage;
 import de.adorsys.psd2.xs2a.spi.domain.payment.SpiSinglePayment;
-import de.adorsys.psd2.xs2a.spi.domain.payment.SpiTransactionStatus;
 import de.adorsys.psd2.xs2a.spi.domain.payment.response.SpiSinglePaymentInitiationResponse;
 import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponse;
 import de.adorsys.psd2.xs2a.spi.service.SinglePaymentSpi;
@@ -68,7 +66,6 @@ class SinglePaymentInitiationServiceTest {
     private static final SinglePaymentInitiationResponse SINGLE_PAYMENT_RESPONSE = new SinglePaymentInitiationResponse();
 
     private static final TppMessage FORMAT_ERROR = new TppMessage(MessageErrorCode.FORMAT_ERROR);
-    private static final SpiTppMessage SPI_FORMAT_ERROR = new SpiTppMessage(SpiMessageErrorCode.FORMAT_ERROR);
     private static final ErrorHolder EXPECTED_ERROR = ErrorHolder.builder(ErrorType.PIS_404)
                                                           .tppMessages(TppMessageInformation.of(MessageErrorCode.RESOURCE_UNKNOWN_404_NO_PAYMENT))
                                                           .build();
@@ -122,7 +119,7 @@ class SinglePaymentInitiationServiceTest {
     void createSinglePayment_singlePaymentSpi_initiatePayment_failed() {
         // Given
         SpiResponse<SpiSinglePaymentInitiationResponse> expectedFailureResponse = SpiResponse.<SpiSinglePaymentInitiationResponse>builder()
-                                                                                      .error(SPI_FORMAT_ERROR)
+                                                                                      .error(FORMAT_ERROR)
                                                                                       .build();
 
         when(xs2AToSpiSinglePaymentMapper.mapToSpiSinglePayment(SINGLE_PAYMENT, PRODUCT))
@@ -144,7 +141,7 @@ class SinglePaymentInitiationServiceTest {
     private static SpiSinglePaymentInitiationResponse buildSpiSinglePaymentInitiationResponse() {
         SpiSinglePaymentInitiationResponse response = new SpiSinglePaymentInitiationResponse();
         response.setPaymentId(PAYMENT_ID);
-        response.setTransactionStatus(SpiTransactionStatus.RCVD);
+        response.setTransactionStatus(TransactionStatus.RCVD);
         response.setAspspAccountId(ASPSP_ACCOUNT_ID);
         return response;
     }

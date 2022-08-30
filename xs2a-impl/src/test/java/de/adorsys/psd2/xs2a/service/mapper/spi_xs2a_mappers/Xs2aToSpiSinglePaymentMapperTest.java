@@ -30,10 +30,8 @@ import de.adorsys.psd2.xs2a.domain.pis.SinglePayment;
 import de.adorsys.psd2.xs2a.spi.domain.account.SpiAccountReference;
 import de.adorsys.psd2.xs2a.spi.domain.common.SpiAmount;
 import de.adorsys.psd2.xs2a.spi.domain.payment.SpiAddress;
-import de.adorsys.psd2.xs2a.spi.domain.payment.SpiPisPurposeCode;
 import de.adorsys.psd2.xs2a.spi.domain.payment.SpiRemittance;
 import de.adorsys.psd2.xs2a.spi.domain.payment.SpiSinglePayment;
-import de.adorsys.psd2.xs2a.spi.domain.payment.SpiTransactionStatus;
 import de.adorsys.psd2.xs2a.spi.domain.psu.SpiPsuData;
 import de.adorsys.psd2.xs2a.web.mapper.RemittanceMapper;
 import org.junit.jupiter.api.BeforeEach;
@@ -83,7 +81,6 @@ class Xs2aToSpiSinglePaymentMapperTest {
     private static final LocalDate REQUESTED_EXECUTION_DATE = LocalDate.now();
     private static final OffsetDateTime REQUESTED_EXECUTION_TIME = OffsetDateTime.now();
     private static final TransactionStatus TRANSACTION_STATUS = TransactionStatus.RCVD;
-    private static final SpiTransactionStatus SPI_TRANSACTION_STATUS = SpiTransactionStatus.RCVD;
     private final Currency EUR_CURRENCY = Currency.getInstance("EUR");
     private static final List<PsuIdData> psuDataList = new ArrayList<>();
     private static final List<SpiPsuData> spiPsuDataList = new ArrayList<>();
@@ -93,7 +90,6 @@ class Xs2aToSpiSinglePaymentMapperTest {
     private static final String ULTIMATE_DEBTOR = "ultimate debtor";
     private static final String ULTIMATE_CREDITOR = "ultimate creditor";
     private static final PurposeCode PURPOSE_CODE = PurposeCode.fromValue("BKDF");
-    private static final SpiPisPurposeCode SPI_PURPOSE_CODE = SpiPisPurposeCode.fromValue("BKDF");
     private final Remittance REMITTANCE = getRemittance();
     private final SpiRemittance SPI_REMITTANCE = getSpiRemittance();
     private final String REFERENCE = "reference";
@@ -108,10 +104,6 @@ class Xs2aToSpiSinglePaymentMapperTest {
     private Xs2aToSpiAccountReferenceMapper xs2aToSpiAccountReferenceMapper;
     @Mock
     private Xs2aToSpiPsuDataMapper xs2aToSpiPsuDataMapper;
-    @Mock
-    private Xs2aToSpiPisMapper xs2aToSpiPisMapper;
-    @Mock
-    private Xs2aToSpiTransactionMapper xs2aToSpiTransactionMapper;
     @Spy
     private final RemittanceMapper remittanceMapper = Mappers.getMapper(RemittanceMapper.class);
 
@@ -129,9 +121,6 @@ class Xs2aToSpiSinglePaymentMapperTest {
             .thenReturn(buildSpiAmount(EUR_CURRENCY));
         when(xs2aToSpiAddressMapper.mapToSpiAddress(buildXs2aAddress()))
             .thenReturn(buildSpiAddress());
-        when(xs2aToSpiTransactionMapper.mapToSpiTransactionStatus(TRANSACTION_STATUS)).thenReturn(SPI_TRANSACTION_STATUS);
-        when(xs2aToSpiPisMapper.mapToSpiPisPurposeCode(PURPOSE_CODE)).thenReturn(SPI_PURPOSE_CODE);
-
     }
 
     @Test
@@ -151,7 +140,7 @@ class Xs2aToSpiSinglePaymentMapperTest {
         assertEquals(CREDITOR_NAME, spiSinglePayment.getCreditorName());
         assertEquals(buildSpiAddress(), spiSinglePayment.getCreditorAddress());
         assertEquals(REMITTANCE_INFORMATION_UNSTRUCTURED_ARRAY, spiSinglePayment.getRemittanceInformationUnstructuredArray());
-        assertEquals(SPI_TRANSACTION_STATUS, spiSinglePayment.getPaymentStatus());
+        assertEquals(TRANSACTION_STATUS, spiSinglePayment.getPaymentStatus());
         assertEquals(PAYMENT_PRODUCT, spiSinglePayment.getPaymentProduct());
         assertEquals(REQUESTED_EXECUTION_DATE, spiSinglePayment.getRequestedExecutionDate());
         assertEquals(REQUESTED_EXECUTION_TIME, spiSinglePayment.getRequestedExecutionTime());
@@ -159,7 +148,7 @@ class Xs2aToSpiSinglePaymentMapperTest {
         assertEquals(STATUS_CHANGE_TIMESTAMP, singlePayment.getStatusChangeTimestamp());
         assertEquals(ULTIMATE_DEBTOR, spiSinglePayment.getUltimateDebtor());
         assertEquals(ULTIMATE_CREDITOR, spiSinglePayment.getUltimateCreditor());
-        assertEquals(SPI_PURPOSE_CODE, spiSinglePayment.getPurposeCode());
+        assertEquals(PURPOSE_CODE, spiSinglePayment.getPurposeCode());
         assertEquals(Collections.singletonList(SPI_REMITTANCE), spiSinglePayment.getRemittanceInformationStructuredArray());
         assertEquals(singlePayment.getCreationTimestamp(), spiSinglePayment.getCreationTimestamp());
         assertEquals(singlePayment.getContentType(), spiSinglePayment.getContentType());

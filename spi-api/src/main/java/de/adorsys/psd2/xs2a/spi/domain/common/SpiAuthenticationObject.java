@@ -16,16 +16,19 @@
  * contact us at psd2@adorsys.com.
  */
 
-package de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers;
+package de.adorsys.psd2.xs2a.spi.domain.common;
 
-import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
-import de.adorsys.psd2.xs2a.spi.domain.tpp.SpiTppInfo;
-import org.mapstruct.Mapper;
-import org.springframework.stereotype.Component;
+import lombok.Data;
 
-@Component
-@Mapper(componentModel = "spring")
-public interface Xs2aToSpiTppInfoMapper {
-
-    SpiTppInfo mapToSpiTppInfo(TppInfo tppInfo);
+@Data
+public class SpiAuthenticationObject {
+    private String authenticationType;
+    private String authenticationMethodId;
+    private String authenticationVersion;
+    private String name;
+    private String explanation;
+    /**
+     * Represents, whether current authentication object requires decoupled SCA
+     */
+    private boolean decoupled;
 }
