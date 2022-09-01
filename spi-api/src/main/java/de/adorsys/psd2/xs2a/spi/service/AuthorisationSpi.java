@@ -24,7 +24,12 @@ import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import de.adorsys.psd2.xs2a.spi.domain.SpiAspspConsentDataProvider;
 import de.adorsys.psd2.xs2a.spi.domain.SpiContextData;
-import de.adorsys.psd2.xs2a.spi.domain.authorisation.*;
+import de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiAuthorisationDecoupledScaResponse;
+import de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiAuthorizationCodeResult;
+import de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiAvailableScaMethodsResponse;
+import de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiPsuAuthorisationResponse;
+import de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiScaStatusResponse;
+import de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiStartAuthorisationResponse;
 import de.adorsys.psd2.xs2a.spi.domain.psu.SpiPsuData;
 import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponse;
 import org.jetbrains.annotations.NotNull;
@@ -48,7 +53,10 @@ interface AuthorisationSpi<T> {
      * @param businessObject           generic consent/payment object
      * @param aspspConsentDataProvider Provides access to read/write encrypted data to be stored in the consent management system.
      * @return Returns an object containing scaApproach, scaStatus, psuMessage, tppMessages from the bank.
+     * @deprecated                     Method signature will be changed in 14.4 release, ScaApproach and ScaStatus models will be changed to SpiScaApproach and SpiScaStatus
      */
+    @Deprecated
+    //TODO:before release 14.4 merge changes for https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/-/issues/1334
     default SpiResponse<SpiStartAuthorisationResponse> startAuthorisation(@NotNull SpiContextData contextData, @NotNull ScaApproach scaApproach,
                                                                           @NotNull ScaStatus scaStatus, @NotNull String authorisationId,
                                                                           T businessObject, @NotNull SpiAspspConsentDataProvider aspspConsentDataProvider) {
@@ -118,7 +126,10 @@ interface AuthorisationSpi<T> {
      * @param businessObject           generic consent/payment object
      * @param aspspConsentDataProvider Provides access to read/write encrypted data to be stored in the consent management system.
      * @return Returns response object, containing a SCA information from ASPSP
+     * @deprecated Method signature will be changed in 14.4 release, ScaStatus model will be changed to SpiScaStatus
      */
+    @Deprecated
+    //TODO:before release 14.4 merge changes for https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/-/issues/1334
     SpiResponse<SpiScaStatusResponse> getScaStatus(@NotNull ScaStatus scaStatus,
                                                    @NotNull SpiContextData contextData,
                                                    @NotNull String authorisationId,
