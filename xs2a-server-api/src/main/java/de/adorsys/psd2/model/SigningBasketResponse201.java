@@ -9,7 +9,6 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 
 /**
@@ -17,7 +16,7 @@ import java.util.Objects;
  */
 @Schema(description = "Body of the JSON response for a successful create signing basket request.")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-05-06T13:00:42.214155+03:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-09-19T16:45:22.884087+03:00[Europe/Kiev]")
 
 
 public class SigningBasketResponse201   {
@@ -37,7 +36,7 @@ public class SigningBasketResponse201   {
   private ChallengeData challengeData = null;
 
   @JsonProperty("_links")
-  private Map _links = null;
+  private LinksSigningBasket _links = null;
 
   @JsonProperty("psuMessage")
   private String psuMessage = null;
@@ -147,7 +146,7 @@ public class SigningBasketResponse201   {
     this.challengeData = challengeData;
   }
 
-  public SigningBasketResponse201 _links(Map _links) {
+  public SigningBasketResponse201 _links(LinksSigningBasket _links) {
     this._links = _links;
     return this;
   }
@@ -160,11 +159,11 @@ public class SigningBasketResponse201   {
       @NotNull
 
     @Valid
-    public Map getLinks() {
+    public LinksSigningBasket getLinks() {
     return _links;
   }
 
-  public void setLinks(Map _links) {
+  public void setLinks(LinksSigningBasket _links) {
     this._links = _links;
   }
 

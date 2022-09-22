@@ -4,40 +4,39 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
 import org.springframework.validation.annotation.Validated;
 
-import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import java.util.Objects;
 
 /**
- * InlineResponse2003
+ * Equals \&quot;true\&quot; if sufficient funds are available at the time of the request,  \&quot;false\&quot; otherwise.
  */
+@Schema(description = "Equals \"true\" if sufficient funds are available at the time of the request,  \"false\" otherwise. ")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-05-06T13:00:42.214155+03:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-09-19T16:45:22.884087+03:00[Europe/Kiev]")
 
 
 public class InlineResponse2003   {
-  @JsonProperty("account")
-  private AccountDetails account = null;
+  @JsonProperty("fundsAvailable")
+  private Boolean fundsAvailable = null;
 
-  public InlineResponse2003 account(AccountDetails account) {
-    this.account = account;
+  public InlineResponse2003 fundsAvailable(Boolean fundsAvailable) {
+    this.fundsAvailable = fundsAvailable;
     return this;
   }
 
   /**
-   * Get account
-   * @return account
+   * Equals true if sufficient funds are available at the time of the request, false otherwise.  This data element is allways contained in a confirmation of funds response.  This data element is contained in a payment status response,  if supported by the ASPSP, if a funds check has been performed and  if the transactionStatus is \"ACTC\", \"ACWC\" or \"ACCP\".
+   * @return fundsAvailable
    **/
-  @Schema(required = true, description = "")
+  @Schema(required = true, description = "Equals true if sufficient funds are available at the time of the request, false otherwise.  This data element is allways contained in a confirmation of funds response.  This data element is contained in a payment status response,  if supported by the ASPSP, if a funds check has been performed and  if the transactionStatus is \"ACTC\", \"ACWC\" or \"ACCP\". ")
       @NotNull
 
-    @Valid
-    public AccountDetails getAccount() {
-    return account;
+    public Boolean isFundsAvailable() {
+    return fundsAvailable;
   }
 
-  public void setAccount(AccountDetails account) {
-    this.account = account;
+  public void setFundsAvailable(Boolean fundsAvailable) {
+    this.fundsAvailable = fundsAvailable;
   }
 
 
@@ -50,12 +49,12 @@ public class InlineResponse2003   {
       return false;
     }
     InlineResponse2003 inlineResponse2003 = (InlineResponse2003) o;
-    return Objects.equals(this.account, inlineResponse2003.account);
+    return Objects.equals(this.fundsAvailable, inlineResponse2003.fundsAvailable);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(account);
+    return Objects.hash(fundsAvailable);
   }
 
   @Override
@@ -63,7 +62,7 @@ public class InlineResponse2003   {
     StringBuilder sb = new StringBuilder();
     sb.append("class InlineResponse2003 {\n");
 
-    sb.append("    account: ").append(toIndentedString(account)).append("\n");
+    sb.append("    fundsAvailable: ").append(toIndentedString(fundsAvailable)).append("\n");
     sb.append("}");
     return sb.toString();
   }

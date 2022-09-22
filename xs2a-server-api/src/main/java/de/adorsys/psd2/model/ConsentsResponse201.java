@@ -17,7 +17,7 @@ import java.util.Objects;
  */
 @Schema(description = "Body of the JSON response for a successful consent request.")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-05-06T13:00:42.214155+03:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-09-19T16:45:22.884087+03:00[Europe/Kiev]")
 
 
 public class ConsentsResponse201   {
@@ -167,7 +167,7 @@ public class ConsentsResponse201   {
     return _links;
   }
 
-  public void setLinks(LinksConsents _links) {
+  public void setLinks(Map _links) {
     this._links = _links;
   }
 

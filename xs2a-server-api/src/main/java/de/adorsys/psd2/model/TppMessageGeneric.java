@@ -13,7 +13,7 @@ import java.util.Objects;
  * TppMessageGeneric
  */
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-05-06T13:00:42.214155+03:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-09-19T16:45:22.884087+03:00[Europe/Kiev]")
 
 
 public class TppMessageGeneric   {
@@ -21,7 +21,7 @@ public class TppMessageGeneric   {
   private TppMessageCategory category = null;
 
   @JsonProperty("code")
-  private TppMessageCategory code = null;
+  private String code = null;
 
   @JsonProperty("path")
   private String path = null;
@@ -50,24 +50,23 @@ public class TppMessageGeneric   {
     this.category = category;
   }
 
-  public TppMessageGeneric code(TppMessageCategory code) {
+  public TppMessageGeneric code(String code) {
     this.code = code;
     return this;
   }
 
   /**
-   * Get code
+   * Code of the TPP message category.
    * @return code
    **/
-  @Schema(required = true, description = "")
+  @Schema(required = true, description = "Code of the TPP message category.")
       @NotNull
 
-    @Valid
-    public TppMessageCategory getCode() {
+    public String getCode() {
     return code;
   }
 
-  public void setCode(TppMessageCategory code) {
+  public void setCode(String code) {
     this.code = code;
   }
 

@@ -16,7 +16,7 @@ import java.util.Objects;
  */
 @Schema(description = "A single balance element. ")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-05-06T13:00:42.214155+03:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-09-19T16:45:22.884087+03:00[Europe/Kiev]")
 
 
 public class Balance   {
@@ -145,10 +145,10 @@ public class Balance   {
   }
 
   /**
-   * \"entryReference\" of the last commited transaction to support the TPP in identifying whether all  PSU transactions are already known.
+   * \"entryReference\" of the last committed transaction to support the TPP in identifying whether all  PSU transactions are already known.
    * @return lastCommittedTransaction
    **/
-  @Schema(description = "\"entryReference\" of the last commited transaction to support the TPP in identifying whether all  PSU transactions are already known. ")
+  @Schema(description = "\"entryReference\" of the last committed transaction to support the TPP in identifying whether all  PSU transactions are already known. ")
 
   @Size(max=35)   public String getLastCommittedTransaction() {
     return lastCommittedTransaction;

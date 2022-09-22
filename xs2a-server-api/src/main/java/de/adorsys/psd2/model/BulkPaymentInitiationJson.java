@@ -14,11 +14,11 @@ import java.util.List;
 import java.util.Objects;
 
 /**
- * Generic Body for a bulk payment initation via JSON.  paymentInformationId is contained in code but commented since it is n.a.  and not all ASPSP are able to support this field now. In a later version the field will be mandatory.
+ * Generic Body for a bulk payment initiation via JSON.  paymentInformationId is contained in code but commented since it is n.a.  and not all ASPSP are able to support this field now. In a later version the field will be mandatory.
  */
-@Schema(description = "Generic Body for a bulk payment initation via JSON.  paymentInformationId is contained in code but commented since it is n.a.  and not all ASPSP are able to support this field now. In a later version the field will be mandatory. ")
+@Schema(description = "Generic Body for a bulk payment initiation via JSON.  paymentInformationId is contained in code but commented since it is n.a.  and not all ASPSP are able to support this field now. In a later version the field will be mandatory. ")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-05-06T13:00:42.214155+03:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-09-19T16:45:22.884087+03:00[Europe/Kiev]")
 
 
 public class BulkPaymentInitiationJson   {
@@ -132,10 +132,10 @@ public class BulkPaymentInitiationJson   {
   }
 
   /**
-   * A list of generic JSON bodies payment initations for bulk payments via JSON.  Note: Some fields from single payments do not occcur in a bulk payment element
+   * A list of generic JSON bodies payment initiations for bulk payments via JSON.  Note: Some fields from single payments do not occur in a bulk payment element
    * @return payments
    **/
-  @Schema(required = true, description = "A list of generic JSON bodies payment initations for bulk payments via JSON.  Note: Some fields from single payments do not occcur in a bulk payment element ")
+  @Schema(required = true, description = "A list of generic JSON bodies payment initiations for bulk payments via JSON.  Note: Some fields from single payments do not occur in a bulk payment element ")
       @NotNull
     @Valid
     public List<PaymentInitiationBulkElementJson> getPayments() {

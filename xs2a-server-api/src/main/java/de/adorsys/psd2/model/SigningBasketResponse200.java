@@ -6,7 +6,6 @@ import org.springframework.validation.annotation.Validated;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
-import java.util.Map;
 import java.util.Objects;
 
 /**
@@ -14,7 +13,7 @@ import java.util.Objects;
  */
 @Schema(description = "Body of the JSON response for a successful get signing basket request.    * 'payments': payment initiations which shall be authorised through this signing basket.   * 'consents': consent objects which shall be authorised through this signing basket.   * 'transactionStatus': Only the codes RCVD, ACTC, RJCT are used.   * '_links': The ASPSP might integrate hyperlinks to indicate next (authorisation) steps to be taken. ")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-05-06T13:00:42.214155+03:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-09-19T16:45:22.884087+03:00[Europe/Kiev]")
 
 
 public class SigningBasketResponse200   {
@@ -28,7 +27,7 @@ public class SigningBasketResponse200   {
   private TransactionStatusSBS transactionStatus = null;
 
   @JsonProperty("_links")
-  private Map _links = null;
+  private LinksSigningBasket _links = null;
 
   public SigningBasketResponse200 payments(PaymentIdList payments) {
     this.payments = payments;
@@ -91,7 +90,7 @@ public class SigningBasketResponse200   {
     this.transactionStatus = transactionStatus;
   }
 
-  public SigningBasketResponse200 _links(Map _links) {
+  public SigningBasketResponse200 _links(LinksSigningBasket _links) {
     this._links = _links;
     return this;
   }
@@ -103,11 +102,11 @@ public class SigningBasketResponse200   {
   @Schema(description = "")
 
     @Valid
-    public Map getLinks() {
+    public LinksSigningBasket getLinks() {
     return _links;
   }
 
-  public void setLinks(Map _links) {
+  public void setLinks(LinksSigningBasket _links) {
     this._links = _links;
   }
 

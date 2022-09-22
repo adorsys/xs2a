@@ -13,10 +13,10 @@ import java.util.Objects;
  */
 @Schema(description = "Content of the body of a Update PSU authentication request  Password subfield is used. ")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-05-06T13:00:42.214155+03:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-09-19T16:45:22.884087+03:00[Europe/Kiev]")
 
 
-public class UpdatePsuAuthentication {
+public class UpdatePsuAuthentication   {
   @JsonProperty("psuData")
   private PsuData psuData = null;
 

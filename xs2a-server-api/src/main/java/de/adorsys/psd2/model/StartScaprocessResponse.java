@@ -17,7 +17,7 @@ import java.util.Objects;
  */
 @Schema(description = "Body of the JSON response for a Start SCA authorisation request.")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-05-06T13:00:42.214155+03:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-09-19T16:45:22.884087+03:00[Europe/Kiev]")
 
 
 public class StartScaprocessResponse   {
@@ -147,7 +147,7 @@ public class StartScaprocessResponse   {
     this.challengeData = challengeData;
   }
 
-  public StartScaprocessResponse _links(LinksStartScaProcess _links) {
+  public StartScaprocessResponse _links(Map _links) {
     this._links = _links;
     return this;
   }

@@ -17,7 +17,7 @@ import java.util.Objects;
  */
 @Schema(description = "Body of the response for a successful payment initiation status request in case of an JSON based endpoint. *Remark:* If the PSU does not complete a required SCA within the required timeframe the payment resource's status must be set to \"RJCT\". Particularly, if a multi-level-SCA is required and the number of successful SCAs during the required timeframe is insufficient, the status must also be set to \"RJCT\".")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-05-06T13:00:42.214155+03:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-09-19T16:45:22.884087+03:00[Europe/Kiev]")
 
 
 public class PaymentInitiationStatusResponse200Json   {
@@ -29,6 +29,13 @@ public class PaymentInitiationStatusResponse200Json   {
 
   @JsonProperty("psuMessage")
   private String psuMessage = null;
+
+  @JsonProperty("ownerNames")
+  @Valid
+  private List<AccountOwner> ownerNames = null;
+
+  @JsonProperty("psuName")
+  private String psuName = null;
 
   @JsonProperty("_links")
   private Map _links = null;
@@ -64,10 +71,10 @@ public class PaymentInitiationStatusResponse200Json   {
   }
 
   /**
-   * Equals true if sufficient funds are available at the time of the request, false otherwise.  This datalemenet is allways contained in a confirmation of funds response.  This data element is contained in a payment status response,  if supported by the ASPSP, if a funds check has been performed and  if the transactionStatus is \"ACTC\", \"ACWC\" or \"ACCP\".
+   * Equals true if sufficient funds are available at the time of the request, false otherwise.  This data element is allways contained in a confirmation of funds response.  This data element is contained in a payment status response,  if supported by the ASPSP, if a funds check has been performed and  if the transactionStatus is \"ACTC\", \"ACWC\" or \"ACCP\".
    * @return fundsAvailable
    **/
-  @Schema(description = "Equals true if sufficient funds are available at the time of the request, false otherwise.  This datalemenet is allways contained in a confirmation of funds response.  This data element is contained in a payment status response,  if supported by the ASPSP, if a funds check has been performed and  if the transactionStatus is \"ACTC\", \"ACWC\" or \"ACCP\". ")
+  @Schema(description = "Equals true if sufficient funds are available at the time of the request, false otherwise.  This data element is allways contained in a confirmation of funds response.  This data element is contained in a payment status response,  if supported by the ASPSP, if a funds check has been performed and  if the transactionStatus is \"ACTC\", \"ACWC\" or \"ACCP\". ")
 
     public Boolean isFundsAvailable() {
     return fundsAvailable;
@@ -96,6 +103,52 @@ public class PaymentInitiationStatusResponse200Json   {
     this.psuMessage = psuMessage;
   }
 
+  public PaymentInitiationStatusResponse200Json ownerNames(List<AccountOwner> ownerNames) {
+    this.ownerNames = ownerNames;
+    return this;
+  }
+
+  public PaymentInitiationStatusResponse200Json addOwnerNamesItem(AccountOwner ownerNamesItem) {
+    if (this.ownerNames == null) {
+      this.ownerNames = new ArrayList<>();
+    }
+    this.ownerNames.add(ownerNamesItem);
+    return this;
+  }
+
+  /**
+   * List of owner names. Should only be delivered after successful SCA. Could be restricted to the current PSU by the ASPSP.
+   * @return ownerNames
+   **/
+  @Schema(description = "List of owner names. Should only be delivered after successful SCA. Could be restricted to the current PSU by the ASPSP. ")
+      @Valid
+    public List<AccountOwner> getOwnerNames() {
+    return ownerNames;
+  }
+
+  public void setOwnerNames(List<AccountOwner> ownerNames) {
+    this.ownerNames = ownerNames;
+  }
+
+  public PaymentInitiationStatusResponse200Json psuName(String psuName) {
+    this.psuName = psuName;
+    return this;
+  }
+
+  /**
+   * Name of the PSU. In case of a corporate account, this might be the person acting on behalf of the corporate.
+   * @return psuName
+   **/
+  @Schema(description = "Name of the PSU. In case of a corporate account, this might be the person acting on behalf of the corporate. ")
+
+  @Size(max=140)   public String getPsuName() {
+    return psuName;
+  }
+
+  public void setPsuName(String psuName) {
+    this.psuName = psuName;
+  }
+
   public PaymentInitiationStatusResponse200Json _links(Map _links) {
     this._links = _links;
     return this;
@@ -112,7 +165,7 @@ public class PaymentInitiationStatusResponse200Json   {
     return _links;
   }
 
-  public void setLinks(LinksPaymentInitiationStatus _links) {
+  public void setLinks(Map _links) {
     this._links = _links;
   }
 
@@ -156,13 +209,15 @@ public class PaymentInitiationStatusResponse200Json   {
     return Objects.equals(this.transactionStatus, paymentInitiationStatusResponse200Json.transactionStatus) &&
         Objects.equals(this.fundsAvailable, paymentInitiationStatusResponse200Json.fundsAvailable) &&
         Objects.equals(this.psuMessage, paymentInitiationStatusResponse200Json.psuMessage) &&
+        Objects.equals(this.ownerNames, paymentInitiationStatusResponse200Json.ownerNames) &&
+        Objects.equals(this.psuName, paymentInitiationStatusResponse200Json.psuName) &&
         Objects.equals(this._links, paymentInitiationStatusResponse200Json._links) &&
         Objects.equals(this.tppMessages, paymentInitiationStatusResponse200Json.tppMessages);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(transactionStatus, fundsAvailable, psuMessage, _links, tppMessages);
+    return Objects.hash(transactionStatus, fundsAvailable, psuMessage, ownerNames, psuName, _links, tppMessages);
   }
 
   @Override
@@ -173,6 +228,8 @@ public class PaymentInitiationStatusResponse200Json   {
     sb.append("    transactionStatus: ").append(toIndentedString(transactionStatus)).append("\n");
     sb.append("    fundsAvailable: ").append(toIndentedString(fundsAvailable)).append("\n");
     sb.append("    psuMessage: ").append(toIndentedString(psuMessage)).append("\n");
+    sb.append("    ownerNames: ").append(toIndentedString(ownerNames)).append("\n");
+    sb.append("    psuName: ").append(toIndentedString(psuName)).append("\n");
     sb.append("    _links: ").append(toIndentedString(_links)).append("\n");
     sb.append("    tppMessages: ").append(toIndentedString(tppMessages)).append("\n");
     sb.append("}");

@@ -27,12 +27,12 @@
   "tppMessages": [
     {
       "category": "WARNING",
-      "code": "WARNING",
+      "code": "FORMAT_ERROR",
       "text": "Mocked tpp message from spi stub"
     },
     {
       "category": "WARNING",
-      "code": "WARNING",
+      "code": "FORMAT_ERROR",
       "text": "Start authorisation Mocked tpp message from spi stub"
     }
   ],

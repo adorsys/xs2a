@@ -7,6 +7,7 @@ import org.springframework.validation.annotation.Validated;
 import javax.validation.Valid;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 /**
@@ -14,7 +15,7 @@ import java.util.Objects;
  */
 @Schema(description = "NextGenPSD2 specific definition of reporting error information in case of a HTTP error code 401. ")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-05-06T13:00:42.214155+03:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-09-19T16:45:22.884087+03:00[Europe/Kiev]")
 
 
 public class Error405NGPISCANC   {
@@ -23,7 +24,7 @@ public class Error405NGPISCANC   {
   private List<TppMessage405PISCANC> tppMessages = null;
 
   @JsonProperty("_links")
-  private LinksAll _links = null;
+  private Map _links = null;
 
   public Error405NGPISCANC tppMessages(List<TppMessage405PISCANC> tppMessages) {
     this.tppMessages = tppMessages;
@@ -52,7 +53,7 @@ public class Error405NGPISCANC   {
     this.tppMessages = tppMessages;
   }
 
-  public Error405NGPISCANC _links(LinksAll _links) {
+  public Error405NGPISCANC _links(Map _links) {
     this._links = _links;
     return this;
   }
@@ -64,11 +65,11 @@ public class Error405NGPISCANC   {
   @Schema(description = "")
 
     @Valid
-    public LinksAll getLinks() {
+    public Map getLinks() {
     return _links;
   }
 
-  public void setLinks(LinksAll _links) {
+  public void setLinks(Map _links) {
     this._links = _links;
   }
 

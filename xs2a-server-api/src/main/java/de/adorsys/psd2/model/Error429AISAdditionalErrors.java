@@ -13,7 +13,7 @@ import java.util.Objects;
  */
 @Schema(description = "This is a data element to support the declaration of additional errors in the context of [RFC7807]  in case of a HTTP error code 429 for.  ")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-05-06T13:00:42.214155+03:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-09-19T16:45:22.884087+03:00[Europe/Kiev]")
 
 
 public class Error429AISAdditionalErrors   {

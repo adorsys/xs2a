@@ -21,7 +21,11 @@ package de.adorsys.psd2.xs2a.web.controller.psd2;
 import de.adorsys.psd2.api.CardAccountsApi;
 import de.adorsys.psd2.xs2a.core.ais.BookingStatus;
 import de.adorsys.psd2.xs2a.domain.ResponseObject;
-import de.adorsys.psd2.xs2a.domain.account.*;
+import de.adorsys.psd2.xs2a.domain.account.Xs2aBalancesReport;
+import de.adorsys.psd2.xs2a.domain.account.Xs2aCardAccountDetailsHolder;
+import de.adorsys.psd2.xs2a.domain.account.Xs2aCardAccountListHolder;
+import de.adorsys.psd2.xs2a.domain.account.Xs2aCardTransactionsReport;
+import de.adorsys.psd2.xs2a.domain.account.Xs2aCardTransactionsReportByPeriodRequest;
 import de.adorsys.psd2.xs2a.service.ais.CardAccountBalanceService;
 import de.adorsys.psd2.xs2a.service.ais.CardAccountService;
 import de.adorsys.psd2.xs2a.service.ais.CardTransactionService;
@@ -90,7 +94,7 @@ public class CardAccountController implements CardAccountsApi {
 
         return accountDetails.hasError()
                    ? responseErrorMapper.generateErrorResponse(accountDetails.getError())
-                   : responseMapper.ok(accountDetails, cardAccountModelMapper::mapToInlineResponse2007);
+                   : responseMapper.ok(accountDetails, cardAccountModelMapper::mapToInlineResponse2002);
     }
 
     private String trimEndingSlash(String input) {

@@ -55,7 +55,12 @@ import de.adorsys.psd2.xs2a.service.spi.SpiAspspConsentDataProviderFactory;
 import de.adorsys.psd2.xs2a.spi.domain.SpiAspspConsentDataProvider;
 import de.adorsys.psd2.xs2a.spi.domain.SpiContextData;
 import de.adorsys.psd2.xs2a.spi.domain.account.SpiAccountConsent;
-import de.adorsys.psd2.xs2a.spi.domain.authorisation.*;
+import de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiAuthorisationStatus;
+import de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiAuthorizationCodeResult;
+import de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiAvailableScaMethodsResponse;
+import de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiPsuAuthorisationResponse;
+import de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiScaConfirmation;
+import de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiStartAuthorisationResponse;
 import de.adorsys.psd2.xs2a.spi.domain.consent.SpiVerifyScaAuthorisationResponse;
 import de.adorsys.psd2.xs2a.spi.domain.psu.SpiPsuData;
 import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponse;
@@ -69,9 +74,16 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
 
-import static de.adorsys.psd2.xs2a.core.error.ErrorType.*;
+import static de.adorsys.psd2.xs2a.core.error.ErrorType.AIS_400;
+import static de.adorsys.psd2.xs2a.core.error.ErrorType.AIS_401;
+import static de.adorsys.psd2.xs2a.core.error.ErrorType.AIS_403;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -1470,6 +1482,7 @@ class AisAuthorisationProcessorServiceImplTest {
         updateAuthorisationRequest.setAuthenticationMethodId(AUTHENTICATION_METHOD_ID);
 
         AisConsent aisConsent = new AisConsent();
+        aisConsent.setPsuIdDataList(new ArrayList<>());
         aisConsent.setConsentTppInformation(new ConsentTppInformation());
 
         when(xs2aAisConsentService.getAccountConsentById(ENCRYPTED_CONSENT_ID)).thenReturn(Optional.of(aisConsent));

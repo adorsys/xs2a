@@ -17,10 +17,10 @@ import java.util.Objects;
  */
 @Schema(description = "Body of the response for a successful payment initiation request.")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-05-06T13:00:42.214155+03:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-09-19T16:45:22.884087+03:00[Europe/Kiev]")
 
 
-public class PaymentInitationRequestResponse201   {
+public class PaymentInitiationRequestResponse201   {
   @JsonProperty("transactionStatus")
   private TransactionStatus transactionStatus = null;
 
@@ -64,7 +64,7 @@ public class PaymentInitationRequestResponse201   {
   @JsonProperty("scaStatus")
   private ScaStatus scaStatus = null;
 
-  public PaymentInitationRequestResponse201 transactionStatus(TransactionStatus transactionStatus) {
+  public PaymentInitiationRequestResponse201 transactionStatus(TransactionStatus transactionStatus) {
     this.transactionStatus = transactionStatus;
     return this;
   }
@@ -85,7 +85,7 @@ public class PaymentInitationRequestResponse201   {
     this.transactionStatus = transactionStatus;
   }
 
-  public PaymentInitationRequestResponse201 paymentId(String paymentId) {
+  public PaymentInitiationRequestResponse201 paymentId(String paymentId) {
     this.paymentId = paymentId;
     return this;
   }
@@ -105,7 +105,7 @@ public class PaymentInitationRequestResponse201   {
     this.paymentId = paymentId;
   }
 
-  public PaymentInitationRequestResponse201 transactionFees(Amount transactionFees) {
+  public PaymentInitiationRequestResponse201 transactionFees(Amount transactionFees) {
     this.transactionFees = transactionFees;
     return this;
   }
@@ -125,7 +125,7 @@ public class PaymentInitationRequestResponse201   {
     this.transactionFees = transactionFees;
   }
 
-  public PaymentInitationRequestResponse201 currencyConversionFee(Amount currencyConversionFee) {
+  public PaymentInitiationRequestResponse201 currencyConversionFee(Amount currencyConversionFee) {
     this.currencyConversionFee = currencyConversionFee;
     return this;
   }
@@ -145,7 +145,7 @@ public class PaymentInitationRequestResponse201   {
     this.currencyConversionFee = currencyConversionFee;
   }
 
-  public PaymentInitationRequestResponse201 estimatedTotalAmount(Amount estimatedTotalAmount) {
+  public PaymentInitiationRequestResponse201 estimatedTotalAmount(Amount estimatedTotalAmount) {
     this.estimatedTotalAmount = estimatedTotalAmount;
     return this;
   }
@@ -165,7 +165,7 @@ public class PaymentInitationRequestResponse201   {
     this.estimatedTotalAmount = estimatedTotalAmount;
   }
 
-  public PaymentInitationRequestResponse201 estimatedInterbankSettlementAmount(Amount estimatedInterbankSettlementAmount) {
+  public PaymentInitiationRequestResponse201 estimatedInterbankSettlementAmount(Amount estimatedInterbankSettlementAmount) {
     this.estimatedInterbankSettlementAmount = estimatedInterbankSettlementAmount;
     return this;
   }
@@ -185,7 +185,7 @@ public class PaymentInitationRequestResponse201   {
     this.estimatedInterbankSettlementAmount = estimatedInterbankSettlementAmount;
   }
 
-  public PaymentInitationRequestResponse201 transactionFeeIndicator(Boolean transactionFeeIndicator) {
+  public PaymentInitiationRequestResponse201 transactionFeeIndicator(Boolean transactionFeeIndicator) {
     this.transactionFeeIndicator = transactionFeeIndicator;
     return this;
   }
@@ -204,7 +204,7 @@ public class PaymentInitationRequestResponse201   {
     this.transactionFeeIndicator = transactionFeeIndicator;
   }
 
-  public PaymentInitationRequestResponse201 scaMethods(ScaMethods scaMethods) {
+  public PaymentInitiationRequestResponse201 scaMethods(ScaMethods scaMethods) {
     this.scaMethods = scaMethods;
     return this;
   }
@@ -224,7 +224,7 @@ public class PaymentInitationRequestResponse201   {
     this.scaMethods = scaMethods;
   }
 
-  public PaymentInitationRequestResponse201 chosenScaMethod(ChosenScaMethod chosenScaMethod) {
+  public PaymentInitiationRequestResponse201 chosenScaMethod(ChosenScaMethod chosenScaMethod) {
     this.chosenScaMethod = chosenScaMethod;
     return this;
   }
@@ -244,7 +244,7 @@ public class PaymentInitationRequestResponse201   {
     this.chosenScaMethod = chosenScaMethod;
   }
 
-  public PaymentInitationRequestResponse201 challengeData(ChallengeData challengeData) {
+  public PaymentInitiationRequestResponse201 challengeData(ChallengeData challengeData) {
     this.challengeData = challengeData;
     return this;
   }
@@ -264,7 +264,7 @@ public class PaymentInitationRequestResponse201   {
     this.challengeData = challengeData;
   }
 
-  public PaymentInitationRequestResponse201 _links(LinksPaymentInitiation _links) {
+  public PaymentInitiationRequestResponse201 _links(Map _links) {
     this._links = _links;
     return this;
   }
@@ -285,7 +285,7 @@ public class PaymentInitationRequestResponse201   {
     this._links = _links;
   }
 
-  public PaymentInitationRequestResponse201 psuMessage(String psuMessage) {
+  public PaymentInitiationRequestResponse201 psuMessage(String psuMessage) {
     this.psuMessage = psuMessage;
     return this;
   }
@@ -304,12 +304,12 @@ public class PaymentInitationRequestResponse201   {
     this.psuMessage = psuMessage;
   }
 
-  public PaymentInitationRequestResponse201 tppMessages(List<TppMessage201PaymentInitiation> tppMessages) {
+  public PaymentInitiationRequestResponse201 tppMessages(List<TppMessage201PaymentInitiation> tppMessages) {
     this.tppMessages = tppMessages;
     return this;
   }
 
-  public PaymentInitationRequestResponse201 addTppMessagesItem(TppMessage201PaymentInitiation tppMessagesItem) {
+  public PaymentInitiationRequestResponse201 addTppMessagesItem(TppMessage201PaymentInitiation tppMessagesItem) {
     if (this.tppMessages == null) {
       this.tppMessages = new ArrayList<>();
     }
@@ -331,7 +331,7 @@ public class PaymentInitationRequestResponse201   {
     this.tppMessages = tppMessages;
   }
 
-  public PaymentInitationRequestResponse201 scaStatus(ScaStatus scaStatus) {
+  public PaymentInitiationRequestResponse201 scaStatus(ScaStatus scaStatus) {
     this.scaStatus = scaStatus;
     return this;
   }
@@ -360,21 +360,21 @@ public class PaymentInitationRequestResponse201   {
     if (o == null || getClass() != o.getClass()) {
       return false;
     }
-    PaymentInitationRequestResponse201 paymentInitationRequestResponse201 = (PaymentInitationRequestResponse201) o;
-    return Objects.equals(this.transactionStatus, paymentInitationRequestResponse201.transactionStatus) &&
-        Objects.equals(this.paymentId, paymentInitationRequestResponse201.paymentId) &&
-        Objects.equals(this.transactionFees, paymentInitationRequestResponse201.transactionFees) &&
-        Objects.equals(this.currencyConversionFee, paymentInitationRequestResponse201.currencyConversionFee) &&
-        Objects.equals(this.estimatedTotalAmount, paymentInitationRequestResponse201.estimatedTotalAmount) &&
-        Objects.equals(this.estimatedInterbankSettlementAmount, paymentInitationRequestResponse201.estimatedInterbankSettlementAmount) &&
-        Objects.equals(this.transactionFeeIndicator, paymentInitationRequestResponse201.transactionFeeIndicator) &&
-        Objects.equals(this.scaMethods, paymentInitationRequestResponse201.scaMethods) &&
-        Objects.equals(this.chosenScaMethod, paymentInitationRequestResponse201.chosenScaMethod) &&
-        Objects.equals(this.challengeData, paymentInitationRequestResponse201.challengeData) &&
-        Objects.equals(this._links, paymentInitationRequestResponse201._links) &&
-        Objects.equals(this.psuMessage, paymentInitationRequestResponse201.psuMessage) &&
-        Objects.equals(this.tppMessages, paymentInitationRequestResponse201.tppMessages) &&
-        Objects.equals(this.scaStatus, paymentInitationRequestResponse201.scaStatus);
+    PaymentInitiationRequestResponse201 paymentInitiationRequestResponse201 = (PaymentInitiationRequestResponse201) o;
+    return Objects.equals(this.transactionStatus, paymentInitiationRequestResponse201.transactionStatus) &&
+        Objects.equals(this.paymentId, paymentInitiationRequestResponse201.paymentId) &&
+        Objects.equals(this.transactionFees, paymentInitiationRequestResponse201.transactionFees) &&
+        Objects.equals(this.currencyConversionFee, paymentInitiationRequestResponse201.currencyConversionFee) &&
+        Objects.equals(this.estimatedTotalAmount, paymentInitiationRequestResponse201.estimatedTotalAmount) &&
+        Objects.equals(this.estimatedInterbankSettlementAmount, paymentInitiationRequestResponse201.estimatedInterbankSettlementAmount) &&
+        Objects.equals(this.transactionFeeIndicator, paymentInitiationRequestResponse201.transactionFeeIndicator) &&
+        Objects.equals(this.scaMethods, paymentInitiationRequestResponse201.scaMethods) &&
+        Objects.equals(this.chosenScaMethod, paymentInitiationRequestResponse201.chosenScaMethod) &&
+        Objects.equals(this.challengeData, paymentInitiationRequestResponse201.challengeData) &&
+        Objects.equals(this._links, paymentInitiationRequestResponse201._links) &&
+        Objects.equals(this.psuMessage, paymentInitiationRequestResponse201.psuMessage) &&
+        Objects.equals(this.tppMessages, paymentInitiationRequestResponse201.tppMessages) &&
+        Objects.equals(this.scaStatus, paymentInitiationRequestResponse201.scaStatus);
   }
 
   @Override
@@ -385,7 +385,7 @@ public class PaymentInitationRequestResponse201   {
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
-    sb.append("class PaymentInitationRequestResponse201 {\n");
+    sb.append("class PaymentInitiationRequestResponse201 {\n");
 
     sb.append("    transactionStatus: ").append(toIndentedString(transactionStatus)).append("\n");
     sb.append("    paymentId: ").append(toIndentedString(paymentId)).append("\n");

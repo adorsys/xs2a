@@ -17,7 +17,7 @@ import java.util.Objects;
  */
 @Schema(description = "Transaction details.")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-05-09T09:54:21.220655+03:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-09-19T16:45:22.884087+03:00[Europe/Kiev]")
 
 
 public class Transactions   {
@@ -668,10 +668,10 @@ public class Transactions   {
   }
 
   /**
-   * Bank transaction code as used by the ASPSP and using the sub elements of this structured code defined by ISO 20022.   This code type is concatenating the three ISO20022 Codes    * Domain Code,    * Family Code, and    * SubFamiliy Code  by hyphens, resulting in 'DomainCode'-'FamilyCode'-'SubFamilyCode'. For standing order reports the following codes are applicable:   * \"PMNT-ICDT-STDO\" for credit transfers,   * \"PMNT-IRCT-STDO\"  for instant credit transfers   * \"PMNT-ICDT-XBST\" for cross-border credit transfers   * \"PMNT-IRCT-XBST\" for cross-border real time credit transfers and   * \"PMNT-MCOP-OTHR\" for specific standing orders which have a dynamical amount to move left funds e.g. on month end to a saving account
+   * Bank transaction code as used by the ASPSP and using the sub elements of this structured code defined by ISO 20022.   This code type is concatenating the three ISO20022 Codes    * Domain Code,    * Family Code, and    * SubFamily Code  by hyphens, resulting in 'DomainCode'-'FamilyCode'-'SubFamilyCode'. For standing order reports the following codes are applicable:   * \"PMNT-ICDT-STDO\" for credit transfers,   * \"PMNT-IRCT-STDO\"  for instant credit transfers   * \"PMNT-ICDT-XBST\" for cross-border credit transfers   * \"PMNT-IRCT-XBST\" for cross-border real time credit transfers and   * \"PMNT-MCOP-OTHR\" for specific standing orders which have a dynamical amount to move left funds e.g. on month end to a saving account
    * @return bankTransactionCode
    **/
-  @Schema(example = "PMNT-RDDT-ESDD", description = "Bank transaction code as used by the ASPSP and using the sub elements of this structured code defined by ISO 20022.   This code type is concatenating the three ISO20022 Codes    * Domain Code,    * Family Code, and    * SubFamiliy Code  by hyphens, resulting in 'DomainCode'-'FamilyCode'-'SubFamilyCode'. For standing order reports the following codes are applicable:   * \"PMNT-ICDT-STDO\" for credit transfers,   * \"PMNT-IRCT-STDO\"  for instant credit transfers   * \"PMNT-ICDT-XBST\" for cross-border credit transfers   * \"PMNT-IRCT-XBST\" for cross-border real time credit transfers and   * \"PMNT-MCOP-OTHR\" for specific standing orders which have a dynamical amount to move left funds e.g. on month end to a saving account ")
+  @Schema(example = "PMNT-RDDT-ESDD", description = "Bank transaction code as used by the ASPSP and using the sub elements of this structured code defined by ISO 20022.   This code type is concatenating the three ISO20022 Codes    * Domain Code,    * Family Code, and    * SubFamily Code  by hyphens, resulting in 'DomainCode'-'FamilyCode'-'SubFamilyCode'. For standing order reports the following codes are applicable:   * \"PMNT-ICDT-STDO\" for credit transfers,   * \"PMNT-IRCT-STDO\"  for instant credit transfers   * \"PMNT-ICDT-XBST\" for cross-border credit transfers   * \"PMNT-IRCT-XBST\" for cross-border real time credit transfers and   * \"PMNT-MCOP-OTHR\" for specific standing orders which have a dynamical amount to move left funds e.g. on month end to a saving account ")
 
     public String getBankTransactionCode() {
     return bankTransactionCode;
@@ -720,7 +720,7 @@ public class Transactions   {
     this.balanceAfterTransaction = balanceAfterTransaction;
   }
 
-  public Transactions _links(LinksTransactionDetails _links) {
+  public Transactions _links(Map _links) {
     this._links = _links;
     return this;
   }

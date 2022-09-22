@@ -15,10 +15,10 @@ import java.util.Objects;
  */
 @Schema(description = "Body of the JSON response for a successful select PSU authentication method request.")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-05-06T13:00:42.214155+03:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-09-19T16:45:22.884087+03:00[Europe/Kiev]")
 
 
-public class SelectPsuAuthenticationMethodResponse {
+public class SelectPsuAuthenticationMethodResponse   {
   @JsonProperty("transactionFees")
   private Amount transactionFees = null;
 
@@ -166,7 +166,7 @@ public class SelectPsuAuthenticationMethodResponse {
     this.challengeData = challengeData;
   }
 
-  public SelectPsuAuthenticationMethodResponse _links(LinksSelectPsuAuthenticationMethod _links) {
+  public SelectPsuAuthenticationMethodResponse _links(Map _links) {
     this._links = _links;
     return this;
   }
