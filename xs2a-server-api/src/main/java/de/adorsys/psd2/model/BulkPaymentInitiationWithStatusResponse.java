@@ -14,14 +14,14 @@ import java.util.List;
 import java.util.Objects;
 
 /**
- * Generic JSON response body consistion of the corresponding bulk payment initation JSON body together with an optional transaction status field.
+ * Generic JSON response body consistion of the corresponding bulk payment initiation JSON body together with an optional transaction status field.
  */
-@Schema(description = "Generic JSON response body consistion of the corresponding bulk payment initation JSON body together with an optional transaction status field. ")
+@Schema(description = "Generic JSON response body consistion of the corresponding bulk payment initiation JSON body together with an optional transaction status field. ")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-05-06T13:00:42.214155+03:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-09-19T16:45:22.884087+03:00[Europe/Kiev]")
 
 
-public class BulkPaymentInitiationWithStatusResponse {
+public class BulkPaymentInitiationWithStatusResponse   {
   @JsonProperty("batchBookingPreferred")
   private Boolean batchBookingPreferred = null;
 
@@ -158,10 +158,10 @@ public class BulkPaymentInitiationWithStatusResponse {
   }
 
   /**
-   * A list of generic JSON bodies payment initations for bulk payments via JSON.  Note: Some fields from single payments do not occcur in a bulk payment element
+   * A list of generic JSON bodies payment initiations for bulk payments via JSON.  Note: Some fields from single payments do not occur in a bulk payment element
    * @return payments
    **/
-  @Schema(required = true, description = "A list of generic JSON bodies payment initations for bulk payments via JSON.  Note: Some fields from single payments do not occcur in a bulk payment element ")
+  @Schema(required = true, description = "A list of generic JSON bodies payment initiations for bulk payments via JSON.  Note: Some fields from single payments do not occur in a bulk payment element ")
       @NotNull
     @Valid
     public List<PaymentInitiationBulkElementJson> getPayments() {

@@ -24,7 +24,7 @@
   "tppMessages": [
     {
       "category": "WARNING",
-      "code": "WARNING",
+      "code": "FORMAT_ERROR",
       "text": "Mocked tpp message from spi stub"
     }
   ]

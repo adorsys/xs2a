@@ -1,9 +1,9 @@
 {
 	"info": {
-		"_postman_id": "1d604b6f-3707-4936-b4da-7797c7f4bd11",
+		"_postman_id": "eaa844c6-71a7-4623-ade0-f9b7d96c3024",
 		"name": "XS2A requests 15x",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-		"_exporter_id": "15259246"
+		"_exporter_id": "6572081"
 	},
 	"item": [
 		{
@@ -11561,7 +11561,7 @@
 													"       pm.expect(jsonData).to.have.property('tppMessages');",
 													"       pm.expect(jsonData._links.account.href).to.be.eq('Mocked account link from SPI');",
 													"       pm.expect(jsonData.tppMessages[0].category).to.be.eq('WARNING');",
-													"       pm.expect(jsonData.tppMessages[0].code).to.be.eq('WARNING');",
+													"       pm.expect(jsonData.tppMessages[0].code).to.be.eq('FORMAT_ERROR');",
 													"       pm.expect(jsonData.tppMessages[0].text).to.be.eq('Mocked tpp message from SPI');",
 													"});"
 												],
@@ -22755,7 +22755,7 @@
 													"",
 													"pm.test(\"TppMessages is correct\", () => {",
 													"     ",
-													"    pm.expect(jsonData.tppMessages).length.to.be.lengthOf(3);",
+													"    pm.expect(jsonData.tppMessages).length.to.be.lengthOf(2);",
 													"    ",
 													"});"
 												],
@@ -22917,7 +22917,7 @@
 													"",
 													"pm.test(\"TppMessages is correct\", () => {",
 													"    ",
-													"    pm.expect(jsonData.tppMessages).length.to.be.lengthOf(3);",
+													"    pm.expect(jsonData.tppMessages).length.to.be.lengthOf(2);",
 													"",
 													"});"
 												],
@@ -28640,7 +28640,7 @@
 													"       pm.expect(jsonData).to.have.property('tppMessages');",
 													"       pm.expect(jsonData._links.account.href).to.be.eq('Mocked account link from SPI');",
 													"       pm.expect(jsonData.tppMessages[0].category).to.be.eq('WARNING');",
-													"       pm.expect(jsonData.tppMessages[0].code).to.be.eq('WARNING');",
+													"       pm.expect(jsonData.tppMessages[0].code).to.be.eq('FORMAT_ERROR');",
 													"       pm.expect(jsonData.tppMessages[0].text).to.be.eq('Mocked tpp message from SPI');",
 													"});"
 												],
@@ -68248,7 +68248,7 @@
 															"       pm.expect(jsonData).to.have.property('tppMessages');",
 															"       pm.expect(jsonData._links.account.href).to.be.eq('Mocked account link from SPI');",
 															"       pm.expect(jsonData.tppMessages[0].category).to.be.eq('WARNING');",
-															"       pm.expect(jsonData.tppMessages[0].code).to.be.eq('WARNING');",
+															"       pm.expect(jsonData.tppMessages[0].code).to.be.eq('FORMAT_ERROR');",
 															"       pm.expect(jsonData.tppMessages[0].text).to.be.eq('Mocked tpp message from SPI');",
 															"});"
 														],
@@ -87578,7 +87578,7 @@
 															"",
 															"pm.test(\"TppMessages is correct\", () => {",
 															"     ",
-															"     pm.expect(jsonData.tppMessages).length.to.be.lengthOf(3);",
+															"     pm.expect(jsonData.tppMessages).length.to.be.lengthOf(2);",
 															"     ",
 															"});"
 														],
@@ -88861,7 +88861,7 @@
 													"       pm.expect(jsonData).to.have.property('tppMessages');",
 													"       pm.expect(jsonData._links.account.href).to.be.eq('Mocked account link from SPI');",
 													"       pm.expect(jsonData.tppMessages[0].category).to.be.eq('WARNING');",
-													"       pm.expect(jsonData.tppMessages[0].code).to.be.eq('WARNING');",
+													"       pm.expect(jsonData.tppMessages[0].code).to.be.eq('FORMAT_ERROR');",
 													"       pm.expect(jsonData.tppMessages[0].text).to.be.eq('Mocked tpp message from SPI');",
 													"});"
 												],
@@ -89380,7 +89380,7 @@
 													"       pm.expect(jsonData).to.have.property('tppMessages');",
 													"       pm.expect(jsonData._links.account.href).to.be.eq('Mocked account link from SPI');",
 													"       pm.expect(jsonData.tppMessages[0].category).to.be.eq('WARNING');",
-													"       pm.expect(jsonData.tppMessages[0].code).to.be.eq('WARNING');",
+													"       pm.expect(jsonData.tppMessages[0].code).to.be.eq('FORMAT_ERROR');",
 													"       pm.expect(jsonData.tppMessages[0].text).to.be.eq('Mocked tpp message from SPI');",
 													"});"
 												],
@@ -89889,7 +89889,7 @@
 													"       pm.expect(jsonData).to.have.property('tppMessages');",
 													"       pm.expect(jsonData._links.account.href).to.be.eq('Mocked account link from SPI');",
 													"       pm.expect(jsonData.tppMessages[0].category).to.be.eq('WARNING');",
-													"       pm.expect(jsonData.tppMessages[0].code).to.be.eq('WARNING');",
+													"       pm.expect(jsonData.tppMessages[0].code).to.be.eq('FORMAT_ERROR');",
 													"       pm.expect(jsonData.tppMessages[0].text).to.be.eq('Mocked tpp message from SPI');",
 													"});"
 												],
@@ -90271,7 +90271,7 @@
 											"       pm.expect(jsonData).to.have.property('tppMessages');",
 											"       pm.expect(jsonData._links.account.href).to.be.eq('Mocked account link from SPI');",
 											"       pm.expect(jsonData.tppMessages[0].category).to.be.eq('WARNING');",
-											"       pm.expect(jsonData.tppMessages[0].code).to.be.eq('WARNING');",
+											"       pm.expect(jsonData.tppMessages[0].code).to.be.eq('FORMAT_ERROR');",
 											"       pm.expect(jsonData.tppMessages[0].text).to.be.eq('Mocked tpp message from SPI');",
 											"});"
 										],

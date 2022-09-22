@@ -43,7 +43,7 @@ public interface TppMessageGenericMapper {
     }
 
     @Mapping(target = "category", expression = "java(mapToTppMessageCategory(tppMessage.getCategory()))")
-    @Mapping(target = "code", expression = "java(getMessageCode())")
+    @Mapping(target = "code", source = "tppMessage.messageErrorCode.name")
     TppMessageGeneric mapToTppMessageGeneric(TppMessageInformation tppMessage);
 
     TppMessageCategory mapToTppMessageCategory(MessageCategory messageCategory);

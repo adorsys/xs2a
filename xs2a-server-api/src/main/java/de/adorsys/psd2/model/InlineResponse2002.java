@@ -1,17 +1,45 @@
 package de.adorsys.psd2.model;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import org.springframework.validation.annotation.Validated;
 
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 import java.util.Objects;
 
 /**
  * InlineResponse2002
  */
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-05-06T13:00:42.214155+03:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-09-19T16:45:22.884087+03:00[Europe/Kiev]")
 
 
-public class InlineResponse2002 {
+public class InlineResponse2002   {
+  @JsonProperty("cardAccount")
+  private CardAccountDetails cardAccount = null;
+
+  public InlineResponse2002 cardAccount(CardAccountDetails cardAccount) {
+    this.cardAccount = cardAccount;
+    return this;
+  }
+
+  /**
+   * Get cardAccount
+   * @return cardAccount
+   **/
+  @Schema(required = true, description = "")
+      @NotNull
+
+    @Valid
+    public CardAccountDetails getCardAccount() {
+    return cardAccount;
+  }
+
+  public void setCardAccount(CardAccountDetails cardAccount) {
+    this.cardAccount = cardAccount;
+  }
+
 
   @Override
   public boolean equals(Object o) {
@@ -21,12 +49,13 @@ public class InlineResponse2002 {
     if (o == null || getClass() != o.getClass()) {
       return false;
     }
-    return true;
+    InlineResponse2002 inlineResponse2002 = (InlineResponse2002) o;
+    return Objects.equals(this.cardAccount, inlineResponse2002.cardAccount);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash();
+    return Objects.hash(cardAccount);
   }
 
   @Override
@@ -34,6 +63,7 @@ public class InlineResponse2002 {
     StringBuilder sb = new StringBuilder();
     sb.append("class InlineResponse2002 {\n");
 
+    sb.append("    cardAccount: ").append(toIndentedString(cardAccount)).append("\n");
     sb.append("}");
     return sb.toString();
   }

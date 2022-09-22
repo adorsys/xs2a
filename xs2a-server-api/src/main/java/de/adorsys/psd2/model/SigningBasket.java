@@ -12,7 +12,7 @@ import java.util.Objects;
  */
 @Schema(description = "JSON Body of a establish signing basket request. The body shall contain at least one entry. ")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-05-06T13:00:42.214155+03:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-09-19T16:45:22.884087+03:00[Europe/Kiev]")
 
 
 public class SigningBasket   {

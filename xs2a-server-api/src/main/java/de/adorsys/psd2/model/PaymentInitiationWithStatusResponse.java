@@ -14,14 +14,14 @@ import java.util.List;
 import java.util.Objects;
 
 /**
- * Generic JSON response body consistion of the corresponding payment initation JSON body together with an optional transaction status field.
+ * Generic JSON response body consistion of the corresponding payment initiation JSON body together with an optional transaction status field.
  */
-@Schema(description = "Generic JSON response body consistion of the corresponding payment initation JSON body together with an optional transaction status field. ")
+@Schema(description = "Generic JSON response body consistion of the corresponding payment initiation JSON body together with an optional transaction status field. ")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-05-06T13:00:42.214155+03:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-09-19T16:45:22.884087+03:00[Europe/Kiev]")
 
 
-public class PaymentInitiationWithStatusResponse {
+public class PaymentInitiationWithStatusResponse   {
   @JsonProperty("endToEndIdentification")
   private String endToEndIdentification = null;
 
@@ -68,7 +68,7 @@ public class PaymentInitiationWithStatusResponse {
   private String remittanceInformationUnstructured = null;
 
   @JsonProperty("remittanceInformationStructured")
-  private String remittanceInformationStructured = null;
+  private RemittanceInformationStructuredMax140 remittanceInformationStructured = null;
 
   @JsonProperty("remittanceInformationStructuredArray")
   private RemittanceInformationStructuredArray remittanceInformationStructuredArray = null;
@@ -378,22 +378,23 @@ public class PaymentInitiationWithStatusResponse {
     this.remittanceInformationUnstructured = remittanceInformationUnstructured;
   }
 
-  public PaymentInitiationWithStatusResponse remittanceInformationStructured(String remittanceInformationStructured) {
+  public PaymentInitiationWithStatusResponse remittanceInformationStructured(RemittanceInformationStructuredMax140 remittanceInformationStructured) {
     this.remittanceInformationStructured = remittanceInformationStructured;
     return this;
   }
 
   /**
-   * Structured remittance information Max
+   * Get remittanceInformationStructured
    * @return remittanceInformationStructured
    **/
-  @Schema(description = "Structured remittance information Max ")
+  @Schema(description = "")
 
-  @Size(max=140)   public String getRemittanceInformationStructured() {
+    @Valid
+    public RemittanceInformationStructuredMax140 getRemittanceInformationStructured() {
     return remittanceInformationStructured;
   }
 
-  public void setRemittanceInformationStructured(String remittanceInformationStructured) {
+  public void setRemittanceInformationStructured(RemittanceInformationStructuredMax140 remittanceInformationStructured) {
     this.remittanceInformationStructured = remittanceInformationStructured;
   }
 

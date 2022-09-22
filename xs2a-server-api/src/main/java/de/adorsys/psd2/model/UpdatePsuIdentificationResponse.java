@@ -15,10 +15,10 @@ import java.util.Objects;
  */
 @Schema(description = "Body of the JSON response for a successful update PSU identification request.")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-05-06T13:00:42.214155+03:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-09-19T16:45:22.884087+03:00[Europe/Kiev]")
 
 
-public class UpdatePsuIdenticationResponse {
+public class UpdatePsuIdentificationResponse   {
   @JsonProperty("transactionFees")
   private Amount transactionFees = null;
 
@@ -43,7 +43,7 @@ public class UpdatePsuIdenticationResponse {
   @JsonProperty("psuMessage")
   private String psuMessage = null;
 
-  public UpdatePsuIdenticationResponse transactionFees(Amount transactionFees) {
+  public UpdatePsuIdentificationResponse transactionFees(Amount transactionFees) {
     this.transactionFees = transactionFees;
     return this;
   }
@@ -63,7 +63,7 @@ public class UpdatePsuIdenticationResponse {
     this.transactionFees = transactionFees;
   }
 
-  public UpdatePsuIdenticationResponse currencyConversionFees(Amount currencyConversionFees) {
+  public UpdatePsuIdentificationResponse currencyConversionFees(Amount currencyConversionFees) {
     this.currencyConversionFees = currencyConversionFees;
     return this;
   }
@@ -83,7 +83,7 @@ public class UpdatePsuIdenticationResponse {
     this.currencyConversionFees = currencyConversionFees;
   }
 
-  public UpdatePsuIdenticationResponse estimatedTotalAmount(Amount estimatedTotalAmount) {
+  public UpdatePsuIdentificationResponse estimatedTotalAmount(Amount estimatedTotalAmount) {
     this.estimatedTotalAmount = estimatedTotalAmount;
     return this;
   }
@@ -103,7 +103,7 @@ public class UpdatePsuIdenticationResponse {
     this.estimatedTotalAmount = estimatedTotalAmount;
   }
 
-  public UpdatePsuIdenticationResponse estimatedInterbankSettlementAmount(Amount estimatedInterbankSettlementAmount) {
+  public UpdatePsuIdentificationResponse estimatedInterbankSettlementAmount(Amount estimatedInterbankSettlementAmount) {
     this.estimatedInterbankSettlementAmount = estimatedInterbankSettlementAmount;
     return this;
   }
@@ -123,7 +123,7 @@ public class UpdatePsuIdenticationResponse {
     this.estimatedInterbankSettlementAmount = estimatedInterbankSettlementAmount;
   }
 
-  public UpdatePsuIdenticationResponse scaMethods(ScaMethods scaMethods) {
+  public UpdatePsuIdentificationResponse scaMethods(ScaMethods scaMethods) {
     this.scaMethods = scaMethods;
     return this;
   }
@@ -143,7 +143,7 @@ public class UpdatePsuIdenticationResponse {
     this.scaMethods = scaMethods;
   }
 
-  public UpdatePsuIdenticationResponse _links(LinksUpdatePsuIdentification _links) {
+  public UpdatePsuIdentificationResponse _links(Map _links) {
     this._links = _links;
     return this;
   }
@@ -164,7 +164,7 @@ public class UpdatePsuIdenticationResponse {
     this._links = _links;
   }
 
-  public UpdatePsuIdenticationResponse scaStatus(ScaStatus scaStatus) {
+  public UpdatePsuIdentificationResponse scaStatus(ScaStatus scaStatus) {
     this.scaStatus = scaStatus;
     return this;
   }
@@ -185,7 +185,7 @@ public class UpdatePsuIdenticationResponse {
     this.scaStatus = scaStatus;
   }
 
-  public UpdatePsuIdenticationResponse psuMessage(String psuMessage) {
+  public UpdatePsuIdentificationResponse psuMessage(String psuMessage) {
     this.psuMessage = psuMessage;
     return this;
   }
@@ -213,15 +213,15 @@ public class UpdatePsuIdenticationResponse {
     if (o == null || getClass() != o.getClass()) {
       return false;
     }
-    UpdatePsuIdenticationResponse updatePsuIdenticationResponse = (UpdatePsuIdenticationResponse) o;
-    return Objects.equals(this.transactionFees, updatePsuIdenticationResponse.transactionFees) &&
-        Objects.equals(this.currencyConversionFees, updatePsuIdenticationResponse.currencyConversionFees) &&
-        Objects.equals(this.estimatedTotalAmount, updatePsuIdenticationResponse.estimatedTotalAmount) &&
-        Objects.equals(this.estimatedInterbankSettlementAmount, updatePsuIdenticationResponse.estimatedInterbankSettlementAmount) &&
-        Objects.equals(this.scaMethods, updatePsuIdenticationResponse.scaMethods) &&
-        Objects.equals(this._links, updatePsuIdenticationResponse._links) &&
-        Objects.equals(this.scaStatus, updatePsuIdenticationResponse.scaStatus) &&
-        Objects.equals(this.psuMessage, updatePsuIdenticationResponse.psuMessage);
+    UpdatePsuIdentificationResponse updatePsuIdentificationResponse = (UpdatePsuIdentificationResponse) o;
+    return Objects.equals(this.transactionFees, updatePsuIdentificationResponse.transactionFees) &&
+        Objects.equals(this.currencyConversionFees, updatePsuIdentificationResponse.currencyConversionFees) &&
+        Objects.equals(this.estimatedTotalAmount, updatePsuIdentificationResponse.estimatedTotalAmount) &&
+        Objects.equals(this.estimatedInterbankSettlementAmount, updatePsuIdentificationResponse.estimatedInterbankSettlementAmount) &&
+        Objects.equals(this.scaMethods, updatePsuIdentificationResponse.scaMethods) &&
+        Objects.equals(this._links, updatePsuIdentificationResponse._links) &&
+        Objects.equals(this.scaStatus, updatePsuIdentificationResponse.scaStatus) &&
+        Objects.equals(this.psuMessage, updatePsuIdentificationResponse.psuMessage);
   }
 
   @Override
@@ -232,7 +232,7 @@ public class UpdatePsuIdenticationResponse {
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
-    sb.append("class UpdatePsuIdenticationResponse {\n");
+    sb.append("class UpdatePsuIdentificationResponse {\n");
 
     sb.append("    transactionFees: ").append(toIndentedString(transactionFees)).append("\n");
     sb.append("    currencyConversionFees: ").append(toIndentedString(currencyConversionFees)).append("\n");

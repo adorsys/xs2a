@@ -10,6 +10,8 @@ import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
@@ -18,7 +20,7 @@ import java.util.Objects;
  */
 @Schema(description = "The ASPSP shall give at least one of the account reference identifiers:   - iban   - bban   - pan   - maskedPan   - msisdn If the account is a multicurrency account currency code in \"currency\" is set to \"XXX\". ")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-05-06T13:00:42.214155+03:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-09-19T16:45:22.884087+03:00[Europe/Kiev]")
 
 
 public class AccountDetails   {
@@ -36,6 +38,16 @@ public class AccountDetails   {
 
   @JsonProperty("currency")
   private String currency = null;
+
+  @JsonProperty("ownerName")
+  private String ownerName = null;
+
+  @JsonProperty("ownerNames")
+  @Valid
+  private List<AccountOwner> ownerNames = null;
+
+  @JsonProperty("psuName")
+  private String psuName = null;
 
   @JsonProperty("name")
   private String name = null;
@@ -99,9 +111,6 @@ public class AccountDetails   {
 
   @JsonProperty("_links")
   private Map _links = null;
-
-  @JsonProperty("ownerName")
-  private String ownerName = null;
 
   public AccountDetails resourceId(String resourceId) {
     this.resourceId = resourceId;
@@ -197,6 +206,71 @@ public class AccountDetails   {
 
   public void setCurrency(String currency) {
     this.currency = currency;
+  }
+
+  public AccountDetails ownerName(String ownerName) {
+    this.ownerName = ownerName;
+    return this;
+  }
+
+  /**
+   * Name of the legal account owner.  If there is more than one owner, then e.g. two names might be noted here.  For a corporate account, the corporate name is used for this attribute. Even if supported by the ASPSP, the provision of this field might depend on the fact whether an explicit consent to this specific additional account information has been given by the PSU.
+   * @return ownerName
+   **/
+  @Schema(example = "John Doe", description = "Name of the legal account owner.  If there is more than one owner, then e.g. two names might be noted here.  For a corporate account, the corporate name is used for this attribute. Even if supported by the ASPSP, the provision of this field might depend on the fact whether an explicit consent to this specific additional account information has been given by the PSU. ")
+
+  @Size(max=140)   public String getOwnerName() {
+    return ownerName;
+  }
+
+  public void setOwnerName(String ownerName) {
+    this.ownerName = ownerName;
+  }
+
+  public AccountDetails ownerNames(List<AccountOwner> ownerNames) {
+    this.ownerNames = ownerNames;
+    return this;
+  }
+
+  public AccountDetails addOwnerNamesItem(AccountOwner ownerNamesItem) {
+    if (this.ownerNames == null) {
+      this.ownerNames = new ArrayList<>();
+    }
+    this.ownerNames.add(ownerNamesItem);
+    return this;
+  }
+
+  /**
+   * List of owner names.
+   * @return ownerNames
+   **/
+  @Schema(description = "List of owner names. ")
+      @Valid
+    public List<AccountOwner> getOwnerNames() {
+    return ownerNames;
+  }
+
+  public void setOwnerNames(List<AccountOwner> ownerNames) {
+    this.ownerNames = ownerNames;
+  }
+
+  public AccountDetails psuName(String psuName) {
+    this.psuName = psuName;
+    return this;
+  }
+
+  /**
+   * Name of the PSU. In case of a corporate account, this might be the person acting on behalf of the corporate.
+   * @return psuName
+   **/
+  @Schema(description = "Name of the PSU. In case of a corporate account, this might be the person acting on behalf of the corporate. ")
+
+  @Size(max=140)   public String getPsuName() {
+    return psuName;
+  }
+
+  public void setPsuName(String psuName) {
+    this.psuName = psuName;
   }
 
   public AccountDetails name(String name) {
@@ -411,25 +485,6 @@ public class AccountDetails   {
     this._links = _links;
   }
 
-  public AccountDetails ownerName(String ownerName) {
-    this.ownerName = ownerName;
-    return this;
-  }
-
-  /**
-   * Name of the legal account owner.  If there is more than one owner, then e.g. two names might be noted here.  For a corporate account, the corporate name is used for this attribute. Even if supported by the ASPSP, the provision of this field might depend on the fact whether an explicit consent to this specific additional account information has been given by the PSU.
-   * @return ownerName
-   **/
-  @Schema(example = "John Doe", description = "Name of the legal account owner.  If there is more than one owner, then e.g. two names might be noted here.  For a corporate account, the corporate name is used for this attribute. Even if supported by the ASPSP, the provision of this field might depend on the fact whether an explicit consent to this specific additional account information has been given by the PSU. ")
-
-  @Size(max=140)   public String getOwnerName() {
-    return ownerName;
-  }
-
-  public void setOwnerName(String ownerName) {
-    this.ownerName = ownerName;
-  }
-
 
   @Override
   public boolean equals(Object o) {
@@ -445,6 +500,9 @@ public class AccountDetails   {
         Objects.equals(this.bban, accountDetails.bban) &&
         Objects.equals(this.msisdn, accountDetails.msisdn) &&
         Objects.equals(this.currency, accountDetails.currency) &&
+        Objects.equals(this.ownerName, accountDetails.ownerName) &&
+        Objects.equals(this.ownerNames, accountDetails.ownerNames) &&
+        Objects.equals(this.psuName, accountDetails.psuName) &&
         Objects.equals(this.name, accountDetails.name) &&
         Objects.equals(this.displayName, accountDetails.displayName) &&
         Objects.equals(this.product, accountDetails.product) &&
@@ -455,13 +513,12 @@ public class AccountDetails   {
         Objects.equals(this.usage, accountDetails.usage) &&
         Objects.equals(this.details, accountDetails.details) &&
         Objects.equals(this.balances, accountDetails.balances) &&
-        Objects.equals(this._links, accountDetails._links) &&
-        Objects.equals(this.ownerName, accountDetails.ownerName);
+        Objects.equals(this._links, accountDetails._links);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(resourceId, iban, bban, msisdn, currency, name, displayName, product, cashAccountType, status, bic, linkedAccounts, usage, details, balances, _links, ownerName);
+    return Objects.hash(resourceId, iban, bban, msisdn, currency, ownerName, ownerNames, psuName, name, displayName, product, cashAccountType, status, bic, linkedAccounts, usage, details, balances, _links);
   }
 
   @Override
@@ -474,6 +531,9 @@ public class AccountDetails   {
     sb.append("    bban: ").append(toIndentedString(bban)).append("\n");
     sb.append("    msisdn: ").append(toIndentedString(msisdn)).append("\n");
     sb.append("    currency: ").append(toIndentedString(currency)).append("\n");
+    sb.append("    ownerName: ").append(toIndentedString(ownerName)).append("\n");
+    sb.append("    ownerNames: ").append(toIndentedString(ownerNames)).append("\n");
+    sb.append("    psuName: ").append(toIndentedString(psuName)).append("\n");
     sb.append("    name: ").append(toIndentedString(name)).append("\n");
     sb.append("    displayName: ").append(toIndentedString(displayName)).append("\n");
     sb.append("    product: ").append(toIndentedString(product)).append("\n");
@@ -485,7 +545,6 @@ public class AccountDetails   {
     sb.append("    details: ").append(toIndentedString(details)).append("\n");
     sb.append("    balances: ").append(toIndentedString(balances)).append("\n");
     sb.append("    _links: ").append(toIndentedString(_links)).append("\n");
-    sb.append("    ownerName: ").append(toIndentedString(ownerName)).append("\n");
     sb.append("}");
     return sb.toString();
   }

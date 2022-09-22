@@ -2,6 +2,8 @@
 
 == Table of Contents
 
+* Migrated to PSD2 new yaml 1.3.12.
+
 * Fixed error mapping
 
 * Fixed links in PIS Cancellation
@@ -15,6 +17,10 @@
 * Improved performance for consents export in CmsAspspAisExportApi
 
 * Deprecated methods in AuthorisationSpi
+
+== Migrated to PSD2 new yaml 1.3.12.
+
+From now on, XS2A uses models and API's according to the last BG 1.3.12 .yaml file version.
 
 == Fixed error mapping
 

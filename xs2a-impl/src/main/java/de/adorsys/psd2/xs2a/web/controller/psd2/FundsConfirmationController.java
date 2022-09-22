@@ -44,11 +44,11 @@ public class FundsConfirmationController implements ConfirmationOfFundsServicePi
     private final FundsConfirmationModelMapper fundsConfirmationModelMapper;
 
     @Override
-    public ResponseEntity checkAvailabilityOfFunds(UUID xRequestID, ConfirmationOfFunds body, String authorization, String consentID, String digest, String signature, byte[] tpPSignatureCertificate) {
+    public ResponseEntity checkAvailabilityOfFunds(UUID xRequestID, ConfirmationOfFunds body, String consentID, String digest, String signature, byte[] tpPSignatureCertificate) {
         ResponseObject<FundsConfirmationResponse> responseObject = fundsConfirmationService.fundsConfirmation(fundsConfirmationModelMapper.mapToFundsConfirmationRequest(body, consentID));
 
         return responseObject.hasError()
                    ? responseErrorMapper.generateErrorResponse(responseObject.getError())
-                   : responseMapper.ok(responseObject, fundsConfirmationModelMapper::mapToInlineResponse2008);
+                   : responseMapper.ok(responseObject, fundsConfirmationModelMapper::mapToInlineResponse2003);
     }
 }

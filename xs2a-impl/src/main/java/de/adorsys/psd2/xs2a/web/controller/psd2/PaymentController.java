@@ -20,8 +20,8 @@ package de.adorsys.psd2.xs2a.web.controller.psd2;
 
 import de.adorsys.psd2.api.PaymentApi;
 import de.adorsys.psd2.consent.api.pis.proto.PisPaymentCancellationRequest;
-import de.adorsys.psd2.model.PaymentInitationRequestResponse201;
 import de.adorsys.psd2.model.PaymentInitiationCancelResponse202;
+import de.adorsys.psd2.model.PaymentInitiationRequestResponse201;
 import de.adorsys.psd2.model.PeriodicPaymentInitiationXmlPart2StandingorderTypeJson;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import de.adorsys.psd2.xs2a.core.psu.AdditionalPsuIdData;
@@ -117,20 +117,20 @@ public class PaymentController implements PaymentApi {
     //Method for JSON format payments
 
     @Override
-    public ResponseEntity<PaymentInitationRequestResponse201> initiatePayment(Object body, UUID xRequestID,
-                                                                              String psUIPAddress, String paymentService,
-                                                                              String paymentProduct, String digest,
-                                                                              String signature, byte[] tpPSignatureCertificate,
-                                                                              String psuId, String psUIDType, String psUCorporateID,
-                                                                              String psUCorporateIDType, String consentID,
-                                                                              Boolean tpPRedirectPreferred, Boolean tpPDecoupledPreferred, String tpPRedirectURI,
-                                                                              String tpPNokRedirectURI, Boolean tpPExplicitAuthorisationPreferred,
-                                                                              Boolean tpPRejectionNoFundsPreferred, String tppBrandLoggingInformation,
-                                                                              String tpPNotificationURI, String tpPNotificationContentPreferred,
-                                                                              String psUIPPort, String psUAccept, String psUAcceptCharset,
-                                                                              String psUAcceptEncoding, String psUAcceptLanguage,
-                                                                              String psUUserAgent, String psUHttpMethod,
-                                                                              UUID psUDeviceID, String psUGeoLocation) {
+    public ResponseEntity<PaymentInitiationRequestResponse201> initiatePayment(Object body, UUID xRequestID,
+                                                                               String psUIPAddress, String paymentService,
+                                                                               String paymentProduct, String digest,
+                                                                               String signature, byte[] tpPSignatureCertificate,
+                                                                               String psuId, String psUIDType, String psUCorporateID,
+                                                                               String psUCorporateIDType, String consentID,
+                                                                               Boolean tpPRedirectPreferred, Boolean tpPDecoupledPreferred, String tpPRedirectURI,
+                                                                               String tpPNokRedirectURI, Boolean tpPExplicitAuthorisationPreferred,
+                                                                               Boolean tpPRejectionNoFundsPreferred, String tppBrandLoggingInformation,
+                                                                               String tpPNotificationURI, String tpPNotificationContentPreferred,
+                                                                               String psUIPPort, String psUAccept, String psUAcceptCharset,
+                                                                               String psUAcceptEncoding, String psUAcceptLanguage,
+                                                                               String psUUserAgent, String psUHttpMethod,
+                                                                               UUID psUDeviceID, String psUGeoLocation) {
         PsuIdData psuData = new PsuIdData(psuId, psUIDType, psUCorporateID, psUCorporateIDType, psUIPAddress, new AdditionalPsuIdData(psUIPPort, psUUserAgent, psUGeoLocation, psUAccept, psUAcceptCharset, psUAcceptEncoding, psUAcceptLanguage, psUHttpMethod, psUDeviceID));
         TppNotificationData tppNotificationData = notificationSupportedModeService.getTppNotificationData(tpPNotificationContentPreferred, tpPNotificationURI);
 
@@ -158,22 +158,22 @@ public class PaymentController implements PaymentApi {
 
     //Method for pain.001 payment products
     @Override
-    public ResponseEntity<PaymentInitationRequestResponse201> initiatePayment(UUID xRequestID, String psUIPAddress,
-                                                                              String paymentService, String paymentProduct,
-                                                                              Object xmlSct,
-                                                                              PeriodicPaymentInitiationXmlPart2StandingorderTypeJson jsonStandingorderType,
-                                                                              String digest, String signature,
-                                                                              byte[] tpPSignatureCertificate, String psuId,
-                                                                              String psUIDType, String psUCorporateID,
-                                                                              String psUCorporateIDType, String consentID,
-                                                                              Boolean tpPRedirectPreferred, Boolean tpPDecoupledPreferred, String tpPRedirectURI,
-                                                                              String tpPNokRedirectURI, Boolean tpPExplicitAuthorisationPreferred,
-                                                                              Boolean tpPRejectionNoFundsPreferred, String tppBrandLoggingInformation,
-                                                                              String tpPNotificationURI, String tpPNotificationContentPreferred,
-                                                                              String psUIPPort, String psUAccept, String psUAcceptCharset,
-                                                                              String psUAcceptEncoding, String psUAcceptLanguage,
-                                                                              String psUUserAgent, String psUHttpMethod,
-                                                                              UUID psUDeviceID, String psUGeoLocation) {
+    public ResponseEntity<PaymentInitiationRequestResponse201> initiatePayment(UUID xRequestID, String psUIPAddress,
+                                                                               String paymentService, String paymentProduct,
+                                                                               Object xmlSct,
+                                                                               PeriodicPaymentInitiationXmlPart2StandingorderTypeJson jsonStandingorderType,
+                                                                               String digest, String signature,
+                                                                               byte[] tpPSignatureCertificate, String psuId,
+                                                                               String psUIDType, String psUCorporateID,
+                                                                               String psUCorporateIDType, String consentID,
+                                                                               Boolean tpPRedirectPreferred, Boolean tpPDecoupledPreferred, String tpPRedirectURI,
+                                                                               String tpPNokRedirectURI, Boolean tpPExplicitAuthorisationPreferred,
+                                                                               Boolean tpPRejectionNoFundsPreferred, String tppBrandLoggingInformation,
+                                                                               String tpPNotificationURI, String tpPNotificationContentPreferred,
+                                                                               String psUIPPort, String psUAccept, String psUAcceptCharset,
+                                                                               String psUAcceptEncoding, String psUAcceptLanguage,
+                                                                               String psUUserAgent, String psUHttpMethod,
+                                                                               UUID psUDeviceID, String psUGeoLocation) {
         PsuIdData psuData = new PsuIdData(psuId, psUIDType, psUCorporateID, psUCorporateIDType, psUIPAddress, new AdditionalPsuIdData(psUIPPort, psUUserAgent, psUGeoLocation, psUAccept, psUAcceptCharset, psUAcceptEncoding, psUAcceptLanguage, psUHttpMethod, psUDeviceID));
         TppNotificationData tppNotificationData = notificationSupportedModeService.getTppNotificationData(tpPNotificationContentPreferred, tpPNotificationURI);
         TppAttributes tppAttributes = new TppAttributes(tpPSignatureCertificate, tpPRedirectURI, tpPNokRedirectURI, BooleanUtils.isTrue(tpPExplicitAuthorisationPreferred), tppNotificationData, tppBrandLoggingInformation);
@@ -201,20 +201,20 @@ public class PaymentController implements PaymentApi {
     // Method for raw payment products
 
     @Override
-    public ResponseEntity<PaymentInitationRequestResponse201> initiatePayment(String body, UUID xRequestID,
-                                                                              String psUIPAddress, String paymentService,
-                                                                              String paymentProduct, String digest,
-                                                                              String signature, byte[] tpPSignatureCertificate,
-                                                                              String psuId, String psUIDType,
-                                                                              String psUCorporateID, String psUCorporateIDType,
-                                                                              String consentID, Boolean tpPRedirectPreferred, Boolean tpPDecoupledPreferred,
-                                                                              String tpPRedirectURI, String tpPNokRedirectURI,
-                                                                              Boolean tpPExplicitAuthorisationPreferred, Boolean tpPRejectionNoFundsPreferred,
-                                                                              String tppBrandLoggingInformation, String tpPNotificationURI,
-                                                                              String tpPNotificationContentPreferred, String psUIPPort,
-                                                                              String psUAccept, String psUAcceptCharset, String psUAcceptEncoding,
-                                                                              String psUAcceptLanguage, String psUUserAgent,
-                                                                              String psUHttpMethod, UUID psUDeviceID, String psUGeoLocation) {
+    public ResponseEntity<PaymentInitiationRequestResponse201> initiatePayment(String body, UUID xRequestID,
+                                                                               String psUIPAddress, String paymentService,
+                                                                               String paymentProduct, String digest,
+                                                                               String signature, byte[] tpPSignatureCertificate,
+                                                                               String psuId, String psUIDType,
+                                                                               String psUCorporateID, String psUCorporateIDType,
+                                                                               String consentID, Boolean tpPRedirectPreferred, Boolean tpPDecoupledPreferred,
+                                                                               String tpPRedirectURI, String tpPNokRedirectURI,
+                                                                               Boolean tpPExplicitAuthorisationPreferred, Boolean tpPRejectionNoFundsPreferred,
+                                                                               String tppBrandLoggingInformation, String tpPNotificationURI,
+                                                                               String tpPNotificationContentPreferred, String psUIPPort,
+                                                                               String psUAccept, String psUAcceptCharset, String psUAcceptEncoding,
+                                                                               String psUAcceptLanguage, String psUUserAgent,
+                                                                               String psUHttpMethod, UUID psUDeviceID, String psUGeoLocation) {
         PsuIdData psuData = new PsuIdData(psuId, psUIDType, psUCorporateID, psUCorporateIDType, psUIPAddress, new AdditionalPsuIdData(psUIPPort, psUUserAgent, psUGeoLocation, psUAccept, psUAcceptCharset, psUAcceptEncoding, psUAcceptLanguage, psUHttpMethod, psUDeviceID));
 
         TppNotificationData tppNotificationData = notificationSupportedModeService.getTppNotificationData(tpPNotificationContentPreferred, tpPNotificationURI);

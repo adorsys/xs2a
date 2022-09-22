@@ -1,10 +1,10 @@
 openapi: 3.0.1
 info:
   title: NextGenPSD2 XS2A Framework
-  version: "1.3.11_2021-09-24"
+  version: "1.3.12_2022-07-01"
   description: |
     # Summary
-    The **NextGenPSD2** *Framework Version 1.3.11* offers a modern, open, harmonised and interoperable set of
+    The **NextGenPSD2** *Framework Version 1.3.12* offers a modern, open, harmonised and interoperable set of
     Application Programming Interfaces (APIs) as the safest and most efficient way to provide data securely.
     The NextGenPSD2 Framework reduces XS2A complexity and costs, addresses the problem of multiple competing standards 
     in Europe and, aligned with the goals of the Euro Retail Payments Board,
@@ -52,7 +52,7 @@ info:
       
     * **We omit the definition of all standard HTTP header elements (mandatory/optional/conditional) 
       except they are mentioned in the Implementation Guidelines.**
-      Therefore the implementer might add these in his own realisation of a PSD2 comlient API in addition to the elements defined in this file.
+      Therefore the implementer might add these in his own realisation of a PSD2 complient API in addition to the elements defined in this file.
        
     ## General Remarks on Data Types
 
@@ -133,7 +133,7 @@ paths:
         
         This is the first step in the API to initiate the related recurring/periodic payment.
           
-        ## Single and mulitilevel SCA Processes
+        ## Single and multilevel SCA Processes
         
         The payment initiation requests are independent from the need of one or multilevel 
         SCA processing, i.e. independent from the number of authorisations needed for the execution of payments. 
@@ -142,7 +142,7 @@ paths:
         
         For payment initiation with multilevel SCA, this specification requires an explicit start of the authorisation, 
         i.e. links directly associated with SCA processing like 'scaRedirect' or 'scaOAuth' cannot be contained in the 
-        response message of a Payment Initation Request for a payment, where multiple authorisations are needed. 
+        response message of a Payment Initiation Request for a payment, where multiple authorisations are needed. 
         Also if any data is needed for the next action, like selecting an SCA method is not supported in the response, 
         since all starts of the multiple authorisations are fully equal. 
         In these cases, first an authorisation sub-resource has to be generated following the 'startAuthorisation' link.
@@ -517,7 +517,7 @@ paths:
             initiation response that an explicit start of the authorisation process is needed by the TPP. 
             The 'startAuthorisation' hyperlink can transport more information about data which needs to be 
             uploaded by using the extended forms:
-            * 'startAuthorisationWithPsuIdentfication'
+            * 'startAuthorisationWithPsuIdentification'
             * 'startAuthorisationWithPsuAuthentication'
             * 'startAuthorisationWithEncryptedPsuAuthentication'
             * 'startAuthorisationWithAuthentciationMethodSelection'
@@ -821,7 +821,7 @@ paths:
         There are the following request types on this access path:
           * Update PSU identification
           * Update PSU authentication
-          * Select PSU autorization method 
+          * Select PSU authorization method 
             WARNING: This method needs a reduced header, 
             therefore many optional elements are not present. 
             Maybe in a later version the access path will change.
@@ -958,7 +958,7 @@ paths:
             initiation response that an explicit start of the authorisation process is needed by the TPP. 
             The 'startAuthorisation' hyperlink can transport more information about data which needs to be 
             uploaded by using the extended forms:
-            * 'startAuthorisationWithPsuIdentfication'
+            * 'startAuthorisationWithPsuIdentification'
             * 'startAuthorisationWithPsuAuthentication'
             * 'startAuthorisationWithAuthentciationMethodSelection' 
           * The related payment initiation cannot yet be executed since a multilevel SCA is mandated.
@@ -1261,7 +1261,7 @@ paths:
         There are the following request types on this access path:
           * Update PSU identification
           * Update PSU authentication
-          * Select PSU autorization method 
+          * Select PSU authorization method 
             WARNING: This method needs a reduced header, 
             therefore many optional elements are not present. 
             Maybe in a later version the access path will change.
@@ -1658,7 +1658,7 @@ paths:
     get:
       summary: Read transaction list of an account
       description: |
-        Read transaction reports or transaction lists of a given account ddressed by "account-id", depending on the steering parameter 
+        Read transaction reports or transaction lists of a given account addressed by "account-id", depending on the steering parameter 
         "bookingStatus" together with balances.
         
         For a given account, additional parameters are e.g. the attributes "dateFrom" and "dateTo". 
@@ -2559,7 +2559,7 @@ paths:
             initiation response that an explicit start of the authorisation process is needed by the TPP. 
             The 'startAuthorisation' hyperlink can transport more information about data which needs to be 
             uploaded by using the extended forms:
-            * 'startAuthorisationWithPsuIdentfication', 
+            * 'startAuthorisationWithPsuIdentification', 
             * 'startAuthorisationWithPsuAuthentication' 
             * 'startAuthorisationWithEncryptedPsuAuthentication'
             * 'startAuthorisationWithAuthentciationMethodSelection' 
@@ -2862,7 +2862,7 @@ paths:
         There are the following request types on this access path:
           * Update PSU identification
           * Update PSU authentication
-          * Select PSU autorization method 
+          * Select PSU authorization method 
             WARNING: This method needs a reduced header, 
             therefore many optional elements are not present. 
             Maybe in a later version the access path will change.
@@ -3013,7 +3013,6 @@ paths:
       #header
           #common header parameter
         - $ref: "#/components/parameters/X-Request-ID"
-        - $ref: "#/components/parameters/Authorization"
           #method specific header elements
         - $ref: "#/components/parameters/consentId_HEADER_optional" # Consent-Id for usage of extended services
           #header to support the signature function
@@ -3233,7 +3232,7 @@ paths:
       summary: Delete the signing basket
       description: |
         Delete the signing basket structure as long as no (partial) authorisation has yet been applied. 
-        The undlerying transactions are not affected by this deletion.
+        The underlying transactions are not affected by this deletion.
         
         Remark: The signing basket as such is not deletable after a first (partial) authorisation has been applied. 
         Nevertheless, single transactions might be cancelled on an individual basis on the XS2A interface.
@@ -3418,7 +3417,7 @@ paths:
             initiation response that an explicit start of the authorisation process is needed by the TPP. 
             The 'startAuthorisation' hyperlink can transport more information about data which needs to be 
             uploaded by using the extended forms:
-            * 'startAuthorisationWithPsuIdentfication', 
+            * 'startAuthorisationWithPsuIdentification', 
             * 'startAuthorisationWithPsuAuthentication' 
             * 'startAuthorisationWithEncryptedPsuAuthentication'
             * 'startAuthorisationWithAuthentciationMethodSelection' 
@@ -3640,7 +3639,7 @@ paths:
         There are the following request types on this access path:
           * Update PSU identification
           * Update PSU authentication
-          * Select PSU autorization Method 
+          * Select PSU authorization Method 
             WARNING: This method needs a reduced header, 
             therefore many optional elements are not present. 
             Maybe in a later version the access path will change.
@@ -3909,11 +3908,6 @@ components:
         ID of the corresponding consent object as returned by an account information consent request.
       type: string
 
-    authorization:
-      description: |
-        Authorization by OAuth2 based Protocol.
-      type: string
-
     consentIdList:
       description: A list of consentIds.
       type: array
@@ -3981,13 +3975,10 @@ components:
           Payment initiation or individual transaction included in the payment initiation has been rejected.
         - 'CANC': 'Cancelled'
           Payment initiation has been cancelled before execution
-          Remark: This codeis accepted as new code by ISO20022.
         - 'ACFC': 'AcceptedFundsChecked' -
           Preceding check of technical validation and customer profile was successful and an automatic funds check was positive .
-          Remark: This code is accepted as new code by ISO20022.
         - 'PATC': 'PartiallyAcceptedTechnical'
           Correct The payment initiation needs multiple authentications, where some but not yet all have been performed. Syntactical and semantical validations are successful.
-          Remark: This code is accepted as new code by ISO20022.
         - 'PART': 'PartiallyAccepted' -
           A number of transactions have been accepted, whereas another number of transactions have not yet achieved 'accepted' status.
           Remark: This code may be used only in case of bulk payments. It is only used in a situation where all mandated authorisations have been applied, but some payments have been rejected.
@@ -4085,7 +4076,7 @@ components:
         
         The following codes are defined for this data type.
         
-          * 'finalised': if the transaction authorisation and confirmation was successfule.
+          * 'finalised': if the transaction authorisation and confirmation was successful.
           * 'failed': if the transaction authorisation or confirmation was not successful.
       type: string
       enum:
@@ -4159,7 +4150,7 @@ components:
 
     trustedBeneficiaryFlag:
       description: |
-        Additional Service: Trusted Benificiaries
+        Additional Service: Trusted Beneficiaries
         Within this data element, the ASPSP might optionally communicate towards the TPP whether the creditor was part of the related trusted beneficiary list. 
         This attribute is only contained in case of a final scaStatus.
       type: boolean
@@ -4302,7 +4293,7 @@ components:
       description: |
         Equals true if sufficient funds are available at the time of the request, false otherwise.
         
-        This datalemenet is allways contained in a confirmation of funds response.
+        This data element is allways contained in a confirmation of funds response.
         
         This data element is contained in a payment status response, 
         if supported by the ASPSP, if a funds check has been performed and 
@@ -4660,6 +4651,19 @@ components:
           $ref: "#/components/schemas/msisdn"
         currency:
           $ref: "#/components/schemas/currencyCode"
+        ownerName:
+          $ref: "#/components/schemas/ownerName"
+        ownerNames:
+          description: |
+            List of owner names.
+          type: array
+          items: 
+            $ref: "#/components/schemas/accountOwner"
+        psuName:
+          description: |
+            Name of the PSU. In case of a corporate account, this might be the person acting on behalf of the corporate.
+          type: string
+          maxLength: 140
         name:
           description: 
             Name of the account, as assigned by the ASPSP,
@@ -4703,10 +4707,8 @@ components:
           $ref: "#/components/schemas/balanceList"
         _links:
           $ref: "#/components/schemas/_linksAccountDetails"
-        ownerName:
-          $ref: "#/components/schemas/ownerName"
-
-
+          
+          
     cardAccountDetails:
       description: |
         Card account details.
@@ -4794,6 +4796,27 @@ components:
             $ref: "#/components/schemas/cardAccountDetails"
 
 
+    accountOwner:
+      description: |
+        Identifies a Person that acts as an account owner
+      type: object
+      required:
+        - name
+      properties:
+        name:
+          description: Account owner name
+          type: string
+          maxLength: 70
+        role:
+          description: |
+            The following proprietary codes are used:
+              * "owner", 
+              * "legalRepresentative", 
+              * "authorisedUser"
+          type: string
+          maxLength: 35
+          
+          
     accountReport:
       description: |
         JSON based account report.
@@ -4803,7 +4826,7 @@ components:
         
         'pending' is not contained if the bookingStatus parameter is set to "booked" or "information".
 
-        'information' Only contained if the bookingStatus is set to "information" and if supported by ASPSP.
+        'information' is used if and only if the bookingStatus entry equals "information". Every active standing order related to the dedicated payment account result into one entry.
       type: object
       required:
         - _links
@@ -5079,7 +5102,7 @@ components:
           format: date
         lastCommittedTransaction:
           description: |
-            "entryReference" of the last commited transaction to support the TPP in identifying whether all 
+            "entryReference" of the last committed transaction to support the TPP in identifying whether all 
             PSU transactions are already known.
           type: string
           maxLength: 35
@@ -5381,7 +5404,6 @@ components:
         referenceIssuer:
           type: string
           maxLength: 140
-
 
     remittanceInformationStructured:
       description: |
@@ -5857,7 +5879,7 @@ components:
         This code type is concatenating the three ISO20022 Codes 
           * Domain Code, 
           * Family Code, and 
-          * SubFamiliy Code 
+          * SubFamily Code 
         by hyphens, resulting in 'DomainCode'-'FamilyCode'-'SubFamilyCode'.
         For standing order reports the following codes are applicable:
           * "PMNT-ICDT-STDO" for credit transfers,
@@ -6043,12 +6065,6 @@ components:
       maxLength: 70
       example: "Creditor Name"
 
-    creditorAlias:
-      description: An alias for the creditor as defined by the PSU as an alias when displaying the list of trusted beneficiaries in online channels of the ASPSP.
-      type: string
-      maxLength: 70
-      example: "Creditor Alias"
-
     creditorId:
       description: Identification of Creditors, e.g. a SEPA Creditor ID.
       type: string
@@ -6148,7 +6164,7 @@ components:
 
     paymentInitiation_json: 
       description: |
-        Generic Body for a payment initation via JSON.
+        Generic Body for a payment initiation via JSON.
         
         This generic JSON body can be used to represent valid payment initiations for the following JSON based payment product, 
         which where defined in the Implementation Guidelines:
@@ -6158,12 +6174,12 @@ components:
           * target-2-payments
           * cross-border-credit-transfers
         
-        For the convenience of the implementer additional which are already predefinded in the Implementation Guidelines 
+        For the convenience of the implementer additional which are already predefined in the Implementation Guidelines 
         are included (but commented in source code), such that an ASPSP may add them easily.
         
         Take care: Since the format is intended to fit for all payment products 
         there are additional conditions which are NOT covered by this specification.
-        Please check the Implementation Guidelines for detailes.
+        Please check the Implementation Guidelines for details.
 
         
         The following data element are depending on the actual payment product available (in source code):
@@ -6206,9 +6222,9 @@ components:
             are set to be mandatory in this specification.
           * Data elements which are indicated in the table above as n.a. for all payment products are commented in the source code.
           * Data elements which are indicated to be option, conditional or mandatory for at least one payment product 
-            in the table above are set to be optional in the s specification except the case where all are definde to be mandatory. 
-          * Data element which are inticated to be n.a. can be used by the ASPS if needed. 
-            In this case uncomment tthe the relatetd lines in the source code.
+            in the table above are set to be optional in the s specification except the case where all are defined to be mandatory. 
+          * Data element which are indicated to be n.a. can be used by the ASPS if needed. 
+            In this case uncomment the the related lines in the source code.
           * If one uses this data types for some payment products he has to ensure that the used data type is 
             valid according to the underlying payment product, e.g. by some appropriate validations.
 
@@ -6281,7 +6297,7 @@ components:
 
     paymentInitiationBulkElement_json:
       description: |
-        Generic body for a bulk payment initation entry.
+        Generic body for a bulk payment initiation entry.
         
         The bulk entry type is a type which follows the JSON formats for the supported products for single payments
         excluding the data elements (if supported):
@@ -6298,12 +6314,12 @@ components:
           * target-2-payments
           * cross-border-credit-transfers
         
-        For the convenience of the implementer additional which are already predefinded in the Implementation Guidelines 
+        For the convenience of the implementer additional which are already predefined in the Implementation Guidelines 
         are included (but commented in source code), such that an ASPSP may add them easily.
         
         Take care: Since the format is intended to fit for all payment products 
         there are additional conditions which are NOT covered by this specification.
-        Please check the Implementation Guidelines for detailes.
+        Please check the Implementation Guidelines for details.
 
         
         The following data element are depending on the actual payment product available (in source code):
@@ -6343,9 +6359,9 @@ components:
             are set to be mandatory in this specification.
           * Data elements which are indicated in the table above as n.a. for all payment products are commented in the source code.
           * Data elements which are indicated to be option, conditional or mandatory for at least one payment product 
-            in the table above are set to be optional in the s specification except the case where all are definde to be mandatory. 
-          * Data element which are inticated to be n.a. can be used by the ASPS if needed. 
-            In this case uncomment tthe the relatetd lines in the source code.
+            in the table above are set to be optional in the s specification except the case where all are defined to be mandatory. 
+          * Data element which are indicated to be n.a. can be used by the ASPS if needed. 
+            In this case uncomment the the related lines in the source code.
           * If one uses this data types for some payment products he has to ensure that the used data type is 
             valid according to the underlying payment product, e.g. by some appropriate validations.
 
@@ -6358,7 +6374,6 @@ components:
         endToEndIdentification:
           type: string
           maxLength: 35
-
         instructionIdentification: # N.A. for all, but can be used by ASPSP if needed
           type: string
           maxLength: 35
@@ -6384,8 +6399,8 @@ components:
           $ref: "#/components/schemas/creditorName"
         creditorAddress:
           $ref: "#/components/schemas/address"
-        creditorId:  # N.A. for all, but can be used by ASPSP if needed
-          $ref: "#/components/schemas/creditorId"
+#        creditorId:  # N.A. for all, but can be used by ASPSP if needed
+#          $ref: "#/components/schemas/creditorId"
 #        creditorNameAndAddress: # N.A. for all, but can be used by ASPSP if needed
 #          $ref: "#/components/schemas/creditorNameAndAddress"
         ultimateCreditor: # N.A. for all, but can be used by ASPSP if needed
@@ -6408,7 +6423,7 @@ components:
 
     periodicPaymentInitiation_json: 
       description: |
-        Generic Body for a periodic payment initation via JSON.
+        Generic Body for a periodic payment initiation via JSON.
         
         This generic JSON body can be used to represent valid periodic payment initiations for the following JSON based payment product, 
         which where defined in the Implementation Guidelines:
@@ -6418,12 +6433,12 @@ components:
           * target-2-payments
           * cross-border-credit-transfers
         
-        For the convenience of the implementer additional which are already predefinded in the Implementation Guidelines 
+        For the convenience of the implementer additional which are already predefined in the Implementation Guidelines 
         are included (but commented in source code), such that an ASPSP may add them easily.
         
         Take care: Since the format is intended to fit for all payment products 
         there are additional conditions which are NOT covered by this specification.
-        Please check the Implementation Guidelines for detailes.
+        Please check the Implementation Guidelines for details.
 
         
         The following data element are depending on the actual payment product available (in source code):
@@ -6471,9 +6486,9 @@ components:
             are set to be mandatory in this specification.
           * Data elements which are indicated in the table above as n.a. for all payment products are commented in the source code.
           * Data elements which are indicated to be option, conditional or mandatory for at least one payment product 
-            in the table above are set to be optional in the s specification except the case where all are definde to be mandatory. 
-          * Data element which are inticated to be n.a. can be used by the ASPS if needed. 
-            In this case uncomment tthe the relatetd lines in the source code.
+            in the table above are set to be optional in the s specification except the case where all are defined to be mandatory. 
+          * Data element which are indicated to be n.a. can be used by the ASPS if needed. 
+            In this case uncomment the the related lines in the source code.
           * If one uses this data types for some payment products he has to ensure that the used data type is 
             valid according to the underlying payment product, e.g. by some appropriate validations.
 
@@ -6553,7 +6568,7 @@ components:
 
     bulkPaymentInitiation_json: 
       description: |
-        Generic Body for a bulk payment initation via JSON.
+        Generic Body for a bulk payment initiation via JSON.
         
         paymentInformationId is contained in code but commented since it is n.a. 
         and not all ASPSP are able to support this field now.
@@ -6581,9 +6596,9 @@ components:
           format: date-time
         payments:
           description: |
-            A list of generic JSON bodies payment initations for bulk payments via JSON.
+            A list of generic JSON bodies payment initiations for bulk payments via JSON.
             
-            Note: Some fields from single payments do not occcur in a bulk payment element
+            Note: Some fields from single payments do not occur in a bulk payment element
           type: array
           items:
             $ref: "#/components/schemas/paymentInitiationBulkElement_json"
@@ -6791,7 +6806,7 @@ components:
       description: |
        The multipart message definition for the initiation of a periodic payment initiation 
        where the information of the payment is contained in a pain.001 message (Part 1) and 
-       the additional informations related to the periodic payment is an additional JSON message (Part 2).
+       the additional information related to the periodic payment is an additional JSON message (Part 2).
       type: object
       properties:
         xml_sct: #PART 1
@@ -6805,7 +6820,7 @@ components:
 
     periodicPaymentInitiation_xml-Part2-standingorderType_json:
       description: |
-        The body part 2 of a periodic payment initation request containes the execution related informations 
+        The body part 2 of a periodic payment initiation request contains the execution related information 
         of the periodic payment.
       type: object
       required:
@@ -6843,6 +6858,17 @@ components:
           $ref: "#/components/schemas/fundsAvailable"
         psuMessage:
           $ref: "#/components/schemas/psuMessageText"
+        ownerNames:
+          description: |
+            List of owner names. Should only be delivered after successful SCA. Could be restricted to the current PSU by the ASPSP.
+          type: array
+          items: 
+            $ref: "#/components/schemas/accountOwner"
+        psuName:
+          description: |
+            Name of the PSU. In case of a corporate account, this might be the person acting on behalf of the corporate.
+          type: string
+          maxLength: 140
         _links:
           $ref: "#/components/schemas/_linksPaymentInitiationStatus"
         tppMessages:
@@ -6864,7 +6890,7 @@ components:
       type: string
 
 
-    paymentInitationRequestResponse-201:
+    paymentInitiationRequestResponse-201:
       description: Body of the response for a successful payment initiation request.
       type: object
       required:
@@ -6939,7 +6965,7 @@ components:
 
     paymentInitiationWithStatusResponse: 
       description: |
-        Generic JSON response body consistion of the corresponding payment initation JSON body together with an optional transaction status field.
+        Generic JSON response body consistion of the corresponding payment initiation JSON body together with an optional transaction status field.
       type: object
       required:
         - debtorAccount
@@ -6950,7 +6976,6 @@ components:
         endToEndIdentification:
           type: string
           maxLength: 35
-
         instructionIdentification: # N.A. for all, but can be used by ASPSP if needed
           type: string
           maxLength: 35
@@ -7015,7 +7040,7 @@ components:
 
     periodicPaymentInitiationWithStatusResponse: 
       description: |
-        Generic JSON response body consistion of the corresponding periodic payment initation JSON body together with an optional transaction status field.
+        Generic JSON response body consistion of the corresponding periodic payment initiation JSON body together with an optional transaction status field.
       type: object
       required:
         - debtorAccount
@@ -7091,7 +7116,7 @@ components:
 
     bulkPaymentInitiationWithStatusResponse: 
       description: |
-        Generic JSON response body consistion of the corresponding bulk payment initation JSON body together with an optional transaction status field.
+        Generic JSON response body consistion of the corresponding bulk payment initiation JSON body together with an optional transaction status field.
       type: object
       required:
         - payments
@@ -7112,9 +7137,9 @@ components:
           maxLength: 35
         payments:
           description: |
-            A list of generic JSON bodies payment initations for bulk payments via JSON.
+            A list of generic JSON bodies payment initiations for bulk payments via JSON.
             
-            Note: Some fields from single payments do not occcur in a bulk payment element
+            Note: Some fields from single payments do not occur in a bulk payment element
           type: array
           items:
             $ref: "#/components/schemas/paymentInitiationBulkElement_json"
@@ -7137,6 +7162,11 @@ components:
           $ref: "#/components/schemas/scaStatus"
         psuMessage:
           $ref: "#/components/schemas/psuMessageText"
+        psuName:
+          description: |
+            Name of the PSU. In case of a corporate account, this might be the person acting on behalf of the corporate.
+          type: string
+          maxLength: 140
         trustedBeneficiaryFlag:
           $ref: "#/components/schemas/trustedBeneficiaryFlag"
         _links:
@@ -7193,7 +7223,7 @@ components:
           $ref: "#/components/schemas/psuMessageText"
 
 
-    updatePsuIdenticationResponse:
+    updatePsuIdentificationResponse:
       description: Body of the JSON response for a successful update PSU identification request.
       type: object
       required:
@@ -7695,7 +7725,7 @@ components:
             The link to the cancellation-authorisations end-point, where the cancellation sub-resource has to be 
             generated while uploading the PSU identification data.
           * 'startAuthorisationWithPsuAuthentication': 
-            In case of a yet to be created authorisation sub-resource: The link to the cancalation authorisation end-point, 
+            In case of a yet to be created authorisation sub-resource: The link to the cancelation authorisation end-point, 
             where the authorisation sub-resource has to be generated while uploading the PSU authentication data.
           * 'startAuthorisationWithEncryptedPsuAuthentication':
             Same as startAuthorisactionWithPsuAuthentication where the authentication data need to be encrypted on 
@@ -8202,6 +8232,11 @@ components:
         - "ERROR"
         - "WARNING"
 
+    tppMessageCodeGeneric:
+      description: Code of the TPP message category.
+      type: string
+      #Currently, no restriction to enums is defined
+
 
     MessageCode2XX: 
       description: Message codes for HTTP Error codes 2XX.
@@ -8361,7 +8396,7 @@ components:
         category:
            $ref: "#/components/schemas/tppMessageCategory"
         code:
-          $ref: "#/components/schemas/tppMessageCategory"
+          $ref: "#/components/schemas/tppMessageCodeGeneric"
         path:
           type: string
         text:
@@ -8797,23 +8832,6 @@ components:
         text:
           $ref: "#/components/schemas/tppMessageText"
 
-
-    tppMessage406_PIIS:
-      type: object
-      required:
-        - category
-        - code
-      properties:
-        category:
-          $ref: "#/components/schemas/tppMessageCategory"
-        code:
-          $ref: "#/components/schemas/MessageCode406_PIIS"
-        path:
-          type: string
-        text:
-          $ref: "#/components/schemas/tppMessageText"
-
-
     tppMessage409_AIS:
       type: object
       required:
@@ -8830,6 +8848,20 @@ components:
           $ref: "#/components/schemas/tppMessageText"
 
 
+    tppMessage406_PIIS:
+      type: object
+      required:
+        - category
+        - code
+      properties:
+        category:
+          $ref: "#/components/schemas/tppMessageCategory"
+        code:
+          $ref: "#/components/schemas/MessageCode406_PIIS"
+        path:
+          type: string
+        text:
+          $ref: "#/components/schemas/tppMessageText"
     tppMessage409_PIIS:
       type: object
       required:
@@ -9828,7 +9860,7 @@ components:
     Error405_PIS_CANC: 
       description: |
         Standardised definition of reporting error information according to [RFC7807] 
-        in case of a HTTP error code 405 for a pament cancelation (PIS).
+        in case of a HTTP error code 405 for a payment cancelation (PIS).
       type: object
       required:
         - type
@@ -10123,7 +10155,7 @@ components:
             XPath might be used to point to the issue generating the error in addition.
             Remark for Future: In future, a dedicated field might be introduced for the XPath.
           type: string
-          maxLength: 500
+          maxLength: 512
         code:
           $ref: "#/components/schemas/MessageCode406_PIS"
         additionalErrors:
@@ -10872,7 +10904,7 @@ components:
         Further XML schemes might be supported by some communities.
         
         **Remark:** For cross-border and TARGET-2 payments only community wide pain.001 schemes do exist. 
-        There are plenty of country specificic scheme variants.
+        There are plenty of country specific scheme variants.
 
 
       required: true
@@ -10959,16 +10991,6 @@ components:
       required: false
       schema:
         $ref: "#/components/schemas/consentId"
-
-    Authorization:
-      name: Authorization
-      in: header
-      description: |
-        This field  might be used in case where a consent was agreed between ASPSP and PSU through an OAuth2 based protocol, 
-        facilitated by the TPP.
-      required: false
-      schema:
-        $ref: "#/components/schemas/authorization"
 
     consentId_HEADER_mandatory:
       name: Consent-ID
@@ -11546,7 +11568,7 @@ components:
         There are the following payment-services supported:
           * "payments"
           * "periodic-payments"
-          * "bulk-paments"
+          * "bulk-payments"
         
         All optional, conditional and predefined but not yet used fields are defined.
       required: true
@@ -11707,7 +11729,7 @@ components:
       required: false
   responses:
   #####################################################
-  # Reusabale Responses
+  # Reusable Responses
   #####################################################
     #####################################################
     # Positive Responses
@@ -11915,7 +11937,7 @@ components:
             "Example 1: Regular Account":
               $ref: "#/components/examples/balancesExample1_RegularAccount"
             "Example 2: Multicurrency Account":
-              $ref: "#/components/examples/balancesExample2_MulticurrencyAcount"
+              $ref: "#/components/examples/balancesExample2_MulticurrencyAccount"
             "Example 3:":
               $ref: "#/components/examples/balancesExample3_RegularAccount"
 
@@ -12043,15 +12065,15 @@ components:
           schema:
           
             oneOf: #Different Authorisation Bodies
-              - $ref: "#/components/schemas/updatePsuIdenticationResponse" #Update PSU identification
+              - $ref: "#/components/schemas/updatePsuIdentificationResponse" #Update PSU identification
               - $ref: "#/components/schemas/updatePsuAuthenticationResponse" #Update PSU authentication
               - $ref: "#/components/schemas/selectPsuAuthenticationMethodResponse" #Select authentication method
               - $ref: "#/components/schemas/scaStatusResponse" #Transaction Authorisation
               - $ref: "#/components/schemas/authorisationConfirmationResponse" #Authorisation Confirmation
           examples: 
-            "Update PSU identification - payment pnitiation (Decoupled Approach)":
+            "Update PSU identification - payment initiation (Decoupled Approach)":
               $ref: "#/components/examples/updatePsuIdentificationResponseExample_Decoupled_payments"
-            "Update PSU authentication - payment pnitiation (Embedded Approach)":
+            "Update PSU authentication - payment initiation (Embedded Approach)":
               $ref: "#/components/examples/updatePsuAuthenticationResponseExample_Embedded_payments"
             "Select PSU authentication - payment initiation method (Embedded Approach)":
               $ref: "#/components/examples/selectPsuAuthenticationMethodResponseExample_Embedded_payments"
@@ -12158,7 +12180,7 @@ components:
       content:
         application/json:
           schema:
-            $ref: "#/components/schemas/paymentInitationRequestResponse-201"
+            $ref: "#/components/schemas/paymentInitiationRequestResponse-201"
           examples:
             "Response in case of a redirect with an implicitly created authorisation sub-resource":
               $ref: "#/components/examples/paymentInitiationExample_json_Redirect"
@@ -13819,7 +13841,7 @@ components:
 
 
 
-    balancesExample2_MulticurrencyAcount:
+    balancesExample2_MulticurrencyAccount:
       description: |
         Response in case of a multicurrency account with one account in EUR, 
         one in USD, where the ASPSP has delivered a link to the balance endpoint relative to the aggregated 
