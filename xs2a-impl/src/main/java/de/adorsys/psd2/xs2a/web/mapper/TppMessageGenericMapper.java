@@ -47,8 +47,4 @@ public interface TppMessageGenericMapper {
     TppMessageGeneric mapToTppMessageGeneric(TppMessageInformation tppMessage);
 
     TppMessageCategory mapToTppMessageCategory(MessageCategory messageCategory);
-
-    default TppMessageCategory getMessageCode() {
-        return TppMessageCategory.WARNING;
-    }
 }
