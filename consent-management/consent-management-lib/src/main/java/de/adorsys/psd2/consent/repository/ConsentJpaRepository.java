@@ -41,7 +41,13 @@ public interface ConsentJpaRepository extends CrudRepository<ConsentEntity, Long
 
     Long countByConsentStatusIn(Set<ConsentStatus> statuses);
 
-    Optional<ConsentEntity> findByExternalId(String externalId);
+    @Query(
+        "select c from consent c join fetch c.authorisationTemplate " +
+            "join fetch c.tppInformation tppi " +
+            "join fetch tppi.tppInfo" +
+            " where c.externalId = :externalId"
+    )
+    Optional<ConsentEntity> findByExternalId(@Param("externalId") String externalId);
 
     List<ConsentEntity> findAllByExternalIdIn(List<String> externalIds);
 

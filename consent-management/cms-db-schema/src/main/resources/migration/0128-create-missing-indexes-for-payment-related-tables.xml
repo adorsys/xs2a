@@ -1,0 +1,92 @@
+<!--
+  ~ Copyright 2018-2022 adorsys GmbH & Co KG
+  ~
+  ~ This program is free software: you can redistribute it and/or modify it
+  ~ under the terms of the GNU Affero General Public License as published
+  ~ by the Free Software Foundation, either version 3 of the License, or (at
+  ~ your option) any later version. This program is distributed in the hope that
+  ~ it will be useful, but WITHOUT ANY WARRANTY; without even the implied
+  ~ warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+  ~ See the GNU Affero General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU Affero General Public License
+  ~ along with this program. If not, see https://www.gnu.org/licenses/.
+  ~
+  ~ This project is also available under a separate commercial license. You can
+  ~ contact us at psd2@adorsys.com.
+  -->
+
+<databaseChangeLog logicalFilePath="db.changelog-1.0.xml" xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.4.xsd">
+
+    <changeSet author="Saltuk.Kezer.ex@adorsys.com" id="2022-09-6-1">
+        <comment>Adding indexes to pis_common_payment table</comment>
+
+        <createIndex tableName="pis_common_payment" indexName="pis_common_payment_tpp_info_id_index">
+            <column name="tpp_info_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+        </createIndex>
+
+        <createIndex tableName="pis_common_payment" indexName="pis_common_payment_authorisation_template_id_index">
+            <column name="authorisation_template_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+        </createIndex>
+    </changeSet>
+
+    <changeSet author="Saltuk.Kezer.ex@adorsys.com" id="2022-09-06-2">
+        <comment>Adding indexes to pis_payment_data table</comment>
+
+        <createIndex tableName="pis_payment_data" indexName="pis_payment_data_debtor_acc_reference_id_index">
+            <column name="debtor_acc_reference_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+        </createIndex>
+
+        <createIndex tableName="pis_payment_data" indexName="pis_payment_data_creditor_acc_reference_id_index">
+            <column name="creditor_acc_reference_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+        </createIndex>
+
+        <createIndex tableName="pis_payment_data" indexName="pis_payment_data_address_id_index">
+            <column name="address_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+        </createIndex>
+
+        <createIndex tableName="pis_payment_data" indexName="pis_payment_data_remittance_id_index">
+            <column name="remittance_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+        </createIndex>
+
+        <createIndex tableName="pis_payment_data" indexName="pis_payment_data_common_payment_id_index">
+            <column name="common_payment_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+        </createIndex>
+    </changeSet>
+
+    <changeSet author="Saltuk.Kezer.ex@adorsys.com" id="2022-09-06-3">
+        <comment>Adding indexes to pis_common_payment_psu_data table</comment>
+
+        <createIndex tableName="pis_common_payment_psu_data" indexName="pis_common_payment_psu_data_pis_common_payment_id_index">
+            <column name="pis_common_payment_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+        </createIndex>
+    </changeSet>
+
+    <changeSet author="Saltuk.Kezer.ex@adorsys.com" id="2022-09-6-4">
+        <comment>Adding indexes to payment_tpp_ntfc table</comment>
+
+        <createIndex tableName="payment_tpp_ntfc" indexName="payment_tpp_ntfc_id_index">
+            <column name="id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+        </createIndex>
+    </changeSet>
+</databaseChangeLog>

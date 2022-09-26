@@ -1,0 +1,105 @@
+<!--
+  ~ Copyright 2018-2022 adorsys GmbH & Co KG
+  ~
+  ~ This program is free software: you can redistribute it and/or modify it
+  ~ under the terms of the GNU Affero General Public License as published
+  ~ by the Free Software Foundation, either version 3 of the License, or (at
+  ~ your option) any later version. This program is distributed in the hope that
+  ~ it will be useful, but WITHOUT ANY WARRANTY; without even the implied
+  ~ warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+  ~ See the GNU Affero General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU Affero General Public License
+  ~ along with this program. If not, see https://www.gnu.org/licenses/.
+  ~
+  ~ This project is also available under a separate commercial license. You can
+  ~ contact us at psd2@adorsys.com.
+  -->
+
+<databaseChangeLog logicalFilePath="db.changelog-1.0.xml" xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.4.xsd">
+
+    <changeSet author="Saltuk.Kezer.ex@adorsys.com" id="2022-09-1-1">
+        <comment>Adding indexes to consent table</comment>
+
+        <createIndex tableName="consent" indexName="consent_external_id_index">
+            <column name="external_id" type="VARCHAR(40)">
+                <constraints nullable="false"/>
+            </column>
+        </createIndex>
+        <createIndex tableName="consent" indexName="consent_authorisation_template_id_index">
+            <column name="authorisation_template_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+        </createIndex>
+    </changeSet>
+
+    <changeSet author="Saltuk.Kezer.ex@adorsys.com" id="2022-09-1-2">
+        <comment>Adding indexes to psu_data_table</comment>
+
+        <createIndex tableName="psu_data" indexName="psu_data_additional_psu_data_id_index">
+            <column name="additional_psu_data_id" type="BIGINT"/>
+        </createIndex>
+    </changeSet>
+
+    <changeSet author="Saltuk.Kezer.ex@adorsys.com" id="2022-09-1-3">
+        <comment>Adding indexes to consent_psu_data_table</comment>
+
+        <createIndex tableName="consent_psu_data" indexName="consent_psu_data_consent_id_index">
+            <column name="consent_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+        </createIndex>
+    </changeSet>
+
+    <changeSet author="Saltuk.Kezer.ex@adorsys.com" id="2022-09-1-4">
+        <comment>Adding indexes to consent_tpp_information table</comment>
+
+        <createIndex tableName="consent_tpp_information" indexName="consent_tpp_information_tpp_info_id_index">
+            <column name="tpp_info_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+        </createIndex>
+    </changeSet>
+
+    <changeSet author="Saltuk.Kezer.ex@adorsys.com" id="2022-09-1-5">
+        <comment>Adding indexes to aspsp_account_access table</comment>
+
+        <createIndex tableName="aspsp_account_access" indexName="aspsp_account_access_consent_id_index">
+            <column name="consent_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+        </createIndex>
+    </changeSet>
+
+    <changeSet author="Saltuk.Kezer.ex@adorsys.com" id="2022-09-1-6">
+        <comment>Adding indexes to account_access table</comment>
+
+        <createIndex tableName="account_access" indexName="account_access_consent_id_index">
+            <column name="consent_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+        </createIndex>
+    </changeSet>
+
+    <changeSet author="Saltuk.Kezer.ex@adorsys.com" id="2022-09-1-7">
+        <comment>Adding indexes to consent_usage table</comment>
+
+        <createIndex tableName="consent_usage" indexName="consent_usage_consent_id_index">
+            <column name="consent_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+        </createIndex>
+    </changeSet>
+
+    <changeSet author="Saltuk.Kezer.ex@adorsys.com" id="2022-09-6-7">
+        <comment>Adding indexes to ais_consent_tpp_ntfc table</comment>
+
+        <createIndex tableName="ais_consent_tpp_ntfc" indexName="ais_consent_tpp_ntfc_id_index">
+            <column name="id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+        </createIndex>
+    </changeSet>
+</databaseChangeLog>

@@ -2,6 +2,8 @@
 
 == Table of Contents
 
+* Migrated to PSD2 new yaml 1.3.12.
+
 * Fixed error mapping
 
 * Fixed links in PIS Cancellation
@@ -15,6 +17,12 @@
 * Improved performance for consents export in CmsAspspAisExportApi
 
 * Deprecated methods in AuthorisationSpi
+
+* Added DB indexes for application performance improving
+
+== Migrated to PSD2 new yaml 1.3.12.
+
+From now on, XS2A uses models and API's according to the last BG 1.3.12 .yaml file version.
 
 == Fixed error mapping
 
@@ -48,3 +56,7 @@ Consents export logic was changed due to removal of needless LazyMigrationServic
 Two methods in AuthorisationSpi were marked as deprecated(`AuthorisationSpi.startAuthorisation` and `AuthorisationSpi.getScaStatus`).
 Their signatures will be changed in release 15.4, new models `SpiScaApproach` and `SpiScaStatus`
 will be used instead of old ones `ScaApproach` and `ScaStatus`.
+
+== Added DB indexes for application performance improving
+
+Indexes were added to foreign key columns in payments- and consents- related tables inside CMS to improve the performance during PIS and AIS flows.
