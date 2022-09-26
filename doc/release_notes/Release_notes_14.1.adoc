@@ -12,6 +12,8 @@
 
 * Deprecated methods in AuthorisationSpi
 
+* Added DB indexes for application performance improving
+
 == Fixed error mapping
 
 Fixed 503 HTTP error code handling from SPI level.
@@ -34,3 +36,8 @@ Consents export logic was changed due to removal of needless LazyMigrationServic
 Two methods in AuthorisationSpi were marked as deprecated(`AuthorisationSpi.startAuthorisation` and `AuthorisationSpi.getScaStatus`).
 Their signatures will be changed in release 14.4, new models `SpiScaApproach` and `SpiScaStatus`
 will be used instead of old ones `ScaApproach` and `ScaStatus`.
+
+== Added DB indexes for application performance improving
+
+Indexes were added to foreign key columns in payments- and consents- related tables inside CMS to improve the performance during PIS and AIS flows.
+

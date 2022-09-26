@@ -154,4 +154,6 @@
     <include relativeToChangelogFile="true" file="migration/0124-refactor-aspsp-account-access-table.xml"/>
     <include relativeToChangelogFile="true" file="migration/0125-refactor-account-access-table.xml"/>
     <include relativeToChangelogFile="true" file="migration/0126-remove-deprecated-consent-tables.xml"/>
+    <include relativeToChangelogFile="true" file="migration/0127-create-missing-indexes-for-consent-related-tables.xml"/>
+    <include relativeToChangelogFile="true" file="migration/0128-create-missing-indexes-for-payment-related-tables.xml"/>
 </databaseChangeLog>

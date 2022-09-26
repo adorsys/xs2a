@@ -25,7 +25,6 @@ import de.adorsys.psd2.event.service.model.EventBO;
 import lombok.RequiredArgsConstructor;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 
@@ -36,7 +35,6 @@ public class EventServiceEncryptedImpl implements Xs2aEventServiceEncrypted {
     private final Xs2aEventService eventService;
 
     @Override
-    @Transactional
     public void recordEvent(@NotNull EventBO event) {
         String decryptedConsentId = decryptId(event.getConsentId());
         String decryptedPaymentId = decryptId(event.getPaymentId());
