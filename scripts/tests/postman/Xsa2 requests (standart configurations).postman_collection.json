@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "eaa844c6-71a7-4623-ade0-f9b7d96c3024",
+		"_postman_id": "e1bbc234-9313-438a-92cd-184b54f866c0",
 		"name": "XS2A requests 15x",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
 		"_exporter_id": "6572081"
@@ -22755,7 +22755,7 @@
 													"",
 													"pm.test(\"TppMessages is correct\", () => {",
 													"     ",
-													"    pm.expect(jsonData.tppMessages).length.to.be.lengthOf(2);",
+													"    pm.expect(jsonData.tppMessages).length.to.be.lengthOf(3);",
 													"    ",
 													"});"
 												],
@@ -22917,7 +22917,7 @@
 													"",
 													"pm.test(\"TppMessages is correct\", () => {",
 													"    ",
-													"    pm.expect(jsonData.tppMessages).length.to.be.lengthOf(2);",
+													"    pm.expect(jsonData.tppMessages).length.to.be.lengthOf(3);",
 													"",
 													"});"
 												],
@@ -87578,7 +87578,7 @@
 															"",
 															"pm.test(\"TppMessages is correct\", () => {",
 															"     ",
-															"     pm.expect(jsonData.tppMessages).length.to.be.lengthOf(2);",
+															"     pm.expect(jsonData.tppMessages).length.to.be.lengthOf(3);",
 															"     ",
 															"});"
 														],
