@@ -20,18 +20,23 @@ package de.adorsys.psd2.consent.domain;
 
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
-import lombok.Setter;
 
 import javax.persistence.Column;
 import javax.persistence.MappedSuperclass;
 
 @Getter
-@Setter
 @MappedSuperclass
 @EqualsAndHashCode
 public abstract class InstanceDependableEntity {
     private static final String DEFAULT_SERVICE_INSTANCE_ID = "UNDEFINED";
 
-    @Column(name = "instance_id", updatable = false)
+    @Column(name = "instance_id", nullable = false, updatable = false)
     private String instanceId = DEFAULT_SERVICE_INSTANCE_ID;
+
+    public void setInstanceId(String instanceId) {
+        this.instanceId = instanceId == null
+                              ? DEFAULT_SERVICE_INSTANCE_ID
+                              : instanceId;
+
+    }
 }
