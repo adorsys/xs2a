@@ -13,7 +13,7 @@ import java.util.Objects;
  */
 @Schema(description = "Body of the JSON response for a successful read card account transaction list request. This card account report contains transactions resulting from the query parameters. ")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-09-19T16:45:22.884087+03:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-10-25T13:15:56.196839+03:00[Europe/Kiev]")
 
 
 public class CardAccountsTransactionsResponse200   {
@@ -42,9 +42,10 @@ public class CardAccountsTransactionsResponse200   {
    * @return cardAccount
    **/
   @Schema(description = "")
+  @JsonProperty("cardAccount")
 
-    @Valid
-    public AccountReference getCardAccount() {
+  @Valid
+  public AccountReference getCardAccount() {
     return cardAccount;
   }
 
@@ -62,8 +63,9 @@ public class CardAccountsTransactionsResponse200   {
    * @return debitAccounting
    **/
   @Schema(description = "If true, the amounts of debits on the reports are quoted positive with the related consequence for balances. If false, the amount of debits on the reports are quoted negative. ")
+  @JsonProperty("debitAccounting")
 
-    public Boolean isDebitAccounting() {
+  public Boolean isDebitAccounting() {
     return debitAccounting;
   }
 
@@ -81,9 +83,10 @@ public class CardAccountsTransactionsResponse200   {
    * @return cardTransactions
    **/
   @Schema(description = "")
+  @JsonProperty("cardTransactions")
 
-    @Valid
-    public CardAccountReport getCardTransactions() {
+  @Valid
+  public CardAccountReport getCardTransactions() {
     return cardTransactions;
   }
 
@@ -101,9 +104,10 @@ public class CardAccountsTransactionsResponse200   {
    * @return balances
    **/
   @Schema(description = "")
+  @JsonProperty("balances")
 
-    @Valid
-    public BalanceList getBalances() {
+  @Valid
+  public BalanceList getBalances() {
     return balances;
   }
 
@@ -121,9 +125,10 @@ public class CardAccountsTransactionsResponse200   {
    * @return _links
    **/
   @Schema(description = "")
+  @JsonProperty("_links")
 
-    @Valid
-    public Map getLinks() {
+  @Valid
+  public Map getLinks() {
     return _links;
   }
 

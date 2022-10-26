@@ -14,7 +14,7 @@ import java.util.Objects;
  */
 @Schema(description = "Exchange Rate.")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-09-19T16:45:22.884087+03:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-10-25T13:15:56.196839+03:00[Europe/Kiev]")
 
 
 public class PaymentExchangeRate   {
@@ -40,8 +40,9 @@ public class PaymentExchangeRate   {
    * @return unitCurrency
    **/
   @Schema(example = "EUR", description = "ISO 4217 Alpha 3 currency code. ")
+  @JsonProperty("unitCurrency")
 
-  @Pattern(regexp="[A-Z]{3}")   public String getUnitCurrency() {
+@Pattern(regexp="[A-Z]{3}")   public String getUnitCurrency() {
     return unitCurrency;
   }
 
@@ -59,8 +60,9 @@ public class PaymentExchangeRate   {
    * @return exchangeRate
    **/
   @Schema(description = "")
+  @JsonProperty("exchangeRate")
 
-    public String getExchangeRate() {
+  public String getExchangeRate() {
     return exchangeRate;
   }
 
@@ -78,8 +80,9 @@ public class PaymentExchangeRate   {
    * @return contractIdentification
    **/
   @Schema(description = "")
+  @JsonProperty("contractIdentification")
 
-  @Size(max=35)   public String getContractIdentification() {
+@Size(max=35)   public String getContractIdentification() {
     return contractIdentification;
   }
 
@@ -97,9 +100,10 @@ public class PaymentExchangeRate   {
    * @return rateType
    **/
   @Schema(description = "")
+  @JsonProperty("rateType")
 
-    @Valid
-    public ExchangeRateTypeCode getRateType() {
+  @Valid
+  public ExchangeRateTypeCode getRateType() {
     return rateType;
   }
 

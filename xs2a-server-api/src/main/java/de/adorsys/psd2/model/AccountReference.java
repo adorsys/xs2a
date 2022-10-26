@@ -14,7 +14,7 @@ import java.util.Objects;
  */
 @Schema(description = "Reference to an account by either   * IBAN, of a payment accounts, or   * BBAN, for payment accounts if there is no IBAN, or    * the Primary Account Number (PAN) of a card, can be tokenised by the ASPSP due to PCI DSS requirements, or   * the Primary Account Number (PAN) of a card in a masked form, or   * an alias to access a payment account via a registered mobile phone number (MSISDN), or   * a proprietary ID of the  respective account that uniquely identifies the account for this ASPSP. ")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-09-19T16:45:22.884087+03:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-10-25T13:15:56.196839+03:00[Europe/Kiev]")
 
 
 public class AccountReference   {
@@ -52,8 +52,9 @@ public class AccountReference   {
    * @return iban
    **/
   @Schema(example = "FR7612345987650123456789014", description = "IBAN of an account.")
+  @JsonProperty("iban")
 
-  @Pattern(regexp="[A-Z]{2,2}[0-9]{2,2}[a-zA-Z0-9]{1,30}")   public String getIban() {
+@Pattern(regexp="[A-Z]{2,2}[0-9]{2,2}[a-zA-Z0-9]{1,30}")   public String getIban() {
     return iban;
   }
 
@@ -71,8 +72,9 @@ public class AccountReference   {
    * @return bban
    **/
   @Schema(example = "BARC12345612345678", description = "Basic Bank Account Number (BBAN) Identifier.  This data element can be used in the body of the consent request.   Message for retrieving account access consent from this account. This   data elements is used for payment accounts which have no IBAN.   ISO20022: Basic Bank Account Number (BBAN).       Identifier used nationally by financial institutions, i.e., in individual countries,    generally as part of a National Account Numbering Scheme(s),    which uniquely identifies the account of a customer. ")
+  @JsonProperty("bban")
 
-  @Pattern(regexp="[a-zA-Z0-9]{1,30}")   public String getBban() {
+@Pattern(regexp="[a-zA-Z0-9]{1,30}")   public String getBban() {
     return bban;
   }
 
@@ -90,8 +92,9 @@ public class AccountReference   {
    * @return pan
    **/
   @Schema(example = "5409050000000000", description = "Primary Account Number according to ISO/IEC 7812. ")
+  @JsonProperty("pan")
 
-  @Size(max=35)   public String getPan() {
+@Size(max=35)   public String getPan() {
     return pan;
   }
 
@@ -109,8 +112,9 @@ public class AccountReference   {
    * @return maskedPan
    **/
   @Schema(example = "123456xxxxxx1234", description = "Masked Primary Account Number. ")
+  @JsonProperty("maskedPan")
 
-  @Size(max=35)   public String getMaskedPan() {
+@Size(max=35)   public String getMaskedPan() {
     return maskedPan;
   }
 
@@ -128,8 +132,9 @@ public class AccountReference   {
    * @return msisdn
    **/
   @Schema(example = "+49 170 1234567", description = "Mobile phone number.")
+  @JsonProperty("msisdn")
 
-  @Size(max=35)   public String getMsisdn() {
+@Size(max=35)   public String getMsisdn() {
     return msisdn;
   }
 
@@ -147,9 +152,10 @@ public class AccountReference   {
    * @return other
    **/
   @Schema(description = "")
+  @JsonProperty("other")
 
-    @Valid
-    public OtherType getOther() {
+  @Valid
+  public OtherType getOther() {
     return other;
   }
 
@@ -167,8 +173,9 @@ public class AccountReference   {
    * @return currency
    **/
   @Schema(example = "EUR", description = "ISO 4217 Alpha 3 currency code. ")
+  @JsonProperty("currency")
 
-  @Pattern(regexp="[A-Z]{3}")   public String getCurrency() {
+@Pattern(regexp="[A-Z]{3}")   public String getCurrency() {
     return currency;
   }
 
@@ -186,8 +193,9 @@ public class AccountReference   {
    * @return cashAccountType
    **/
   @Schema(description = "ExternalCashAccountType1Code from ISO 20022. ")
+  @JsonProperty("cashAccountType")
 
-    public String getCashAccountType() {
+  public String getCashAccountType() {
     return cashAccountType;
   }
 

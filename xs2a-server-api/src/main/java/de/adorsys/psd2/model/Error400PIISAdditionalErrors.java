@@ -13,7 +13,7 @@ import java.util.Objects;
  */
 @Schema(description = "This is a data element to support the declaration of additional errors in the context of [RFC7807].")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-09-19T16:45:22.884087+03:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-10-25T13:15:56.196839+03:00[Europe/Kiev]")
 
 
 public class Error400PIISAdditionalErrors   {
@@ -36,8 +36,9 @@ public class Error400PIISAdditionalErrors   {
    * @return title
    **/
   @Schema(description = "Short human readable description of error type.  Could be in local language.  To be provided by ASPSPs. ")
+  @JsonProperty("title")
 
-  @Size(max=70)   public String getTitle() {
+@Size(max=70)   public String getTitle() {
     return title;
   }
 
@@ -55,8 +56,9 @@ public class Error400PIISAdditionalErrors   {
    * @return detail
    **/
   @Schema(description = "Detailed human readable text specific to this instance of the error.  XPath might be used to point to the issue generating the error in addition. Remark for Future: In future, a dedicated field might be introduced for the XPath. ")
+  @JsonProperty("detail")
 
-  @Size(max=500)   public String getDetail() {
+@Size(max=500)   public String getDetail() {
     return detail;
   }
 
@@ -74,9 +76,10 @@ public class Error400PIISAdditionalErrors   {
    * @return code
    **/
   @Schema(required = true, description = "Message codes defined for PIIS for HTTP Error code 400 (BAD_REQUEST).")
-      @NotNull
+  @JsonProperty("code")
+    @NotNull
 
-    public String getCode() {
+  public String getCode() {
     return code;
   }
 

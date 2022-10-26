@@ -12,7 +12,7 @@ import java.util.Objects;
  */
 @Schema(description = "Content of the body of an authorisation confirmation request ")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-09-19T16:45:22.884087+03:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-10-25T13:15:56.196839+03:00[Europe/Kiev]")
 
 
 public class AuthorisationConfirmation   {
@@ -29,9 +29,10 @@ public class AuthorisationConfirmation   {
    * @return confirmationCode
    **/
   @Schema(required = true, description = "Confirmation Code as retrieved by the TPP from the redirect based SCA process.")
-      @NotNull
+  @JsonProperty("confirmationCode")
+    @NotNull
 
-    public String getConfirmationCode() {
+  public String getConfirmationCode() {
     return confirmationCode;
   }
 

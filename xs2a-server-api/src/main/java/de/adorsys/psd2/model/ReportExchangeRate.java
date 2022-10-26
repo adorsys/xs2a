@@ -16,7 +16,7 @@ import java.util.Objects;
  */
 @Schema(description = "Exchange Rate.")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-09-19T16:45:22.884087+03:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-10-25T13:15:56.196839+03:00[Europe/Kiev]")
 
 
 public class ReportExchangeRate   {
@@ -48,9 +48,10 @@ public class ReportExchangeRate   {
    * @return sourceCurrency
    **/
   @Schema(example = "EUR", required = true, description = "ISO 4217 Alpha 3 currency code. ")
-      @NotNull
+  @JsonProperty("sourceCurrency")
+    @NotNull
 
-  @Pattern(regexp="[A-Z]{3}")   public String getSourceCurrency() {
+@Pattern(regexp="[A-Z]{3}")   public String getSourceCurrency() {
     return sourceCurrency;
   }
 
@@ -68,9 +69,10 @@ public class ReportExchangeRate   {
    * @return exchangeRate
    **/
   @Schema(required = true, description = "")
-      @NotNull
+  @JsonProperty("exchangeRate")
+    @NotNull
 
-    public String getExchangeRate() {
+  public String getExchangeRate() {
     return exchangeRate;
   }
 
@@ -88,9 +90,10 @@ public class ReportExchangeRate   {
    * @return unitCurrency
    **/
   @Schema(example = "EUR", required = true, description = "ISO 4217 Alpha 3 currency code. ")
-      @NotNull
+  @JsonProperty("unitCurrency")
+    @NotNull
 
-  @Pattern(regexp="[A-Z]{3}")   public String getUnitCurrency() {
+@Pattern(regexp="[A-Z]{3}")   public String getUnitCurrency() {
     return unitCurrency;
   }
 
@@ -108,9 +111,10 @@ public class ReportExchangeRate   {
    * @return targetCurrency
    **/
   @Schema(example = "EUR", required = true, description = "ISO 4217 Alpha 3 currency code. ")
-      @NotNull
+  @JsonProperty("targetCurrency")
+    @NotNull
 
-  @Pattern(regexp="[A-Z]{3}")   public String getTargetCurrency() {
+@Pattern(regexp="[A-Z]{3}")   public String getTargetCurrency() {
     return targetCurrency;
   }
 
@@ -128,10 +132,11 @@ public class ReportExchangeRate   {
    * @return quotationDate
    **/
   @Schema(required = true, description = "")
-      @NotNull
+  @JsonProperty("quotationDate")
+    @NotNull
 
-    @Valid
-    public LocalDate getQuotationDate() {
+  @Valid
+  public LocalDate getQuotationDate() {
     return quotationDate;
   }
 
@@ -149,8 +154,9 @@ public class ReportExchangeRate   {
    * @return contractIdentification
    **/
   @Schema(description = "")
+  @JsonProperty("contractIdentification")
 
-  @Size(max=35)   public String getContractIdentification() {
+@Size(max=35)   public String getContractIdentification() {
     return contractIdentification;
   }
 

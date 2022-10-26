@@ -13,7 +13,7 @@ import java.util.Objects;
  * TppMessage405PIS
  */
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-09-19T16:45:22.884087+03:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-10-25T13:15:56.196839+03:00[Europe/Kiev]")
 
 
 public class TppMessage405PIS   {
@@ -39,10 +39,11 @@ public class TppMessage405PIS   {
    * @return category
    **/
   @Schema(required = true, description = "")
-      @NotNull
+  @JsonProperty("category")
+    @NotNull
 
-    @Valid
-    public TppMessageCategory getCategory() {
+  @Valid
+  public TppMessageCategory getCategory() {
     return category;
   }
 
@@ -60,9 +61,10 @@ public class TppMessage405PIS   {
    * @return code
    **/
   @Schema(required = true, description = "Message codes defined for payment cancelations PIS for HTTP Error code 405 (METHOD NOT ALLOWED).")
-      @NotNull
+  @JsonProperty("code")
+    @NotNull
 
-    public String getCode() {
+  public String getCode() {
     return code;
   }
 
@@ -80,8 +82,9 @@ public class TppMessage405PIS   {
    * @return path
    **/
   @Schema(description = "")
+  @JsonProperty("path")
 
-    public String getPath() {
+  public String getPath() {
     return path;
   }
 
@@ -99,8 +102,9 @@ public class TppMessage405PIS   {
    * @return text
    **/
   @Schema(description = "Additional explaining text to the TPP.")
+  @JsonProperty("text")
 
-  @Size(max=500)   public String getText() {
+@Size(max=500)   public String getText() {
     return text;
   }
 

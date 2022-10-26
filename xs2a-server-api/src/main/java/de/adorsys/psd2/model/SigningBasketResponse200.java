@@ -13,7 +13,7 @@ import java.util.Objects;
  */
 @Schema(description = "Body of the JSON response for a successful get signing basket request.    * 'payments': payment initiations which shall be authorised through this signing basket.   * 'consents': consent objects which shall be authorised through this signing basket.   * 'transactionStatus': Only the codes RCVD, ACTC, RJCT are used.   * '_links': The ASPSP might integrate hyperlinks to indicate next (authorisation) steps to be taken. ")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-09-19T16:45:22.884087+03:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-10-25T13:15:56.196839+03:00[Europe/Kiev]")
 
 
 public class SigningBasketResponse200   {
@@ -39,9 +39,10 @@ public class SigningBasketResponse200   {
    * @return payments
    **/
   @Schema(description = "")
+  @JsonProperty("payments")
 
-    @Valid
-    public PaymentIdList getPayments() {
+  @Valid
+  public PaymentIdList getPayments() {
     return payments;
   }
 
@@ -59,9 +60,10 @@ public class SigningBasketResponse200   {
    * @return consents
    **/
   @Schema(description = "")
+  @JsonProperty("consents")
 
-    @Valid
-    public ConsentIdList getConsents() {
+  @Valid
+  public ConsentIdList getConsents() {
     return consents;
   }
 
@@ -79,10 +81,11 @@ public class SigningBasketResponse200   {
    * @return transactionStatus
    **/
   @Schema(required = true, description = "")
-      @NotNull
+  @JsonProperty("transactionStatus")
+    @NotNull
 
-    @Valid
-    public TransactionStatusSBS getTransactionStatus() {
+  @Valid
+  public TransactionStatusSBS getTransactionStatus() {
     return transactionStatus;
   }
 
@@ -100,9 +103,10 @@ public class SigningBasketResponse200   {
    * @return _links
    **/
   @Schema(description = "")
+  @JsonProperty("_links")
 
-    @Valid
-    public LinksSigningBasket getLinks() {
+  @Valid
+  public LinksSigningBasket getLinks() {
     return _links;
   }
 

@@ -13,7 +13,7 @@ import java.util.Objects;
  */
 @Schema(description = "Structured remittance information. ")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-09-19T16:45:22.884087+03:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-10-25T13:15:56.196839+03:00[Europe/Kiev]")
 
 
 public class RemittanceInformationStructured   {
@@ -36,9 +36,10 @@ public class RemittanceInformationStructured   {
    * @return reference
    **/
   @Schema(required = true, description = "")
-      @NotNull
+  @JsonProperty("reference")
+    @NotNull
 
-  @Size(max=35)   public String getReference() {
+@Size(max=35)   public String getReference() {
     return reference;
   }
 
@@ -56,8 +57,9 @@ public class RemittanceInformationStructured   {
    * @return referenceType
    **/
   @Schema(description = "")
+  @JsonProperty("referenceType")
 
-  @Size(max=35)   public String getReferenceType() {
+@Size(max=35)   public String getReferenceType() {
     return referenceType;
   }
 
@@ -75,8 +77,9 @@ public class RemittanceInformationStructured   {
    * @return referenceIssuer
    **/
   @Schema(description = "")
+  @JsonProperty("referenceIssuer")
 
-  @Size(max=35)   public String getReferenceIssuer() {
+@Size(max=35)   public String getReferenceIssuer() {
     return referenceIssuer;
   }
 

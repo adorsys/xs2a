@@ -17,7 +17,7 @@ import java.util.Objects;
  */
 @Schema(description = "Transaction details.")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-09-19T16:45:22.884087+03:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-10-25T13:15:56.196839+03:00[Europe/Kiev]")
 
 
 public class Transactions   {
@@ -127,8 +127,9 @@ public class Transactions   {
    * @return transactionId
    **/
   @Schema(example = "3dc3d5b3-7023-4848-9853-f5400a64e80f", description = "This identification is given by the attribute transactionId of the corresponding entry of a transaction list. ")
+  @JsonProperty("transactionId")
 
-    public String getTransactionId() {
+  public String getTransactionId() {
     return transactionId;
   }
 
@@ -146,8 +147,9 @@ public class Transactions   {
    * @return entryReference
    **/
   @Schema(description = "Is the identification of the transaction as used e.g. for reference for deltafunction on application level. The same identification as for example used within camt.05x messages. ")
+  @JsonProperty("entryReference")
 
-  @Size(max=35)   public String getEntryReference() {
+@Size(max=35)   public String getEntryReference() {
     return entryReference;
   }
 
@@ -165,8 +167,9 @@ public class Transactions   {
    * @return endToEndId
    **/
   @Schema(description = "Unique end to end identity.")
+  @JsonProperty("endToEndId")
 
-  @Size(max=35)   public String getEndToEndId() {
+@Size(max=35)   public String getEndToEndId() {
     return endToEndId;
   }
 
@@ -184,8 +187,9 @@ public class Transactions   {
    * @return batchIndicator
    **/
   @Schema(description = "If this indicator equals true, then the related entry is a batch entry. ")
+  @JsonProperty("batchIndicator")
 
-    public Boolean isBatchIndicator() {
+  public Boolean isBatchIndicator() {
     return batchIndicator;
   }
 
@@ -203,8 +207,9 @@ public class Transactions   {
    * @return batchNumberOfTransactions
    **/
   @Schema(description = "Shall be used if and only if the batchIndicator is contained and equals true. ")
+  @JsonProperty("batchNumberOfTransactions")
 
-    public Integer getBatchNumberOfTransactions() {
+  public Integer getBatchNumberOfTransactions() {
     return batchNumberOfTransactions;
   }
 
@@ -222,8 +227,9 @@ public class Transactions   {
    * @return mandateId
    **/
   @Schema(description = "Identification of Mandates, e.g. a SEPA Mandate ID.")
+  @JsonProperty("mandateId")
 
-  @Size(max=35)   public String getMandateId() {
+@Size(max=35)   public String getMandateId() {
     return mandateId;
   }
 
@@ -241,8 +247,9 @@ public class Transactions   {
    * @return checkId
    **/
   @Schema(description = "Identification of a Cheque.")
+  @JsonProperty("checkId")
 
-  @Size(max=35)   public String getCheckId() {
+@Size(max=35)   public String getCheckId() {
     return checkId;
   }
 
@@ -260,8 +267,9 @@ public class Transactions   {
    * @return creditorId
    **/
   @Schema(example = "Creditor Id 5678", description = "Identification of Creditors, e.g. a SEPA Creditor ID.")
+  @JsonProperty("creditorId")
 
-  @Size(max=35)   public String getCreditorId() {
+@Size(max=35)   public String getCreditorId() {
     return creditorId;
   }
 
@@ -279,9 +287,10 @@ public class Transactions   {
    * @return bookingDate
    **/
   @Schema(description = "The date when an entry is posted to an account on the ASPSPs books. ")
+  @JsonProperty("bookingDate")
 
-    @Valid
-    public LocalDate getBookingDate() {
+  @Valid
+  public LocalDate getBookingDate() {
     return bookingDate;
   }
 
@@ -299,9 +308,10 @@ public class Transactions   {
    * @return valueDate
    **/
   @Schema(description = "The Date at which assets become available to the account owner in case of a credit, or cease to be available to the account owner in case of a debit entry. **Usage:** If entry status is pending and value date is present, then the value date refers to an expected/requested value date.")
+  @JsonProperty("valueDate")
 
-    @Valid
-    public LocalDate getValueDate() {
+  @Valid
+  public LocalDate getValueDate() {
     return valueDate;
   }
 
@@ -319,10 +329,11 @@ public class Transactions   {
    * @return transactionAmount
    **/
   @Schema(required = true, description = "")
-      @NotNull
+  @JsonProperty("transactionAmount")
+    @NotNull
 
-    @Valid
-    public Amount getTransactionAmount() {
+  @Valid
+  public Amount getTransactionAmount() {
     return transactionAmount;
   }
 
@@ -340,9 +351,10 @@ public class Transactions   {
    * @return currencyExchange
    **/
   @Schema(description = "")
+  @JsonProperty("currencyExchange")
 
-    @Valid
-    public ReportExchangeRateList getCurrencyExchange() {
+  @Valid
+  public ReportExchangeRateList getCurrencyExchange() {
     return currencyExchange;
   }
 
@@ -360,8 +372,9 @@ public class Transactions   {
    * @return creditorName
    **/
   @Schema(example = "Creditor Name", description = "Creditor name.")
+  @JsonProperty("creditorName")
 
-  @Size(max=70)   public String getCreditorName() {
+@Size(max=70)   public String getCreditorName() {
     return creditorName;
   }
 
@@ -379,9 +392,10 @@ public class Transactions   {
    * @return creditorAccount
    **/
   @Schema(description = "")
+  @JsonProperty("creditorAccount")
 
-    @Valid
-    public AccountReference getCreditorAccount() {
+  @Valid
+  public AccountReference getCreditorAccount() {
     return creditorAccount;
   }
 
@@ -399,8 +413,9 @@ public class Transactions   {
    * @return creditorAgent
    **/
   @Schema(example = "AAAADEBBXXX", description = "BICFI ")
+  @JsonProperty("creditorAgent")
 
-  @Pattern(regexp="[A-Z]{6,6}[A-Z2-9][A-NP-Z0-9]([A-Z0-9]{3,3}){0,1}")   public String getCreditorAgent() {
+@Pattern(regexp="[A-Z]{6,6}[A-Z2-9][A-NP-Z0-9]([A-Z0-9]{3,3}){0,1}")   public String getCreditorAgent() {
     return creditorAgent;
   }
 
@@ -418,8 +433,9 @@ public class Transactions   {
    * @return ultimateCreditor
    **/
   @Schema(example = "Ultimate Creditor", description = "Ultimate creditor.")
+  @JsonProperty("ultimateCreditor")
 
-  @Size(max=70)   public String getUltimateCreditor() {
+@Size(max=70)   public String getUltimateCreditor() {
     return ultimateCreditor;
   }
 
@@ -437,8 +453,9 @@ public class Transactions   {
    * @return debtorName
    **/
   @Schema(example = "Debtor Name", description = "Debtor name.")
+  @JsonProperty("debtorName")
 
-  @Size(max=70)   public String getDebtorName() {
+@Size(max=70)   public String getDebtorName() {
     return debtorName;
   }
 
@@ -456,9 +473,10 @@ public class Transactions   {
    * @return debtorAccount
    **/
   @Schema(description = "")
+  @JsonProperty("debtorAccount")
 
-    @Valid
-    public AccountReference getDebtorAccount() {
+  @Valid
+  public AccountReference getDebtorAccount() {
     return debtorAccount;
   }
 
@@ -476,8 +494,9 @@ public class Transactions   {
    * @return debtorAgent
    **/
   @Schema(example = "AAAADEBBXXX", description = "BICFI ")
+  @JsonProperty("debtorAgent")
 
-  @Pattern(regexp="[A-Z]{6,6}[A-Z2-9][A-NP-Z0-9]([A-Z0-9]{3,3}){0,1}")   public String getDebtorAgent() {
+@Pattern(regexp="[A-Z]{6,6}[A-Z2-9][A-NP-Z0-9]([A-Z0-9]{3,3}){0,1}")   public String getDebtorAgent() {
     return debtorAgent;
   }
 
@@ -495,8 +514,9 @@ public class Transactions   {
    * @return ultimateDebtor
    **/
   @Schema(example = "Ultimate Debtor", description = "Ultimate debtor.")
+  @JsonProperty("ultimateDebtor")
 
-  @Size(max=70)   public String getUltimateDebtor() {
+@Size(max=70)   public String getUltimateDebtor() {
     return ultimateDebtor;
   }
 
@@ -514,8 +534,9 @@ public class Transactions   {
    * @return remittanceInformationUnstructured
    **/
   @Schema(example = "Ref Number Merchant", description = "Unstructured remittance information. ")
+  @JsonProperty("remittanceInformationUnstructured")
 
-  @Size(max=140)   public String getRemittanceInformationUnstructured() {
+@Size(max=140)   public String getRemittanceInformationUnstructured() {
     return remittanceInformationUnstructured;
   }
 
@@ -533,9 +554,10 @@ public class Transactions   {
    * @return remittanceInformationUnstructuredArray
    **/
   @Schema(description = "")
+  @JsonProperty("remittanceInformationUnstructuredArray")
 
-    @Valid
-    public RemittanceInformationUnstructuredArray getRemittanceInformationUnstructuredArray() {
+  @Valid
+  public RemittanceInformationUnstructuredArray getRemittanceInformationUnstructuredArray() {
     return remittanceInformationUnstructuredArray;
   }
 
@@ -553,9 +575,10 @@ public class Transactions   {
    * @return remittanceInformationStructured
    **/
   @Schema(description = "")
+  @JsonProperty("remittanceInformationStructured")
 
-    @Valid
-    public RemittanceInformationStructuredMax140 getRemittanceInformationStructured() {
+  @Valid
+  public RemittanceInformationStructuredMax140 getRemittanceInformationStructured() {
     return remittanceInformationStructured;
   }
 
@@ -573,9 +596,10 @@ public class Transactions   {
    * @return remittanceInformationStructuredArray
    **/
   @Schema(description = "")
+  @JsonProperty("remittanceInformationStructuredArray")
 
-    @Valid
-    public RemittanceInformationStructuredArray getRemittanceInformationStructuredArray() {
+  @Valid
+  public RemittanceInformationStructuredArray getRemittanceInformationStructuredArray() {
     return remittanceInformationStructuredArray;
   }
 
@@ -593,9 +617,10 @@ public class Transactions   {
    * @return entryDetails
    **/
   @Schema(description = "")
+  @JsonProperty("entryDetails")
 
-    @Valid
-    public EntryDetails getEntryDetails() {
+  @Valid
+  public EntryDetails getEntryDetails() {
     return entryDetails;
   }
 
@@ -613,8 +638,9 @@ public class Transactions   {
    * @return additionalInformation
    **/
   @Schema(example = "Some additional transaction related information.", description = "Might be used by the ASPSP to transport additional transaction related information to the PSU ")
+  @JsonProperty("additionalInformation")
 
-  @Size(max=500)   public String getAdditionalInformation() {
+@Size(max=500)   public String getAdditionalInformation() {
     return additionalInformation;
   }
 
@@ -632,9 +658,10 @@ public class Transactions   {
    * @return additionalInformationStructured
    **/
   @Schema(description = "")
+  @JsonProperty("additionalInformationStructured")
 
-    @Valid
-    public AdditionalInformationStructured getAdditionalInformationStructured() {
+  @Valid
+  public AdditionalInformationStructured getAdditionalInformationStructured() {
     return additionalInformationStructured;
   }
 
@@ -652,9 +679,10 @@ public class Transactions   {
    * @return purposeCode
    **/
   @Schema(description = "")
+  @JsonProperty("purposeCode")
 
-    @Valid
-    public PurposeCode getPurposeCode() {
+  @Valid
+  public PurposeCode getPurposeCode() {
     return purposeCode;
   }
 
@@ -672,8 +700,9 @@ public class Transactions   {
    * @return bankTransactionCode
    **/
   @Schema(example = "PMNT-RDDT-ESDD", description = "Bank transaction code as used by the ASPSP and using the sub elements of this structured code defined by ISO 20022.   This code type is concatenating the three ISO20022 Codes    * Domain Code,    * Family Code, and    * SubFamily Code  by hyphens, resulting in 'DomainCode'-'FamilyCode'-'SubFamilyCode'. For standing order reports the following codes are applicable:   * \"PMNT-ICDT-STDO\" for credit transfers,   * \"PMNT-IRCT-STDO\"  for instant credit transfers   * \"PMNT-ICDT-XBST\" for cross-border credit transfers   * \"PMNT-IRCT-XBST\" for cross-border real time credit transfers and   * \"PMNT-MCOP-OTHR\" for specific standing orders which have a dynamical amount to move left funds e.g. on month end to a saving account ")
+  @JsonProperty("bankTransactionCode")
 
-    public String getBankTransactionCode() {
+  public String getBankTransactionCode() {
     return bankTransactionCode;
   }
 
@@ -691,8 +720,9 @@ public class Transactions   {
    * @return proprietaryBankTransactionCode
    **/
   @Schema(description = "Proprietary bank transaction code as used within a community or within an ASPSP e.g.  for MT94x based transaction reports. ")
+  @JsonProperty("proprietaryBankTransactionCode")
 
-  @Size(max=35)   public String getProprietaryBankTransactionCode() {
+@Size(max=35)   public String getProprietaryBankTransactionCode() {
     return proprietaryBankTransactionCode;
   }
 
@@ -710,9 +740,10 @@ public class Transactions   {
    * @return balanceAfterTransaction
    **/
   @Schema(description = "")
+  @JsonProperty("balanceAfterTransaction")
 
-    @Valid
-    public Balance getBalanceAfterTransaction() {
+  @Valid
+  public Balance getBalanceAfterTransaction() {
     return balanceAfterTransaction;
   }
 
@@ -730,9 +761,10 @@ public class Transactions   {
    * @return _links
    **/
   @Schema(description = "")
+  @JsonProperty("_links")
 
-    @Valid
-    public Map getLinks() {
+  @Valid
+  public Map getLinks() {
     return _links;
   }
 

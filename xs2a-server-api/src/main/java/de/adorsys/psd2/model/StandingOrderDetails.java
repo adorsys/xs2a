@@ -6,7 +6,6 @@ import org.springframework.validation.annotation.Validated;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
 import java.time.LocalDate;
 import java.util.Objects;
 
@@ -15,7 +14,7 @@ import java.util.Objects;
  */
 @Schema(description = "Details of underlying standing orders. ")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-09-19T16:45:22.884087+03:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-10-25T13:15:56.196839+03:00[Europe/Kiev]")
 
 
 public class StandingOrderDetails   {
@@ -56,10 +55,11 @@ public class StandingOrderDetails   {
    * @return startDate
    **/
   @Schema(required = true, description = "The first applicable day of execution starting from this date is the first payment. ")
-      @NotNull
+  @JsonProperty("startDate")
+    @NotNull
 
-    @Valid
-    public LocalDate getStartDate() {
+  @Valid
+  public LocalDate getStartDate() {
     return startDate;
   }
 
@@ -77,10 +77,11 @@ public class StandingOrderDetails   {
    * @return frequency
    **/
   @Schema(required = true, description = "")
-      @NotNull
+  @JsonProperty("frequency")
+    @NotNull
 
-    @Valid
-    public FrequencyCode getFrequency() {
+  @Valid
+  public FrequencyCode getFrequency() {
     return frequency;
   }
 
@@ -98,9 +99,10 @@ public class StandingOrderDetails   {
    * @return endDate
    **/
   @Schema(description = "The last applicable day of execution. If not given, it is an infinite standing order. ")
+  @JsonProperty("endDate")
 
-    @Valid
-    public LocalDate getEndDate() {
+  @Valid
+  public LocalDate getEndDate() {
     return endDate;
   }
 
@@ -118,9 +120,10 @@ public class StandingOrderDetails   {
    * @return executionRule
    **/
   @Schema(description = "")
+  @JsonProperty("executionRule")
 
-    @Valid
-    public ExecutionRule getExecutionRule() {
+  @Valid
+  public ExecutionRule getExecutionRule() {
     return executionRule;
   }
 
@@ -138,8 +141,9 @@ public class StandingOrderDetails   {
    * @return withinAMonthFlag
    **/
   @Schema(description = "This element is only used in case of frequency equals \"Monthly\".  If this element equals false it has no effect. If this element equals true, then the execution rule is overruled if the day of execution would fall into a different month using the execution rule.  Example: executionRule equals \"preceding\", dayOfExecution equals \"02\" and the second of a month is a Sunday.  In this case, the transaction date would be on the last day of the month before.  This would be overruled if withinAMonthFlag equals true and the payment is processed on Monday the third of the Month. Remark: This attribute is rarely supported in the market. ")
+  @JsonProperty("withinAMonthFlag")
 
-    public Boolean isWithinAMonthFlag() {
+  public Boolean isWithinAMonthFlag() {
     return withinAMonthFlag;
   }
 
@@ -157,9 +161,10 @@ public class StandingOrderDetails   {
    * @return monthsOfExecution
    **/
   @Schema(description = "")
+  @JsonProperty("monthsOfExecution")
 
-    @Valid
-    public MonthsOfExecution getMonthsOfExecution() {
+  @Valid
+  public MonthsOfExecution getMonthsOfExecution() {
     return monthsOfExecution;
   }
 
@@ -177,8 +182,9 @@ public class StandingOrderDetails   {
    * @return multiplicator
    **/
   @Schema(description = "This is multiplying the given frequency resulting the exact frequency, e.g. Frequency=weekly and multiplicator=3 means every 3 weeks. Remark: This attribute is rarely supported in the market. ")
+  @JsonProperty("multiplicator")
 
-    public Integer getMultiplicator() {
+  public Integer getMultiplicator() {
     return multiplicator;
   }
 
@@ -196,9 +202,10 @@ public class StandingOrderDetails   {
    * @return dayOfExecution
    **/
   @Schema(description = "")
+  @JsonProperty("dayOfExecution")
 
-    @Valid
-  @Size(max=2)   public DayOfExecution getDayOfExecution() {
+  @Valid
+  public DayOfExecution getDayOfExecution() {
     return dayOfExecution;
   }
 
@@ -216,9 +223,10 @@ public class StandingOrderDetails   {
    * @return limitAmount
    **/
   @Schema(description = "")
+  @JsonProperty("limitAmount")
 
-    @Valid
-    public Amount getLimitAmount() {
+  @Valid
+  public Amount getLimitAmount() {
     return limitAmount;
   }
 

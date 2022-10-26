@@ -15,7 +15,7 @@ import java.util.Objects;
  */
 @Schema(description = "Body of the JSON response for a successful update PSU authentication request.")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-09-19T16:45:22.884087+03:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-10-25T13:15:56.196839+03:00[Europe/Kiev]")
 
 
 public class UpdatePsuAuthenticationResponse   {
@@ -62,9 +62,10 @@ public class UpdatePsuAuthenticationResponse   {
    * @return transactionFees
    **/
   @Schema(description = "")
+  @JsonProperty("transactionFees")
 
-    @Valid
-    public Amount getTransactionFees() {
+  @Valid
+  public Amount getTransactionFees() {
     return transactionFees;
   }
 
@@ -82,9 +83,10 @@ public class UpdatePsuAuthenticationResponse   {
    * @return currencyConversionFees
    **/
   @Schema(description = "")
+  @JsonProperty("currencyConversionFees")
 
-    @Valid
-    public Amount getCurrencyConversionFees() {
+  @Valid
+  public Amount getCurrencyConversionFees() {
     return currencyConversionFees;
   }
 
@@ -102,9 +104,10 @@ public class UpdatePsuAuthenticationResponse   {
    * @return estimatedTotalAmount
    **/
   @Schema(description = "")
+  @JsonProperty("estimatedTotalAmount")
 
-    @Valid
-    public Amount getEstimatedTotalAmount() {
+  @Valid
+  public Amount getEstimatedTotalAmount() {
     return estimatedTotalAmount;
   }
 
@@ -122,9 +125,10 @@ public class UpdatePsuAuthenticationResponse   {
    * @return estimatedInterbankSettlementAmount
    **/
   @Schema(description = "")
+  @JsonProperty("estimatedInterbankSettlementAmount")
 
-    @Valid
-    public Amount getEstimatedInterbankSettlementAmount() {
+  @Valid
+  public Amount getEstimatedInterbankSettlementAmount() {
     return estimatedInterbankSettlementAmount;
   }
 
@@ -142,9 +146,10 @@ public class UpdatePsuAuthenticationResponse   {
    * @return chosenScaMethod
    **/
   @Schema(description = "")
+  @JsonProperty("chosenScaMethod")
 
-    @Valid
-    public ChosenScaMethod getChosenScaMethod() {
+  @Valid
+  public ChosenScaMethod getChosenScaMethod() {
     return chosenScaMethod;
   }
 
@@ -162,9 +167,10 @@ public class UpdatePsuAuthenticationResponse   {
    * @return challengeData
    **/
   @Schema(description = "")
+  @JsonProperty("challengeData")
 
-    @Valid
-    public ChallengeData getChallengeData() {
+  @Valid
+  public ChallengeData getChallengeData() {
     return challengeData;
   }
 
@@ -182,9 +188,10 @@ public class UpdatePsuAuthenticationResponse   {
    * @return scaMethods
    **/
   @Schema(description = "")
+  @JsonProperty("scaMethods")
 
-    @Valid
-    public ScaMethods getScaMethods() {
+  @Valid
+  public ScaMethods getScaMethods() {
     return scaMethods;
   }
 
@@ -202,9 +209,10 @@ public class UpdatePsuAuthenticationResponse   {
    * @return _links
    **/
   @Schema(description = "")
+  @JsonProperty("_links")
 
-    @Valid
-    public Map getLinks() {
+  @Valid
+  public Map getLinks() {
     return _links;
   }
 
@@ -222,10 +230,11 @@ public class UpdatePsuAuthenticationResponse   {
    * @return scaStatus
    **/
   @Schema(required = true, description = "")
-      @NotNull
+  @JsonProperty("scaStatus")
+    @NotNull
 
-    @Valid
-    public ScaStatus getScaStatus() {
+  @Valid
+  public ScaStatus getScaStatus() {
     return scaStatus;
   }
 
@@ -243,8 +252,9 @@ public class UpdatePsuAuthenticationResponse   {
    * @return psuMessage
    **/
   @Schema(description = "Text to be displayed to the PSU.")
+  @JsonProperty("psuMessage")
 
-  @Size(max=500)   public String getPsuMessage() {
+@Size(max=500)   public String getPsuMessage() {
     return psuMessage;
   }
 
@@ -262,8 +272,9 @@ public class UpdatePsuAuthenticationResponse   {
    * @return authorisationId
    **/
   @Schema(example = "123auth456", description = "Resource identification of the related SCA.")
+  @JsonProperty("authorisationId")
 
-    public String getAuthorisationId() {
+  public String getAuthorisationId() {
     return authorisationId;
   }
 

@@ -17,7 +17,7 @@ import java.util.Objects;
  */
 @Schema(description = "Body of the JSON response for a successful consent request.")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-09-19T16:45:22.884087+03:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-10-25T13:15:56.196839+03:00[Europe/Kiev]")
 
 
 public class ConsentsResponse201   {
@@ -59,10 +59,11 @@ public class ConsentsResponse201   {
    * @return consentStatus
    **/
   @Schema(required = true, description = "")
-      @NotNull
+  @JsonProperty("consentStatus")
+    @NotNull
 
-    @Valid
-    public ConsentStatus getConsentStatus() {
+  @Valid
+  public ConsentStatus getConsentStatus() {
     return consentStatus;
   }
 
@@ -80,9 +81,10 @@ public class ConsentsResponse201   {
    * @return consentId
    **/
   @Schema(required = true, description = "ID of the corresponding consent object as returned by an account information consent request. ")
-      @NotNull
+  @JsonProperty("consentId")
+    @NotNull
 
-    public String getConsentId() {
+  public String getConsentId() {
     return consentId;
   }
 
@@ -100,9 +102,10 @@ public class ConsentsResponse201   {
    * @return scaMethods
    **/
   @Schema(description = "")
+  @JsonProperty("scaMethods")
 
-    @Valid
-    public ScaMethods getScaMethods() {
+  @Valid
+  public ScaMethods getScaMethods() {
     return scaMethods;
   }
 
@@ -120,9 +123,10 @@ public class ConsentsResponse201   {
    * @return chosenScaMethod
    **/
   @Schema(description = "")
+  @JsonProperty("chosenScaMethod")
 
-    @Valid
-    public ChosenScaMethod getChosenScaMethod() {
+  @Valid
+  public ChosenScaMethod getChosenScaMethod() {
     return chosenScaMethod;
   }
 
@@ -140,9 +144,10 @@ public class ConsentsResponse201   {
    * @return challengeData
    **/
   @Schema(description = "")
+  @JsonProperty("challengeData")
 
-    @Valid
-    public ChallengeData getChallengeData() {
+  @Valid
+  public ChallengeData getChallengeData() {
     return challengeData;
   }
 
@@ -160,10 +165,11 @@ public class ConsentsResponse201   {
    * @return _links
    **/
   @Schema(required = true, description = "")
-      @NotNull
+  @JsonProperty("_links")
+    @NotNull
 
-    @Valid
-    public Map getLinks() {
+  @Valid
+  public Map getLinks() {
     return _links;
   }
 
@@ -181,8 +187,9 @@ public class ConsentsResponse201   {
    * @return psuMessage
    **/
   @Schema(description = "Text to be displayed to the PSU.")
+  @JsonProperty("psuMessage")
 
-  @Size(max=500)   public String getPsuMessage() {
+@Size(max=500)   public String getPsuMessage() {
     return psuMessage;
   }
 
@@ -208,8 +215,9 @@ public class ConsentsResponse201   {
    * @return tppMessages
    **/
   @Schema(description = "")
-      @Valid
-    public List<TppMessageGeneric> getTppMessages() {
+  @JsonProperty("tppMessages")
+    @Valid
+  public List<TppMessageGeneric> getTppMessages() {
     return tppMessages;
   }
 
@@ -227,9 +235,10 @@ public class ConsentsResponse201   {
    * @return scaStatus
    **/
   @Schema(description = "")
+  @JsonProperty("scaStatus")
 
-    @Valid
-    public ScaStatus getScaStatus() {
+  @Valid
+  public ScaStatus getScaStatus() {
     return scaStatus;
   }
 

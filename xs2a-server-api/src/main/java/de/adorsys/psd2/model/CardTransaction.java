@@ -17,7 +17,7 @@ import java.util.Objects;
  */
 @Schema(description = "Card transaction information.")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-09-19T16:45:22.884087+03:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-10-25T13:15:56.196839+03:00[Europe/Kiev]")
 
 
 public class CardTransaction   {
@@ -91,8 +91,9 @@ public class CardTransaction   {
    * @return cardTransactionId
    **/
   @Schema(description = "Unique end to end identity.")
+  @JsonProperty("cardTransactionId")
 
-  @Size(max=35)   public String getCardTransactionId() {
+@Size(max=35)   public String getCardTransactionId() {
     return cardTransactionId;
   }
 
@@ -110,8 +111,9 @@ public class CardTransaction   {
    * @return terminalId
    **/
   @Schema(description = "Identification of the Terminal, where the card has been used.")
+  @JsonProperty("terminalId")
 
-  @Size(max=35)   public String getTerminalId() {
+@Size(max=35)   public String getTerminalId() {
     return terminalId;
   }
 
@@ -129,9 +131,10 @@ public class CardTransaction   {
    * @return transactionDate
    **/
   @Schema(description = "Date of the actual card transaction.")
+  @JsonProperty("transactionDate")
 
-    @Valid
-    public LocalDate getTransactionDate() {
+  @Valid
+  public LocalDate getTransactionDate() {
     return transactionDate;
   }
 
@@ -149,9 +152,10 @@ public class CardTransaction   {
    * @return acceptorTransactionDateTime
    **/
   @Schema(description = "Timestamp of the actual card transaction within the acceptance system")
+  @JsonProperty("acceptorTransactionDateTime")
 
-    @Valid
-    public OffsetDateTime getAcceptorTransactionDateTime() {
+  @Valid
+  public OffsetDateTime getAcceptorTransactionDateTime() {
     return acceptorTransactionDateTime;
   }
 
@@ -169,9 +173,10 @@ public class CardTransaction   {
    * @return bookingDate
    **/
   @Schema(description = "The date when an entry is posted to an account on the ASPSPs books. ")
+  @JsonProperty("bookingDate")
 
-    @Valid
-    public LocalDate getBookingDate() {
+  @Valid
+  public LocalDate getBookingDate() {
     return bookingDate;
   }
 
@@ -189,9 +194,10 @@ public class CardTransaction   {
    * @return valueDate
    **/
   @Schema(description = "The Date at which assets become available to the account owner in case of a credit, or cease to be available to the account owner in case of a debit entry. For card transactions this is the payment due date of related booked transactions of a card.")
+  @JsonProperty("valueDate")
 
-    @Valid
-    public LocalDate getValueDate() {
+  @Valid
+  public LocalDate getValueDate() {
     return valueDate;
   }
 
@@ -209,10 +215,11 @@ public class CardTransaction   {
    * @return transactionAmount
    **/
   @Schema(required = true, description = "")
-      @NotNull
+  @JsonProperty("transactionAmount")
+    @NotNull
 
-    @Valid
-    public Amount getTransactionAmount() {
+  @Valid
+  public Amount getTransactionAmount() {
     return transactionAmount;
   }
 
@@ -230,9 +237,10 @@ public class CardTransaction   {
    * @return grandTotalAmount
    **/
   @Schema(description = "")
+  @JsonProperty("grandTotalAmount")
 
-    @Valid
-    public GrandTotalAmount getGrandTotalAmount() {
+  @Valid
+  public GrandTotalAmount getGrandTotalAmount() {
     return grandTotalAmount;
   }
 
@@ -250,9 +258,10 @@ public class CardTransaction   {
    * @return currencyExchange
    **/
   @Schema(description = "")
+  @JsonProperty("currencyExchange")
 
-    @Valid
-    public ReportExchangeRateList getCurrencyExchange() {
+  @Valid
+  public ReportExchangeRateList getCurrencyExchange() {
     return currencyExchange;
   }
 
@@ -270,9 +279,10 @@ public class CardTransaction   {
    * @return originalAmount
    **/
   @Schema(description = "")
+  @JsonProperty("originalAmount")
 
-    @Valid
-    public Amount getOriginalAmount() {
+  @Valid
+  public Amount getOriginalAmount() {
     return originalAmount;
   }
 
@@ -290,9 +300,10 @@ public class CardTransaction   {
    * @return markupFee
    **/
   @Schema(description = "")
+  @JsonProperty("markupFee")
 
-    @Valid
-    public Amount getMarkupFee() {
+  @Valid
+  public Amount getMarkupFee() {
     return markupFee;
   }
 
@@ -310,8 +321,9 @@ public class CardTransaction   {
    * @return markupFeePercentage
    **/
   @Schema(example = "0.3", description = "")
+  @JsonProperty("markupFeePercentage")
 
-    public String getMarkupFeePercentage() {
+  public String getMarkupFeePercentage() {
     return markupFeePercentage;
   }
 
@@ -329,8 +341,9 @@ public class CardTransaction   {
    * @return cardAcceptorId
    **/
   @Schema(description = "")
+  @JsonProperty("cardAcceptorId")
 
-  @Size(max=35)   public String getCardAcceptorId() {
+@Size(max=35)   public String getCardAcceptorId() {
     return cardAcceptorId;
   }
 
@@ -348,9 +361,10 @@ public class CardTransaction   {
    * @return cardAcceptorAddress
    **/
   @Schema(description = "")
+  @JsonProperty("cardAcceptorAddress")
 
-    @Valid
-    public Address getCardAcceptorAddress() {
+  @Valid
+  public Address getCardAcceptorAddress() {
     return cardAcceptorAddress;
   }
 
@@ -368,8 +382,9 @@ public class CardTransaction   {
    * @return cardAcceptorPhone
    **/
   @Schema(description = "Merchant phone number It consists of a \"+\" followed by the country code (from 1 to 3 characters) then a \"-\" and finally, any combination of numbers, \"(\", \")\", \"+\" and \"-\" (up to 30 characters). pattern according to ISO20022 \\+[0-9]{1,3}-[0-9()+\\-]{1,30} ")
+  @JsonProperty("cardAcceptorPhone")
 
-  @Pattern(regexp="\\+[0-9]{1,3}\\-[0-9()+\\-]{1,30}")   public String getCardAcceptorPhone() {
+@Pattern(regexp="\\+[0-9]{1,3}\\-[0-9()+\\-]{1,30}")   public String getCardAcceptorPhone() {
     return cardAcceptorPhone;
   }
 
@@ -387,8 +402,9 @@ public class CardTransaction   {
    * @return merchantCategoryCode
    **/
   @Schema(description = "Merchant category code.")
+  @JsonProperty("merchantCategoryCode")
 
-  @Size(min=4,max=4)   public String getMerchantCategoryCode() {
+@Size(min=4,max=4)   public String getMerchantCategoryCode() {
     return merchantCategoryCode;
   }
 
@@ -406,8 +422,9 @@ public class CardTransaction   {
    * @return maskedPAN
    **/
   @Schema(example = "123456xxxxxx1234", description = "Masked Primary Account Number. ")
+  @JsonProperty("maskedPAN")
 
-  @Size(max=35)   public String getMaskedPAN() {
+@Size(max=35)   public String getMaskedPAN() {
     return maskedPAN;
   }
 
@@ -425,8 +442,9 @@ public class CardTransaction   {
    * @return transactionDetails
    **/
   @Schema(description = "")
+  @JsonProperty("transactionDetails")
 
-  @Size(max=1000)   public String getTransactionDetails() {
+@Size(max=1000)   public String getTransactionDetails() {
     return transactionDetails;
   }
 
@@ -444,8 +462,9 @@ public class CardTransaction   {
    * @return invoiced
    **/
   @Schema(description = "")
+  @JsonProperty("invoiced")
 
-    public Boolean isInvoiced() {
+  public Boolean isInvoiced() {
     return invoiced;
   }
 
@@ -463,8 +482,9 @@ public class CardTransaction   {
    * @return proprietaryBankTransactionCode
    **/
   @Schema(description = "Proprietary bank transaction code as used within a community or within an ASPSP e.g.  for MT94x based transaction reports. ")
+  @JsonProperty("proprietaryBankTransactionCode")
 
-  @Size(max=35)   public String getProprietaryBankTransactionCode() {
+@Size(max=35)   public String getProprietaryBankTransactionCode() {
     return proprietaryBankTransactionCode;
   }
 

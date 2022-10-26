@@ -14,7 +14,7 @@ import java.util.Objects;
  */
 @Schema(description = "JSON Request body for the \"Confirmation of funds service\".  <table>  <tr>    <td>cardNumber</td>    <td>String </td>   <td>Optional</td>   <td>Card Number of the card issued by the PIISP. Should be delivered if available.</td> </tr>  <tr>   <td>account</td>   <td> Account Reference</td>   <td>Mandatory</td>   <td>PSU's account number.</td> </tr>  <tr>    <td>payee</td>   <td>Max70Text</td>   <td>Optional</td>   <td>The merchant where the card is accepted as an information to the PSU.</td> </tr>  <tr>   <td>instructedAmount</td>   <td>Amount</td>   <td>Mandatory</td>   <td>Transaction amount to be checked within the funds check mechanism.</td> </tr>  </table> ")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-09-19T16:45:22.884087+03:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-10-25T13:15:56.196839+03:00[Europe/Kiev]")
 
 
 public class ConfirmationOfFunds   {
@@ -40,8 +40,9 @@ public class ConfirmationOfFunds   {
    * @return cardNumber
    **/
   @Schema(description = "Card Number of the card issued by the PIISP.  Should be delivered if available. ")
+  @JsonProperty("cardNumber")
 
-  @Size(max=35)   public String getCardNumber() {
+@Size(max=35)   public String getCardNumber() {
     return cardNumber;
   }
 
@@ -59,10 +60,11 @@ public class ConfirmationOfFunds   {
    * @return account
    **/
   @Schema(required = true, description = "")
-      @NotNull
+  @JsonProperty("account")
+    @NotNull
 
-    @Valid
-    public AccountReference getAccount() {
+  @Valid
+  public AccountReference getAccount() {
     return account;
   }
 
@@ -80,8 +82,9 @@ public class ConfirmationOfFunds   {
    * @return payee
    **/
   @Schema(description = "Name payee.")
+  @JsonProperty("payee")
 
-  @Size(max=70)   public String getPayee() {
+@Size(max=70)   public String getPayee() {
     return payee;
   }
 
@@ -99,10 +102,11 @@ public class ConfirmationOfFunds   {
    * @return instructedAmount
    **/
   @Schema(required = true, description = "")
-      @NotNull
+  @JsonProperty("instructedAmount")
+    @NotNull
 
-    @Valid
-    public Amount getInstructedAmount() {
+  @Valid
+  public Amount getInstructedAmount() {
     return instructedAmount;
   }
 

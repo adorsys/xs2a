@@ -13,7 +13,7 @@ import java.util.Objects;
  */
 @Schema(description = "Body of the JSON response for a successful read transaction list request. This account report contains transactions resulting from the query parameters. ")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-09-19T16:45:22.884087+03:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-10-25T13:15:56.196839+03:00[Europe/Kiev]")
 
 
 public class TransactionsResponse200Json   {
@@ -39,9 +39,10 @@ public class TransactionsResponse200Json   {
    * @return account
    **/
   @Schema(description = "")
+  @JsonProperty("account")
 
-    @Valid
-    public AccountReference getAccount() {
+  @Valid
+  public AccountReference getAccount() {
     return account;
   }
 
@@ -59,9 +60,10 @@ public class TransactionsResponse200Json   {
    * @return transactions
    **/
   @Schema(description = "")
+  @JsonProperty("transactions")
 
-    @Valid
-    public AccountReport getTransactions() {
+  @Valid
+  public AccountReport getTransactions() {
     return transactions;
   }
 
@@ -79,9 +81,10 @@ public class TransactionsResponse200Json   {
    * @return balances
    **/
   @Schema(description = "")
+  @JsonProperty("balances")
 
-    @Valid
-    public BalanceList getBalances() {
+  @Valid
+  public BalanceList getBalances() {
     return balances;
   }
 
@@ -99,9 +102,10 @@ public class TransactionsResponse200Json   {
    * @return _links
    **/
   @Schema(description = "")
+  @JsonProperty("_links")
 
-    @Valid
-    public Map getLinks() {
+  @Valid
+  public Map getLinks() {
     return _links;
   }
 

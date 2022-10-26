@@ -18,7 +18,7 @@ import java.util.Objects;
  */
 @Schema(description = "Generic JSON response body consistion of the corresponding payment initiation JSON body together with an optional transaction status field. ")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-09-19T16:45:22.884087+03:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-10-25T13:15:56.196839+03:00[Europe/Kiev]")
 
 
 public class PaymentInitiationWithStatusResponse   {
@@ -93,8 +93,9 @@ public class PaymentInitiationWithStatusResponse   {
    * @return endToEndIdentification
    **/
   @Schema(description = "")
+  @JsonProperty("endToEndIdentification")
 
-  @Size(max=35)   public String getEndToEndIdentification() {
+@Size(max=35)   public String getEndToEndIdentification() {
     return endToEndIdentification;
   }
 
@@ -112,8 +113,9 @@ public class PaymentInitiationWithStatusResponse   {
    * @return instructionIdentification
    **/
   @Schema(description = "")
+  @JsonProperty("instructionIdentification")
 
-  @Size(max=35)   public String getInstructionIdentification() {
+@Size(max=35)   public String getInstructionIdentification() {
     return instructionIdentification;
   }
 
@@ -131,8 +133,9 @@ public class PaymentInitiationWithStatusResponse   {
    * @return debtorName
    **/
   @Schema(example = "Debtor Name", description = "Debtor name.")
+  @JsonProperty("debtorName")
 
-  @Size(max=70)   public String getDebtorName() {
+@Size(max=70)   public String getDebtorName() {
     return debtorName;
   }
 
@@ -150,10 +153,11 @@ public class PaymentInitiationWithStatusResponse   {
    * @return debtorAccount
    **/
   @Schema(required = true, description = "")
-      @NotNull
+  @JsonProperty("debtorAccount")
+    @NotNull
 
-    @Valid
-    public AccountReference getDebtorAccount() {
+  @Valid
+  public AccountReference getDebtorAccount() {
     return debtorAccount;
   }
 
@@ -171,8 +175,9 @@ public class PaymentInitiationWithStatusResponse   {
    * @return ultimateDebtor
    **/
   @Schema(example = "Ultimate Debtor", description = "Ultimate debtor.")
+  @JsonProperty("ultimateDebtor")
 
-  @Size(max=70)   public String getUltimateDebtor() {
+@Size(max=70)   public String getUltimateDebtor() {
     return ultimateDebtor;
   }
 
@@ -190,10 +195,11 @@ public class PaymentInitiationWithStatusResponse   {
    * @return instructedAmount
    **/
   @Schema(required = true, description = "")
-      @NotNull
+  @JsonProperty("instructedAmount")
+    @NotNull
 
-    @Valid
-    public Amount getInstructedAmount() {
+  @Valid
+  public Amount getInstructedAmount() {
     return instructedAmount;
   }
 
@@ -211,10 +217,11 @@ public class PaymentInitiationWithStatusResponse   {
    * @return creditorAccount
    **/
   @Schema(required = true, description = "")
-      @NotNull
+  @JsonProperty("creditorAccount")
+    @NotNull
 
-    @Valid
-    public AccountReference getCreditorAccount() {
+  @Valid
+  public AccountReference getCreditorAccount() {
     return creditorAccount;
   }
 
@@ -232,8 +239,9 @@ public class PaymentInitiationWithStatusResponse   {
    * @return creditorAgent
    **/
   @Schema(example = "AAAADEBBXXX", description = "BICFI ")
+  @JsonProperty("creditorAgent")
 
-  @Pattern(regexp="[A-Z]{6,6}[A-Z2-9][A-NP-Z0-9]([A-Z0-9]{3,3}){0,1}")   public String getCreditorAgent() {
+@Pattern(regexp="[A-Z]{6,6}[A-Z2-9][A-NP-Z0-9]([A-Z0-9]{3,3}){0,1}")   public String getCreditorAgent() {
     return creditorAgent;
   }
 
@@ -251,9 +259,10 @@ public class PaymentInitiationWithStatusResponse   {
    * @return creditorName
    **/
   @Schema(example = "Creditor Name", required = true, description = "Creditor name.")
-      @NotNull
+  @JsonProperty("creditorName")
+    @NotNull
 
-  @Size(max=70)   public String getCreditorName() {
+@Size(max=70)   public String getCreditorName() {
     return creditorName;
   }
 
@@ -271,9 +280,10 @@ public class PaymentInitiationWithStatusResponse   {
    * @return creditorAddress
    **/
   @Schema(description = "")
+  @JsonProperty("creditorAddress")
 
-    @Valid
-    public Address getCreditorAddress() {
+  @Valid
+  public Address getCreditorAddress() {
     return creditorAddress;
   }
 
@@ -291,8 +301,9 @@ public class PaymentInitiationWithStatusResponse   {
    * @return creditorId
    **/
   @Schema(description = "Identification of Creditors, e.g. a SEPA Creditor ID.")
+  @JsonProperty("creditorId")
 
-  @Size(max=35)   public String getCreditorId() {
+@Size(max=35)   public String getCreditorId() {
     return creditorId;
   }
 
@@ -310,8 +321,9 @@ public class PaymentInitiationWithStatusResponse   {
    * @return ultimateCreditor
    **/
   @Schema(example = "Ultimate Creditor", description = "Ultimate creditor.")
+  @JsonProperty("ultimateCreditor")
 
-  @Size(max=70)   public String getUltimateCreditor() {
+@Size(max=70)   public String getUltimateCreditor() {
     return ultimateCreditor;
   }
 
@@ -329,9 +341,10 @@ public class PaymentInitiationWithStatusResponse   {
    * @return purposeCode
    **/
   @Schema(description = "")
+  @JsonProperty("purposeCode")
 
-    @Valid
-    public PurposeCode getPurposeCode() {
+  @Valid
+  public PurposeCode getPurposeCode() {
     return purposeCode;
   }
 
@@ -349,9 +362,10 @@ public class PaymentInitiationWithStatusResponse   {
    * @return chargeBearer
    **/
   @Schema(description = "")
+  @JsonProperty("chargeBearer")
 
-    @Valid
-    public ChargeBearer getChargeBearer() {
+  @Valid
+  public ChargeBearer getChargeBearer() {
     return chargeBearer;
   }
 
@@ -369,8 +383,9 @@ public class PaymentInitiationWithStatusResponse   {
    * @return remittanceInformationUnstructured
    **/
   @Schema(example = "Ref Number Merchant", description = "Unstructured remittance information. ")
+  @JsonProperty("remittanceInformationUnstructured")
 
-  @Size(max=140)   public String getRemittanceInformationUnstructured() {
+@Size(max=140)   public String getRemittanceInformationUnstructured() {
     return remittanceInformationUnstructured;
   }
 
@@ -388,9 +403,10 @@ public class PaymentInitiationWithStatusResponse   {
    * @return remittanceInformationStructured
    **/
   @Schema(description = "")
+  @JsonProperty("remittanceInformationStructured")
 
-    @Valid
-    public RemittanceInformationStructuredMax140 getRemittanceInformationStructured() {
+  @Valid
+  public RemittanceInformationStructuredMax140 getRemittanceInformationStructured() {
     return remittanceInformationStructured;
   }
 
@@ -408,9 +424,10 @@ public class PaymentInitiationWithStatusResponse   {
    * @return remittanceInformationStructuredArray
    **/
   @Schema(description = "")
+  @JsonProperty("remittanceInformationStructuredArray")
 
-    @Valid
-    public RemittanceInformationStructuredArray getRemittanceInformationStructuredArray() {
+  @Valid
+  public RemittanceInformationStructuredArray getRemittanceInformationStructuredArray() {
     return remittanceInformationStructuredArray;
   }
 
@@ -428,9 +445,10 @@ public class PaymentInitiationWithStatusResponse   {
    * @return requestedExecutionDate
    **/
   @Schema(description = "")
+  @JsonProperty("requestedExecutionDate")
 
-    @Valid
-    public LocalDate getRequestedExecutionDate() {
+  @Valid
+  public LocalDate getRequestedExecutionDate() {
     return requestedExecutionDate;
   }
 
@@ -448,9 +466,10 @@ public class PaymentInitiationWithStatusResponse   {
    * @return transactionStatus
    **/
   @Schema(description = "")
+  @JsonProperty("transactionStatus")
 
-    @Valid
-    public TransactionStatus getTransactionStatus() {
+  @Valid
+  public TransactionStatus getTransactionStatus() {
     return transactionStatus;
   }
 
@@ -476,8 +495,9 @@ public class PaymentInitiationWithStatusResponse   {
    * @return tppMessages
    **/
   @Schema(description = "Messages to the TPP on operational issues.")
-      @Valid
-    public List<TppMessageGeneric> getTppMessages() {
+  @JsonProperty("tppMessages")
+    @Valid
+  public List<TppMessageGeneric> getTppMessages() {
     return tppMessages;
   }
 

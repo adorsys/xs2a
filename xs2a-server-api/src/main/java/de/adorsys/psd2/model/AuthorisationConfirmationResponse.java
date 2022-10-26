@@ -15,7 +15,7 @@ import java.util.Objects;
  */
 @Schema(description = "Body of the JSON response for an authorisation confirmation request.")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-09-19T16:45:22.884087+03:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-10-25T13:15:56.196839+03:00[Europe/Kiev]")
 
 
 public class AuthorisationConfirmationResponse   {
@@ -38,10 +38,11 @@ public class AuthorisationConfirmationResponse   {
    * @return scaStatus
    **/
   @Schema(required = true, description = "")
-      @NotNull
+  @JsonProperty("scaStatus")
+    @NotNull
 
-    @Valid
-    public ScaStatusAuthorisationConfirmation getScaStatus() {
+  @Valid
+  public ScaStatusAuthorisationConfirmation getScaStatus() {
     return scaStatus;
   }
 
@@ -59,10 +60,11 @@ public class AuthorisationConfirmationResponse   {
    * @return _links
    **/
   @Schema(required = true, description = "")
-      @NotNull
+  @JsonProperty("_links")
+    @NotNull
 
-    @Valid
-    public Map getLinks() {
+  @Valid
+  public Map getLinks() {
     return _links;
   }
 
@@ -80,8 +82,9 @@ public class AuthorisationConfirmationResponse   {
    * @return psuMessage
    **/
   @Schema(description = "Text to be displayed to the PSU.")
+  @JsonProperty("psuMessage")
 
-  @Size(max=500)   public String getPsuMessage() {
+@Size(max=500)   public String getPsuMessage() {
     return psuMessage;
   }
 

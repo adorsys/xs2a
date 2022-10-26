@@ -18,7 +18,7 @@ import java.util.Objects;
  */
 @Schema(description = "Card account details. ")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-09-19T16:45:22.884087+03:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-10-25T13:15:56.196839+03:00[Europe/Kiev]")
 
 
 public class CardAccountDetails   {
@@ -104,8 +104,9 @@ public class CardAccountDetails   {
    * @return resourceId
    **/
   @Schema(description = "This is the data element to be used in the path when retrieving data from a dedicated account. This shall be filled, if addressable resource are created by the ASPSP on the /card-accounts endpoint. ")
+  @JsonProperty("resourceId")
 
-    public String getResourceId() {
+  public String getResourceId() {
     return resourceId;
   }
 
@@ -123,9 +124,10 @@ public class CardAccountDetails   {
    * @return maskedPan
    **/
   @Schema(example = "123456xxxxxx1234", required = true, description = "Masked Primary Account Number. ")
-      @NotNull
+  @JsonProperty("maskedPan")
+    @NotNull
 
-  @Size(max=35)   public String getMaskedPan() {
+@Size(max=35)   public String getMaskedPan() {
     return maskedPan;
   }
 
@@ -143,9 +145,10 @@ public class CardAccountDetails   {
    * @return currency
    **/
   @Schema(example = "EUR", required = true, description = "ISO 4217 Alpha 3 currency code. ")
-      @NotNull
+  @JsonProperty("currency")
+    @NotNull
 
-  @Pattern(regexp="[A-Z]{3}")   public String getCurrency() {
+@Pattern(regexp="[A-Z]{3}")   public String getCurrency() {
     return currency;
   }
 
@@ -163,8 +166,9 @@ public class CardAccountDetails   {
    * @return ownerName
    **/
   @Schema(example = "John Doe", description = "Name of the legal account owner.  If there is more than one owner, then e.g. two names might be noted here.  For a corporate account, the corporate name is used for this attribute. Even if supported by the ASPSP, the provision of this field might depend on the fact whether an explicit consent to this specific additional account information has been given by the PSU. ")
+  @JsonProperty("ownerName")
 
-  @Size(max=140)   public String getOwnerName() {
+@Size(max=140)   public String getOwnerName() {
     return ownerName;
   }
 
@@ -182,8 +186,9 @@ public class CardAccountDetails   {
    * @return name
    **/
   @Schema(description = "Name of the account, as assigned by the ASPSP,  in agreement with the account owner in order to provide an additional means of identification of the account. ")
+  @JsonProperty("name")
 
-  @Size(max=70)   public String getName() {
+@Size(max=70)   public String getName() {
     return name;
   }
 
@@ -201,8 +206,9 @@ public class CardAccountDetails   {
    * @return displayName
    **/
   @Schema(description = "Name of the account as defined by the PSU within online channels. ")
+  @JsonProperty("displayName")
 
-  @Size(max=70)   public String getDisplayName() {
+@Size(max=70)   public String getDisplayName() {
     return displayName;
   }
 
@@ -220,8 +226,9 @@ public class CardAccountDetails   {
    * @return product
    **/
   @Schema(description = "Product Name of the Bank for this account, proprietary definition. ")
+  @JsonProperty("product")
 
-  @Size(max=35)   public String getProduct() {
+@Size(max=35)   public String getProduct() {
     return product;
   }
 
@@ -239,8 +246,9 @@ public class CardAccountDetails   {
    * @return debitAccounting
    **/
   @Schema(description = "If true, the amounts of debits on the reports are quoted positive with the related consequence for balances. If false, the amount of debits on the reports are quoted negative. ")
+  @JsonProperty("debitAccounting")
 
-    public Boolean isDebitAccounting() {
+  public Boolean isDebitAccounting() {
     return debitAccounting;
   }
 
@@ -258,9 +266,10 @@ public class CardAccountDetails   {
    * @return status
    **/
   @Schema(description = "")
+  @JsonProperty("status")
 
-    @Valid
-    public AccountStatus getStatus() {
+  @Valid
+  public AccountStatus getStatus() {
     return status;
   }
 
@@ -278,8 +287,9 @@ public class CardAccountDetails   {
    * @return usage
    **/
   @Schema(description = "Specifies the usage of the account:   * PRIV: private personal account   * ORGA: professional account ")
+  @JsonProperty("usage")
 
-  @Size(max=4)   public UsageEnum getUsage() {
+@Size(max=4)   public UsageEnum getUsage() {
     return usage;
   }
 
@@ -297,8 +307,9 @@ public class CardAccountDetails   {
    * @return details
    **/
   @Schema(description = "Specifications that might be provided by the ASPSP:   - characteristics of the account   - characteristics of the relevant card ")
+  @JsonProperty("details")
 
-  @Size(max=1000)   public String getDetails() {
+@Size(max=1000)   public String getDetails() {
     return details;
   }
 
@@ -316,9 +327,10 @@ public class CardAccountDetails   {
    * @return creditLimit
    **/
   @Schema(description = "")
+  @JsonProperty("creditLimit")
 
-    @Valid
-    public Amount getCreditLimit() {
+  @Valid
+  public Amount getCreditLimit() {
     return creditLimit;
   }
 
@@ -336,9 +348,10 @@ public class CardAccountDetails   {
    * @return balances
    **/
   @Schema(description = "")
+  @JsonProperty("balances")
 
-    @Valid
-    public BalanceList getBalances() {
+  @Valid
+  public BalanceList getBalances() {
     return balances;
   }
 
@@ -356,9 +369,10 @@ public class CardAccountDetails   {
    * @return _links
    **/
   @Schema(description = "")
+  @JsonProperty("_links")
 
-    @Valid
-    public Map getLinks() {
+  @Valid
+  public Map getLinks() {
     return _links;
   }
 

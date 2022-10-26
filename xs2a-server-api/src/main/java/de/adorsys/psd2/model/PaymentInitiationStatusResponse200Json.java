@@ -17,7 +17,7 @@ import java.util.Objects;
  */
 @Schema(description = "Body of the response for a successful payment initiation status request in case of an JSON based endpoint. *Remark:* If the PSU does not complete a required SCA within the required timeframe the payment resource's status must be set to \"RJCT\". Particularly, if a multi-level-SCA is required and the number of successful SCAs during the required timeframe is insufficient, the status must also be set to \"RJCT\".")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-09-19T16:45:22.884087+03:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-10-25T13:15:56.196839+03:00[Europe/Kiev]")
 
 
 public class PaymentInitiationStatusResponse200Json   {
@@ -54,10 +54,11 @@ public class PaymentInitiationStatusResponse200Json   {
    * @return transactionStatus
    **/
   @Schema(required = true, description = "")
-      @NotNull
+  @JsonProperty("transactionStatus")
+    @NotNull
 
-    @Valid
-    public TransactionStatus getTransactionStatus() {
+  @Valid
+  public TransactionStatus getTransactionStatus() {
     return transactionStatus;
   }
 
@@ -75,8 +76,9 @@ public class PaymentInitiationStatusResponse200Json   {
    * @return fundsAvailable
    **/
   @Schema(description = "Equals true if sufficient funds are available at the time of the request, false otherwise.  This data element is allways contained in a confirmation of funds response.  This data element is contained in a payment status response,  if supported by the ASPSP, if a funds check has been performed and  if the transactionStatus is \"ACTC\", \"ACWC\" or \"ACCP\". ")
+  @JsonProperty("fundsAvailable")
 
-    public Boolean isFundsAvailable() {
+  public Boolean isFundsAvailable() {
     return fundsAvailable;
   }
 
@@ -94,8 +96,9 @@ public class PaymentInitiationStatusResponse200Json   {
    * @return psuMessage
    **/
   @Schema(description = "Text to be displayed to the PSU.")
+  @JsonProperty("psuMessage")
 
-  @Size(max=500)   public String getPsuMessage() {
+@Size(max=500)   public String getPsuMessage() {
     return psuMessage;
   }
 
@@ -121,8 +124,9 @@ public class PaymentInitiationStatusResponse200Json   {
    * @return ownerNames
    **/
   @Schema(description = "List of owner names. Should only be delivered after successful SCA. Could be restricted to the current PSU by the ASPSP. ")
-      @Valid
-    public List<AccountOwner> getOwnerNames() {
+  @JsonProperty("ownerNames")
+    @Valid
+  public List<AccountOwner> getOwnerNames() {
     return ownerNames;
   }
 
@@ -140,8 +144,9 @@ public class PaymentInitiationStatusResponse200Json   {
    * @return psuName
    **/
   @Schema(description = "Name of the PSU. In case of a corporate account, this might be the person acting on behalf of the corporate. ")
+  @JsonProperty("psuName")
 
-  @Size(max=140)   public String getPsuName() {
+@Size(max=140)   public String getPsuName() {
     return psuName;
   }
 
@@ -159,9 +164,10 @@ public class PaymentInitiationStatusResponse200Json   {
    * @return _links
    **/
   @Schema(description = "")
+  @JsonProperty("_links")
 
-    @Valid
-    public Map getLinks() {
+  @Valid
+  public Map getLinks() {
     return _links;
   }
 
@@ -187,8 +193,9 @@ public class PaymentInitiationStatusResponse200Json   {
    * @return tppMessages
    **/
   @Schema(description = "Messages to the TPP on operational issues.")
-      @Valid
-    public List<TppMessageGeneric> getTppMessages() {
+  @JsonProperty("tppMessages")
+    @Valid
+  public List<TppMessageGeneric> getTppMessages() {
     return tppMessages;
   }
 

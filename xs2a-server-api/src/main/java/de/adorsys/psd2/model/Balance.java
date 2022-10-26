@@ -16,7 +16,7 @@ import java.util.Objects;
  */
 @Schema(description = "A single balance element. ")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-09-19T16:45:22.884087+03:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-10-25T13:15:56.196839+03:00[Europe/Kiev]")
 
 
 public class Balance   {
@@ -48,10 +48,11 @@ public class Balance   {
    * @return balanceAmount
    **/
   @Schema(required = true, description = "")
-      @NotNull
+  @JsonProperty("balanceAmount")
+    @NotNull
 
-    @Valid
-    public Amount getBalanceAmount() {
+  @Valid
+  public Amount getBalanceAmount() {
     return balanceAmount;
   }
 
@@ -69,10 +70,11 @@ public class Balance   {
    * @return balanceType
    **/
   @Schema(required = true, description = "")
-      @NotNull
+  @JsonProperty("balanceType")
+    @NotNull
 
-    @Valid
-    public BalanceType getBalanceType() {
+  @Valid
+  public BalanceType getBalanceType() {
     return balanceType;
   }
 
@@ -90,8 +92,9 @@ public class Balance   {
    * @return creditLimitIncluded
    **/
   @Schema(example = "false", description = "A flag indicating if the credit limit of the corresponding account  is included in the calculation of the balance, where applicable. ")
+  @JsonProperty("creditLimitIncluded")
 
-    public Boolean isCreditLimitIncluded() {
+  public Boolean isCreditLimitIncluded() {
     return creditLimitIncluded;
   }
 
@@ -109,9 +112,10 @@ public class Balance   {
    * @return lastChangeDateTime
    **/
   @Schema(description = "This data element might be used to indicate e.g. with the expected or booked balance that no action is known  on the account, which is not yet booked. ")
+  @JsonProperty("lastChangeDateTime")
 
-    @Valid
-    public OffsetDateTime getLastChangeDateTime() {
+  @Valid
+  public OffsetDateTime getLastChangeDateTime() {
     return lastChangeDateTime;
   }
 
@@ -129,9 +133,10 @@ public class Balance   {
    * @return referenceDate
    **/
   @Schema(description = "Indicates the date of the balance.")
+  @JsonProperty("referenceDate")
 
-    @Valid
-    public LocalDate getReferenceDate() {
+  @Valid
+  public LocalDate getReferenceDate() {
     return referenceDate;
   }
 
@@ -149,8 +154,9 @@ public class Balance   {
    * @return lastCommittedTransaction
    **/
   @Schema(description = "\"entryReference\" of the last committed transaction to support the TPP in identifying whether all  PSU transactions are already known. ")
+  @JsonProperty("lastCommittedTransaction")
 
-  @Size(max=35)   public String getLastCommittedTransaction() {
+@Size(max=35)   public String getLastCommittedTransaction() {
     return lastCommittedTransaction;
   }
 

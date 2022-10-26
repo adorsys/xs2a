@@ -11,7 +11,7 @@ import java.util.Objects;
  */
 @Schema(description = "Link to a resource.")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-09-19T16:45:22.884087+03:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-10-25T13:15:56.196839+03:00[Europe/Kiev]")
 
 
 public class HrefType   {
@@ -28,8 +28,9 @@ public class HrefType   {
    * @return href
    **/
   @Schema(example = "/v1/payments/sepa-credit-transfers/1234-wertiq-983", description = "Link to a resource.")
+  @JsonProperty("href")
 
-    public String getHref() {
+  public String getHref() {
     return href;
   }
 
