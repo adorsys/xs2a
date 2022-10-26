@@ -1,3 +1,21 @@
+/*
+ * Copyright 2018-2022 adorsys GmbH & Co KG
+ *
+ * This program is free software: you can redistribute it and/or modify it
+ * under the terms of the GNU Affero General Public License as published
+ * by the Free Software Foundation, either version 3 of the License, or (at
+ * your option) any later version. This program is distributed in the hope that
+ * it will be useful, but WITHOUT ANY WARRANTY; without even the implied
+ * warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program. If not, see https://www.gnu.org/licenses/.
+ *
+ * This project is also available under a separate commercial license. You can
+ * contact us at psd2@adorsys.com.
+ */
+
 package de.adorsys.psd2.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -13,7 +31,7 @@ import java.util.Objects;
  */
 @Schema(description = "Total amount of the instalment including charges, insurance and taxes in addition to the funded amount. ")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-05-06T13:00:42.214155+03:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-10-26T13:16:54.081225+03:00[Europe/Kiev]")
 
 
 public class GrandTotalAmount   {
@@ -28,16 +46,19 @@ public class GrandTotalAmount   {
     return this;
   }
 
-  /**
-   * ISO 4217 Alpha 3 currency code.
-   * @return currency
-   **/
-  @Schema(example = "EUR", required = true, description = "ISO 4217 Alpha 3 currency code. ")
-      @NotNull
+    /**
+     * ISO 4217 Alpha 3 currency code.
+     *
+     * @return currency
+     **/
+    @Schema(example = "EUR", required = true, description = "ISO 4217 Alpha 3 currency code. ")
+    @JsonProperty("currency")
+    @NotNull
 
-  @Pattern(regexp="[A-Z]{3}")   public String getCurrency() {
-    return currency;
-  }
+    @Pattern(regexp = "[A-Z]{3}")
+    public String getCurrency() {
+        return currency;
+    }
 
   public void setCurrency(String currency) {
     this.currency = currency;
@@ -48,15 +69,18 @@ public class GrandTotalAmount   {
     return this;
   }
 
-  /**
-   * The amount given with fractional digits, where fractions must be compliant to the currency definition. Up to 14 significant figures. Negative amounts are signed by minus. The decimal separator is a dot.  **Example:** Valid representations for EUR with up to two decimals are:    * 1056   * 5768.2   * -1.50   * 5877.78
-   * @return amount
-   **/
-  @Schema(example = "5877.78", required = true, description = "The amount given with fractional digits, where fractions must be compliant to the currency definition. Up to 14 significant figures. Negative amounts are signed by minus. The decimal separator is a dot.  **Example:** Valid representations for EUR with up to two decimals are:    * 1056   * 5768.2   * -1.50   * 5877.78 ")
-      @NotNull
+    /**
+     * The amount given with fractional digits, where fractions must be compliant to the currency definition. Up to 14 significant figures. Negative amounts are signed by minus. The decimal separator is a dot.  **Example:** Valid representations for EUR with up to two decimals are:    * 1056   * 5768.2   * -1.50   * 5877.78
+     *
+     * @return amount
+     **/
+    @Schema(example = "5877.78", required = true, description = "The amount given with fractional digits, where fractions must be compliant to the currency definition. Up to 14 significant figures. Negative amounts are signed by minus. The decimal separator is a dot.  **Example:** Valid representations for EUR with up to two decimals are:    * 1056   * 5768.2   * -1.50   * 5877.78 ")
+    @JsonProperty("amount")
+    @NotNull
 
-  @Pattern(regexp="-?[0-9]{1,14}(\\.[0-9]{1,3})?")   public String getAmount() {
-    return amount;
+    @Pattern(regexp = "-?[0-9]{1,14}(\\.[0-9]{1,3})?")
+    public String getAmount() {
+        return amount;
   }
 
   public void setAmount(String amount) {

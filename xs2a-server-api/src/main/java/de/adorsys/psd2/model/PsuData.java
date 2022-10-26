@@ -1,3 +1,21 @@
+/*
+ * Copyright 2018-2022 adorsys GmbH & Co KG
+ *
+ * This program is free software: you can redistribute it and/or modify it
+ * under the terms of the GNU Affero General Public License as published
+ * by the Free Software Foundation, either version 3 of the License, or (at
+ * your option) any later version. This program is distributed in the hope that
+ * it will be useful, but WITHOUT ANY WARRANTY; without even the implied
+ * warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program. If not, see https://www.gnu.org/licenses/.
+ *
+ * This project is also available under a separate commercial license. You can
+ * contact us at psd2@adorsys.com.
+ */
+
 package de.adorsys.psd2.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -11,7 +29,7 @@ import java.util.Objects;
  */
 @Schema(description = "PSU Data for Update PSU authentication.")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-05-06T13:00:42.214155+03:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-10-26T13:16:54.081225+03:00[Europe/Kiev]")
 
 
 public class PsuData   {
@@ -32,15 +50,17 @@ public class PsuData   {
     return this;
   }
 
-  /**
-   * Password.
-   * @return password
-   **/
-  @Schema(description = "Password.")
+    /**
+     * Password.
+     *
+     * @return password
+     **/
+    @Schema(description = "Password.")
+    @JsonProperty("password")
 
     public String getPassword() {
-    return password;
-  }
+        return password;
+    }
 
   public void setPassword(String password) {
     this.password = password;
@@ -51,14 +71,16 @@ public class PsuData   {
     return this;
   }
 
-  /**
-   * Encrypted password.
-   * @return encryptedPassword
-   **/
-  @Schema(description = "Encrypted password.")
+    /**
+     * Encrypted password.
+     *
+     * @return encryptedPassword
+     **/
+    @Schema(description = "Encrypted password.")
+    @JsonProperty("encryptedPassword")
 
     public String getEncryptedPassword() {
-    return encryptedPassword;
+        return encryptedPassword;
   }
 
   public void setEncryptedPassword(String encryptedPassword) {
@@ -67,17 +89,19 @@ public class PsuData   {
 
   public PsuData additionalPassword(String additionalPassword) {
     this.additionalPassword = additionalPassword;
-    return this;
+      return this;
   }
 
-  /**
-   * Additional password in plaintext.
-   * @return additionalPassword
-   **/
-  @Schema(description = "Additional password in plaintext.")
+    /**
+     * Additional password in plaintext.
+     *
+     * @return additionalPassword
+     **/
+    @Schema(description = "Additional password in plaintext.")
+    @JsonProperty("additionalPassword")
 
     public String getAdditionalPassword() {
-    return additionalPassword;
+        return additionalPassword;
   }
 
   public void setAdditionalPassword(String additionalPassword) {
@@ -86,17 +110,19 @@ public class PsuData   {
 
   public PsuData additionalEncryptedPassword(String additionalEncryptedPassword) {
     this.additionalEncryptedPassword = additionalEncryptedPassword;
-    return this;
+      return this;
   }
 
-  /**
-   * Additional encrypted password.
-   * @return additionalEncryptedPassword
-   **/
-  @Schema(description = "Additional encrypted password.")
+    /**
+     * Additional encrypted password.
+     *
+     * @return additionalEncryptedPassword
+     **/
+    @Schema(description = "Additional encrypted password.")
+    @JsonProperty("additionalEncryptedPassword")
 
     public String getAdditionalEncryptedPassword() {
-    return additionalEncryptedPassword;
+        return additionalEncryptedPassword;
   }
 
   public void setAdditionalEncryptedPassword(String additionalEncryptedPassword) {

@@ -1,3 +1,21 @@
+/*
+ * Copyright 2018-2022 adorsys GmbH & Co KG
+ *
+ * This program is free software: you can redistribute it and/or modify it
+ * under the terms of the GNU Affero General Public License as published
+ * by the Free Software Foundation, either version 3 of the License, or (at
+ * your option) any later version. This program is distributed in the hope that
+ * it will be useful, but WITHOUT ANY WARRANTY; without even the implied
+ * warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program. If not, see https://www.gnu.org/licenses/.
+ *
+ * This project is also available under a separate commercial license. You can
+ * contact us at psd2@adorsys.com.
+ */
+
 package de.adorsys.psd2.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -13,7 +31,7 @@ import java.util.Objects;
  */
 @Schema(description = "Body of the response for a successful read balance for a card account request.")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-05-06T13:00:42.214155+03:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-10-26T13:16:54.081225+03:00[Europe/Kiev]")
 
 
 public class ReadCardAccountBalanceResponse200   {
@@ -31,16 +49,18 @@ public class ReadCardAccountBalanceResponse200   {
     return this;
   }
 
-  /**
-   * Get cardAccount
-   * @return cardAccount
-   **/
-  @Schema(description = "")
+    /**
+     * Get cardAccount
+     *
+     * @return cardAccount
+     **/
+    @Schema(description = "")
+    @JsonProperty("cardAccount")
 
     @Valid
     public AccountReference getCardAccount() {
-    return cardAccount;
-  }
+        return cardAccount;
+    }
 
   public void setCardAccount(AccountReference cardAccount) {
     this.cardAccount = cardAccount;
@@ -51,14 +71,16 @@ public class ReadCardAccountBalanceResponse200   {
     return this;
   }
 
-  /**
-   * If true, the amounts of debits on the reports are quoted positive with the related consequence for balances. If false, the amount of debits on the reports are quoted negative.
-   * @return debitAccounting
-   **/
-  @Schema(description = "If true, the amounts of debits on the reports are quoted positive with the related consequence for balances. If false, the amount of debits on the reports are quoted negative. ")
+    /**
+     * If true, the amounts of debits on the reports are quoted positive with the related consequence for balances. If false, the amount of debits on the reports are quoted negative.
+     *
+     * @return debitAccounting
+     **/
+    @Schema(description = "If true, the amounts of debits on the reports are quoted positive with the related consequence for balances. If false, the amount of debits on the reports are quoted negative. ")
+    @JsonProperty("debitAccounting")
 
     public Boolean isDebitAccounting() {
-    return debitAccounting;
+        return debitAccounting;
   }
 
   public void setDebitAccounting(Boolean debitAccounting) {
@@ -67,15 +89,17 @@ public class ReadCardAccountBalanceResponse200   {
 
   public ReadCardAccountBalanceResponse200 balances(BalanceList balances) {
     this.balances = balances;
-    return this;
+      return this;
   }
 
-  /**
-   * Get balances
-   * @return balances
-   **/
-  @Schema(required = true, description = "")
-      @NotNull
+    /**
+     * Get balances
+     *
+     * @return balances
+     **/
+    @Schema(required = true, description = "")
+    @JsonProperty("balances")
+    @NotNull
 
     @Valid
     public BalanceList getBalances() {

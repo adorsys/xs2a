@@ -1,3 +1,21 @@
+/*
+ * Copyright 2018-2022 adorsys GmbH & Co KG
+ *
+ * This program is free software: you can redistribute it and/or modify it
+ * under the terms of the GNU Affero General Public License as published
+ * by the Free Software Foundation, either version 3 of the License, or (at
+ * your option) any later version. This program is distributed in the hope that
+ * it will be useful, but WITHOUT ANY WARRANTY; without even the implied
+ * warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program. If not, see https://www.gnu.org/licenses/.
+ *
+ * This project is also available under a separate commercial license. You can
+ * contact us at psd2@adorsys.com.
+ */
+
 package de.adorsys.psd2.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -14,7 +32,7 @@ import java.util.Objects;
  */
 @Schema(description = "JSON Request body for the \"Confirmation of funds service\".  <table>  <tr>    <td>cardNumber</td>    <td>String </td>   <td>Optional</td>   <td>Card Number of the card issued by the PIISP. Should be delivered if available.</td> </tr>  <tr>   <td>account</td>   <td> Account Reference</td>   <td>Mandatory</td>   <td>PSU's account number.</td> </tr>  <tr>    <td>payee</td>   <td>Max70Text</td>   <td>Optional</td>   <td>The merchant where the card is accepted as an information to the PSU.</td> </tr>  <tr>   <td>instructedAmount</td>   <td>Amount</td>   <td>Mandatory</td>   <td>Transaction amount to be checked within the funds check mechanism.</td> </tr>  </table> ")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-05-06T13:00:42.214155+03:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-10-26T13:16:54.081225+03:00[Europe/Kiev]")
 
 
 public class ConfirmationOfFunds   {
@@ -35,15 +53,18 @@ public class ConfirmationOfFunds   {
     return this;
   }
 
-  /**
-   * Card Number of the card issued by the PIISP.  Should be delivered if available.
-   * @return cardNumber
-   **/
-  @Schema(description = "Card Number of the card issued by the PIISP.  Should be delivered if available. ")
+    /**
+     * Card Number of the card issued by the PIISP.  Should be delivered if available.
+     *
+     * @return cardNumber
+     **/
+    @Schema(description = "Card Number of the card issued by the PIISP.  Should be delivered if available. ")
+    @JsonProperty("cardNumber")
 
-  @Size(max=35)   public String getCardNumber() {
-    return cardNumber;
-  }
+    @Size(max = 35)
+    public String getCardNumber() {
+        return cardNumber;
+    }
 
   public void setCardNumber(String cardNumber) {
     this.cardNumber = cardNumber;
@@ -54,16 +75,18 @@ public class ConfirmationOfFunds   {
     return this;
   }
 
-  /**
-   * Get account
-   * @return account
-   **/
-  @Schema(required = true, description = "")
-      @NotNull
+    /**
+     * Get account
+     *
+     * @return account
+     **/
+    @Schema(required = true, description = "")
+    @JsonProperty("account")
+    @NotNull
 
     @Valid
     public AccountReference getAccount() {
-    return account;
+        return account;
   }
 
   public void setAccount(AccountReference account) {
@@ -72,16 +95,19 @@ public class ConfirmationOfFunds   {
 
   public ConfirmationOfFunds payee(String payee) {
     this.payee = payee;
-    return this;
+      return this;
   }
 
-  /**
-   * Name payee.
-   * @return payee
-   **/
-  @Schema(description = "Name payee.")
+    /**
+     * Name payee.
+     *
+     * @return payee
+     **/
+    @Schema(description = "Name payee.")
+    @JsonProperty("payee")
 
-  @Size(max=70)   public String getPayee() {
+    @Size(max = 70)
+    public String getPayee() {
     return payee;
   }
 
@@ -91,15 +117,17 @@ public class ConfirmationOfFunds   {
 
   public ConfirmationOfFunds instructedAmount(Amount instructedAmount) {
     this.instructedAmount = instructedAmount;
-    return this;
+      return this;
   }
 
-  /**
-   * Get instructedAmount
-   * @return instructedAmount
-   **/
-  @Schema(required = true, description = "")
-      @NotNull
+    /**
+     * Get instructedAmount
+     *
+     * @return instructedAmount
+     **/
+    @Schema(required = true, description = "")
+    @JsonProperty("instructedAmount")
+    @NotNull
 
     @Valid
     public Amount getInstructedAmount() {

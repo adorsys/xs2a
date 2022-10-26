@@ -1,3 +1,21 @@
+/*
+ * Copyright 2018-2022 adorsys GmbH & Co KG
+ *
+ * This program is free software: you can redistribute it and/or modify it
+ * under the terms of the GNU Affero General Public License as published
+ * by the Free Software Foundation, either version 3 of the License, or (at
+ * your option) any later version. This program is distributed in the hope that
+ * it will be useful, but WITHOUT ANY WARRANTY; without even the implied
+ * warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program. If not, see https://www.gnu.org/licenses/.
+ *
+ * This project is also available under a separate commercial license. You can
+ * contact us at psd2@adorsys.com.
+ */
+
 package de.adorsys.psd2.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -9,7 +27,6 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 
 /**
@@ -17,7 +34,7 @@ import java.util.Objects;
  */
 @Schema(description = "Body of the JSON response for a successful create signing basket request.")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-05-06T13:00:42.214155+03:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-10-26T13:16:54.081225+03:00[Europe/Kiev]")
 
 
 public class SigningBasketResponse201   {
@@ -36,8 +53,8 @@ public class SigningBasketResponse201   {
   @JsonProperty("challengeData")
   private ChallengeData challengeData = null;
 
-  @JsonProperty("_links")
-  private Map _links = null;
+    @JsonProperty("_links")
+    private LinksSigningBasket _links = null;
 
   @JsonProperty("psuMessage")
   private String psuMessage = null;
@@ -51,17 +68,19 @@ public class SigningBasketResponse201   {
     return this;
   }
 
-  /**
-   * Get transactionStatus
-   * @return transactionStatus
-   **/
-  @Schema(required = true, description = "")
-      @NotNull
+    /**
+     * Get transactionStatus
+     *
+     * @return transactionStatus
+     **/
+    @Schema(required = true, description = "")
+    @JsonProperty("transactionStatus")
+    @NotNull
 
     @Valid
     public TransactionStatusSBS getTransactionStatus() {
-    return transactionStatus;
-  }
+        return transactionStatus;
+    }
 
   public void setTransactionStatus(TransactionStatusSBS transactionStatus) {
     this.transactionStatus = transactionStatus;
@@ -72,15 +91,17 @@ public class SigningBasketResponse201   {
     return this;
   }
 
-  /**
-   * Resource identification of the generated signing basket resource.
-   * @return basketId
-   **/
-  @Schema(example = "1234-basket-567", required = true, description = "Resource identification of the generated signing basket resource.")
-      @NotNull
+    /**
+     * Resource identification of the generated signing basket resource.
+     *
+     * @return basketId
+     **/
+    @Schema(example = "1234-basket-567", required = true, description = "Resource identification of the generated signing basket resource.")
+    @JsonProperty("basketId")
+    @NotNull
 
     public String getBasketId() {
-    return basketId;
+        return basketId;
   }
 
   public void setBasketId(String basketId) {
@@ -89,18 +110,20 @@ public class SigningBasketResponse201   {
 
   public SigningBasketResponse201 scaMethods(ScaMethods scaMethods) {
     this.scaMethods = scaMethods;
-    return this;
+      return this;
   }
 
-  /**
-   * Get scaMethods
-   * @return scaMethods
-   **/
-  @Schema(description = "")
+    /**
+     * Get scaMethods
+     *
+     * @return scaMethods
+     **/
+    @Schema(description = "")
+    @JsonProperty("scaMethods")
 
     @Valid
     public ScaMethods getScaMethods() {
-    return scaMethods;
+        return scaMethods;
   }
 
   public void setScaMethods(ScaMethods scaMethods) {
@@ -109,14 +132,16 @@ public class SigningBasketResponse201   {
 
   public SigningBasketResponse201 chosenScaMethod(ChosenScaMethod chosenScaMethod) {
     this.chosenScaMethod = chosenScaMethod;
-    return this;
+      return this;
   }
 
-  /**
-   * Get chosenScaMethod
-   * @return chosenScaMethod
-   **/
-  @Schema(description = "")
+    /**
+     * Get chosenScaMethod
+     *
+     * @return chosenScaMethod
+     **/
+    @Schema(description = "")
+    @JsonProperty("chosenScaMethod")
 
     @Valid
     public ChosenScaMethod getChosenScaMethod() {
@@ -129,14 +154,16 @@ public class SigningBasketResponse201   {
 
   public SigningBasketResponse201 challengeData(ChallengeData challengeData) {
     this.challengeData = challengeData;
-    return this;
+      return this;
   }
 
-  /**
-   * Get challengeData
-   * @return challengeData
-   **/
-  @Schema(description = "")
+    /**
+     * Get challengeData
+     *
+     * @return challengeData
+     **/
+    @Schema(description = "")
+    @JsonProperty("challengeData")
 
     @Valid
     public ChallengeData getChallengeData() {
@@ -144,42 +171,46 @@ public class SigningBasketResponse201   {
   }
 
   public void setChallengeData(ChallengeData challengeData) {
-    this.challengeData = challengeData;
+      this.challengeData = challengeData;
   }
 
-  public SigningBasketResponse201 _links(Map _links) {
-    this._links = _links;
-    return this;
-  }
+    public SigningBasketResponse201 _links(LinksSigningBasket _links) {
+        this._links = _links;
+        return this;
+    }
 
-  /**
-   * Get _links
-   * @return _links
-   **/
-  @Schema(required = true, description = "")
-      @NotNull
+    /**
+     * Get _links
+     *
+     * @return _links
+     **/
+    @Schema(required = true, description = "")
+    @JsonProperty("_links")
+    @NotNull
 
     @Valid
-    public Map getLinks() {
-    return _links;
-  }
+    public LinksSigningBasket getLinks() {
+        return _links;
+    }
 
-  public void setLinks(Map _links) {
+    public void setLinks(LinksSigningBasket _links) {
     this._links = _links;
   }
 
   public SigningBasketResponse201 psuMessage(String psuMessage) {
-    this.psuMessage = psuMessage;
-    return this;
+      this.psuMessage = psuMessage;
+      return this;
   }
 
-  /**
-   * Text to be displayed to the PSU.
-   * @return psuMessage
-   **/
-  @Schema(description = "Text to be displayed to the PSU.")
+    /**
+     * Text to be displayed to the PSU.
+     *
+     * @return psuMessage
+     **/
+    @Schema(description = "Text to be displayed to the PSU.")
+    @JsonProperty("psuMessage")
 
-  @Size(max=500)   public String getPsuMessage() {
+@Size(max=500)   public String getPsuMessage() {
     return psuMessage;
   }
 
@@ -196,17 +227,19 @@ public class SigningBasketResponse201   {
     if (this.tppMessages == null) {
       this.tppMessages = new ArrayList<>();
     }
-    this.tppMessages.add(tppMessagesItem);
-    return this;
+      this.tppMessages.add(tppMessagesItem);
+      return this;
   }
 
-  /**
-   * Get tppMessages
-   * @return tppMessages
-   **/
-  @Schema(description = "")
-      @Valid
-    public List<TppMessage2XX> getTppMessages() {
+    /**
+     * Get tppMessages
+     *
+     * @return tppMessages
+     **/
+    @Schema(description = "")
+    @JsonProperty("tppMessages")
+    @Valid
+  public List<TppMessage2XX> getTppMessages() {
     return tppMessages;
   }
 

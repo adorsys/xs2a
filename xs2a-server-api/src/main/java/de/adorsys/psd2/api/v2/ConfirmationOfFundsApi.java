@@ -66,7 +66,7 @@ public interface ConfirmationOfFundsApi {
     @Operation(summary = "Create consent", description = "This method creates a confirmation of funds consent resource at the ASPSP regarding confirmation of funds access to an account specified in this request.  **Side Effects** In difference to the Establish Account Information Consent as defined in [XS2A-IG], there is no side effect by the Establish Confirmation of Funds Consent Request ", security = {
         @SecurityRequirement(name = "BearerAuthOAuth")}, tags = {"Confirmation of Funds"})
     @ApiResponses(value = {
-        @ApiResponse(responseCode = "201", description = "Created", content = @Content(mediaType = "application/json", schema = @Schema(implementation = InlineResponse201.class))),
+        @ApiResponse(responseCode = "201", description = "Created", content = @Content(mediaType = "application/json", schema = @Schema(implementation = Object.class))),
 
         @ApiResponse(responseCode = "400", description = "Bad Request", content = @Content(mediaType = "application/json", schema = @Schema(implementation = Error400NGAIS.class))),
 

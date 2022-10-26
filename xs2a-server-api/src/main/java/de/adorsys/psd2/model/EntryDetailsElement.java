@@ -1,3 +1,21 @@
+/*
+ * Copyright 2018-2022 adorsys GmbH & Co KG
+ *
+ * This program is free software: you can redistribute it and/or modify it
+ * under the terms of the GNU Affero General Public License as published
+ * by the Free Software Foundation, either version 3 of the License, or (at
+ * your option) any later version. This program is distributed in the hope that
+ * it will be useful, but WITHOUT ANY WARRANTY; without even the implied
+ * warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program. If not, see https://www.gnu.org/licenses/.
+ *
+ * This project is also available under a separate commercial license. You can
+ * contact us at psd2@adorsys.com.
+ */
+
 package de.adorsys.psd2.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -14,7 +32,7 @@ import java.util.Objects;
  * EntryDetailsElement
  */
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-05-06T13:00:42.214155+03:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-10-26T13:16:54.081225+03:00[Europe/Kiev]")
 
 
 public class EntryDetailsElement   {
@@ -80,15 +98,18 @@ public class EntryDetailsElement   {
     return this;
   }
 
-  /**
-   * Unique end to end identity.
-   * @return endToEndId
-   **/
-  @Schema(description = "Unique end to end identity.")
+    /**
+     * Unique end to end identity.
+     *
+     * @return endToEndId
+     **/
+    @Schema(description = "Unique end to end identity.")
+    @JsonProperty("endToEndId")
 
-  @Size(max=35)   public String getEndToEndId() {
-    return endToEndId;
-  }
+    @Size(max = 35)
+    public String getEndToEndId() {
+        return endToEndId;
+    }
 
   public void setEndToEndId(String endToEndId) {
     this.endToEndId = endToEndId;
@@ -99,14 +120,17 @@ public class EntryDetailsElement   {
     return this;
   }
 
-  /**
-   * Identification of Mandates, e.g. a SEPA Mandate ID.
-   * @return mandateId
-   **/
-  @Schema(description = "Identification of Mandates, e.g. a SEPA Mandate ID.")
+    /**
+     * Identification of Mandates, e.g. a SEPA Mandate ID.
+     *
+     * @return mandateId
+     **/
+    @Schema(description = "Identification of Mandates, e.g. a SEPA Mandate ID.")
+    @JsonProperty("mandateId")
 
-  @Size(max=35)   public String getMandateId() {
-    return mandateId;
+    @Size(max = 35)
+    public String getMandateId() {
+        return mandateId;
   }
 
   public void setMandateId(String mandateId) {
@@ -115,16 +139,19 @@ public class EntryDetailsElement   {
 
   public EntryDetailsElement checkId(String checkId) {
     this.checkId = checkId;
-    return this;
+      return this;
   }
 
-  /**
-   * Identification of a Cheque.
-   * @return checkId
-   **/
-  @Schema(description = "Identification of a Cheque.")
+    /**
+     * Identification of a Cheque.
+     *
+     * @return checkId
+     **/
+    @Schema(description = "Identification of a Cheque.")
+    @JsonProperty("checkId")
 
-  @Size(max=35)   public String getCheckId() {
+    @Size(max = 35)
+    public String getCheckId() {
     return checkId;
   }
 
@@ -134,16 +161,19 @@ public class EntryDetailsElement   {
 
   public EntryDetailsElement creditorId(String creditorId) {
     this.creditorId = creditorId;
-    return this;
+      return this;
   }
 
-  /**
-   * Identification of Creditors, e.g. a SEPA Creditor ID.
-   * @return creditorId
-   **/
-  @Schema(example = "Creditor Id 5678", description = "Identification of Creditors, e.g. a SEPA Creditor ID.")
+    /**
+     * Identification of Creditors, e.g. a SEPA Creditor ID.
+     *
+     * @return creditorId
+     **/
+    @Schema(example = "Creditor Id 5678", description = "Identification of Creditors, e.g. a SEPA Creditor ID.")
+    @JsonProperty("creditorId")
 
-  @Size(max=35)   public String getCreditorId() {
+    @Size(max = 35)
+    public String getCreditorId() {
     return creditorId;
   }
 
@@ -153,15 +183,17 @@ public class EntryDetailsElement   {
 
   public EntryDetailsElement transactionAmount(Amount transactionAmount) {
     this.transactionAmount = transactionAmount;
-    return this;
+      return this;
   }
 
-  /**
-   * Get transactionAmount
-   * @return transactionAmount
-   **/
-  @Schema(required = true, description = "")
-      @NotNull
+    /**
+     * Get transactionAmount
+     *
+     * @return transactionAmount
+     **/
+    @Schema(required = true, description = "")
+    @JsonProperty("transactionAmount")
+    @NotNull
 
     @Valid
     public Amount getTransactionAmount() {
@@ -174,14 +206,16 @@ public class EntryDetailsElement   {
 
   public EntryDetailsElement currencyExchange(ReportExchangeRateList currencyExchange) {
     this.currencyExchange = currencyExchange;
-    return this;
+      return this;
   }
 
-  /**
-   * Get currencyExchange
-   * @return currencyExchange
-   **/
-  @Schema(description = "")
+    /**
+     * Get currencyExchange
+     *
+     * @return currencyExchange
+     **/
+    @Schema(description = "")
+    @JsonProperty("currencyExchange")
 
     @Valid
     public ReportExchangeRateList getCurrencyExchange() {
@@ -193,17 +227,19 @@ public class EntryDetailsElement   {
   }
 
   public EntryDetailsElement creditorName(String creditorName) {
-    this.creditorName = creditorName;
-    return this;
+      this.creditorName = creditorName;
+      return this;
   }
 
-  /**
-   * Creditor name.
-   * @return creditorName
-   **/
-  @Schema(example = "Creditor Name", description = "Creditor name.")
+    /**
+     * Creditor name.
+     *
+     * @return creditorName
+     **/
+    @Schema(example = "Creditor Name", description = "Creditor name.")
+    @JsonProperty("creditorName")
 
-  @Size(max=70)   public String getCreditorName() {
+    @Size(max=70)   public String getCreditorName() {
     return creditorName;
   }
 
@@ -212,15 +248,17 @@ public class EntryDetailsElement   {
   }
 
   public EntryDetailsElement creditorAccount(AccountReference creditorAccount) {
-    this.creditorAccount = creditorAccount;
-    return this;
+      this.creditorAccount = creditorAccount;
+      return this;
   }
 
-  /**
-   * Get creditorAccount
-   * @return creditorAccount
-   **/
-  @Schema(description = "")
+    /**
+     * Get creditorAccount
+     *
+     * @return creditorAccount
+     **/
+    @Schema(description = "")
+    @JsonProperty("creditorAccount")
 
     @Valid
     public AccountReference getCreditorAccount() {
@@ -232,17 +270,19 @@ public class EntryDetailsElement   {
   }
 
   public EntryDetailsElement creditorAgent(String creditorAgent) {
-    this.creditorAgent = creditorAgent;
-    return this;
+      this.creditorAgent = creditorAgent;
+      return this;
   }
 
-  /**
-   * BICFI
-   * @return creditorAgent
-   **/
-  @Schema(example = "AAAADEBBXXX", description = "BICFI ")
+    /**
+     * BICFI
+     *
+     * @return creditorAgent
+     **/
+    @Schema(example = "AAAADEBBXXX", description = "BICFI ")
+    @JsonProperty("creditorAgent")
 
-  @Pattern(regexp="[A-Z]{6,6}[A-Z2-9][A-NP-Z0-9]([A-Z0-9]{3,3}){0,1}")   public String getCreditorAgent() {
+    @Pattern(regexp = "[A-Z]{6,6}[A-Z2-9][A-NP-Z0-9]([A-Z0-9]{3,3}){0,1}")   public String getCreditorAgent() {
     return creditorAgent;
   }
 
@@ -251,17 +291,19 @@ public class EntryDetailsElement   {
   }
 
   public EntryDetailsElement ultimateCreditor(String ultimateCreditor) {
-    this.ultimateCreditor = ultimateCreditor;
-    return this;
+      this.ultimateCreditor = ultimateCreditor;
+      return this;
   }
 
-  /**
-   * Ultimate creditor.
-   * @return ultimateCreditor
-   **/
-  @Schema(example = "Ultimate Creditor", description = "Ultimate creditor.")
+    /**
+     * Ultimate creditor.
+     *
+     * @return ultimateCreditor
+     **/
+    @Schema(example = "Ultimate Creditor", description = "Ultimate creditor.")
+    @JsonProperty("ultimateCreditor")
 
-  @Size(max=70)   public String getUltimateCreditor() {
+@Size(max=70)   public String getUltimateCreditor() {
     return ultimateCreditor;
   }
 
@@ -269,18 +311,20 @@ public class EntryDetailsElement   {
     this.ultimateCreditor = ultimateCreditor;
   }
 
-  public EntryDetailsElement debtorName(String debtorName) {
-    this.debtorName = debtorName;
-    return this;
-  }
+    public EntryDetailsElement debtorName(String debtorName) {
+        this.debtorName = debtorName;
+        return this;
+    }
 
-  /**
-   * Debtor name.
-   * @return debtorName
-   **/
-  @Schema(example = "Debtor Name", description = "Debtor name.")
+    /**
+     * Debtor name.
+     *
+     * @return debtorName
+     **/
+    @Schema(example = "Debtor Name", description = "Debtor name.")
+  @JsonProperty("debtorName")
 
-  @Size(max=70)   public String getDebtorName() {
+@Size(max=70)   public String getDebtorName() {
     return debtorName;
   }
 
@@ -288,19 +332,21 @@ public class EntryDetailsElement   {
     this.debtorName = debtorName;
   }
 
-  public EntryDetailsElement debtorAccount(AccountReference debtorAccount) {
-    this.debtorAccount = debtorAccount;
-    return this;
-  }
+    public EntryDetailsElement debtorAccount(AccountReference debtorAccount) {
+        this.debtorAccount = debtorAccount;
+        return this;
+    }
 
-  /**
-   * Get debtorAccount
-   * @return debtorAccount
-   **/
-  @Schema(description = "")
+    /**
+     * Get debtorAccount
+     *
+     * @return debtorAccount
+     **/
+    @Schema(description = "")
+  @JsonProperty("debtorAccount")
 
-    @Valid
-    public AccountReference getDebtorAccount() {
+  @Valid
+  public AccountReference getDebtorAccount() {
     return debtorAccount;
   }
 
@@ -308,18 +354,20 @@ public class EntryDetailsElement   {
     this.debtorAccount = debtorAccount;
   }
 
-  public EntryDetailsElement debtorAgent(String debtorAgent) {
-    this.debtorAgent = debtorAgent;
-    return this;
-  }
+    public EntryDetailsElement debtorAgent(String debtorAgent) {
+        this.debtorAgent = debtorAgent;
+        return this;
+    }
 
-  /**
-   * BICFI
-   * @return debtorAgent
-   **/
-  @Schema(example = "AAAADEBBXXX", description = "BICFI ")
+    /**
+     * BICFI
+     *
+     * @return debtorAgent
+     **/
+    @Schema(example = "AAAADEBBXXX", description = "BICFI ")
+    @JsonProperty("debtorAgent")
 
-  @Pattern(regexp="[A-Z]{6,6}[A-Z2-9][A-NP-Z0-9]([A-Z0-9]{3,3}){0,1}")   public String getDebtorAgent() {
+    @Pattern(regexp="[A-Z]{6,6}[A-Z2-9][A-NP-Z0-9]([A-Z0-9]{3,3}){0,1}")   public String getDebtorAgent() {
     return debtorAgent;
   }
 
@@ -327,18 +375,20 @@ public class EntryDetailsElement   {
     this.debtorAgent = debtorAgent;
   }
 
-  public EntryDetailsElement ultimateDebtor(String ultimateDebtor) {
-    this.ultimateDebtor = ultimateDebtor;
-    return this;
-  }
+    public EntryDetailsElement ultimateDebtor(String ultimateDebtor) {
+        this.ultimateDebtor = ultimateDebtor;
+        return this;
+    }
 
-  /**
-   * Ultimate debtor.
-   * @return ultimateDebtor
-   **/
-  @Schema(example = "Ultimate Debtor", description = "Ultimate debtor.")
+    /**
+     * Ultimate debtor.
+     *
+     * @return ultimateDebtor
+     **/
+    @Schema(example = "Ultimate Debtor", description = "Ultimate debtor.")
+  @JsonProperty("ultimateDebtor")
 
-  @Size(max=70)   public String getUltimateDebtor() {
+@Size(max=70)   public String getUltimateDebtor() {
     return ultimateDebtor;
   }
 
@@ -347,17 +397,19 @@ public class EntryDetailsElement   {
   }
 
   public EntryDetailsElement remittanceInformationUnstructured(String remittanceInformationUnstructured) {
-    this.remittanceInformationUnstructured = remittanceInformationUnstructured;
-    return this;
+      this.remittanceInformationUnstructured = remittanceInformationUnstructured;
+      return this;
   }
 
-  /**
-   * Unstructured remittance information.
-   * @return remittanceInformationUnstructured
-   **/
-  @Schema(example = "Ref Number Merchant", description = "Unstructured remittance information. ")
+    /**
+     * Unstructured remittance information.
+     *
+     * @return remittanceInformationUnstructured
+     **/
+    @Schema(example = "Ref Number Merchant", description = "Unstructured remittance information. ")
+  @JsonProperty("remittanceInformationUnstructured")
 
-  @Size(max=140)   public String getRemittanceInformationUnstructured() {
+@Size(max=140)   public String getRemittanceInformationUnstructured() {
     return remittanceInformationUnstructured;
   }
 
@@ -366,15 +418,17 @@ public class EntryDetailsElement   {
   }
 
   public EntryDetailsElement remittanceInformationUnstructuredArray(RemittanceInformationUnstructuredArray remittanceInformationUnstructuredArray) {
-    this.remittanceInformationUnstructuredArray = remittanceInformationUnstructuredArray;
-    return this;
+      this.remittanceInformationUnstructuredArray = remittanceInformationUnstructuredArray;
+      return this;
   }
 
-  /**
-   * Get remittanceInformationUnstructuredArray
-   * @return remittanceInformationUnstructuredArray
-   **/
-  @Schema(description = "")
+    /**
+     * Get remittanceInformationUnstructuredArray
+     *
+     * @return remittanceInformationUnstructuredArray
+     **/
+    @Schema(description = "")
+    @JsonProperty("remittanceInformationUnstructuredArray")
 
     @Valid
     public RemittanceInformationUnstructuredArray getRemittanceInformationUnstructuredArray() {
@@ -386,18 +440,20 @@ public class EntryDetailsElement   {
   }
 
   public EntryDetailsElement remittanceInformationStructured(RemittanceInformationStructured remittanceInformationStructured) {
-    this.remittanceInformationStructured = remittanceInformationStructured;
-    return this;
+      this.remittanceInformationStructured = remittanceInformationStructured;
+      return this;
   }
 
-  /**
-   * Get remittanceInformationStructured
-   * @return remittanceInformationStructured
-   **/
-  @Schema(description = "")
+    /**
+     * Get remittanceInformationStructured
+     *
+     * @return remittanceInformationStructured
+     **/
+    @Schema(description = "")
+  @JsonProperty("remittanceInformationStructured")
 
-    @Valid
-    public RemittanceInformationStructured getRemittanceInformationStructured() {
+  @Valid
+  public RemittanceInformationStructured getRemittanceInformationStructured() {
     return remittanceInformationStructured;
   }
 
@@ -406,27 +462,29 @@ public class EntryDetailsElement   {
   }
 
   public EntryDetailsElement remittanceInformationStructuredArray(RemittanceInformationStructuredArray remittanceInformationStructuredArray) {
-    this.remittanceInformationStructuredArray = remittanceInformationStructuredArray;
-    return this;
+      this.remittanceInformationStructuredArray = remittanceInformationStructuredArray;
+      return this;
   }
 
-  /**
-   * Get remittanceInformationStructuredArray
-   * @return remittanceInformationStructuredArray
-   **/
-  @Schema(description = "")
+    /**
+     * Get remittanceInformationStructuredArray
+     *
+     * @return remittanceInformationStructuredArray
+     **/
+    @Schema(description = "")
+  @JsonProperty("remittanceInformationStructuredArray")
 
-    @Valid
-    public RemittanceInformationStructuredArray getRemittanceInformationStructuredArray() {
+  @Valid
+  public RemittanceInformationStructuredArray getRemittanceInformationStructuredArray() {
     return remittanceInformationStructuredArray;
   }
 
   public void setRemittanceInformationStructuredArray(RemittanceInformationStructuredArray remittanceInformationStructuredArray) {
-    this.remittanceInformationStructuredArray = remittanceInformationStructuredArray;
+      this.remittanceInformationStructuredArray = remittanceInformationStructuredArray;
   }
 
-  public EntryDetailsElement purposeCode(PurposeCode purposeCode) {
-    this.purposeCode = purposeCode;
+    public EntryDetailsElement purposeCode(PurposeCode purposeCode) {
+        this.purposeCode = purposeCode;
     return this;
   }
 
@@ -435,9 +493,10 @@ public class EntryDetailsElement   {
    * @return purposeCode
    **/
   @Schema(description = "")
+  @JsonProperty("purposeCode")
 
-    @Valid
-    public PurposeCode getPurposeCode() {
+  @Valid
+  public PurposeCode getPurposeCode() {
     return purposeCode;
   }
 

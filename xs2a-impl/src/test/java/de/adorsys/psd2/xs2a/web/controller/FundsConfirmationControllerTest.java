@@ -20,7 +20,7 @@ package de.adorsys.psd2.xs2a.web.controller;
 
 import com.google.gson.Gson;
 import de.adorsys.psd2.model.ConfirmationOfFunds;
-import de.adorsys.psd2.model.InlineResponse2008;
+import de.adorsys.psd2.model.InlineResponse2003;
 import de.adorsys.psd2.xs2a.domain.ResponseObject;
 import de.adorsys.psd2.xs2a.domain.fund.FundsConfirmationResponse;
 import de.adorsys.psd2.xs2a.service.FundsConfirmationService;
@@ -73,7 +73,7 @@ class FundsConfirmationControllerTest {
 
         //When:
         ResponseEntity<?> actualResult = fundsConfirmationController.checkAvailabilityOfFunds(null, confirmationOfFunds, null, CONSENT_ID, null, null, null);
-        InlineResponse2008 fundsConfirmationResponse = (InlineResponse2008) actualResult.getBody();
+        InlineResponse2003 fundsConfirmationResponse = (InlineResponse2003) actualResult.getBody();
 
         //Then:
         assertThat(actualResult.getStatusCode()).isEqualTo(expectedStatusCode);
@@ -88,7 +88,7 @@ class FundsConfirmationControllerTest {
     }
 
     private ResponseEntity getInlineResponse() {
-        return new ResponseEntity<>(new InlineResponse2008().fundsAvailable(true), HttpStatus.OK);
+        return new ResponseEntity<>(new InlineResponse2003().fundsAvailable(true), HttpStatus.OK);
     }
 
     private ConfirmationOfFunds getConfirmationOfFunds() throws IOException {

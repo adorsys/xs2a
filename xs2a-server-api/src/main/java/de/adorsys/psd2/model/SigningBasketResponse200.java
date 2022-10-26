@@ -1,3 +1,21 @@
+/*
+ * Copyright 2018-2022 adorsys GmbH & Co KG
+ *
+ * This program is free software: you can redistribute it and/or modify it
+ * under the terms of the GNU Affero General Public License as published
+ * by the Free Software Foundation, either version 3 of the License, or (at
+ * your option) any later version. This program is distributed in the hope that
+ * it will be useful, but WITHOUT ANY WARRANTY; without even the implied
+ * warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program. If not, see https://www.gnu.org/licenses/.
+ *
+ * This project is also available under a separate commercial license. You can
+ * contact us at psd2@adorsys.com.
+ */
+
 package de.adorsys.psd2.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -6,7 +24,6 @@ import org.springframework.validation.annotation.Validated;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
-import java.util.Map;
 import java.util.Objects;
 
 /**
@@ -14,7 +31,7 @@ import java.util.Objects;
  */
 @Schema(description = "Body of the JSON response for a successful get signing basket request.    * 'payments': payment initiations which shall be authorised through this signing basket.   * 'consents': consent objects which shall be authorised through this signing basket.   * 'transactionStatus': Only the codes RCVD, ACTC, RJCT are used.   * '_links': The ASPSP might integrate hyperlinks to indicate next (authorisation) steps to be taken. ")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-05-06T13:00:42.214155+03:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-10-26T13:16:54.081225+03:00[Europe/Kiev]")
 
 
 public class SigningBasketResponse200   {
@@ -27,24 +44,26 @@ public class SigningBasketResponse200   {
   @JsonProperty("transactionStatus")
   private TransactionStatusSBS transactionStatus = null;
 
-  @JsonProperty("_links")
-  private Map _links = null;
+    @JsonProperty("_links")
+    private LinksSigningBasket _links = null;
 
   public SigningBasketResponse200 payments(PaymentIdList payments) {
     this.payments = payments;
     return this;
   }
 
-  /**
-   * Get payments
-   * @return payments
-   **/
-  @Schema(description = "")
+    /**
+     * Get payments
+     *
+     * @return payments
+     **/
+    @Schema(description = "")
+    @JsonProperty("payments")
 
     @Valid
     public PaymentIdList getPayments() {
-    return payments;
-  }
+        return payments;
+    }
 
   public void setPayments(PaymentIdList payments) {
     this.payments = payments;
@@ -55,15 +74,17 @@ public class SigningBasketResponse200   {
     return this;
   }
 
-  /**
-   * Get consents
-   * @return consents
-   **/
-  @Schema(description = "")
+    /**
+     * Get consents
+     *
+     * @return consents
+     **/
+    @Schema(description = "")
+    @JsonProperty("consents")
 
     @Valid
     public ConsentIdList getConsents() {
-    return consents;
+        return consents;
   }
 
   public void setConsents(ConsentIdList consents) {
@@ -72,42 +93,46 @@ public class SigningBasketResponse200   {
 
   public SigningBasketResponse200 transactionStatus(TransactionStatusSBS transactionStatus) {
     this.transactionStatus = transactionStatus;
-    return this;
+      return this;
   }
 
-  /**
-   * Get transactionStatus
-   * @return transactionStatus
-   **/
-  @Schema(required = true, description = "")
-      @NotNull
+    /**
+     * Get transactionStatus
+     *
+     * @return transactionStatus
+     **/
+    @Schema(required = true, description = "")
+    @JsonProperty("transactionStatus")
+    @NotNull
 
     @Valid
     public TransactionStatusSBS getTransactionStatus() {
-    return transactionStatus;
+        return transactionStatus;
   }
 
   public void setTransactionStatus(TransactionStatusSBS transactionStatus) {
     this.transactionStatus = transactionStatus;
   }
 
-  public SigningBasketResponse200 _links(Map _links) {
-    this._links = _links;
-    return this;
-  }
+    public SigningBasketResponse200 _links(LinksSigningBasket _links) {
+        this._links = _links;
+        return this;
+    }
 
-  /**
-   * Get _links
-   * @return _links
-   **/
-  @Schema(description = "")
+    /**
+     * Get _links
+     *
+     * @return _links
+     **/
+    @Schema(description = "")
+    @JsonProperty("_links")
 
     @Valid
-    public Map getLinks() {
-    return _links;
-  }
+    public LinksSigningBasket getLinks() {
+        return _links;
+    }
 
-  public void setLinks(Map _links) {
+    public void setLinks(LinksSigningBasket _links) {
     this._links = _links;
   }
 

@@ -1,7 +1,4 @@
 # Reference Java implementation of NextGenPSD2 XS2A Interface of Berlin Group
-[![Build Status](https://travis-ci.com/adorsys/xs2a.svg?branch=develop)](https://travis-ci.com/adorsys/xs2a)
-[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=adorsys_xs2a&metric=alert_status)](https://sonarcloud.io/dashboard?id=adorsys_xs2a)
-[![Coverage](https://sonarcloud.io/api/project_badges/measure?project=adorsys_xs2a&metric=coverage)](https://sonarcloud.io/dashboard?id=adorsys_xs2a)
 
 ## Licensing model change to dual license: AGPL v.3 or commercial license
 

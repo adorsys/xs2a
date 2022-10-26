@@ -1,3 +1,21 @@
+/*
+ * Copyright 2018-2022 adorsys GmbH & Co KG
+ *
+ * This program is free software: you can redistribute it and/or modify it
+ * under the terms of the GNU Affero General Public License as published
+ * by the Free Software Foundation, either version 3 of the License, or (at
+ * your option) any later version. This program is distributed in the hope that
+ * it will be useful, but WITHOUT ANY WARRANTY; without even the implied
+ * warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program. If not, see https://www.gnu.org/licenses/.
+ *
+ * This project is also available under a separate commercial license. You can
+ * contact us at psd2@adorsys.com.
+ */
+
 package de.adorsys.psd2.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -13,7 +31,7 @@ import java.util.Objects;
  */
 @Schema(description = "Body of the JSON response for a successful read transaction list request. This account report contains transactions resulting from the query parameters. ")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-05-06T13:00:42.214155+03:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-10-26T13:16:54.081225+03:00[Europe/Kiev]")
 
 
 public class TransactionsResponse200Json   {
@@ -34,16 +52,18 @@ public class TransactionsResponse200Json   {
     return this;
   }
 
-  /**
-   * Get account
-   * @return account
-   **/
-  @Schema(description = "")
+    /**
+     * Get account
+     *
+     * @return account
+     **/
+    @Schema(description = "")
+    @JsonProperty("account")
 
     @Valid
     public AccountReference getAccount() {
-    return account;
-  }
+        return account;
+    }
 
   public void setAccount(AccountReference account) {
     this.account = account;
@@ -54,15 +74,17 @@ public class TransactionsResponse200Json   {
     return this;
   }
 
-  /**
-   * Get transactions
-   * @return transactions
-   **/
-  @Schema(description = "")
+    /**
+     * Get transactions
+     *
+     * @return transactions
+     **/
+    @Schema(description = "")
+    @JsonProperty("transactions")
 
     @Valid
     public AccountReport getTransactions() {
-    return transactions;
+        return transactions;
   }
 
   public void setTransactions(AccountReport transactions) {
@@ -71,14 +93,16 @@ public class TransactionsResponse200Json   {
 
   public TransactionsResponse200Json balances(BalanceList balances) {
     this.balances = balances;
-    return this;
+      return this;
   }
 
-  /**
-   * Get balances
-   * @return balances
-   **/
-  @Schema(description = "")
+    /**
+     * Get balances
+     *
+     * @return balances
+     **/
+    @Schema(description = "")
+    @JsonProperty("balances")
 
     @Valid
     public BalanceList getBalances() {
@@ -86,19 +110,21 @@ public class TransactionsResponse200Json   {
   }
 
   public void setBalances(BalanceList balances) {
-    this.balances = balances;
+      this.balances = balances;
   }
 
-  public TransactionsResponse200Json _links(LinksDownload _links) {
-    this._links = _links;
-    return this;
-  }
+    public TransactionsResponse200Json _links(Map _links) {
+        this._links = _links;
+        return this;
+    }
 
-  /**
-   * Get _links
-   * @return _links
-   **/
-  @Schema(description = "")
+    /**
+     * Get _links
+     *
+     * @return _links
+     **/
+    @Schema(description = "")
+    @JsonProperty("_links")
 
     @Valid
     public Map getLinks() {

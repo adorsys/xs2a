@@ -1,3 +1,21 @@
+/*
+ * Copyright 2018-2022 adorsys GmbH & Co KG
+ *
+ * This program is free software: you can redistribute it and/or modify it
+ * under the terms of the GNU Affero General Public License as published
+ * by the Free Software Foundation, either version 3 of the License, or (at
+ * your option) any later version. This program is distributed in the hope that
+ * it will be useful, but WITHOUT ANY WARRANTY; without even the implied
+ * warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program. If not, see https://www.gnu.org/licenses/.
+ *
+ * This project is also available under a separate commercial license. You can
+ * contact us at psd2@adorsys.com.
+ */
+
 package de.adorsys.psd2.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -15,7 +33,7 @@ import java.util.Objects;
  */
 @Schema(description = "Content of the body of a consent request. ")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-05-06T13:00:42.214155+03:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-10-26T13:16:54.081225+03:00[Europe/Kiev]")
 
 
 public class Consents   {
@@ -39,17 +57,19 @@ public class Consents   {
     return this;
   }
 
-  /**
-   * Get access
-   * @return access
-   **/
-  @Schema(required = true, description = "")
-      @NotNull
+    /**
+     * Get access
+     *
+     * @return access
+     **/
+    @Schema(required = true, description = "")
+    @JsonProperty("access")
+    @NotNull
 
     @Valid
     public AccountAccess getAccess() {
-    return access;
-  }
+        return access;
+    }
 
   public void setAccess(AccountAccess access) {
     this.access = access;
@@ -60,15 +80,17 @@ public class Consents   {
     return this;
   }
 
-  /**
-   * \"true\", if the consent is for recurring access to the account data.  \"false\", if the consent is for one access to the account data.
-   * @return recurringIndicator
-   **/
-  @Schema(example = "false", required = true, description = "\"true\", if the consent is for recurring access to the account data.  \"false\", if the consent is for one access to the account data. ")
-      @NotNull
+    /**
+     * \"true\", if the consent is for recurring access to the account data.  \"false\", if the consent is for one access to the account data.
+     *
+     * @return recurringIndicator
+     **/
+    @Schema(example = "false", required = true, description = "\"true\", if the consent is for recurring access to the account data.  \"false\", if the consent is for one access to the account data. ")
+    @JsonProperty("recurringIndicator")
+    @NotNull
 
     public Boolean isRecurringIndicator() {
-    return recurringIndicator;
+        return recurringIndicator;
   }
 
   public void setRecurringIndicator(Boolean recurringIndicator) {
@@ -77,19 +99,21 @@ public class Consents   {
 
   public Consents validUntil(LocalDate validUntil) {
     this.validUntil = validUntil;
-    return this;
+      return this;
   }
 
-  /**
-   * This parameter is defining a valid until date (including the mentioned date) for the requested consent.  The content is the local ASPSP date in ISO-Date format, e.g. 2017-10-30.  Future dates might get adjusted by ASPSP.   If a maximal available date is requested, a date in far future is to be used: \"9999-12-31\".   In both cases the consent object to be retrieved by the get consent request will contain the adjusted date.
-   * @return validUntil
-   **/
-  @Schema(example = "Thu Dec 31 02:00:00 EET 2020", required = true, description = "This parameter is defining a valid until date (including the mentioned date) for the requested consent.  The content is the local ASPSP date in ISO-Date format, e.g. 2017-10-30.  Future dates might get adjusted by ASPSP.   If a maximal available date is requested, a date in far future is to be used: \"9999-12-31\".   In both cases the consent object to be retrieved by the get consent request will contain the adjusted date. ")
-      @NotNull
+    /**
+     * This parameter is defining a valid until date (including the mentioned date) for the requested consent.  The content is the local ASPSP date in ISO-Date format, e.g. 2017-10-30.  Future dates might get adjusted by ASPSP.   If a maximal available date is requested, a date in far future is to be used: \"9999-12-31\".   In both cases the consent object to be retrieved by the get consent request will contain the adjusted date.
+     *
+     * @return validUntil
+     **/
+    @Schema(required = true, description = "This parameter is defining a valid until date (including the mentioned date) for the requested consent.  The content is the local ASPSP date in ISO-Date format, e.g. 2017-10-30.  Future dates might get adjusted by ASPSP.   If a maximal available date is requested, a date in far future is to be used: \"9999-12-31\".   In both cases the consent object to be retrieved by the get consent request will contain the adjusted date. ")
+    @JsonProperty("validUntil")
+    @NotNull
 
     @Valid
     public LocalDate getValidUntil() {
-    return validUntil;
+        return validUntil;
   }
 
   public void setValidUntil(LocalDate validUntil) {
@@ -98,18 +122,21 @@ public class Consents   {
 
   public Consents frequencyPerDay(Integer frequencyPerDay) {
     this.frequencyPerDay = frequencyPerDay;
-    return this;
+      return this;
   }
 
-  /**
-   * This field indicates the requested maximum frequency for an access without PSU involvement per day. For a one-off access, this attribute is set to \"1\".  The frequency needs to be greater equal to one.   If not otherwise agreed bilaterally between TPP and ASPSP, the frequency is less equal to 4.
-   * minimum: 1
-   * @return frequencyPerDay
-   **/
-  @Schema(example = "4", required = true, description = "This field indicates the requested maximum frequency for an access without PSU involvement per day. For a one-off access, this attribute is set to \"1\".  The frequency needs to be greater equal to one.   If not otherwise agreed bilaterally between TPP and ASPSP, the frequency is less equal to 4. ")
-      @NotNull
+    /**
+     * This field indicates the requested maximum frequency for an access without PSU involvement per day. For a one-off access, this attribute is set to \"1\".  The frequency needs to be greater equal to one.   If not otherwise agreed bilaterally between TPP and ASPSP, the frequency is less equal to 4.
+     * minimum: 1
+     *
+     * @return frequencyPerDay
+     **/
+    @Schema(example = "4", required = true, description = "This field indicates the requested maximum frequency for an access without PSU involvement per day. For a one-off access, this attribute is set to \"1\".  The frequency needs to be greater equal to one.   If not otherwise agreed bilaterally between TPP and ASPSP, the frequency is less equal to 4. ")
+    @JsonProperty("frequencyPerDay")
+    @NotNull
 
-  @Min(1)  public Integer getFrequencyPerDay() {
+    @Min(1)
+    public Integer getFrequencyPerDay() {
     return frequencyPerDay;
   }
 
@@ -119,15 +146,17 @@ public class Consents   {
 
   public Consents combinedServiceIndicator(Boolean combinedServiceIndicator) {
     this.combinedServiceIndicator = combinedServiceIndicator;
-    return this;
+      return this;
   }
 
-  /**
-   * If \"true\" indicates that a payment initiation service will be addressed in the same \"session\".
-   * @return combinedServiceIndicator
-   **/
-  @Schema(example = "false", required = true, description = "If \"true\" indicates that a payment initiation service will be addressed in the same \"session\". ")
-      @NotNull
+    /**
+     * If \"true\" indicates that a payment initiation service will be addressed in the same \"session\".
+     *
+     * @return combinedServiceIndicator
+     **/
+    @Schema(example = "false", required = true, description = "If \"true\" indicates that a payment initiation service will be addressed in the same \"session\". ")
+    @JsonProperty("combinedServiceIndicator")
+    @NotNull
 
     public Boolean isCombinedServiceIndicator() {
     return combinedServiceIndicator;

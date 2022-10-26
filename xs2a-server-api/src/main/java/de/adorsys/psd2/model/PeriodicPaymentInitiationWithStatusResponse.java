@@ -1,3 +1,21 @@
+/*
+ * Copyright 2018-2022 adorsys GmbH & Co KG
+ *
+ * This program is free software: you can redistribute it and/or modify it
+ * under the terms of the GNU Affero General Public License as published
+ * by the Free Software Foundation, either version 3 of the License, or (at
+ * your option) any later version. This program is distributed in the hope that
+ * it will be useful, but WITHOUT ANY WARRANTY; without even the implied
+ * warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program. If not, see https://www.gnu.org/licenses/.
+ *
+ * This project is also available under a separate commercial license. You can
+ * contact us at psd2@adorsys.com.
+ */
+
 package de.adorsys.psd2.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -18,20 +36,20 @@ import java.util.Objects;
  */
 @Schema(description = "Generic JSON response body consistion of the corresponding periodic payment initation JSON body together with an optional transaction status field. ")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-05-06T13:00:42.214155+03:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-10-26T13:16:54.081225+03:00[Europe/Kiev]")
 
 
 public class PeriodicPaymentInitiationWithStatusResponse {
-  @JsonProperty("endToEndIdentification")
-  private String endToEndIdentification = null;
+    @JsonProperty("endToEndIdentification")
+    private String endToEndIdentification = null;
 
-  @JsonProperty("debtorName")
-  private String debtorName = null;
+    @JsonProperty("debtorName")
+    private String debtorName = null;
 
-  @JsonProperty("debtorAccount")
-  private AccountReference debtorAccount = null;
+    @JsonProperty("debtorAccount")
+    private AccountReference debtorAccount = null;
 
-  @JsonProperty("ultimateDebtor")
+    @JsonProperty("ultimateDebtor")
   private String ultimateDebtor = null;
 
   @JsonProperty("instructedAmount")
@@ -61,8 +79,8 @@ public class PeriodicPaymentInitiationWithStatusResponse {
   @JsonProperty("remittanceInformationUnstructured")
   private String remittanceInformationUnstructured = null;
 
-  @JsonProperty("remittanceInformationStructured")
-  private String remittanceInformationStructured = null;
+    @JsonProperty("remittanceInformationStructured")
+    private RemittanceInformationStructuredMax140 remittanceInformationStructured = null;
 
   @JsonProperty("startDate")
   private LocalDate startDate = null;
@@ -91,15 +109,18 @@ public class PeriodicPaymentInitiationWithStatusResponse {
     return this;
   }
 
-  /**
-   * Get endToEndIdentification
-   * @return endToEndIdentification
-   **/
-  @Schema(description = "")
+    /**
+     * Get endToEndIdentification
+     *
+     * @return endToEndIdentification
+     **/
+    @Schema(description = "")
+    @JsonProperty("endToEndIdentification")
 
-  @Size(max=35)   public String getEndToEndIdentification() {
-    return endToEndIdentification;
-  }
+    @Size(max = 35)
+    public String getEndToEndIdentification() {
+        return endToEndIdentification;
+    }
 
   public void setEndToEndIdentification(String endToEndIdentification) {
     this.endToEndIdentification = endToEndIdentification;
@@ -110,14 +131,17 @@ public class PeriodicPaymentInitiationWithStatusResponse {
     return this;
   }
 
-  /**
-   * Debtor name.
-   * @return debtorName
-   **/
-  @Schema(example = "Debtor Name", description = "Debtor name.")
+    /**
+     * Debtor name.
+     *
+     * @return debtorName
+     **/
+    @Schema(example = "Debtor Name", description = "Debtor name.")
+    @JsonProperty("debtorName")
 
-  @Size(max=70)   public String getDebtorName() {
-    return debtorName;
+    @Size(max = 70)
+    public String getDebtorName() {
+        return debtorName;
   }
 
   public void setDebtorName(String debtorName) {
@@ -126,19 +150,21 @@ public class PeriodicPaymentInitiationWithStatusResponse {
 
   public PeriodicPaymentInitiationWithStatusResponse debtorAccount(AccountReference debtorAccount) {
     this.debtorAccount = debtorAccount;
-    return this;
+      return this;
   }
 
-  /**
-   * Get debtorAccount
-   * @return debtorAccount
-   **/
-  @Schema(required = true, description = "")
-      @NotNull
+    /**
+     * Get debtorAccount
+     *
+     * @return debtorAccount
+     **/
+    @Schema(required = true, description = "")
+    @JsonProperty("debtorAccount")
+    @NotNull
 
     @Valid
     public AccountReference getDebtorAccount() {
-    return debtorAccount;
+        return debtorAccount;
   }
 
   public void setDebtorAccount(AccountReference debtorAccount) {
@@ -147,16 +173,19 @@ public class PeriodicPaymentInitiationWithStatusResponse {
 
   public PeriodicPaymentInitiationWithStatusResponse ultimateDebtor(String ultimateDebtor) {
     this.ultimateDebtor = ultimateDebtor;
-    return this;
+      return this;
   }
 
-  /**
-   * Ultimate debtor.
-   * @return ultimateDebtor
-   **/
-  @Schema(example = "Ultimate Debtor", description = "Ultimate debtor.")
+    /**
+     * Ultimate debtor.
+     *
+     * @return ultimateDebtor
+     **/
+    @Schema(example = "Ultimate Debtor", description = "Ultimate debtor.")
+    @JsonProperty("ultimateDebtor")
 
-  @Size(max=70)   public String getUltimateDebtor() {
+    @Size(max = 70)
+    public String getUltimateDebtor() {
     return ultimateDebtor;
   }
 
@@ -166,15 +195,17 @@ public class PeriodicPaymentInitiationWithStatusResponse {
 
   public PeriodicPaymentInitiationWithStatusResponse instructedAmount(Amount instructedAmount) {
     this.instructedAmount = instructedAmount;
-    return this;
+      return this;
   }
 
-  /**
-   * Get instructedAmount
-   * @return instructedAmount
-   **/
-  @Schema(required = true, description = "")
-      @NotNull
+    /**
+     * Get instructedAmount
+     *
+     * @return instructedAmount
+     **/
+    @Schema(required = true, description = "")
+    @JsonProperty("instructedAmount")
+    @NotNull
 
     @Valid
     public Amount getInstructedAmount() {
@@ -186,16 +217,18 @@ public class PeriodicPaymentInitiationWithStatusResponse {
   }
 
   public PeriodicPaymentInitiationWithStatusResponse creditorAccount(AccountReference creditorAccount) {
-    this.creditorAccount = creditorAccount;
-    return this;
+      this.creditorAccount = creditorAccount;
+      return this;
   }
 
-  /**
-   * Get creditorAccount
-   * @return creditorAccount
-   **/
-  @Schema(required = true, description = "")
-      @NotNull
+    /**
+     * Get creditorAccount
+     *
+     * @return creditorAccount
+     **/
+    @Schema(required = true, description = "")
+    @JsonProperty("creditorAccount")
+    @NotNull
 
     @Valid
     public AccountReference getCreditorAccount() {
@@ -207,17 +240,19 @@ public class PeriodicPaymentInitiationWithStatusResponse {
   }
 
   public PeriodicPaymentInitiationWithStatusResponse creditorAgent(String creditorAgent) {
-    this.creditorAgent = creditorAgent;
-    return this;
+      this.creditorAgent = creditorAgent;
+      return this;
   }
 
-  /**
-   * BICFI
-   * @return creditorAgent
-   **/
-  @Schema(example = "AAAADEBBXXX", description = "BICFI ")
+    /**
+     * BICFI
+     *
+     * @return creditorAgent
+     **/
+    @Schema(example = "AAAADEBBXXX", description = "BICFI ")
+    @JsonProperty("creditorAgent")
 
-  @Pattern(regexp="[A-Z]{6,6}[A-Z2-9][A-NP-Z0-9]([A-Z0-9]{3,3}){0,1}")   public String getCreditorAgent() {
+    @Pattern(regexp = "[A-Z]{6,6}[A-Z2-9][A-NP-Z0-9]([A-Z0-9]{3,3}){0,1}")   public String getCreditorAgent() {
     return creditorAgent;
   }
 
@@ -226,17 +261,19 @@ public class PeriodicPaymentInitiationWithStatusResponse {
   }
 
   public PeriodicPaymentInitiationWithStatusResponse creditorId(String creditorId) {
-    this.creditorId = creditorId;
-    return this;
+      this.creditorId = creditorId;
+      return this;
   }
 
-  /**
-   * Identification of Creditors, e.g. a SEPA Creditor ID.
-   * @return creditorId
-   **/
-  @Schema(description = "Identification of Creditors, e.g. a SEPA Creditor ID.")
+    /**
+     * Identification of Creditors, e.g. a SEPA Creditor ID.
+     *
+     * @return creditorId
+     **/
+    @Schema(description = "Identification of Creditors, e.g. a SEPA Creditor ID.")
+    @JsonProperty("creditorId")
 
-  @Size(max=35)   public String getCreditorId() {
+@Size(max=35)   public String getCreditorId() {
     return creditorId;
   }
 
@@ -245,18 +282,20 @@ public class PeriodicPaymentInitiationWithStatusResponse {
   }
 
   public PeriodicPaymentInitiationWithStatusResponse creditorName(String creditorName) {
-    this.creditorName = creditorName;
-    return this;
+      this.creditorName = creditorName;
+      return this;
   }
 
-  /**
-   * Creditor name.
-   * @return creditorName
-   **/
-  @Schema(example = "Creditor Name", required = true, description = "Creditor name.")
-      @NotNull
+    /**
+     * Creditor name.
+     *
+     * @return creditorName
+     **/
+    @Schema(example = "Creditor Name", required = true, description = "Creditor name.")
+    @JsonProperty("creditorName")
+    @NotNull
 
-  @Size(max=70)   public String getCreditorName() {
+@Size(max=70)   public String getCreditorName() {
     return creditorName;
   }
 
@@ -265,15 +304,17 @@ public class PeriodicPaymentInitiationWithStatusResponse {
   }
 
   public PeriodicPaymentInitiationWithStatusResponse creditorAddress(Address creditorAddress) {
-    this.creditorAddress = creditorAddress;
-    return this;
+      this.creditorAddress = creditorAddress;
+      return this;
   }
 
-  /**
-   * Get creditorAddress
-   * @return creditorAddress
-   **/
-  @Schema(description = "")
+    /**
+     * Get creditorAddress
+     *
+     * @return creditorAddress
+     **/
+    @Schema(description = "")
+    @JsonProperty("creditorAddress")
 
     @Valid
     public Address getCreditorAddress() {
@@ -285,17 +326,19 @@ public class PeriodicPaymentInitiationWithStatusResponse {
   }
 
   public PeriodicPaymentInitiationWithStatusResponse ultimateCreditor(String ultimateCreditor) {
-    this.ultimateCreditor = ultimateCreditor;
-    return this;
+      this.ultimateCreditor = ultimateCreditor;
+      return this;
   }
 
-  /**
-   * Ultimate creditor.
-   * @return ultimateCreditor
-   **/
-  @Schema(example = "Ultimate Creditor", description = "Ultimate creditor.")
+    /**
+     * Ultimate creditor.
+     *
+     * @return ultimateCreditor
+     **/
+    @Schema(example = "Ultimate Creditor", description = "Ultimate creditor.")
+  @JsonProperty("ultimateCreditor")
 
-  @Size(max=70)   public String getUltimateCreditor() {
+@Size(max=70)   public String getUltimateCreditor() {
     return ultimateCreditor;
   }
 
@@ -304,18 +347,19 @@ public class PeriodicPaymentInitiationWithStatusResponse {
   }
 
   public PeriodicPaymentInitiationWithStatusResponse purposeCode(PurposeCode purposeCode) {
-    this.purposeCode = purposeCode;
-    return this;
+      this.purposeCode = purposeCode;
+      return this;
   }
 
-  /**
-   * Get purposeCode
-   * @return purposeCode
-   **/
+    /**
+     * Get purposeCode
+     * @return purposeCode
+     **/
   @Schema(description = "")
+  @JsonProperty("purposeCode")
 
-    @Valid
-    public PurposeCode getPurposeCode() {
+  @Valid
+  public PurposeCode getPurposeCode() {
     return purposeCode;
   }
 
@@ -324,118 +368,129 @@ public class PeriodicPaymentInitiationWithStatusResponse {
   }
 
   public PeriodicPaymentInitiationWithStatusResponse remittanceInformationUnstructured(String remittanceInformationUnstructured) {
-    this.remittanceInformationUnstructured = remittanceInformationUnstructured;
-    return this;
+      this.remittanceInformationUnstructured = remittanceInformationUnstructured;
+      return this;
   }
 
-  /**
-   * Unstructured remittance information.
-   * @return remittanceInformationUnstructured
-   **/
-  @Schema(example = "Ref Number Merchant", description = "Unstructured remittance information. ")
+    /**
+     * Unstructured remittance information.
+     *
+     * @return remittanceInformationUnstructured
+     **/
+    @Schema(example = "Ref Number Merchant", description = "Unstructured remittance information. ")
+    @JsonProperty("remittanceInformationUnstructured")
 
-  @Size(max=140)   public String getRemittanceInformationUnstructured() {
+@Size(max=140)   public String getRemittanceInformationUnstructured() {
     return remittanceInformationUnstructured;
   }
 
   public void setRemittanceInformationUnstructured(String remittanceInformationUnstructured) {
-    this.remittanceInformationUnstructured = remittanceInformationUnstructured;
+      this.remittanceInformationUnstructured = remittanceInformationUnstructured;
   }
 
-  public PeriodicPaymentInitiationWithStatusResponse remittanceInformationStructured(String remittanceInformationStructured) {
-    this.remittanceInformationStructured = remittanceInformationStructured;
-    return this;
-  }
+    public PeriodicPaymentInitiationWithStatusResponse remittanceInformationStructured(RemittanceInformationStructuredMax140 remittanceInformationStructured) {
+        this.remittanceInformationStructured = remittanceInformationStructured;
+        return this;
+    }
 
-  /**
-   * Structured remittance information Max
-   * @return remittanceInformationStructured
-   **/
-  @Schema(description = "Structured remittance information Max ")
-
-  @Size(max=140)   public String getRemittanceInformationStructured() {
-    return remittanceInformationStructured;
-  }
-
-  public void setRemittanceInformationStructured(String remittanceInformationStructured) {
-    this.remittanceInformationStructured = remittanceInformationStructured;
-  }
-
-  public PeriodicPaymentInitiationWithStatusResponse startDate(LocalDate startDate) {
-    this.startDate = startDate;
-    return this;
-  }
-
-  /**
-   * The first applicable day of execution starting from this date is the first payment.
-   * @return startDate
-   **/
-  @Schema(required = true, description = "The first applicable day of execution starting from this date is the first payment. ")
-      @NotNull
+    /**
+     * Get remittanceInformationStructured
+     *
+     * @return remittanceInformationStructured
+     **/
+    @Schema(description = "")
+    @JsonProperty("remittanceInformationStructured")
 
     @Valid
-    public LocalDate getStartDate() {
+    public RemittanceInformationStructuredMax140 getRemittanceInformationStructured() {
+        return remittanceInformationStructured;
+    }
+
+    public void setRemittanceInformationStructured(RemittanceInformationStructuredMax140 remittanceInformationStructured) {
+    this.remittanceInformationStructured = remittanceInformationStructured;
+    }
+
+    public PeriodicPaymentInitiationWithStatusResponse startDate(LocalDate startDate) {
+        this.startDate = startDate;
+        return this;
+    }
+
+    /**
+     * The first applicable day of execution starting from this date is the first payment.
+     *
+     * @return startDate
+     **/
+    @Schema(required = true, description = "The first applicable day of execution starting from this date is the first payment. ")
+  @JsonProperty("startDate")
+    @NotNull
+
+  @Valid
+  public LocalDate getStartDate() {
     return startDate;
   }
 
   public void setStartDate(LocalDate startDate) {
-    this.startDate = startDate;
+      this.startDate = startDate;
   }
 
-  public PeriodicPaymentInitiationWithStatusResponse endDate(LocalDate endDate) {
-    this.endDate = endDate;
-    return this;
-  }
+    public PeriodicPaymentInitiationWithStatusResponse endDate(LocalDate endDate) {
+        this.endDate = endDate;
+        return this;
+    }
 
-  /**
-   * The last applicable day of execution. If not given, it is an infinite standing order.
-   * @return endDate
-   **/
-  @Schema(description = "The last applicable day of execution. If not given, it is an infinite standing order. ")
+    /**
+     * The last applicable day of execution. If not given, it is an infinite standing order.
+     *
+     * @return endDate
+     **/
+    @Schema(description = "The last applicable day of execution. If not given, it is an infinite standing order. ")
+  @JsonProperty("endDate")
 
-    @Valid
-    public LocalDate getEndDate() {
+  @Valid
+  public LocalDate getEndDate() {
     return endDate;
   }
 
   public void setEndDate(LocalDate endDate) {
-    this.endDate = endDate;
+      this.endDate = endDate;
   }
 
-  public PeriodicPaymentInitiationWithStatusResponse executionRule(ExecutionRule executionRule) {
-    this.executionRule = executionRule;
-    return this;
-  }
+    public PeriodicPaymentInitiationWithStatusResponse executionRule(ExecutionRule executionRule) {
+        this.executionRule = executionRule;
+        return this;
+    }
 
-  /**
-   * Get executionRule
+    /**
+     * Get executionRule
    * @return executionRule
    **/
   @Schema(description = "")
+  @JsonProperty("executionRule")
 
-    @Valid
-    public ExecutionRule getExecutionRule() {
+  @Valid
+  public ExecutionRule getExecutionRule() {
     return executionRule;
   }
 
   public void setExecutionRule(ExecutionRule executionRule) {
-    this.executionRule = executionRule;
+      this.executionRule = executionRule;
   }
 
-  public PeriodicPaymentInitiationWithStatusResponse frequency(FrequencyCode frequency) {
-    this.frequency = frequency;
-    return this;
-  }
+    public PeriodicPaymentInitiationWithStatusResponse frequency(FrequencyCode frequency) {
+        this.frequency = frequency;
+        return this;
+    }
 
-  /**
-   * Get frequency
+    /**
+     * Get frequency
    * @return frequency
    **/
   @Schema(required = true, description = "")
-      @NotNull
+  @JsonProperty("frequency")
+    @NotNull
 
-    @Valid
-    public FrequencyCode getFrequency() {
+  @Valid
+  public FrequencyCode getFrequency() {
     return frequency;
   }
 
@@ -453,6 +508,7 @@ public class PeriodicPaymentInitiationWithStatusResponse {
    * @return dayOfExecution
    **/
   @Schema(description = "")
+  @JsonProperty("dayOfExecution")
 
     @Valid
   public DayOfExecution getDayOfExecution() {
@@ -463,19 +519,20 @@ public class PeriodicPaymentInitiationWithStatusResponse {
     this.dayOfExecution = dayOfExecution;
   }
 
-  public PeriodicPaymentInitiationWithStatusResponse transactionStatus(TransactionStatus transactionStatus) {
-    this.transactionStatus = transactionStatus;
-    return this;
-  }
+    public PeriodicPaymentInitiationWithStatusResponse transactionStatus(TransactionStatus transactionStatus) {
+        this.transactionStatus = transactionStatus;
+        return this;
+    }
 
-  /**
-   * Get transactionStatus
-   * @return transactionStatus
+    /**
+     * Get transactionStatus
+     * @return transactionStatus
    **/
   @Schema(description = "")
+  @JsonProperty("transactionStatus")
 
-    @Valid
-    public TransactionStatus getTransactionStatus() {
+  @Valid
+  public TransactionStatus getTransactionStatus() {
     return transactionStatus;
   }
 
@@ -489,20 +546,21 @@ public class PeriodicPaymentInitiationWithStatusResponse {
   }
 
   public PeriodicPaymentInitiationWithStatusResponse addTppMessagesItem(TppMessageGeneric tppMessagesItem) {
-    if (this.tppMessages == null) {
-      this.tppMessages = new ArrayList<>();
-    }
-    this.tppMessages.add(tppMessagesItem);
-    return this;
+      if (this.tppMessages == null) {
+          this.tppMessages = new ArrayList<>();
+      }
+      this.tppMessages.add(tppMessagesItem);
+      return this;
   }
 
-  /**
-   * Messages to the TPP on operational issues.
-   * @return tppMessages
-   **/
+    /**
+     * Messages to the TPP on operational issues.
+     * @return tppMessages
+     **/
   @Schema(description = "Messages to the TPP on operational issues.")
-      @Valid
-    public List<TppMessageGeneric> getTppMessages() {
+  @JsonProperty("tppMessages")
+    @Valid
+  public List<TppMessageGeneric> getTppMessages() {
     return tppMessages;
   }
 

@@ -1,3 +1,21 @@
+/*
+ * Copyright 2018-2022 adorsys GmbH & Co KG
+ *
+ * This program is free software: you can redistribute it and/or modify it
+ * under the terms of the GNU Affero General Public License as published
+ * by the Free Software Foundation, either version 3 of the License, or (at
+ * your option) any later version. This program is distributed in the hope that
+ * it will be useful, but WITHOUT ANY WARRANTY; without even the implied
+ * warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program. If not, see https://www.gnu.org/licenses/.
+ *
+ * This project is also available under a separate commercial license. You can
+ * contact us at psd2@adorsys.com.
+ */
+
 package de.adorsys.psd2.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -13,7 +31,7 @@ import java.util.Objects;
  */
 @Schema(description = "This is a data element to support the declaration of additional errors in the context of [RFC7807].")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-05-06T13:00:42.214155+03:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-10-26T13:16:54.081225+03:00[Europe/Kiev]")
 
 
 public class Error406AISAdditionalErrors   {
@@ -31,15 +49,18 @@ public class Error406AISAdditionalErrors   {
     return this;
   }
 
-  /**
-   * Short human readable description of error type.  Could be in local language.  To be provided by ASPSPs.
-   * @return title
-   **/
-  @Schema(description = "Short human readable description of error type.  Could be in local language.  To be provided by ASPSPs. ")
+    /**
+     * Short human readable description of error type.  Could be in local language.  To be provided by ASPSPs.
+     *
+     * @return title
+     **/
+    @Schema(description = "Short human readable description of error type.  Could be in local language.  To be provided by ASPSPs. ")
+    @JsonProperty("title")
 
-  @Size(max=70)   public String getTitle() {
-    return title;
-  }
+    @Size(max = 70)
+    public String getTitle() {
+        return title;
+    }
 
   public void setTitle(String title) {
     this.title = title;
@@ -50,14 +71,17 @@ public class Error406AISAdditionalErrors   {
     return this;
   }
 
-  /**
-   * Detailed human readable text specific to this instance of the error.  XPath might be used to point to the issue generating the error in addition. Remark for Future: In future, a dedicated field might be introduced for the XPath.
-   * @return detail
-   **/
-  @Schema(description = "Detailed human readable text specific to this instance of the error.  XPath might be used to point to the issue generating the error in addition. Remark for Future: In future, a dedicated field might be introduced for the XPath. ")
+    /**
+     * Detailed human readable text specific to this instance of the error.  XPath might be used to point to the issue generating the error in addition. Remark for Future: In future, a dedicated field might be introduced for the XPath.
+     *
+     * @return detail
+     **/
+    @Schema(description = "Detailed human readable text specific to this instance of the error.  XPath might be used to point to the issue generating the error in addition. Remark for Future: In future, a dedicated field might be introduced for the XPath. ")
+    @JsonProperty("detail")
 
-  @Size(max=500)   public String getDetail() {
-    return detail;
+    @Size(max = 500)
+    public String getDetail() {
+        return detail;
   }
 
   public void setDetail(String detail) {
@@ -66,15 +90,17 @@ public class Error406AISAdditionalErrors   {
 
   public Error406AISAdditionalErrors code(String code) {
     this.code = code;
-    return this;
+      return this;
   }
 
-  /**
-   * Message codes defined for AIS for HTTP Error code 406 (NOT ACCEPTABLE).
-   * @return code
-   **/
-  @Schema(required = true, description = "Message codes defined for AIS for HTTP Error code 406 (NOT ACCEPTABLE).")
-      @NotNull
+    /**
+     * Message codes defined for AIS for HTTP Error code 406 (NOT ACCEPTABLE).
+     *
+     * @return code
+     **/
+    @Schema(required = true, description = "Message codes defined for AIS for HTTP Error code 406 (NOT ACCEPTABLE).")
+    @JsonProperty("code")
+    @NotNull
 
     public String getCode() {
     return code;

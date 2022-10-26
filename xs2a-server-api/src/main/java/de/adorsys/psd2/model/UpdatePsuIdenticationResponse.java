@@ -1,3 +1,21 @@
+/*
+ * Copyright 2018-2022 adorsys GmbH & Co KG
+ *
+ * This program is free software: you can redistribute it and/or modify it
+ * under the terms of the GNU Affero General Public License as published
+ * by the Free Software Foundation, either version 3 of the License, or (at
+ * your option) any later version. This program is distributed in the hope that
+ * it will be useful, but WITHOUT ANY WARRANTY; without even the implied
+ * warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program. If not, see https://www.gnu.org/licenses/.
+ *
+ * This project is also available under a separate commercial license. You can
+ * contact us at psd2@adorsys.com.
+ */
+
 package de.adorsys.psd2.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -15,20 +33,20 @@ import java.util.Objects;
  */
 @Schema(description = "Body of the JSON response for a successful update PSU identification request.")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-05-06T13:00:42.214155+03:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-10-26T13:16:54.081225+03:00[Europe/Kiev]")
 
 
 public class UpdatePsuIdenticationResponse {
-  @JsonProperty("transactionFees")
-  private Amount transactionFees = null;
+    @JsonProperty("transactionFees")
+    private Amount transactionFees = null;
 
-  @JsonProperty("currencyConversionFees")
-  private Amount currencyConversionFees = null;
+    @JsonProperty("currencyConversionFees")
+    private Amount currencyConversionFees = null;
 
-  @JsonProperty("estimatedTotalAmount")
-  private Amount estimatedTotalAmount = null;
+    @JsonProperty("estimatedTotalAmount")
+    private Amount estimatedTotalAmount = null;
 
-  @JsonProperty("estimatedInterbankSettlementAmount")
+    @JsonProperty("estimatedInterbankSettlementAmount")
   private Amount estimatedInterbankSettlementAmount = null;
 
   @JsonProperty("scaMethods")
@@ -48,16 +66,18 @@ public class UpdatePsuIdenticationResponse {
     return this;
   }
 
-  /**
-   * Get transactionFees
-   * @return transactionFees
-   **/
-  @Schema(description = "")
+    /**
+     * Get transactionFees
+     *
+     * @return transactionFees
+     **/
+    @Schema(description = "")
+    @JsonProperty("transactionFees")
 
     @Valid
     public Amount getTransactionFees() {
-    return transactionFees;
-  }
+        return transactionFees;
+    }
 
   public void setTransactionFees(Amount transactionFees) {
     this.transactionFees = transactionFees;
@@ -68,15 +88,17 @@ public class UpdatePsuIdenticationResponse {
     return this;
   }
 
-  /**
-   * Get currencyConversionFees
-   * @return currencyConversionFees
-   **/
-  @Schema(description = "")
+    /**
+     * Get currencyConversionFees
+     *
+     * @return currencyConversionFees
+     **/
+    @Schema(description = "")
+    @JsonProperty("currencyConversionFees")
 
     @Valid
     public Amount getCurrencyConversionFees() {
-    return currencyConversionFees;
+        return currencyConversionFees;
   }
 
   public void setCurrencyConversionFees(Amount currencyConversionFees) {
@@ -85,18 +107,20 @@ public class UpdatePsuIdenticationResponse {
 
   public UpdatePsuIdenticationResponse estimatedTotalAmount(Amount estimatedTotalAmount) {
     this.estimatedTotalAmount = estimatedTotalAmount;
-    return this;
+      return this;
   }
 
-  /**
-   * Get estimatedTotalAmount
-   * @return estimatedTotalAmount
-   **/
-  @Schema(description = "")
+    /**
+     * Get estimatedTotalAmount
+     *
+     * @return estimatedTotalAmount
+     **/
+    @Schema(description = "")
+    @JsonProperty("estimatedTotalAmount")
 
     @Valid
     public Amount getEstimatedTotalAmount() {
-    return estimatedTotalAmount;
+        return estimatedTotalAmount;
   }
 
   public void setEstimatedTotalAmount(Amount estimatedTotalAmount) {
@@ -105,18 +129,20 @@ public class UpdatePsuIdenticationResponse {
 
   public UpdatePsuIdenticationResponse estimatedInterbankSettlementAmount(Amount estimatedInterbankSettlementAmount) {
     this.estimatedInterbankSettlementAmount = estimatedInterbankSettlementAmount;
-    return this;
+      return this;
   }
 
-  /**
-   * Get estimatedInterbankSettlementAmount
-   * @return estimatedInterbankSettlementAmount
-   **/
-  @Schema(description = "")
+    /**
+     * Get estimatedInterbankSettlementAmount
+     *
+     * @return estimatedInterbankSettlementAmount
+     **/
+    @Schema(description = "")
+    @JsonProperty("estimatedInterbankSettlementAmount")
 
     @Valid
     public Amount getEstimatedInterbankSettlementAmount() {
-    return estimatedInterbankSettlementAmount;
+        return estimatedInterbankSettlementAmount;
   }
 
   public void setEstimatedInterbankSettlementAmount(Amount estimatedInterbankSettlementAmount) {
@@ -125,14 +151,16 @@ public class UpdatePsuIdenticationResponse {
 
   public UpdatePsuIdenticationResponse scaMethods(ScaMethods scaMethods) {
     this.scaMethods = scaMethods;
-    return this;
+      return this;
   }
 
-  /**
-   * Get scaMethods
-   * @return scaMethods
-   **/
-  @Schema(description = "")
+    /**
+     * Get scaMethods
+     *
+     * @return scaMethods
+     **/
+    @Schema(description = "")
+    @JsonProperty("scaMethods")
 
     @Valid
     public ScaMethods getScaMethods() {
@@ -140,23 +168,25 @@ public class UpdatePsuIdenticationResponse {
   }
 
   public void setScaMethods(ScaMethods scaMethods) {
-    this.scaMethods = scaMethods;
+      this.scaMethods = scaMethods;
   }
 
-  public UpdatePsuIdenticationResponse _links(LinksUpdatePsuIdentification _links) {
-    this._links = _links;
-    return this;
-  }
+    public UpdatePsuIdenticationResponse _links(Map _links) {
+        this._links = _links;
+        return this;
+    }
 
-  /**
-   * Get _links
-   * @return _links
-   **/
-  @Schema(required = true, description = "")
-      @NotNull
+    /**
+     * Get _links
+     *
+     * @return _links
+     **/
+    @Schema(required = true, description = "")
+    @JsonProperty("_links")
+    @NotNull
 
-    @Valid
-    public Map getLinks() {
+  @Valid
+  public Map getLinks() {
     return _links;
   }
 
@@ -165,19 +195,21 @@ public class UpdatePsuIdenticationResponse {
   }
 
   public UpdatePsuIdenticationResponse scaStatus(ScaStatus scaStatus) {
-    this.scaStatus = scaStatus;
-    return this;
+      this.scaStatus = scaStatus;
+      return this;
   }
 
-  /**
-   * Get scaStatus
-   * @return scaStatus
-   **/
-  @Schema(required = true, description = "")
-      @NotNull
+    /**
+     * Get scaStatus
+     *
+     * @return scaStatus
+     **/
+    @Schema(required = true, description = "")
+    @JsonProperty("scaStatus")
+    @NotNull
 
-    @Valid
-    public ScaStatus getScaStatus() {
+  @Valid
+  public ScaStatus getScaStatus() {
     return scaStatus;
   }
 
@@ -186,17 +218,19 @@ public class UpdatePsuIdenticationResponse {
   }
 
   public UpdatePsuIdenticationResponse psuMessage(String psuMessage) {
-    this.psuMessage = psuMessage;
-    return this;
+      this.psuMessage = psuMessage;
+      return this;
   }
 
-  /**
-   * Text to be displayed to the PSU.
-   * @return psuMessage
-   **/
-  @Schema(description = "Text to be displayed to the PSU.")
+    /**
+     * Text to be displayed to the PSU.
+     *
+     * @return psuMessage
+     **/
+    @Schema(description = "Text to be displayed to the PSU.")
+    @JsonProperty("psuMessage")
 
-  @Size(max=500)   public String getPsuMessage() {
+@Size(max=500)   public String getPsuMessage() {
     return psuMessage;
   }
 

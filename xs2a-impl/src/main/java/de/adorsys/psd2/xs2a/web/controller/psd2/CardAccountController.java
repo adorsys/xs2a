@@ -90,7 +90,7 @@ public class CardAccountController implements CardAccountsApi {
 
         return accountDetails.hasError()
                    ? responseErrorMapper.generateErrorResponse(accountDetails.getError())
-                   : responseMapper.ok(accountDetails, cardAccountModelMapper::mapToInlineResponse2007);
+                   : responseMapper.ok(accountDetails, cardAccountModelMapper::mapToInlineResponse2002);
     }
 
     private String trimEndingSlash(String input) {

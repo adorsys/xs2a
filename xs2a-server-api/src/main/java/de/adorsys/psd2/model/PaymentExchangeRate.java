@@ -1,3 +1,21 @@
+/*
+ * Copyright 2018-2022 adorsys GmbH & Co KG
+ *
+ * This program is free software: you can redistribute it and/or modify it
+ * under the terms of the GNU Affero General Public License as published
+ * by the Free Software Foundation, either version 3 of the License, or (at
+ * your option) any later version. This program is distributed in the hope that
+ * it will be useful, but WITHOUT ANY WARRANTY; without even the implied
+ * warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program. If not, see https://www.gnu.org/licenses/.
+ *
+ * This project is also available under a separate commercial license. You can
+ * contact us at psd2@adorsys.com.
+ */
+
 package de.adorsys.psd2.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -14,7 +32,7 @@ import java.util.Objects;
  */
 @Schema(description = "Exchange Rate.")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-05-06T13:00:42.214155+03:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-10-26T13:16:54.081225+03:00[Europe/Kiev]")
 
 
 public class PaymentExchangeRate   {
@@ -35,15 +53,18 @@ public class PaymentExchangeRate   {
     return this;
   }
 
-  /**
-   * ISO 4217 Alpha 3 currency code.
-   * @return unitCurrency
-   **/
-  @Schema(example = "EUR", description = "ISO 4217 Alpha 3 currency code. ")
+    /**
+     * ISO 4217 Alpha 3 currency code.
+     *
+     * @return unitCurrency
+     **/
+    @Schema(example = "EUR", description = "ISO 4217 Alpha 3 currency code. ")
+    @JsonProperty("unitCurrency")
 
-  @Pattern(regexp="[A-Z]{3}")   public String getUnitCurrency() {
-    return unitCurrency;
-  }
+    @Pattern(regexp = "[A-Z]{3}")
+    public String getUnitCurrency() {
+        return unitCurrency;
+    }
 
   public void setUnitCurrency(String unitCurrency) {
     this.unitCurrency = unitCurrency;
@@ -54,14 +75,16 @@ public class PaymentExchangeRate   {
     return this;
   }
 
-  /**
-   * Get exchangeRate
-   * @return exchangeRate
-   **/
-  @Schema(description = "")
+    /**
+     * Get exchangeRate
+     *
+     * @return exchangeRate
+     **/
+    @Schema(description = "")
+    @JsonProperty("exchangeRate")
 
     public String getExchangeRate() {
-    return exchangeRate;
+        return exchangeRate;
   }
 
   public void setExchangeRate(String exchangeRate) {
@@ -70,17 +93,20 @@ public class PaymentExchangeRate   {
 
   public PaymentExchangeRate contractIdentification(String contractIdentification) {
     this.contractIdentification = contractIdentification;
-    return this;
+      return this;
   }
 
-  /**
-   * Get contractIdentification
-   * @return contractIdentification
-   **/
-  @Schema(description = "")
+    /**
+     * Get contractIdentification
+     *
+     * @return contractIdentification
+     **/
+    @Schema(description = "")
+    @JsonProperty("contractIdentification")
 
-  @Size(max=35)   public String getContractIdentification() {
-    return contractIdentification;
+    @Size(max = 35)
+    public String getContractIdentification() {
+        return contractIdentification;
   }
 
   public void setContractIdentification(String contractIdentification) {
@@ -89,14 +115,16 @@ public class PaymentExchangeRate   {
 
   public PaymentExchangeRate rateType(ExchangeRateTypeCode rateType) {
     this.rateType = rateType;
-    return this;
+      return this;
   }
 
-  /**
-   * Get rateType
-   * @return rateType
-   **/
-  @Schema(description = "")
+    /**
+     * Get rateType
+     *
+     * @return rateType
+     **/
+    @Schema(description = "")
+    @JsonProperty("rateType")
 
     @Valid
     public ExchangeRateTypeCode getRateType() {
