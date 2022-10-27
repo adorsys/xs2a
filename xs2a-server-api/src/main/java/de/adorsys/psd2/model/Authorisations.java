@@ -13,7 +13,7 @@ import java.util.Objects;
  */
 @Schema(description = "An array of all authorisationIds.")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-09-19T16:45:22.884087+03:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-10-25T13:15:56.196839+03:00[Europe/Kiev]")
 
 
 public class Authorisations   {
@@ -30,10 +30,11 @@ public class Authorisations   {
    * @return authorisationIds
    **/
   @Schema(required = true, description = "")
-      @NotNull
+  @JsonProperty("authorisationIds")
+    @NotNull
 
-    @Valid
-    public AuthorisationsList getAuthorisationIds() {
+  @Valid
+  public AuthorisationsList getAuthorisationIds() {
     return authorisationIds;
   }
 

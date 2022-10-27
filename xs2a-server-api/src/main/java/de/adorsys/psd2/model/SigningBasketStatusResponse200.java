@@ -12,7 +12,7 @@ import java.util.Objects;
  * SigningBasketStatusResponse200
  */
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-09-19T16:45:22.884087+03:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-10-25T13:15:56.196839+03:00[Europe/Kiev]")
 
 
 public class SigningBasketStatusResponse200   {
@@ -29,10 +29,11 @@ public class SigningBasketStatusResponse200   {
    * @return transactionStatus
    **/
   @Schema(required = true, description = "")
-      @NotNull
+  @JsonProperty("transactionStatus")
+    @NotNull
 
-    @Valid
-    public TransactionStatusSBS getTransactionStatus() {
+  @Valid
+  public TransactionStatusSBS getTransactionStatus() {
     return transactionStatus;
   }
 

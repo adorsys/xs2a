@@ -12,7 +12,7 @@ import java.util.Objects;
  */
 @Schema(description = "Content of the body of a transaction authorisation request ")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-09-19T16:45:22.884087+03:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-10-25T13:15:56.196839+03:00[Europe/Kiev]")
 
 
 public class TransactionAuthorisation   {
@@ -29,9 +29,10 @@ public class TransactionAuthorisation   {
    * @return scaAuthenticationData
    **/
   @Schema(required = true, description = "SCA authentication data, depending on the chosen authentication method.  If the data is binary, then it is base64 encoded. ")
-      @NotNull
+  @JsonProperty("scaAuthenticationData")
+    @NotNull
 
-    public String getScaAuthenticationData() {
+  public String getScaAuthenticationData() {
     return scaAuthenticationData;
   }
 

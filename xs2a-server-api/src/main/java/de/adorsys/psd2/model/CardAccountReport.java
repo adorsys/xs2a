@@ -14,7 +14,7 @@ import java.util.Objects;
  */
 @Schema(description = "JSON based card account report.  This card account report contains transactions resulting from the query parameters. ")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-09-19T16:45:22.884087+03:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-10-25T13:15:56.196839+03:00[Europe/Kiev]")
 
 
 public class CardAccountReport   {
@@ -37,9 +37,10 @@ public class CardAccountReport   {
    * @return booked
    **/
   @Schema(description = "")
+  @JsonProperty("booked")
 
-    @Valid
-    public CardTransactionList getBooked() {
+  @Valid
+  public CardTransactionList getBooked() {
     return booked;
   }
 
@@ -57,9 +58,10 @@ public class CardAccountReport   {
    * @return pending
    **/
   @Schema(description = "")
+  @JsonProperty("pending")
 
-    @Valid
-    public CardTransactionList getPending() {
+  @Valid
+  public CardTransactionList getPending() {
     return pending;
   }
 
@@ -77,10 +79,11 @@ public class CardAccountReport   {
    * @return _links
    **/
   @Schema(required = true, description = "")
-      @NotNull
+  @JsonProperty("_links")
+    @NotNull
 
-    @Valid
-    public Map getLinks() {
+  @Valid
+  public Map getLinks() {
     return _links;
   }
 

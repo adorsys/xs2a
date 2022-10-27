@@ -16,7 +16,7 @@ import java.util.Objects;
  */
 @Schema(description = "Generic Body for a periodic payment initiation via JSON.  This generic JSON body can be used to represent valid periodic payment initiations for the following JSON based payment product,  which where defined in the Implementation Guidelines:    * sepa-credit-transfers   * instant-sepa-credit-transfers   * target-2-payments   * cross-border-credit-transfers  For the convenience of the implementer additional which are already predefined in the Implementation Guidelines  are included (but commented in source code), such that an ASPSP may add them easily.  Take care: Since the format is intended to fit for all payment products  there are additional conditions which are NOT covered by this specification. Please check the Implementation Guidelines for details.   The following data element are depending on the actual payment product available (in source code):             <table style=\"width:100%\">  <tr><th>Data Element</th><th>SCT EU Core</th><th>SCT INST EU Core</th><th>Target2 Paym. Core</th><th>Cross Border CT Core</th></tr>  <tr><td>endToEndIdentification</td><td> optional</td> <td>optional</td> <td>optional</td> <td>n.a.</td> </tr>  <tr><td>instructionIdentification</td> <td>n.a.</td> <td>n.a.</td> <td>n.a.</td> <td>n.a.</td> </tr>  <tr><td>debtorName</td> <td>n.a.</td> <td>n.a.</td> <td>n.a.</td> <td>n.a.</td> </tr>  <tr><td>debtorAccount</td> <td>mandatory</td> <td>mandatory</td> <td>mandatory</td> <td>mandatory</td> </tr>  <tr><td>debtorId</td> <td>n.a.</td> <td>n.a.</td> <td>n.a.</td> <td>n.a.</td> </tr>  <tr><td>ultimateDebtor</td> <td>n.a.</td> <td>n.a.</td> <td>n.a.</td> <td>n.a.</td> </tr>  <tr><td>instructedAmount</td> <td>mandatory</td> <td>mandatory</td> <td>mandatory</td> <td>mandatory</td> </tr>  <tr><td>currencyOfTransfer</td> <td>n.a.</td> <td>n.a.</td> <td>n.a.</td> <td>n.a.</td> </tr>  <tr><td>exchangeRateInformation</td> <td>n.a.</td> <td>n.a.</td><td>n.a.</td> <td>n.a.</td> </tr>  <tr><td>creditorAccount</td> <td>mandatory</td> <td>mandatory</td> <td>mandatory</td> <td>mandatory</td> </tr>  <tr><td>creditorAgent</td> <td>optional</td> <td>optional</td> <td>optional</td> <td>conditional </td> </tr>  <tr><td>creditorAgentName</td> <td>n.a.</td> <td>n.a.</td> <td>n.a.</td> <td>n.a.</td> </tr>  <tr><td>creditorName</td> <td>mandatory</td> <td>mandatory</td> <td>mandatory</td> <td>mandatory</td> </tr>  <tr><td>creditorId</td> <td>n.a.</td> <td>n.a.</td> <td>n.a.</td> <td>n.a.</td> </tr>  <tr><td>creditorAddress</td>optional</td> <td>optional</td> <td>optional</td> <td>conditional </td> </tr>  <tr><td>creditorNameAndAddress</td> <td>n.a.</td> <td>n.a.</td> <td>n.a.</td> <td>n.a.</td> </tr>  <tr><td>ultimateCreditor</td> <td>n.a.</td> <td>n.a.</td> <td>n.a.</td> <td>n.a.</td> </tr>  <tr><td>purposeCode</td> <td>n.a.</td> <td>n.a.</td> <td>n.a.</td> <td>n.a.</td> </tr>  <tr><td>chargeBearer</td> <td>n.a.</td> <td>n.a.</td> <td>optional</td> <td>conditional </td> </tr>  <tr><td>serviceLevel</td> <td>n.a.</td> <td>n.a.</td> <td>n.a.</td> <td>n.a. </td> </tr>  <tr><td>remittanceInformationUnstructured</td> <td>optional</td> <td>optional</td> <td> optional</td> <td>optional</td> </tr>  <tr><td>remittanceInformationUnstructuredArray</td> <td>n.a.</td> <td>n.a.</td> <td>n.a.</td> <td>n.a.</td> </tr>  <tr><td>remittanceInformationStructured</td> <td>n.a.</td> <td>n.a.</td> <td>n.a.</td> <td>n.a.</td> </tr>  <tr><td>remittanceInformationStructuredArray</td> <td>n.a.</td> <td>n.a.</td> <td>n.a.</td> <td>n.a.</td> </tr>  <tr><td>requestedExecutionDate</td> <td>n.a.</td> <td>n.a.</td> <td>n.a.</td> <td>n.a.</td> </tr>  <tr><td>requestedExecutionTime</td> <td>n.a.</td> <td>n.a.</td> <td>n.a.</td> <td>n.a.</td> </tr>  <tr><td>startDate</td> <td>mandatory</td> <td>mandatory</td> <td>mandatory</td> <td>mandatory</td> </tr>  <tr><td>executionRule</td> <td>optional</td> <td>optional</td> <td>optional</td> <td>optional</td> </tr>  <tr><td>endDate</td> <td>optional</td> <td>optional</td> <td>optional</td> <td>optional</td> </tr>  <tr><td>frequency</td> <td>mandatory</td> <td>mandatory</td> <td>mandatory</td> <td>mandatory</td> </tr>  <tr><td>dayOfExecution</td> <td>conditional</td> <td>conditional</td> <td>conditional</td> <td>conditional</td> </tr>     </td></tr>   </table>    IMPORTANT: In this API definition the following holds:   *  All data elements mentioned above are defined, but some of them are commented,      i.e. they are only visible in the source code and can be used by uncommenting them.   * Data elements which are mandatory in the table above for all payment products      are set to be mandatory in this specification.   * Data elements which are indicated in the table above as n.a. for all payment products are commented in the source code.   * Data elements which are indicated to be option, conditional or mandatory for at least one payment product      in the table above are set to be optional in the s specification except the case where all are defined to be mandatory.    * Data element which are indicated to be n.a. can be used by the ASPS if needed.      In this case uncomment the the related lines in the source code.   * If one uses this data types for some payment products he has to ensure that the used data type is      valid according to the underlying payment product, e.g. by some appropriate validations. ")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-09-19T16:45:22.884087+03:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-10-25T13:15:56.196839+03:00[Europe/Kiev]")
 
 
 public class PeriodicPaymentInitiationJson   {
@@ -99,8 +99,9 @@ public class PeriodicPaymentInitiationJson   {
    * @return endToEndIdentification
    **/
   @Schema(description = "")
+  @JsonProperty("endToEndIdentification")
 
-  @Size(max=35)   public String getEndToEndIdentification() {
+@Size(max=35)   public String getEndToEndIdentification() {
     return endToEndIdentification;
   }
 
@@ -118,8 +119,9 @@ public class PeriodicPaymentInitiationJson   {
    * @return instructionIdentification
    **/
   @Schema(description = "")
+  @JsonProperty("instructionIdentification")
 
-  @Size(max=35)   public String getInstructionIdentification() {
+@Size(max=35)   public String getInstructionIdentification() {
     return instructionIdentification;
   }
 
@@ -137,8 +139,9 @@ public class PeriodicPaymentInitiationJson   {
    * @return debtorName
    **/
   @Schema(example = "Debtor Name", description = "Debtor name.")
+  @JsonProperty("debtorName")
 
-  @Size(max=70)   public String getDebtorName() {
+@Size(max=70)   public String getDebtorName() {
     return debtorName;
   }
 
@@ -156,10 +159,11 @@ public class PeriodicPaymentInitiationJson   {
    * @return debtorAccount
    **/
   @Schema(required = true, description = "")
-      @NotNull
+  @JsonProperty("debtorAccount")
+    @NotNull
 
-    @Valid
-    public AccountReference getDebtorAccount() {
+  @Valid
+  public AccountReference getDebtorAccount() {
     return debtorAccount;
   }
 
@@ -177,8 +181,9 @@ public class PeriodicPaymentInitiationJson   {
    * @return ultimateDebtor
    **/
   @Schema(example = "Ultimate Debtor", description = "Ultimate debtor.")
+  @JsonProperty("ultimateDebtor")
 
-  @Size(max=70)   public String getUltimateDebtor() {
+@Size(max=70)   public String getUltimateDebtor() {
     return ultimateDebtor;
   }
 
@@ -196,10 +201,11 @@ public class PeriodicPaymentInitiationJson   {
    * @return instructedAmount
    **/
   @Schema(required = true, description = "")
-      @NotNull
+  @JsonProperty("instructedAmount")
+    @NotNull
 
-    @Valid
-    public Amount getInstructedAmount() {
+  @Valid
+  public Amount getInstructedAmount() {
     return instructedAmount;
   }
 
@@ -217,10 +223,11 @@ public class PeriodicPaymentInitiationJson   {
    * @return creditorAccount
    **/
   @Schema(required = true, description = "")
-      @NotNull
+  @JsonProperty("creditorAccount")
+    @NotNull
 
-    @Valid
-    public AccountReference getCreditorAccount() {
+  @Valid
+  public AccountReference getCreditorAccount() {
     return creditorAccount;
   }
 
@@ -238,8 +245,9 @@ public class PeriodicPaymentInitiationJson   {
    * @return creditorAgent
    **/
   @Schema(example = "AAAADEBBXXX", description = "BICFI ")
+  @JsonProperty("creditorAgent")
 
-  @Pattern(regexp="[A-Z]{6,6}[A-Z2-9][A-NP-Z0-9]([A-Z0-9]{3,3}){0,1}")   public String getCreditorAgent() {
+@Pattern(regexp="[A-Z]{6,6}[A-Z2-9][A-NP-Z0-9]([A-Z0-9]{3,3}){0,1}")   public String getCreditorAgent() {
     return creditorAgent;
   }
 
@@ -257,8 +265,9 @@ public class PeriodicPaymentInitiationJson   {
    * @return creditorId
    **/
   @Schema(description = "Identification of Creditors, e.g. a SEPA Creditor ID.")
+  @JsonProperty("creditorId")
 
-  @Size(max=35)   public String getCreditorId() {
+@Size(max=35)   public String getCreditorId() {
     return creditorId;
   }
 
@@ -276,9 +285,10 @@ public class PeriodicPaymentInitiationJson   {
    * @return creditorName
    **/
   @Schema(example = "Creditor Name", required = true, description = "Creditor name.")
-      @NotNull
+  @JsonProperty("creditorName")
+    @NotNull
 
-  @Size(max=70)   public String getCreditorName() {
+@Size(max=70)   public String getCreditorName() {
     return creditorName;
   }
 
@@ -296,9 +306,10 @@ public class PeriodicPaymentInitiationJson   {
    * @return creditorAddress
    **/
   @Schema(description = "")
+  @JsonProperty("creditorAddress")
 
-    @Valid
-    public Address getCreditorAddress() {
+  @Valid
+  public Address getCreditorAddress() {
     return creditorAddress;
   }
 
@@ -316,8 +327,9 @@ public class PeriodicPaymentInitiationJson   {
    * @return ultimateCreditor
    **/
   @Schema(example = "Ultimate Creditor", description = "Ultimate creditor.")
+  @JsonProperty("ultimateCreditor")
 
-  @Size(max=70)   public String getUltimateCreditor() {
+@Size(max=70)   public String getUltimateCreditor() {
     return ultimateCreditor;
   }
 
@@ -335,9 +347,10 @@ public class PeriodicPaymentInitiationJson   {
    * @return purposeCode
    **/
   @Schema(description = "")
+  @JsonProperty("purposeCode")
 
-    @Valid
-    public PurposeCode getPurposeCode() {
+  @Valid
+  public PurposeCode getPurposeCode() {
     return purposeCode;
   }
 
@@ -355,8 +368,9 @@ public class PeriodicPaymentInitiationJson   {
    * @return remittanceInformationUnstructured
    **/
   @Schema(example = "Ref Number Merchant", description = "Unstructured remittance information. ")
+  @JsonProperty("remittanceInformationUnstructured")
 
-  @Size(max=140)   public String getRemittanceInformationUnstructured() {
+@Size(max=140)   public String getRemittanceInformationUnstructured() {
     return remittanceInformationUnstructured;
   }
 
@@ -374,9 +388,10 @@ public class PeriodicPaymentInitiationJson   {
    * @return remittanceInformationUnstructuredArray
    **/
   @Schema(description = "")
+  @JsonProperty("remittanceInformationUnstructuredArray")
 
-    @Valid
-    public RemittanceInformationUnstructuredArray getRemittanceInformationUnstructuredArray() {
+  @Valid
+  public RemittanceInformationUnstructuredArray getRemittanceInformationUnstructuredArray() {
     return remittanceInformationUnstructuredArray;
   }
 
@@ -394,9 +409,10 @@ public class PeriodicPaymentInitiationJson   {
    * @return remittanceInformationStructured
    **/
   @Schema(description = "")
+  @JsonProperty("remittanceInformationStructured")
 
-    @Valid
-    public RemittanceInformationStructuredMax140 getRemittanceInformationStructured() {
+  @Valid
+  public RemittanceInformationStructuredMax140 getRemittanceInformationStructured() {
     return remittanceInformationStructured;
   }
 
@@ -414,9 +430,10 @@ public class PeriodicPaymentInitiationJson   {
    * @return remittanceInformationStructuredArray
    **/
   @Schema(description = "")
+  @JsonProperty("remittanceInformationStructuredArray")
 
-    @Valid
-    public RemittanceInformationStructuredArray getRemittanceInformationStructuredArray() {
+  @Valid
+  public RemittanceInformationStructuredArray getRemittanceInformationStructuredArray() {
     return remittanceInformationStructuredArray;
   }
 
@@ -434,10 +451,11 @@ public class PeriodicPaymentInitiationJson   {
    * @return startDate
    **/
   @Schema(required = true, description = "The first applicable day of execution starting from this date is the first payment. ")
-      @NotNull
+  @JsonProperty("startDate")
+    @NotNull
 
-    @Valid
-    public LocalDate getStartDate() {
+  @Valid
+  public LocalDate getStartDate() {
     return startDate;
   }
 
@@ -455,9 +473,10 @@ public class PeriodicPaymentInitiationJson   {
    * @return endDate
    **/
   @Schema(description = "The last applicable day of execution. If not given, it is an infinite standing order. ")
+  @JsonProperty("endDate")
 
-    @Valid
-    public LocalDate getEndDate() {
+  @Valid
+  public LocalDate getEndDate() {
     return endDate;
   }
 
@@ -475,9 +494,10 @@ public class PeriodicPaymentInitiationJson   {
    * @return executionRule
    **/
   @Schema(description = "")
+  @JsonProperty("executionRule")
 
-    @Valid
-    public ExecutionRule getExecutionRule() {
+  @Valid
+  public ExecutionRule getExecutionRule() {
     return executionRule;
   }
 
@@ -495,10 +515,11 @@ public class PeriodicPaymentInitiationJson   {
    * @return frequency
    **/
   @Schema(required = true, description = "")
-      @NotNull
+  @JsonProperty("frequency")
+    @NotNull
 
-    @Valid
-    public FrequencyCode getFrequency() {
+  @Valid
+  public FrequencyCode getFrequency() {
     return frequency;
   }
 
@@ -516,8 +537,9 @@ public class PeriodicPaymentInitiationJson   {
    * @return dayOfExecution
    **/
   @Schema(description = "")
+  @JsonProperty("dayOfExecution")
 
-    @Valid
+  @Valid
   public DayOfExecution getDayOfExecution() {
     return dayOfExecution;
   }
@@ -536,9 +558,10 @@ public class PeriodicPaymentInitiationJson   {
    * @return monthsOfExecution
    **/
   @Schema(description = "")
+  @JsonProperty("monthsOfExecution")
 
-    @Valid
-    public MonthsOfExecution getMonthsOfExecution() {
+  @Valid
+  public MonthsOfExecution getMonthsOfExecution() {
     return monthsOfExecution;
   }
 

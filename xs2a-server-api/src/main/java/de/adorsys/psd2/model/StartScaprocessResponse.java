@@ -17,7 +17,7 @@ import java.util.Objects;
  */
 @Schema(description = "Body of the JSON response for a Start SCA authorisation request.")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-09-19T16:45:22.884087+03:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-10-25T13:15:56.196839+03:00[Europe/Kiev]")
 
 
 public class StartScaprocessResponse   {
@@ -56,10 +56,11 @@ public class StartScaprocessResponse   {
    * @return scaStatus
    **/
   @Schema(required = true, description = "")
-      @NotNull
+  @JsonProperty("scaStatus")
+    @NotNull
 
-    @Valid
-    public ScaStatus getScaStatus() {
+  @Valid
+  public ScaStatus getScaStatus() {
     return scaStatus;
   }
 
@@ -77,9 +78,10 @@ public class StartScaprocessResponse   {
    * @return authorisationId
    **/
   @Schema(example = "123auth456", required = true, description = "Resource identification of the related SCA.")
-      @NotNull
+  @JsonProperty("authorisationId")
+    @NotNull
 
-    public String getAuthorisationId() {
+  public String getAuthorisationId() {
     return authorisationId;
   }
 
@@ -97,9 +99,10 @@ public class StartScaprocessResponse   {
    * @return scaMethods
    **/
   @Schema(description = "")
+  @JsonProperty("scaMethods")
 
-    @Valid
-    public ScaMethods getScaMethods() {
+  @Valid
+  public ScaMethods getScaMethods() {
     return scaMethods;
   }
 
@@ -117,9 +120,10 @@ public class StartScaprocessResponse   {
    * @return chosenScaMethod
    **/
   @Schema(description = "")
+  @JsonProperty("chosenScaMethod")
 
-    @Valid
-    public ChosenScaMethod getChosenScaMethod() {
+  @Valid
+  public ChosenScaMethod getChosenScaMethod() {
     return chosenScaMethod;
   }
 
@@ -137,9 +141,10 @@ public class StartScaprocessResponse   {
    * @return challengeData
    **/
   @Schema(description = "")
+  @JsonProperty("challengeData")
 
-    @Valid
-    public ChallengeData getChallengeData() {
+  @Valid
+  public ChallengeData getChallengeData() {
     return challengeData;
   }
 
@@ -157,10 +162,11 @@ public class StartScaprocessResponse   {
    * @return _links
    **/
   @Schema(required = true, description = "")
-      @NotNull
+  @JsonProperty("_links")
+    @NotNull
 
-    @Valid
-    public Map getLinks() {
+  @Valid
+  public Map getLinks() {
     return _links;
   }
 
@@ -178,8 +184,9 @@ public class StartScaprocessResponse   {
    * @return psuMessage
    **/
   @Schema(description = "Text to be displayed to the PSU.")
+  @JsonProperty("psuMessage")
 
-  @Size(max=500)   public String getPsuMessage() {
+@Size(max=500)   public String getPsuMessage() {
     return psuMessage;
   }
 
@@ -205,8 +212,9 @@ public class StartScaprocessResponse   {
    * @return tppMessages
    **/
   @Schema(description = "Messages to the TPP on operational issues.")
-      @Valid
-    public List<TppMessageGeneric> getTppMessages() {
+  @JsonProperty("tppMessages")
+    @Valid
+  public List<TppMessageGeneric> getTppMessages() {
     return tppMessages;
   }
 

@@ -12,7 +12,7 @@ import java.util.Objects;
  */
 @Schema(description = "Equals \"true\" if sufficient funds are available at the time of the request,  \"false\" otherwise. ")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-09-19T16:45:22.884087+03:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-10-25T13:15:56.196839+03:00[Europe/Kiev]")
 
 
 public class InlineResponse2003   {
@@ -29,9 +29,10 @@ public class InlineResponse2003   {
    * @return fundsAvailable
    **/
   @Schema(required = true, description = "Equals true if sufficient funds are available at the time of the request, false otherwise.  This data element is allways contained in a confirmation of funds response.  This data element is contained in a payment status response,  if supported by the ASPSP, if a funds check has been performed and  if the transactionStatus is \"ACTC\", \"ACWC\" or \"ACCP\". ")
-      @NotNull
+  @JsonProperty("fundsAvailable")
+    @NotNull
 
-    public Boolean isFundsAvailable() {
+  public Boolean isFundsAvailable() {
     return fundsAvailable;
   }
 

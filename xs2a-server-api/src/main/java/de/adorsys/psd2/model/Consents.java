@@ -15,7 +15,7 @@ import java.util.Objects;
  */
 @Schema(description = "Content of the body of a consent request. ")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-09-19T16:45:22.884087+03:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-10-25T13:15:56.196839+03:00[Europe/Kiev]")
 
 
 public class Consents   {
@@ -44,10 +44,11 @@ public class Consents   {
    * @return access
    **/
   @Schema(required = true, description = "")
-      @NotNull
+  @JsonProperty("access")
+    @NotNull
 
-    @Valid
-    public AccountAccess getAccess() {
+  @Valid
+  public AccountAccess getAccess() {
     return access;
   }
 
@@ -65,9 +66,10 @@ public class Consents   {
    * @return recurringIndicator
    **/
   @Schema(example = "false", required = true, description = "\"true\", if the consent is for recurring access to the account data.  \"false\", if the consent is for one access to the account data. ")
-      @NotNull
+  @JsonProperty("recurringIndicator")
+    @NotNull
 
-    public Boolean isRecurringIndicator() {
+  public Boolean isRecurringIndicator() {
     return recurringIndicator;
   }
 
@@ -85,10 +87,11 @@ public class Consents   {
    * @return validUntil
    **/
   @Schema(required = true, description = "This parameter is defining a valid until date (including the mentioned date) for the requested consent.  The content is the local ASPSP date in ISO-Date format, e.g. 2017-10-30.  Future dates might get adjusted by ASPSP.   If a maximal available date is requested, a date in far future is to be used: \"9999-12-31\".   In both cases the consent object to be retrieved by the get consent request will contain the adjusted date. ")
-      @NotNull
+  @JsonProperty("validUntil")
+    @NotNull
 
-    @Valid
-    public LocalDate getValidUntil() {
+  @Valid
+  public LocalDate getValidUntil() {
     return validUntil;
   }
 
@@ -107,9 +110,10 @@ public class Consents   {
    * @return frequencyPerDay
    **/
   @Schema(example = "4", required = true, description = "This field indicates the requested maximum frequency for an access without PSU involvement per day. For a one-off access, this attribute is set to \"1\".  The frequency needs to be greater equal to one.   If not otherwise agreed bilaterally between TPP and ASPSP, the frequency is less equal to 4. ")
-      @NotNull
+  @JsonProperty("frequencyPerDay")
+    @NotNull
 
-  @Min(1)  public Integer getFrequencyPerDay() {
+@Min(1)  public Integer getFrequencyPerDay() {
     return frequencyPerDay;
   }
 
@@ -127,9 +131,10 @@ public class Consents   {
    * @return combinedServiceIndicator
    **/
   @Schema(example = "false", required = true, description = "If \"true\" indicates that a payment initiation service will be addressed in the same \"session\". ")
-      @NotNull
+  @JsonProperty("combinedServiceIndicator")
+    @NotNull
 
-    public Boolean isCombinedServiceIndicator() {
+  public Boolean isCombinedServiceIndicator() {
     return combinedServiceIndicator;
   }
 

@@ -17,7 +17,7 @@ import java.util.Objects;
  */
 @Schema(description = "Standardised definition of reporting error information according to [RFC7807]  in case of a HTTP error code 403 for AIS. ")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-09-19T16:45:22.884087+03:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-10-25T13:15:56.196839+03:00[Europe/Kiev]")
 
 
 public class Error403AIS   {
@@ -50,9 +50,10 @@ public class Error403AIS   {
    * @return type
    **/
   @Schema(required = true, description = "A URI reference [RFC3986] that identifies the problem type.  Remark For Future: These URI will be provided by NextGenPSD2 in future. ")
-      @NotNull
+  @JsonProperty("type")
+    @NotNull
 
-  @Size(max=70)   public String getType() {
+@Size(max=70)   public String getType() {
     return type;
   }
 
@@ -70,8 +71,9 @@ public class Error403AIS   {
    * @return title
    **/
   @Schema(description = "Short human readable description of error type.  Could be in local language.  To be provided by ASPSPs. ")
+  @JsonProperty("title")
 
-  @Size(max=70)   public String getTitle() {
+@Size(max=70)   public String getTitle() {
     return title;
   }
 
@@ -89,8 +91,9 @@ public class Error403AIS   {
    * @return detail
    **/
   @Schema(description = "Detailed human readable text specific to this instance of the error.  XPath might be used to point to the issue generating the error in addition. Remark for Future: In future, a dedicated field might be introduced for the XPath. ")
+  @JsonProperty("detail")
 
-  @Size(max=500)   public String getDetail() {
+@Size(max=500)   public String getDetail() {
     return detail;
   }
 
@@ -108,9 +111,10 @@ public class Error403AIS   {
    * @return code
    **/
   @Schema(required = true, description = "Message codes defined for AIS for HTTP Error code 403 (FORBIDDEN).")
-      @NotNull
+  @JsonProperty("code")
+    @NotNull
 
-    public String getCode() {
+  public String getCode() {
     return code;
   }
 
@@ -136,8 +140,9 @@ public class Error403AIS   {
    * @return additionalErrors
    **/
   @Schema(description = "Array of Error Information Blocks.  Might be used if more than one error is to be communicated ")
-      @Valid
-    public List<Error403AISAdditionalErrors> getAdditionalErrors() {
+  @JsonProperty("additionalErrors")
+    @Valid
+  public List<Error403AISAdditionalErrors> getAdditionalErrors() {
     return additionalErrors;
   }
 
@@ -155,9 +160,10 @@ public class Error403AIS   {
    * @return _links
    **/
   @Schema(description = "")
+  @JsonProperty("_links")
 
-    @Valid
-    public Map getLinks() {
+  @Valid
+  public Map getLinks() {
     return _links;
   }
 

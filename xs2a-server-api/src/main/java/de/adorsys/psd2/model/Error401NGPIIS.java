@@ -15,7 +15,7 @@ import java.util.Objects;
  */
 @Schema(description = "NextGenPSD2 specific definition of reporting error information in case of a HTTP error code 401. ")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-09-19T16:45:22.884087+03:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-10-25T13:15:56.196839+03:00[Europe/Kiev]")
 
 
 public class Error401NGPIIS   {
@@ -44,8 +44,9 @@ public class Error401NGPIIS   {
    * @return tppMessages
    **/
   @Schema(description = "")
-      @Valid
-    public List<TppMessage401PIIS> getTppMessages() {
+  @JsonProperty("tppMessages")
+    @Valid
+  public List<TppMessage401PIIS> getTppMessages() {
     return tppMessages;
   }
 
@@ -63,9 +64,10 @@ public class Error401NGPIIS   {
    * @return _links
    **/
   @Schema(description = "")
+  @JsonProperty("_links")
 
-    @Valid
-    public Map getLinks() {
+  @Valid
+  public Map getLinks() {
     return _links;
   }
 

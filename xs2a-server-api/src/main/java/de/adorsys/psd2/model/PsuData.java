@@ -11,7 +11,7 @@ import java.util.Objects;
  */
 @Schema(description = "PSU Data for Update PSU authentication.")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-09-19T16:45:22.884087+03:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-10-25T13:15:56.196839+03:00[Europe/Kiev]")
 
 
 public class PsuData   {
@@ -37,8 +37,9 @@ public class PsuData   {
    * @return password
    **/
   @Schema(description = "Password.")
+  @JsonProperty("password")
 
-    public String getPassword() {
+  public String getPassword() {
     return password;
   }
 
@@ -56,8 +57,9 @@ public class PsuData   {
    * @return encryptedPassword
    **/
   @Schema(description = "Encrypted password.")
+  @JsonProperty("encryptedPassword")
 
-    public String getEncryptedPassword() {
+  public String getEncryptedPassword() {
     return encryptedPassword;
   }
 
@@ -75,8 +77,9 @@ public class PsuData   {
    * @return additionalPassword
    **/
   @Schema(description = "Additional password in plaintext.")
+  @JsonProperty("additionalPassword")
 
-    public String getAdditionalPassword() {
+  public String getAdditionalPassword() {
     return additionalPassword;
   }
 
@@ -94,8 +97,9 @@ public class PsuData   {
    * @return additionalEncryptedPassword
    **/
   @Schema(description = "Additional encrypted password.")
+  @JsonProperty("additionalEncryptedPassword")
 
-    public String getAdditionalEncryptedPassword() {
+  public String getAdditionalEncryptedPassword() {
     return additionalEncryptedPassword;
   }
 

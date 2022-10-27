@@ -14,7 +14,7 @@ import java.util.Objects;
  */
 @Schema(description = "Body of the JSON response for a successful get status request for a consent.")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-09-19T16:45:22.884087+03:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-10-25T13:15:56.196839+03:00[Europe/Kiev]")
 
 
 public class ConsentStatusResponse200   {
@@ -34,10 +34,11 @@ public class ConsentStatusResponse200   {
    * @return consentStatus
    **/
   @Schema(required = true, description = "")
-      @NotNull
+  @JsonProperty("consentStatus")
+    @NotNull
 
-    @Valid
-    public ConsentStatus getConsentStatus() {
+  @Valid
+  public ConsentStatus getConsentStatus() {
     return consentStatus;
   }
 
@@ -55,8 +56,9 @@ public class ConsentStatusResponse200   {
    * @return psuMessage
    **/
   @Schema(description = "Text to be displayed to the PSU.")
+  @JsonProperty("psuMessage")
 
-  @Size(max=500)   public String getPsuMessage() {
+@Size(max=500)   public String getPsuMessage() {
     return psuMessage;
   }
 

@@ -15,7 +15,7 @@ import java.util.Objects;
  */
 @Schema(description = "List of card accounts with details. ")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-09-19T16:45:22.884087+03:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-10-25T13:15:56.196839+03:00[Europe/Kiev]")
 
 
 public class CardAccountList   {
@@ -38,9 +38,10 @@ public class CardAccountList   {
    * @return cardAccounts
    **/
   @Schema(required = true, description = "")
-      @NotNull
-    @Valid
-    public List<CardAccountDetails> getCardAccounts() {
+  @JsonProperty("cardAccounts")
+    @NotNull
+  @Valid
+  public List<CardAccountDetails> getCardAccounts() {
     return cardAccounts;
   }
 

@@ -12,7 +12,7 @@ import java.util.Objects;
  */
 @Schema(description = "A list of hyperlinks to be recognised by the TPP. The actual hyperlinks used in the  response depend on the dynamical decisions of the ASPSP when processing the request.  Remark: All links can be relative or full links, to be decided by the ASPSP. Type of links admitted in this response, (further links might be added for ASPSP defined  extensions):    * 'scaRedirect':      In case of an SCA Redirect Approach, the ASPSP is transmitting the link to      which to redirect the PSU browser.   * 'scaOAuth':      In case of a SCA OAuth2 Approach, the ASPSP is transmitting the URI where the configuration of      the Authorisation Server can be retrieved. The configuration follows the      OAuth 2.0 Authorisation Server Metadata specification.   * 'startAuthorisation':      In case, where an explicit start of the transaction authorisation is needed,      but no more data needs to be updated (no authentication method to be selected,      no PSU identification nor PSU authentication data to be uploaded).   * 'startAuthorisationWithPsuIdentification':      The link to the authorisation end-point, where the authorisation sub-resource      has to be generated while uploading the PSU identification data.   * 'startAuthorisationWithPsuAuthentication':     The link to the authorisation end-point, where the authorisation sub-resource      has to be generated while uploading the PSU authentication data.   * 'startAuthorisationWithEncryptedPsuAuthentication':     The link to the authorisation end-point, where the authorisation sub-resource has      to be generated while uploading the encrypted PSU authentication data.   * 'startAuthorisationWithAuthenticationMethodSelection':     The link to the authorisation end-point, where the authorisation sub-resource      has to be generated while selecting the authentication method.      This link is contained under exactly the same conditions as the data element 'scaMethods'    * 'startAuthorisationWithTransactionAuthorisation':     The link to the authorisation end-point, where the authorisation sub-resource      has to be generated while authorising the transaction e.g. by uploading an      OTP received by SMS.   * 'self':      The link to the payment initiation resource created by this request.      This link can be used to retrieve the resource data.    * 'status':      The link to retrieve the transaction status of the payment initiation.   * 'scaStatus':      The link to retrieve the scaStatus of the corresponding authorisation sub-resource.      This link is only contained, if an authorisation sub-resource has been already created. ")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-09-19T16:45:22.884087+03:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-10-25T13:15:56.196839+03:00[Europe/Kiev]")
 
 
 public class LinksSigningBasket   {
@@ -59,9 +59,10 @@ public class LinksSigningBasket   {
    * @return scaRedirect
    **/
   @Schema(description = "")
+  @JsonProperty("scaRedirect")
 
-    @Valid
-    public HrefType getScaRedirect() {
+  @Valid
+  public HrefType getScaRedirect() {
     return scaRedirect;
   }
 
@@ -79,9 +80,10 @@ public class LinksSigningBasket   {
    * @return scaOAuth
    **/
   @Schema(description = "")
+  @JsonProperty("scaOAuth")
 
-    @Valid
-    public HrefType getScaOAuth() {
+  @Valid
+  public HrefType getScaOAuth() {
     return scaOAuth;
   }
 
@@ -99,9 +101,10 @@ public class LinksSigningBasket   {
    * @return startAuthorisation
    **/
   @Schema(description = "")
+  @JsonProperty("startAuthorisation")
 
-    @Valid
-    public HrefType getStartAuthorisation() {
+  @Valid
+  public HrefType getStartAuthorisation() {
     return startAuthorisation;
   }
 
@@ -119,9 +122,10 @@ public class LinksSigningBasket   {
    * @return startAuthorisationWithPsuIdentification
    **/
   @Schema(description = "")
+  @JsonProperty("startAuthorisationWithPsuIdentification")
 
-    @Valid
-    public HrefType getStartAuthorisationWithPsuIdentification() {
+  @Valid
+  public HrefType getStartAuthorisationWithPsuIdentification() {
     return startAuthorisationWithPsuIdentification;
   }
 
@@ -139,9 +143,10 @@ public class LinksSigningBasket   {
    * @return startAuthorisationWithPsuAuthentication
    **/
   @Schema(description = "")
+  @JsonProperty("startAuthorisationWithPsuAuthentication")
 
-    @Valid
-    public HrefType getStartAuthorisationWithPsuAuthentication() {
+  @Valid
+  public HrefType getStartAuthorisationWithPsuAuthentication() {
     return startAuthorisationWithPsuAuthentication;
   }
 
@@ -159,9 +164,10 @@ public class LinksSigningBasket   {
    * @return startAuthorisationWithEncryptedPsuAuthentication
    **/
   @Schema(description = "")
+  @JsonProperty("startAuthorisationWithEncryptedPsuAuthentication")
 
-    @Valid
-    public HrefType getStartAuthorisationWithEncryptedPsuAuthentication() {
+  @Valid
+  public HrefType getStartAuthorisationWithEncryptedPsuAuthentication() {
     return startAuthorisationWithEncryptedPsuAuthentication;
   }
 
@@ -179,9 +185,10 @@ public class LinksSigningBasket   {
    * @return startAuthorisationWithAuthenticationMethodSelection
    **/
   @Schema(description = "")
+  @JsonProperty("startAuthorisationWithAuthenticationMethodSelection")
 
-    @Valid
-    public HrefType getStartAuthorisationWithAuthenticationMethodSelection() {
+  @Valid
+  public HrefType getStartAuthorisationWithAuthenticationMethodSelection() {
     return startAuthorisationWithAuthenticationMethodSelection;
   }
 
@@ -199,9 +206,10 @@ public class LinksSigningBasket   {
    * @return startAuthorisationWithTransactionAuthorisation
    **/
   @Schema(description = "")
+  @JsonProperty("startAuthorisationWithTransactionAuthorisation")
 
-    @Valid
-    public HrefType getStartAuthorisationWithTransactionAuthorisation() {
+  @Valid
+  public HrefType getStartAuthorisationWithTransactionAuthorisation() {
     return startAuthorisationWithTransactionAuthorisation;
   }
 
@@ -219,9 +227,10 @@ public class LinksSigningBasket   {
    * @return self
    **/
   @Schema(description = "")
+  @JsonProperty("self")
 
-    @Valid
-    public HrefType getSelf() {
+  @Valid
+  public HrefType getSelf() {
     return self;
   }
 
@@ -239,9 +248,10 @@ public class LinksSigningBasket   {
    * @return status
    **/
   @Schema(description = "")
+  @JsonProperty("status")
 
-    @Valid
-    public HrefType getStatus() {
+  @Valid
+  public HrefType getStatus() {
     return status;
   }
 
@@ -259,9 +269,10 @@ public class LinksSigningBasket   {
    * @return scaStatus
    **/
   @Schema(description = "")
+  @JsonProperty("scaStatus")
 
-    @Valid
-    public HrefType getScaStatus() {
+  @Valid
+  public HrefType getScaStatus() {
     return scaStatus;
   }
 

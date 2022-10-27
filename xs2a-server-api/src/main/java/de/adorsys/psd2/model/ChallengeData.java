@@ -16,7 +16,7 @@ import java.util.Objects;
  */
 @Schema(description = "It is contained in addition to the data element 'chosenScaMethod' if challenge data is needed for SCA. In rare cases this attribute is also used in the context of the 'startAuthorisationWithPsuAuthentication' link. ")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-09-19T16:45:22.884087+03:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-10-25T13:15:56.196839+03:00[Europe/Kiev]")
 
 
 public class ChallengeData   {
@@ -79,8 +79,9 @@ public class ChallengeData   {
    * @return image
    **/
   @Schema(description = "PNG data (max. 512 kilobyte) to be displayed to the PSU, Base64 encoding, cp. [RFC4648]. This attribute is used only, when PHOTO_OTP or CHIP_OTP is the selected SCA method. ")
+  @JsonProperty("image")
 
-    public byte[] getImage() {
+  public byte[] getImage() {
     return image;
   }
 
@@ -106,8 +107,9 @@ public class ChallengeData   {
    * @return data
    **/
   @Schema(description = "A collection of strings as challenge data.")
+  @JsonProperty("data")
 
-    public List<String> getData() {
+  public List<String> getData() {
     return data;
   }
 
@@ -125,8 +127,9 @@ public class ChallengeData   {
    * @return imageLink
    **/
   @Schema(description = "A link where the ASPSP will provides the challenge image for the TPP.")
+  @JsonProperty("imageLink")
 
-    public String getImageLink() {
+  public String getImageLink() {
     return imageLink;
   }
 
@@ -144,8 +147,9 @@ public class ChallengeData   {
    * @return otpMaxLength
    **/
   @Schema(description = "The maximal length for the OTP to be typed in by the PSU.")
+  @JsonProperty("otpMaxLength")
 
-    public Integer getOtpMaxLength() {
+  public Integer getOtpMaxLength() {
     return otpMaxLength;
   }
 
@@ -163,8 +167,9 @@ public class ChallengeData   {
    * @return otpFormat
    **/
   @Schema(description = "The format type of the OTP to be typed in. The admitted values are \"characters\" or \"integer\".")
+  @JsonProperty("otpFormat")
 
-    public OtpFormatEnum getOtpFormat() {
+  public OtpFormatEnum getOtpFormat() {
     return otpFormat;
   }
 
@@ -182,8 +187,9 @@ public class ChallengeData   {
    * @return additionalInformation
    **/
   @Schema(description = "Additional explanation for the PSU to explain e.g. fallback mechanism for the chosen SCA method. The TPP is obliged to show this to the PSU. ")
+  @JsonProperty("additionalInformation")
 
-    public String getAdditionalInformation() {
+  public String getAdditionalInformation() {
     return additionalInformation;
   }
 

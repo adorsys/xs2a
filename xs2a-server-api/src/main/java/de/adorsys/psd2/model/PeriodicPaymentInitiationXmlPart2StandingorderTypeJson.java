@@ -14,7 +14,7 @@ import java.util.Objects;
  */
 @Schema(description = "The body part 2 of a periodic payment initiation request contains the execution related information  of the periodic payment. ")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-09-19T16:45:22.884087+03:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-10-25T13:15:56.196839+03:00[Europe/Kiev]")
 
 
 public class PeriodicPaymentInitiationXmlPart2StandingorderTypeJson   {
@@ -46,10 +46,11 @@ public class PeriodicPaymentInitiationXmlPart2StandingorderTypeJson   {
    * @return startDate
    **/
   @Schema(required = true, description = "The first applicable day of execution starting from this date is the first payment. ")
-      @NotNull
+  @JsonProperty("startDate")
+    @NotNull
 
-    @Valid
-    public LocalDate getStartDate() {
+  @Valid
+  public LocalDate getStartDate() {
     return startDate;
   }
 
@@ -67,9 +68,10 @@ public class PeriodicPaymentInitiationXmlPart2StandingorderTypeJson   {
    * @return endDate
    **/
   @Schema(description = "The last applicable day of execution. If not given, it is an infinite standing order. ")
+  @JsonProperty("endDate")
 
-    @Valid
-    public LocalDate getEndDate() {
+  @Valid
+  public LocalDate getEndDate() {
     return endDate;
   }
 
@@ -87,9 +89,10 @@ public class PeriodicPaymentInitiationXmlPart2StandingorderTypeJson   {
    * @return executionRule
    **/
   @Schema(description = "")
+  @JsonProperty("executionRule")
 
-    @Valid
-    public ExecutionRule getExecutionRule() {
+  @Valid
+  public ExecutionRule getExecutionRule() {
     return executionRule;
   }
 
@@ -107,10 +110,11 @@ public class PeriodicPaymentInitiationXmlPart2StandingorderTypeJson   {
    * @return frequency
    **/
   @Schema(required = true, description = "")
-      @NotNull
+  @JsonProperty("frequency")
+    @NotNull
 
-    @Valid
-    public FrequencyCode getFrequency() {
+  @Valid
+  public FrequencyCode getFrequency() {
     return frequency;
   }
 
@@ -128,8 +132,9 @@ public class PeriodicPaymentInitiationXmlPart2StandingorderTypeJson   {
    * @return dayOfExecution
    **/
   @Schema(description = "")
+  @JsonProperty("dayOfExecution")
 
-    @Valid
+  @Valid
   public DayOfExecution getDayOfExecution() {
     return dayOfExecution;
   }
@@ -148,9 +153,10 @@ public class PeriodicPaymentInitiationXmlPart2StandingorderTypeJson   {
    * @return monthsOfExecution
    **/
   @Schema(description = "")
+  @JsonProperty("monthsOfExecution")
 
-    @Valid
-    public MonthsOfExecution getMonthsOfExecution() {
+  @Valid
+  public MonthsOfExecution getMonthsOfExecution() {
     return monthsOfExecution;
   }
 

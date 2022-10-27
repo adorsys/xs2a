@@ -13,7 +13,7 @@ import java.util.Objects;
  */
 @Schema(description = "In cases where the specifically defined criteria (IBAN, BBAN, MSISDN) are not provided to identify an instance of the respective account type (e.g. a savings account), the ASPSP shall include a proprietary ID of the respective account that uniquely identifies the account for this ASPSP.")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-09-19T16:45:22.884087+03:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-10-25T13:15:56.196839+03:00[Europe/Kiev]")
 
 
 public class OtherType   {
@@ -39,9 +39,10 @@ public class OtherType   {
    * @return identification
    **/
   @Schema(required = true, description = "Proprietary identification of the account.")
-      @NotNull
+  @JsonProperty("identification")
+    @NotNull
 
-  @Size(max=35)   public String getIdentification() {
+@Size(max=35)   public String getIdentification() {
     return identification;
   }
 
@@ -59,8 +60,9 @@ public class OtherType   {
    * @return schemeNameCode
    **/
   @Schema(description = "An entry provided by an external ISO code list.")
+  @JsonProperty("schemeNameCode")
 
-  @Size(max=35)   public String getSchemeNameCode() {
+@Size(max=35)   public String getSchemeNameCode() {
     return schemeNameCode;
   }
 
@@ -78,8 +80,9 @@ public class OtherType   {
    * @return schemeNameProprietary
    **/
   @Schema(description = "A scheme name defined in a proprietary way.")
+  @JsonProperty("schemeNameProprietary")
 
-  @Size(max=35)   public String getSchemeNameProprietary() {
+@Size(max=35)   public String getSchemeNameProprietary() {
     return schemeNameProprietary;
   }
 
@@ -97,8 +100,9 @@ public class OtherType   {
    * @return issuer
    **/
   @Schema(description = "Issuer of the identification.")
+  @JsonProperty("issuer")
 
-  @Size(max=35)   public String getIssuer() {
+@Size(max=35)   public String getIssuer() {
     return issuer;
   }
 

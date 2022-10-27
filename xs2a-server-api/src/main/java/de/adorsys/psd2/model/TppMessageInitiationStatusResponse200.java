@@ -13,7 +13,7 @@ import java.util.Objects;
  * TppMessageInitiationStatusResponse200
  */
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-09-19T16:45:22.884087+03:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-10-25T13:15:56.196839+03:00[Europe/Kiev]")
 
 
 public class TppMessageInitiationStatusResponse200   {
@@ -39,10 +39,11 @@ public class TppMessageInitiationStatusResponse200   {
    * @return category
    **/
   @Schema(required = true, description = "")
-      @NotNull
+  @JsonProperty("category")
+    @NotNull
 
-    @Valid
-    public TppMessageCategory getCategory() {
+  @Valid
+  public TppMessageCategory getCategory() {
     return category;
   }
 
@@ -60,10 +61,11 @@ public class TppMessageInitiationStatusResponse200   {
    * @return code
    **/
   @Schema(required = true, description = "")
-      @NotNull
+  @JsonProperty("code")
+    @NotNull
 
-    @Valid
-    public MessageCode200InitiationStatus getCode() {
+  @Valid
+  public MessageCode200InitiationStatus getCode() {
     return code;
   }
 
@@ -81,8 +83,9 @@ public class TppMessageInitiationStatusResponse200   {
    * @return path
    **/
   @Schema(description = "")
+  @JsonProperty("path")
 
-    public String getPath() {
+  public String getPath() {
     return path;
   }
 
@@ -100,8 +103,9 @@ public class TppMessageInitiationStatusResponse200   {
    * @return text
    **/
   @Schema(description = "Additional explaining text to the TPP.")
+  @JsonProperty("text")
 
-  @Size(max=500)   public String getText() {
+@Size(max=500)   public String getText() {
     return text;
   }
 

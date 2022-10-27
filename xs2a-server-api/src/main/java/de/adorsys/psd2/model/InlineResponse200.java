@@ -12,7 +12,7 @@ import java.util.Objects;
  * InlineResponse200
  */
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-09-19T16:45:22.884087+03:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-10-25T13:15:56.196839+03:00[Europe/Kiev]")
 
 
 public class InlineResponse200   {
@@ -29,10 +29,11 @@ public class InlineResponse200   {
    * @return account
    **/
   @Schema(required = true, description = "")
-      @NotNull
+  @JsonProperty("account")
+    @NotNull
 
-    @Valid
-    public AccountDetails getAccount() {
+  @Valid
+  public AccountDetails getAccount() {
     return account;
   }
 

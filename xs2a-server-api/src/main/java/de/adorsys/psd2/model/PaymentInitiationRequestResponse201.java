@@ -17,7 +17,7 @@ import java.util.Objects;
  */
 @Schema(description = "Body of the response for a successful payment initiation request.")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-09-19T16:45:22.884087+03:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-10-25T13:15:56.196839+03:00[Europe/Kiev]")
 
 
 public class PaymentInitiationRequestResponse201   {
@@ -74,10 +74,11 @@ public class PaymentInitiationRequestResponse201   {
    * @return transactionStatus
    **/
   @Schema(required = true, description = "")
-      @NotNull
+  @JsonProperty("transactionStatus")
+    @NotNull
 
-    @Valid
-    public TransactionStatus getTransactionStatus() {
+  @Valid
+  public TransactionStatus getTransactionStatus() {
     return transactionStatus;
   }
 
@@ -95,9 +96,10 @@ public class PaymentInitiationRequestResponse201   {
    * @return paymentId
    **/
   @Schema(example = "1234-wertiq-983", required = true, description = "Resource identification of the generated payment initiation resource.")
-      @NotNull
+  @JsonProperty("paymentId")
+    @NotNull
 
-    public String getPaymentId() {
+  public String getPaymentId() {
     return paymentId;
   }
 
@@ -115,9 +117,10 @@ public class PaymentInitiationRequestResponse201   {
    * @return transactionFees
    **/
   @Schema(description = "")
+  @JsonProperty("transactionFees")
 
-    @Valid
-    public Amount getTransactionFees() {
+  @Valid
+  public Amount getTransactionFees() {
     return transactionFees;
   }
 
@@ -135,9 +138,10 @@ public class PaymentInitiationRequestResponse201   {
    * @return currencyConversionFee
    **/
   @Schema(description = "")
+  @JsonProperty("currencyConversionFee")
 
-    @Valid
-    public Amount getCurrencyConversionFee() {
+  @Valid
+  public Amount getCurrencyConversionFee() {
     return currencyConversionFee;
   }
 
@@ -155,9 +159,10 @@ public class PaymentInitiationRequestResponse201   {
    * @return estimatedTotalAmount
    **/
   @Schema(description = "")
+  @JsonProperty("estimatedTotalAmount")
 
-    @Valid
-    public Amount getEstimatedTotalAmount() {
+  @Valid
+  public Amount getEstimatedTotalAmount() {
     return estimatedTotalAmount;
   }
 
@@ -175,9 +180,10 @@ public class PaymentInitiationRequestResponse201   {
    * @return estimatedInterbankSettlementAmount
    **/
   @Schema(description = "")
+  @JsonProperty("estimatedInterbankSettlementAmount")
 
-    @Valid
-    public Amount getEstimatedInterbankSettlementAmount() {
+  @Valid
+  public Amount getEstimatedInterbankSettlementAmount() {
     return estimatedInterbankSettlementAmount;
   }
 
@@ -195,8 +201,9 @@ public class PaymentInitiationRequestResponse201   {
    * @return transactionFeeIndicator
    **/
   @Schema(description = "If equals 'true', the transaction will involve specific transaction cost as shown by the ASPSP in their public price list or as agreed between ASPSP and PSU. If equals 'false', the transaction will not involve additional specific transaction costs to the PSU unless the fee amount is given specifically in the data elements transactionFees and/or currencyConversionFees. If this data element is not used, there is no information about transaction fees unless the fee amount is given explicitly in the data element transactionFees and/or currencyConversionFees. ")
+  @JsonProperty("transactionFeeIndicator")
 
-    public Boolean isTransactionFeeIndicator() {
+  public Boolean isTransactionFeeIndicator() {
     return transactionFeeIndicator;
   }
 
@@ -214,9 +221,10 @@ public class PaymentInitiationRequestResponse201   {
    * @return scaMethods
    **/
   @Schema(description = "")
+  @JsonProperty("scaMethods")
 
-    @Valid
-    public ScaMethods getScaMethods() {
+  @Valid
+  public ScaMethods getScaMethods() {
     return scaMethods;
   }
 
@@ -234,9 +242,10 @@ public class PaymentInitiationRequestResponse201   {
    * @return chosenScaMethod
    **/
   @Schema(description = "")
+  @JsonProperty("chosenScaMethod")
 
-    @Valid
-    public ChosenScaMethod getChosenScaMethod() {
+  @Valid
+  public ChosenScaMethod getChosenScaMethod() {
     return chosenScaMethod;
   }
 
@@ -254,9 +263,10 @@ public class PaymentInitiationRequestResponse201   {
    * @return challengeData
    **/
   @Schema(description = "")
+  @JsonProperty("challengeData")
 
-    @Valid
-    public ChallengeData getChallengeData() {
+  @Valid
+  public ChallengeData getChallengeData() {
     return challengeData;
   }
 
@@ -274,10 +284,11 @@ public class PaymentInitiationRequestResponse201   {
    * @return _links
    **/
   @Schema(required = true, description = "")
-      @NotNull
+  @JsonProperty("_links")
+    @NotNull
 
-    @Valid
-    public Map getLinks() {
+  @Valid
+  public Map getLinks() {
     return _links;
   }
 
@@ -295,8 +306,9 @@ public class PaymentInitiationRequestResponse201   {
    * @return psuMessage
    **/
   @Schema(description = "Text to be displayed to the PSU.")
+  @JsonProperty("psuMessage")
 
-  @Size(max=500)   public String getPsuMessage() {
+@Size(max=500)   public String getPsuMessage() {
     return psuMessage;
   }
 
@@ -322,8 +334,9 @@ public class PaymentInitiationRequestResponse201   {
    * @return tppMessages
    **/
   @Schema(description = "")
-      @Valid
-    public List<TppMessage201PaymentInitiation> getTppMessages() {
+  @JsonProperty("tppMessages")
+    @Valid
+  public List<TppMessage201PaymentInitiation> getTppMessages() {
     return tppMessages;
   }
 
@@ -341,9 +354,10 @@ public class PaymentInitiationRequestResponse201   {
    * @return scaStatus
    **/
   @Schema(description = "")
+  @JsonProperty("scaStatus")
 
-    @Valid
-    public ScaStatus getScaStatus() {
+  @Valid
+  public ScaStatus getScaStatus() {
     return scaStatus;
   }
 

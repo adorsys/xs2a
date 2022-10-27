@@ -13,7 +13,7 @@ import java.util.Objects;
  */
 @Schema(description = "Body of the response for a successful read balance for an account request.")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-09-19T16:45:22.884087+03:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-10-25T13:15:56.196839+03:00[Europe/Kiev]")
 
 
 public class ReadAccountBalanceResponse200   {
@@ -33,9 +33,10 @@ public class ReadAccountBalanceResponse200   {
    * @return account
    **/
   @Schema(description = "")
+  @JsonProperty("account")
 
-    @Valid
-    public AccountReference getAccount() {
+  @Valid
+  public AccountReference getAccount() {
     return account;
   }
 
@@ -53,10 +54,11 @@ public class ReadAccountBalanceResponse200   {
    * @return balances
    **/
   @Schema(required = true, description = "")
-      @NotNull
+  @JsonProperty("balances")
+    @NotNull
 
-    @Valid
-    public BalanceList getBalances() {
+  @Valid
+  public BalanceList getBalances() {
     return balances;
   }
 

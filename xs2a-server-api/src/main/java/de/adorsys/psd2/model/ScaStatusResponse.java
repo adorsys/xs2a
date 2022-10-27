@@ -17,7 +17,7 @@ import java.util.Objects;
  */
 @Schema(description = "Body of the JSON response with SCA Status.")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-09-19T16:45:22.884087+03:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-10-25T13:15:56.196839+03:00[Europe/Kiev]")
 
 
 public class ScaStatusResponse   {
@@ -50,10 +50,11 @@ public class ScaStatusResponse   {
    * @return scaStatus
    **/
   @Schema(required = true, description = "")
-      @NotNull
+  @JsonProperty("scaStatus")
+    @NotNull
 
-    @Valid
-    public ScaStatus getScaStatus() {
+  @Valid
+  public ScaStatus getScaStatus() {
     return scaStatus;
   }
 
@@ -71,8 +72,9 @@ public class ScaStatusResponse   {
    * @return psuMessage
    **/
   @Schema(description = "Text to be displayed to the PSU.")
+  @JsonProperty("psuMessage")
 
-  @Size(max=500)   public String getPsuMessage() {
+@Size(max=500)   public String getPsuMessage() {
     return psuMessage;
   }
 
@@ -90,8 +92,9 @@ public class ScaStatusResponse   {
    * @return psuName
    **/
   @Schema(description = "Name of the PSU. In case of a corporate account, this might be the person acting on behalf of the corporate. ")
+  @JsonProperty("psuName")
 
-  @Size(max=140)   public String getPsuName() {
+@Size(max=140)   public String getPsuName() {
     return psuName;
   }
 
@@ -109,8 +112,9 @@ public class ScaStatusResponse   {
    * @return trustedBeneficiaryFlag
    **/
   @Schema(example = "false", description = "Additional Service: Trusted Beneficiaries Within this data element, the ASPSP might optionally communicate towards the TPP whether the creditor was part of the related trusted beneficiary list.  This attribute is only contained in case of a final scaStatus. ")
+  @JsonProperty("trustedBeneficiaryFlag")
 
-    public Boolean isTrustedBeneficiaryFlag() {
+  public Boolean isTrustedBeneficiaryFlag() {
     return trustedBeneficiaryFlag;
   }
 
@@ -128,9 +132,10 @@ public class ScaStatusResponse   {
    * @return _links
    **/
   @Schema(description = "")
+  @JsonProperty("_links")
 
-    @Valid
-    public Map getLinks() {
+  @Valid
+  public Map getLinks() {
     return _links;
   }
 
@@ -156,8 +161,9 @@ public class ScaStatusResponse   {
    * @return tppMessages
    **/
   @Schema(description = "Messages to the TPP on operational issues.")
-      @Valid
-    public List<TppMessageGeneric> getTppMessages() {
+  @JsonProperty("tppMessages")
+    @Valid
+  public List<TppMessageGeneric> getTppMessages() {
     return tppMessages;
   }
 

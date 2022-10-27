@@ -13,7 +13,7 @@ import java.util.Objects;
  */
 @Schema(description = "Content of the body of a Select PSU authentication method request ")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-09-19T16:45:22.884087+03:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-10-25T13:15:56.196839+03:00[Europe/Kiev]")
 
 
 public class SelectPsuAuthenticationMethod   {
@@ -30,9 +30,10 @@ public class SelectPsuAuthenticationMethod   {
    * @return authenticationMethodId
    **/
   @Schema(example = "myAuthenticationID", required = true, description = "An identification provided by the ASPSP for the later identification of the authentication method selection. ")
-      @NotNull
+  @JsonProperty("authenticationMethodId")
+    @NotNull
 
-  @Size(max=35)   public String getAuthenticationMethodId() {
+@Size(max=35)   public String getAuthenticationMethodId() {
     return authenticationMethodId;
   }
 

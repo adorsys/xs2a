@@ -13,7 +13,7 @@ import java.util.Objects;
  */
 @Schema(description = "Body of the response for a successful read balance for a card account request.")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-09-19T16:45:22.884087+03:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-10-25T13:15:56.196839+03:00[Europe/Kiev]")
 
 
 public class ReadCardAccountBalanceResponse200   {
@@ -36,9 +36,10 @@ public class ReadCardAccountBalanceResponse200   {
    * @return cardAccount
    **/
   @Schema(description = "")
+  @JsonProperty("cardAccount")
 
-    @Valid
-    public AccountReference getCardAccount() {
+  @Valid
+  public AccountReference getCardAccount() {
     return cardAccount;
   }
 
@@ -56,8 +57,9 @@ public class ReadCardAccountBalanceResponse200   {
    * @return debitAccounting
    **/
   @Schema(description = "If true, the amounts of debits on the reports are quoted positive with the related consequence for balances. If false, the amount of debits on the reports are quoted negative. ")
+  @JsonProperty("debitAccounting")
 
-    public Boolean isDebitAccounting() {
+  public Boolean isDebitAccounting() {
     return debitAccounting;
   }
 
@@ -75,10 +77,11 @@ public class ReadCardAccountBalanceResponse200   {
    * @return balances
    **/
   @Schema(required = true, description = "")
-      @NotNull
+  @JsonProperty("balances")
+    @NotNull
 
-    @Valid
-    public BalanceList getBalances() {
+  @Valid
+  public BalanceList getBalances() {
     return balances;
   }
 

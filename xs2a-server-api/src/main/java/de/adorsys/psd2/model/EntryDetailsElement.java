@@ -14,7 +14,7 @@ import java.util.Objects;
  * EntryDetailsElement
  */
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-09-19T16:45:22.884087+03:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-10-25T13:15:56.196839+03:00[Europe/Kiev]")
 
 
 public class EntryDetailsElement   {
@@ -85,8 +85,9 @@ public class EntryDetailsElement   {
    * @return endToEndId
    **/
   @Schema(description = "Unique end to end identity.")
+  @JsonProperty("endToEndId")
 
-  @Size(max=35)   public String getEndToEndId() {
+@Size(max=35)   public String getEndToEndId() {
     return endToEndId;
   }
 
@@ -104,8 +105,9 @@ public class EntryDetailsElement   {
    * @return mandateId
    **/
   @Schema(description = "Identification of Mandates, e.g. a SEPA Mandate ID.")
+  @JsonProperty("mandateId")
 
-  @Size(max=35)   public String getMandateId() {
+@Size(max=35)   public String getMandateId() {
     return mandateId;
   }
 
@@ -123,8 +125,9 @@ public class EntryDetailsElement   {
    * @return checkId
    **/
   @Schema(description = "Identification of a Cheque.")
+  @JsonProperty("checkId")
 
-  @Size(max=35)   public String getCheckId() {
+@Size(max=35)   public String getCheckId() {
     return checkId;
   }
 
@@ -142,8 +145,9 @@ public class EntryDetailsElement   {
    * @return creditorId
    **/
   @Schema(example = "Creditor Id 5678", description = "Identification of Creditors, e.g. a SEPA Creditor ID.")
+  @JsonProperty("creditorId")
 
-  @Size(max=35)   public String getCreditorId() {
+@Size(max=35)   public String getCreditorId() {
     return creditorId;
   }
 
@@ -161,10 +165,11 @@ public class EntryDetailsElement   {
    * @return transactionAmount
    **/
   @Schema(required = true, description = "")
-      @NotNull
+  @JsonProperty("transactionAmount")
+    @NotNull
 
-    @Valid
-    public Amount getTransactionAmount() {
+  @Valid
+  public Amount getTransactionAmount() {
     return transactionAmount;
   }
 
@@ -182,9 +187,10 @@ public class EntryDetailsElement   {
    * @return currencyExchange
    **/
   @Schema(description = "")
+  @JsonProperty("currencyExchange")
 
-    @Valid
-    public ReportExchangeRateList getCurrencyExchange() {
+  @Valid
+  public ReportExchangeRateList getCurrencyExchange() {
     return currencyExchange;
   }
 
@@ -202,8 +208,9 @@ public class EntryDetailsElement   {
    * @return creditorName
    **/
   @Schema(example = "Creditor Name", description = "Creditor name.")
+  @JsonProperty("creditorName")
 
-  @Size(max=70)   public String getCreditorName() {
+@Size(max=70)   public String getCreditorName() {
     return creditorName;
   }
 
@@ -221,9 +228,10 @@ public class EntryDetailsElement   {
    * @return creditorAccount
    **/
   @Schema(description = "")
+  @JsonProperty("creditorAccount")
 
-    @Valid
-    public AccountReference getCreditorAccount() {
+  @Valid
+  public AccountReference getCreditorAccount() {
     return creditorAccount;
   }
 
@@ -241,8 +249,9 @@ public class EntryDetailsElement   {
    * @return creditorAgent
    **/
   @Schema(example = "AAAADEBBXXX", description = "BICFI ")
+  @JsonProperty("creditorAgent")
 
-  @Pattern(regexp="[A-Z]{6,6}[A-Z2-9][A-NP-Z0-9]([A-Z0-9]{3,3}){0,1}")   public String getCreditorAgent() {
+@Pattern(regexp="[A-Z]{6,6}[A-Z2-9][A-NP-Z0-9]([A-Z0-9]{3,3}){0,1}")   public String getCreditorAgent() {
     return creditorAgent;
   }
 
@@ -260,8 +269,9 @@ public class EntryDetailsElement   {
    * @return ultimateCreditor
    **/
   @Schema(example = "Ultimate Creditor", description = "Ultimate creditor.")
+  @JsonProperty("ultimateCreditor")
 
-  @Size(max=70)   public String getUltimateCreditor() {
+@Size(max=70)   public String getUltimateCreditor() {
     return ultimateCreditor;
   }
 
@@ -279,8 +289,9 @@ public class EntryDetailsElement   {
    * @return debtorName
    **/
   @Schema(example = "Debtor Name", description = "Debtor name.")
+  @JsonProperty("debtorName")
 
-  @Size(max=70)   public String getDebtorName() {
+@Size(max=70)   public String getDebtorName() {
     return debtorName;
   }
 
@@ -298,9 +309,10 @@ public class EntryDetailsElement   {
    * @return debtorAccount
    **/
   @Schema(description = "")
+  @JsonProperty("debtorAccount")
 
-    @Valid
-    public AccountReference getDebtorAccount() {
+  @Valid
+  public AccountReference getDebtorAccount() {
     return debtorAccount;
   }
 
@@ -318,8 +330,9 @@ public class EntryDetailsElement   {
    * @return debtorAgent
    **/
   @Schema(example = "AAAADEBBXXX", description = "BICFI ")
+  @JsonProperty("debtorAgent")
 
-  @Pattern(regexp="[A-Z]{6,6}[A-Z2-9][A-NP-Z0-9]([A-Z0-9]{3,3}){0,1}")   public String getDebtorAgent() {
+@Pattern(regexp="[A-Z]{6,6}[A-Z2-9][A-NP-Z0-9]([A-Z0-9]{3,3}){0,1}")   public String getDebtorAgent() {
     return debtorAgent;
   }
 
@@ -337,8 +350,9 @@ public class EntryDetailsElement   {
    * @return ultimateDebtor
    **/
   @Schema(example = "Ultimate Debtor", description = "Ultimate debtor.")
+  @JsonProperty("ultimateDebtor")
 
-  @Size(max=70)   public String getUltimateDebtor() {
+@Size(max=70)   public String getUltimateDebtor() {
     return ultimateDebtor;
   }
 
@@ -356,8 +370,9 @@ public class EntryDetailsElement   {
    * @return remittanceInformationUnstructured
    **/
   @Schema(example = "Ref Number Merchant", description = "Unstructured remittance information. ")
+  @JsonProperty("remittanceInformationUnstructured")
 
-  @Size(max=140)   public String getRemittanceInformationUnstructured() {
+@Size(max=140)   public String getRemittanceInformationUnstructured() {
     return remittanceInformationUnstructured;
   }
 
@@ -375,9 +390,10 @@ public class EntryDetailsElement   {
    * @return remittanceInformationUnstructuredArray
    **/
   @Schema(description = "")
+  @JsonProperty("remittanceInformationUnstructuredArray")
 
-    @Valid
-    public RemittanceInformationUnstructuredArray getRemittanceInformationUnstructuredArray() {
+  @Valid
+  public RemittanceInformationUnstructuredArray getRemittanceInformationUnstructuredArray() {
     return remittanceInformationUnstructuredArray;
   }
 
@@ -395,9 +411,10 @@ public class EntryDetailsElement   {
    * @return remittanceInformationStructured
    **/
   @Schema(description = "")
+  @JsonProperty("remittanceInformationStructured")
 
-    @Valid
-    public RemittanceInformationStructured getRemittanceInformationStructured() {
+  @Valid
+  public RemittanceInformationStructured getRemittanceInformationStructured() {
     return remittanceInformationStructured;
   }
 
@@ -415,9 +432,10 @@ public class EntryDetailsElement   {
    * @return remittanceInformationStructuredArray
    **/
   @Schema(description = "")
+  @JsonProperty("remittanceInformationStructuredArray")
 
-    @Valid
-    public RemittanceInformationStructuredArray getRemittanceInformationStructuredArray() {
+  @Valid
+  public RemittanceInformationStructuredArray getRemittanceInformationStructuredArray() {
     return remittanceInformationStructuredArray;
   }
 
@@ -435,9 +453,10 @@ public class EntryDetailsElement   {
    * @return purposeCode
    **/
   @Schema(description = "")
+  @JsonProperty("purposeCode")
 
-    @Valid
-    public PurposeCode getPurposeCode() {
+  @Valid
+  public PurposeCode getPurposeCode() {
     return purposeCode;
   }
 

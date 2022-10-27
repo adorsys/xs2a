@@ -13,7 +13,7 @@ import java.util.Objects;
  */
 @Schema(description = "Identifies a Person that acts as an account owner ")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-09-19T16:45:22.884087+03:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-10-25T13:15:56.196839+03:00[Europe/Kiev]")
 
 
 public class AccountOwner   {
@@ -33,9 +33,10 @@ public class AccountOwner   {
    * @return name
    **/
   @Schema(required = true, description = "Account owner name")
-      @NotNull
+  @JsonProperty("name")
+    @NotNull
 
-  @Size(max=70)   public String getName() {
+@Size(max=70)   public String getName() {
     return name;
   }
 
@@ -53,8 +54,9 @@ public class AccountOwner   {
    * @return role
    **/
   @Schema(description = "The following proprietary codes are used:   * \"owner\",    * \"legalRepresentative\",    * \"authorisedUser\" ")
+  @JsonProperty("role")
 
-  @Size(max=35)   public String getRole() {
+@Size(max=35)   public String getRole() {
     return role;
   }
 

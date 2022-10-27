@@ -14,7 +14,7 @@ import java.util.Objects;
  */
 @Schema(description = "JSON based account report. This account report contains transactions resulting from the query parameters.  'booked' shall be contained if bookingStatus parameter is set to \"booked\" or \"both\".  'pending' is not contained if the bookingStatus parameter is set to \"booked\" or \"information\".  'information' is used if and only if the bookingStatus entry equals \"information\". Every active standing order related to the dedicated payment account result into one entry. ")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-09-19T16:45:22.884087+03:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-10-25T13:15:56.196839+03:00[Europe/Kiev]")
 
 
 public class AccountReport   {
@@ -40,9 +40,10 @@ public class AccountReport   {
    * @return booked
    **/
   @Schema(description = "")
+  @JsonProperty("booked")
 
-    @Valid
-    public TransactionList getBooked() {
+  @Valid
+  public TransactionList getBooked() {
     return booked;
   }
 
@@ -60,9 +61,10 @@ public class AccountReport   {
    * @return pending
    **/
   @Schema(description = "")
+  @JsonProperty("pending")
 
-    @Valid
-    public TransactionList getPending() {
+  @Valid
+  public TransactionList getPending() {
     return pending;
   }
 
@@ -80,9 +82,10 @@ public class AccountReport   {
    * @return information
    **/
   @Schema(description = "")
+  @JsonProperty("information")
 
-    @Valid
-    public TransactionList getInformation() {
+  @Valid
+  public TransactionList getInformation() {
     return information;
   }
 
@@ -100,10 +103,11 @@ public class AccountReport   {
    * @return _links
    **/
   @Schema(required = true, description = "")
-      @NotNull
+  @JsonProperty("_links")
+    @NotNull
 
-    @Valid
-    public Map getLinks() {
+  @Valid
+  public Map getLinks() {
     return _links;
   }
 

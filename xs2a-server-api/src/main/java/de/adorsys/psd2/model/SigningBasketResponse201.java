@@ -16,7 +16,7 @@ import java.util.Objects;
  */
 @Schema(description = "Body of the JSON response for a successful create signing basket request.")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-09-19T16:45:22.884087+03:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-10-25T13:15:56.196839+03:00[Europe/Kiev]")
 
 
 public class SigningBasketResponse201   {
@@ -55,10 +55,11 @@ public class SigningBasketResponse201   {
    * @return transactionStatus
    **/
   @Schema(required = true, description = "")
-      @NotNull
+  @JsonProperty("transactionStatus")
+    @NotNull
 
-    @Valid
-    public TransactionStatusSBS getTransactionStatus() {
+  @Valid
+  public TransactionStatusSBS getTransactionStatus() {
     return transactionStatus;
   }
 
@@ -76,9 +77,10 @@ public class SigningBasketResponse201   {
    * @return basketId
    **/
   @Schema(example = "1234-basket-567", required = true, description = "Resource identification of the generated signing basket resource.")
-      @NotNull
+  @JsonProperty("basketId")
+    @NotNull
 
-    public String getBasketId() {
+  public String getBasketId() {
     return basketId;
   }
 
@@ -96,9 +98,10 @@ public class SigningBasketResponse201   {
    * @return scaMethods
    **/
   @Schema(description = "")
+  @JsonProperty("scaMethods")
 
-    @Valid
-    public ScaMethods getScaMethods() {
+  @Valid
+  public ScaMethods getScaMethods() {
     return scaMethods;
   }
 
@@ -116,9 +119,10 @@ public class SigningBasketResponse201   {
    * @return chosenScaMethod
    **/
   @Schema(description = "")
+  @JsonProperty("chosenScaMethod")
 
-    @Valid
-    public ChosenScaMethod getChosenScaMethod() {
+  @Valid
+  public ChosenScaMethod getChosenScaMethod() {
     return chosenScaMethod;
   }
 
@@ -136,9 +140,10 @@ public class SigningBasketResponse201   {
    * @return challengeData
    **/
   @Schema(description = "")
+  @JsonProperty("challengeData")
 
-    @Valid
-    public ChallengeData getChallengeData() {
+  @Valid
+  public ChallengeData getChallengeData() {
     return challengeData;
   }
 
@@ -156,10 +161,11 @@ public class SigningBasketResponse201   {
    * @return _links
    **/
   @Schema(required = true, description = "")
-      @NotNull
+  @JsonProperty("_links")
+    @NotNull
 
-    @Valid
-    public LinksSigningBasket getLinks() {
+  @Valid
+  public LinksSigningBasket getLinks() {
     return _links;
   }
 
@@ -177,8 +183,9 @@ public class SigningBasketResponse201   {
    * @return psuMessage
    **/
   @Schema(description = "Text to be displayed to the PSU.")
+  @JsonProperty("psuMessage")
 
-  @Size(max=500)   public String getPsuMessage() {
+@Size(max=500)   public String getPsuMessage() {
     return psuMessage;
   }
 
@@ -204,8 +211,9 @@ public class SigningBasketResponse201   {
    * @return tppMessages
    **/
   @Schema(description = "")
-      @Valid
-    public List<TppMessage2XX> getTppMessages() {
+  @JsonProperty("tppMessages")
+    @Valid
+  public List<TppMessage2XX> getTppMessages() {
     return tppMessages;
   }
 

@@ -13,7 +13,7 @@ import java.util.Objects;
  * Address
  */
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-09-19T16:45:22.884087+03:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-10-25T13:15:56.196839+03:00[Europe/Kiev]")
 
 
 public class Address   {
@@ -42,8 +42,9 @@ public class Address   {
    * @return streetName
    **/
   @Schema(description = "")
+  @JsonProperty("streetName")
 
-  @Size(max=70)   public String getStreetName() {
+@Size(max=70)   public String getStreetName() {
     return streetName;
   }
 
@@ -61,8 +62,9 @@ public class Address   {
    * @return buildingNumber
    **/
   @Schema(description = "")
+  @JsonProperty("buildingNumber")
 
-    public String getBuildingNumber() {
+  public String getBuildingNumber() {
     return buildingNumber;
   }
 
@@ -80,8 +82,9 @@ public class Address   {
    * @return townName
    **/
   @Schema(description = "")
+  @JsonProperty("townName")
 
-    public String getTownName() {
+  public String getTownName() {
     return townName;
   }
 
@@ -99,8 +102,9 @@ public class Address   {
    * @return postCode
    **/
   @Schema(description = "")
+  @JsonProperty("postCode")
 
-    public String getPostCode() {
+  public String getPostCode() {
     return postCode;
   }
 
@@ -118,9 +122,10 @@ public class Address   {
    * @return country
    **/
   @Schema(example = "SE", required = true, description = "ISO 3166 ALPHA2 country code.")
-      @NotNull
+  @JsonProperty("country")
+    @NotNull
 
-  @Pattern(regexp="[A-Z]{2}")   public String getCountry() {
+@Pattern(regexp="[A-Z]{2}")   public String getCountry() {
     return country;
   }
 
