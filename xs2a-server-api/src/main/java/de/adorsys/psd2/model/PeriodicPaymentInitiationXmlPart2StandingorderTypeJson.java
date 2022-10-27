@@ -1,3 +1,21 @@
+/*
+ * Copyright 2018-2022 adorsys GmbH & Co KG
+ *
+ * This program is free software: you can redistribute it and/or modify it
+ * under the terms of the GNU Affero General Public License as published
+ * by the Free Software Foundation, either version 3 of the License, or (at
+ * your option) any later version. This program is distributed in the hope that
+ * it will be useful, but WITHOUT ANY WARRANTY; without even the implied
+ * warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program. If not, see https://www.gnu.org/licenses/.
+ *
+ * This project is also available under a separate commercial license. You can
+ * contact us at psd2@adorsys.com.
+ */
+
 package de.adorsys.psd2.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -14,7 +32,7 @@ import java.util.Objects;
  */
 @Schema(description = "The body part 2 of a periodic payment initation request containes the execution related informations  of the periodic payment. ")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-05-06T13:00:42.214155+03:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-10-26T13:16:54.081225+03:00[Europe/Kiev]")
 
 
 public class PeriodicPaymentInitiationXmlPart2StandingorderTypeJson   {
@@ -41,17 +59,19 @@ public class PeriodicPaymentInitiationXmlPart2StandingorderTypeJson   {
     return this;
   }
 
-  /**
-   * The first applicable day of execution starting from this date is the first payment.
-   * @return startDate
-   **/
-  @Schema(required = true, description = "The first applicable day of execution starting from this date is the first payment. ")
-      @NotNull
+    /**
+     * The first applicable day of execution starting from this date is the first payment.
+     *
+     * @return startDate
+     **/
+    @Schema(required = true, description = "The first applicable day of execution starting from this date is the first payment. ")
+    @JsonProperty("startDate")
+    @NotNull
 
     @Valid
     public LocalDate getStartDate() {
-    return startDate;
-  }
+        return startDate;
+    }
 
   public void setStartDate(LocalDate startDate) {
     this.startDate = startDate;
@@ -62,15 +82,17 @@ public class PeriodicPaymentInitiationXmlPart2StandingorderTypeJson   {
     return this;
   }
 
-  /**
-   * The last applicable day of execution. If not given, it is an infinite standing order.
-   * @return endDate
-   **/
-  @Schema(description = "The last applicable day of execution. If not given, it is an infinite standing order. ")
+    /**
+     * The last applicable day of execution. If not given, it is an infinite standing order.
+     *
+     * @return endDate
+     **/
+    @Schema(description = "The last applicable day of execution. If not given, it is an infinite standing order. ")
+    @JsonProperty("endDate")
 
     @Valid
     public LocalDate getEndDate() {
-    return endDate;
+        return endDate;
   }
 
   public void setEndDate(LocalDate endDate) {
@@ -79,18 +101,20 @@ public class PeriodicPaymentInitiationXmlPart2StandingorderTypeJson   {
 
   public PeriodicPaymentInitiationXmlPart2StandingorderTypeJson executionRule(ExecutionRule executionRule) {
     this.executionRule = executionRule;
-    return this;
+      return this;
   }
 
-  /**
-   * Get executionRule
-   * @return executionRule
-   **/
-  @Schema(description = "")
+    /**
+     * Get executionRule
+     *
+     * @return executionRule
+     **/
+    @Schema(description = "")
+    @JsonProperty("executionRule")
 
     @Valid
     public ExecutionRule getExecutionRule() {
-    return executionRule;
+        return executionRule;
   }
 
   public void setExecutionRule(ExecutionRule executionRule) {
@@ -99,15 +123,17 @@ public class PeriodicPaymentInitiationXmlPart2StandingorderTypeJson   {
 
   public PeriodicPaymentInitiationXmlPart2StandingorderTypeJson frequency(FrequencyCode frequency) {
     this.frequency = frequency;
-    return this;
+      return this;
   }
 
-  /**
-   * Get frequency
-   * @return frequency
-   **/
-  @Schema(required = true, description = "")
-      @NotNull
+    /**
+     * Get frequency
+     *
+     * @return frequency
+     **/
+    @Schema(required = true, description = "")
+    @JsonProperty("frequency")
+    @NotNull
 
     @Valid
     public FrequencyCode getFrequency() {
@@ -128,6 +154,7 @@ public class PeriodicPaymentInitiationXmlPart2StandingorderTypeJson   {
    * @return dayOfExecution
    **/
   @Schema(description = "")
+  @JsonProperty("dayOfExecution")
 
     @Valid
   public DayOfExecution getDayOfExecution() {
@@ -140,14 +167,16 @@ public class PeriodicPaymentInitiationXmlPart2StandingorderTypeJson   {
 
   public PeriodicPaymentInitiationXmlPart2StandingorderTypeJson monthsOfExecution(MonthsOfExecution monthsOfExecution) {
     this.monthsOfExecution = monthsOfExecution;
-    return this;
+      return this;
   }
 
-  /**
-   * Get monthsOfExecution
-   * @return monthsOfExecution
-   **/
-  @Schema(description = "")
+    /**
+     * Get monthsOfExecution
+     *
+     * @return monthsOfExecution
+     **/
+    @Schema(description = "")
+    @JsonProperty("monthsOfExecution")
 
     @Valid
     public MonthsOfExecution getMonthsOfExecution() {

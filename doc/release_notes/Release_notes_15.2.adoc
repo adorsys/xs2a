@@ -1,3 +1,16 @@
 = Release notes v.15.2
 
 == Table of Contents
+
+* Fixed duplicated links in responses
+
+* Documentation update
+
+== Fixed duplicated links in responses
+
+Some responses contained duplicated links objects.
+This bug was fixed.
+
+== Documentation update
+
+Documentation files were updated according to current project state.

@@ -1,3 +1,21 @@
+/*
+ * Copyright 2018-2022 adorsys GmbH & Co KG
+ *
+ * This program is free software: you can redistribute it and/or modify it
+ * under the terms of the GNU Affero General Public License as published
+ * by the Free Software Foundation, either version 3 of the License, or (at
+ * your option) any later version. This program is distributed in the hope that
+ * it will be useful, but WITHOUT ANY WARRANTY; without even the implied
+ * warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program. If not, see https://www.gnu.org/licenses/.
+ *
+ * This project is also available under a separate commercial license. You can
+ * contact us at psd2@adorsys.com.
+ */
+
 package de.adorsys.psd2.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -17,7 +35,7 @@ import java.util.Objects;
  */
 @Schema(description = "Body of the response for a successful payment initiation request.")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-05-06T13:00:42.214155+03:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-10-26T13:16:54.081225+03:00[Europe/Kiev]")
 
 
 public class PaymentInitationRequestResponse201   {
@@ -69,17 +87,19 @@ public class PaymentInitationRequestResponse201   {
     return this;
   }
 
-  /**
-   * Get transactionStatus
-   * @return transactionStatus
-   **/
-  @Schema(required = true, description = "")
-      @NotNull
+    /**
+     * Get transactionStatus
+     *
+     * @return transactionStatus
+     **/
+    @Schema(required = true, description = "")
+    @JsonProperty("transactionStatus")
+    @NotNull
 
     @Valid
     public TransactionStatus getTransactionStatus() {
-    return transactionStatus;
-  }
+        return transactionStatus;
+    }
 
   public void setTransactionStatus(TransactionStatus transactionStatus) {
     this.transactionStatus = transactionStatus;
@@ -90,15 +110,17 @@ public class PaymentInitationRequestResponse201   {
     return this;
   }
 
-  /**
-   * Resource identification of the generated payment initiation resource.
-   * @return paymentId
-   **/
-  @Schema(example = "1234-wertiq-983", required = true, description = "Resource identification of the generated payment initiation resource.")
-      @NotNull
+    /**
+     * Resource identification of the generated payment initiation resource.
+     *
+     * @return paymentId
+     **/
+    @Schema(example = "1234-wertiq-983", required = true, description = "Resource identification of the generated payment initiation resource.")
+    @JsonProperty("paymentId")
+    @NotNull
 
     public String getPaymentId() {
-    return paymentId;
+        return paymentId;
   }
 
   public void setPaymentId(String paymentId) {
@@ -107,18 +129,20 @@ public class PaymentInitationRequestResponse201   {
 
   public PaymentInitationRequestResponse201 transactionFees(Amount transactionFees) {
     this.transactionFees = transactionFees;
-    return this;
+      return this;
   }
 
-  /**
-   * Get transactionFees
-   * @return transactionFees
-   **/
-  @Schema(description = "")
+    /**
+     * Get transactionFees
+     *
+     * @return transactionFees
+     **/
+    @Schema(description = "")
+    @JsonProperty("transactionFees")
 
     @Valid
     public Amount getTransactionFees() {
-    return transactionFees;
+        return transactionFees;
   }
 
   public void setTransactionFees(Amount transactionFees) {
@@ -127,14 +151,16 @@ public class PaymentInitationRequestResponse201   {
 
   public PaymentInitationRequestResponse201 currencyConversionFee(Amount currencyConversionFee) {
     this.currencyConversionFee = currencyConversionFee;
-    return this;
+      return this;
   }
 
-  /**
-   * Get currencyConversionFee
-   * @return currencyConversionFee
-   **/
-  @Schema(description = "")
+    /**
+     * Get currencyConversionFee
+     *
+     * @return currencyConversionFee
+     **/
+    @Schema(description = "")
+    @JsonProperty("currencyConversionFee")
 
     @Valid
     public Amount getCurrencyConversionFee() {
@@ -147,14 +173,16 @@ public class PaymentInitationRequestResponse201   {
 
   public PaymentInitationRequestResponse201 estimatedTotalAmount(Amount estimatedTotalAmount) {
     this.estimatedTotalAmount = estimatedTotalAmount;
-    return this;
+      return this;
   }
 
-  /**
-   * Get estimatedTotalAmount
-   * @return estimatedTotalAmount
-   **/
-  @Schema(description = "")
+    /**
+     * Get estimatedTotalAmount
+     *
+     * @return estimatedTotalAmount
+     **/
+    @Schema(description = "")
+    @JsonProperty("estimatedTotalAmount")
 
     @Valid
     public Amount getEstimatedTotalAmount() {
@@ -167,14 +195,16 @@ public class PaymentInitationRequestResponse201   {
 
   public PaymentInitationRequestResponse201 estimatedInterbankSettlementAmount(Amount estimatedInterbankSettlementAmount) {
     this.estimatedInterbankSettlementAmount = estimatedInterbankSettlementAmount;
-    return this;
+      return this;
   }
 
-  /**
-   * Get estimatedInterbankSettlementAmount
-   * @return estimatedInterbankSettlementAmount
-   **/
-  @Schema(description = "")
+    /**
+     * Get estimatedInterbankSettlementAmount
+     *
+     * @return estimatedInterbankSettlementAmount
+     **/
+    @Schema(description = "")
+    @JsonProperty("estimatedInterbankSettlementAmount")
 
     @Valid
     public Amount getEstimatedInterbankSettlementAmount() {
@@ -187,14 +217,16 @@ public class PaymentInitationRequestResponse201   {
 
   public PaymentInitationRequestResponse201 transactionFeeIndicator(Boolean transactionFeeIndicator) {
     this.transactionFeeIndicator = transactionFeeIndicator;
-    return this;
+      return this;
   }
 
-  /**
-   * If equals 'true', the transaction will involve specific transaction cost as shown by the ASPSP in their public price list or as agreed between ASPSP and PSU. If equals 'false', the transaction will not involve additional specific transaction costs to the PSU unless the fee amount is given specifically in the data elements transactionFees and/or currencyConversionFees. If this data element is not used, there is no information about transaction fees unless the fee amount is given explicitly in the data element transactionFees and/or currencyConversionFees.
-   * @return transactionFeeIndicator
-   **/
-  @Schema(description = "If equals 'true', the transaction will involve specific transaction cost as shown by the ASPSP in their public price list or as agreed between ASPSP and PSU. If equals 'false', the transaction will not involve additional specific transaction costs to the PSU unless the fee amount is given specifically in the data elements transactionFees and/or currencyConversionFees. If this data element is not used, there is no information about transaction fees unless the fee amount is given explicitly in the data element transactionFees and/or currencyConversionFees. ")
+    /**
+     * If equals 'true', the transaction will involve specific transaction cost as shown by the ASPSP in their public price list or as agreed between ASPSP and PSU. If equals 'false', the transaction will not involve additional specific transaction costs to the PSU unless the fee amount is given specifically in the data elements transactionFees and/or currencyConversionFees. If this data element is not used, there is no information about transaction fees unless the fee amount is given explicitly in the data element transactionFees and/or currencyConversionFees.
+     *
+     * @return transactionFeeIndicator
+     **/
+    @Schema(description = "If equals 'true', the transaction will involve specific transaction cost as shown by the ASPSP in their public price list or as agreed between ASPSP and PSU. If equals 'false', the transaction will not involve additional specific transaction costs to the PSU unless the fee amount is given specifically in the data elements transactionFees and/or currencyConversionFees. If this data element is not used, there is no information about transaction fees unless the fee amount is given explicitly in the data element transactionFees and/or currencyConversionFees. ")
+    @JsonProperty("transactionFeeIndicator")
 
     public Boolean isTransactionFeeIndicator() {
     return transactionFeeIndicator;
@@ -205,15 +237,17 @@ public class PaymentInitationRequestResponse201   {
   }
 
   public PaymentInitationRequestResponse201 scaMethods(ScaMethods scaMethods) {
-    this.scaMethods = scaMethods;
-    return this;
+      this.scaMethods = scaMethods;
+      return this;
   }
 
-  /**
-   * Get scaMethods
-   * @return scaMethods
-   **/
-  @Schema(description = "")
+    /**
+     * Get scaMethods
+     *
+     * @return scaMethods
+     **/
+    @Schema(description = "")
+    @JsonProperty("scaMethods")
 
     @Valid
     public ScaMethods getScaMethods() {
@@ -225,15 +259,17 @@ public class PaymentInitationRequestResponse201   {
   }
 
   public PaymentInitationRequestResponse201 chosenScaMethod(ChosenScaMethod chosenScaMethod) {
-    this.chosenScaMethod = chosenScaMethod;
-    return this;
+      this.chosenScaMethod = chosenScaMethod;
+      return this;
   }
 
-  /**
-   * Get chosenScaMethod
-   * @return chosenScaMethod
-   **/
-  @Schema(description = "")
+    /**
+     * Get chosenScaMethod
+     *
+     * @return chosenScaMethod
+     **/
+    @Schema(description = "")
+    @JsonProperty("chosenScaMethod")
 
     @Valid
     public ChosenScaMethod getChosenScaMethod() {
@@ -245,39 +281,43 @@ public class PaymentInitationRequestResponse201   {
   }
 
   public PaymentInitationRequestResponse201 challengeData(ChallengeData challengeData) {
-    this.challengeData = challengeData;
-    return this;
+      this.challengeData = challengeData;
+      return this;
   }
 
-  /**
-   * Get challengeData
-   * @return challengeData
-   **/
-  @Schema(description = "")
+    /**
+     * Get challengeData
+     *
+     * @return challengeData
+     **/
+    @Schema(description = "")
+    @JsonProperty("challengeData")
 
     @Valid
     public ChallengeData getChallengeData() {
     return challengeData;
-  }
+    }
 
-  public void setChallengeData(ChallengeData challengeData) {
-    this.challengeData = challengeData;
-  }
+    public void setChallengeData(ChallengeData challengeData) {
+        this.challengeData = challengeData;
+    }
 
-  public PaymentInitationRequestResponse201 _links(LinksPaymentInitiation _links) {
-    this._links = _links;
-    return this;
-  }
+    public PaymentInitationRequestResponse201 _links(Map _links) {
+        this._links = _links;
+        return this;
+    }
 
-  /**
-   * Get _links
-   * @return _links
-   **/
-  @Schema(required = true, description = "")
-      @NotNull
+    /**
+     * Get _links
+     *
+     * @return _links
+     **/
+    @Schema(required = true, description = "")
+  @JsonProperty("_links")
+    @NotNull
 
-    @Valid
-    public Map getLinks() {
+  @Valid
+  public Map getLinks() {
     return _links;
   }
 
@@ -285,18 +325,20 @@ public class PaymentInitationRequestResponse201   {
     this._links = _links;
   }
 
-  public PaymentInitationRequestResponse201 psuMessage(String psuMessage) {
-    this.psuMessage = psuMessage;
-    return this;
-  }
+    public PaymentInitationRequestResponse201 psuMessage(String psuMessage) {
+        this.psuMessage = psuMessage;
+        return this;
+    }
 
-  /**
-   * Text to be displayed to the PSU.
-   * @return psuMessage
-   **/
-  @Schema(description = "Text to be displayed to the PSU.")
+    /**
+     * Text to be displayed to the PSU.
+     *
+     * @return psuMessage
+     **/
+    @Schema(description = "Text to be displayed to the PSU.")
+    @JsonProperty("psuMessage")
 
-  @Size(max=500)   public String getPsuMessage() {
+    @Size(max=500)   public String getPsuMessage() {
     return psuMessage;
   }
 
@@ -310,20 +352,22 @@ public class PaymentInitationRequestResponse201   {
   }
 
   public PaymentInitationRequestResponse201 addTppMessagesItem(TppMessage201PaymentInitiation tppMessagesItem) {
-    if (this.tppMessages == null) {
-      this.tppMessages = new ArrayList<>();
-    }
-    this.tppMessages.add(tppMessagesItem);
-    return this;
+      if (this.tppMessages == null) {
+          this.tppMessages = new ArrayList<>();
+      }
+      this.tppMessages.add(tppMessagesItem);
+      return this;
   }
 
-  /**
-   * Get tppMessages
-   * @return tppMessages
-   **/
-  @Schema(description = "")
-      @Valid
-    public List<TppMessage201PaymentInitiation> getTppMessages() {
+    /**
+     * Get tppMessages
+     *
+     * @return tppMessages
+     **/
+    @Schema(description = "")
+  @JsonProperty("tppMessages")
+    @Valid
+  public List<TppMessage201PaymentInitiation> getTppMessages() {
     return tppMessages;
   }
 
@@ -331,19 +375,20 @@ public class PaymentInitationRequestResponse201   {
     this.tppMessages = tppMessages;
   }
 
-  public PaymentInitationRequestResponse201 scaStatus(ScaStatus scaStatus) {
-    this.scaStatus = scaStatus;
-    return this;
-  }
+    public PaymentInitationRequestResponse201 scaStatus(ScaStatus scaStatus) {
+        this.scaStatus = scaStatus;
+        return this;
+    }
 
-  /**
-   * Get scaStatus
+    /**
+     * Get scaStatus
    * @return scaStatus
    **/
   @Schema(description = "")
+  @JsonProperty("scaStatus")
 
-    @Valid
-    public ScaStatus getScaStatus() {
+  @Valid
+  public ScaStatus getScaStatus() {
     return scaStatus;
   }
 

@@ -70,7 +70,7 @@ public interface ConfirmationOfFundsServicePiisApi {
     @Operation(summary = "Confirmation of funds request", description = "Creates a confirmation of funds request at the ASPSP. Checks whether a specific amount is available at point of time of the request on an account linked to a given tuple card issuer(TPP)/card number, or addressed by IBAN and TPP respectively. If the related extended services are used a conditional Consent-ID is contained in the header. This field is contained but commented out in this specification.", security = {
         @SecurityRequirement(name = "BearerAuthOAuth")    }, tags={ "Confirmation of Funds Service (PIIS)" })
     @ApiResponses(value = {
-        @ApiResponse(responseCode = "200", description = "OK", content = @Content(mediaType = "application/json", schema = @Schema(implementation = InlineResponse2008.class))),
+        @ApiResponse(responseCode = "200", description = "OK", content = @Content(mediaType = "application/json", schema = @Schema(implementation = InlineResponse2003.class))),
 
         @ApiResponse(responseCode = "400", description = "Bad Request", content = @Content(mediaType = "application/json", schema = @Schema(implementation = Error400NGAIS.class))),
 
@@ -94,21 +94,21 @@ public interface ConfirmationOfFundsServicePiisApi {
 
         @ApiResponse(responseCode = "500", description = "Internal Server Error"),
 
-        @ApiResponse(responseCode = "503", description = "Service Unavailable") })
+        @ApiResponse(responseCode = "503", description = "Service Unavailable")})
     @RequestMapping(value = "/v1/funds-confirmations",
-        produces = { "application/json", "application/problem+json" },
-        consumes = { "application/json" },
+        produces = {"application/json", "application/problem+json"},
+        consumes = {"application/json"},
         method = RequestMethod.POST)
-    default ResponseEntity<InlineResponse2008> _checkAvailabilityOfFunds(@Parameter(in = ParameterIn.HEADER, description = "ID of the request, unique to the call, as determined by the initiating party." ,required=true,schema=@Schema()) @RequestHeader(value="X-Request-ID", required=true) UUID xRequestID, @Parameter(in = ParameterIn.DEFAULT, description = "Request body for a confirmation of funds request. ", required=true, schema=@Schema()) @Valid @RequestBody ConfirmationOfFunds body, @Parameter(in = ParameterIn.HEADER, description = "This field  might be used in case where a consent was agreed between ASPSP and PSU through an OAuth2 based protocol,  facilitated by the TPP. " ,schema=@Schema()) @RequestHeader(value="Authorization", required=false) String authorization, @Parameter(in = ParameterIn.HEADER, description = "This data element may be contained, if the payment initiation transaction is part of a session, i.e. combined AIS/PIS service. This then contains the consentId of the related AIS consent, which was performed prior to this payment initiation. " ,schema=@Schema()) @RequestHeader(value="Consent-ID", required=false) String consentID, @Parameter(in = ParameterIn.HEADER, description = "Is contained if and only if the \"Signature\" element is contained in the header of the request." ,schema=@Schema()) @RequestHeader(value="Digest", required=false) String digest, @Parameter(in = ParameterIn.HEADER, description = "A signature of the request by the TPP on application level. This might be mandated by ASPSP. " ,schema=@Schema()) @RequestHeader(value="Signature", required=false) String signature, @Parameter(in = ParameterIn.HEADER, description = "The certificate used for signing the request, in base64 encoding.  Must be contained if a signature is contained. " ,schema=@Schema()) @RequestHeader(value="TPP-Signature-Certificate", required=false) byte[] tpPSignatureCertificate) {
+    default ResponseEntity<InlineResponse2003> _checkAvailabilityOfFunds(@Parameter(in = ParameterIn.HEADER, description = "ID of the request, unique to the call, as determined by the initiating party.", required = true, schema = @Schema()) @RequestHeader(value = "X-Request-ID", required = true) UUID xRequestID, @Parameter(in = ParameterIn.DEFAULT, description = "Request body for a confirmation of funds request. ", required = true, schema = @Schema()) @Valid @RequestBody ConfirmationOfFunds body, @Parameter(in = ParameterIn.HEADER, description = "This field  might be used in case where a consent was agreed between ASPSP and PSU through an OAuth2 based protocol,  facilitated by the TPP. ", schema = @Schema()) @RequestHeader(value = "Authorization", required = false) String authorization, @Parameter(in = ParameterIn.HEADER, description = "This data element may be contained, if the payment initiation transaction is part of a session, i.e. combined AIS/PIS service. This then contains the consentId of the related AIS consent, which was performed prior to this payment initiation. ", schema = @Schema()) @RequestHeader(value = "Consent-ID", required = false) String consentID, @Parameter(in = ParameterIn.HEADER, description = "Is contained if and only if the \"Signature\" element is contained in the header of the request.", schema = @Schema()) @RequestHeader(value = "Digest", required = false) String digest, @Parameter(in = ParameterIn.HEADER, description = "A signature of the request by the TPP on application level. This might be mandated by ASPSP. ", schema = @Schema()) @RequestHeader(value = "Signature", required = false) String signature, @Parameter(in = ParameterIn.HEADER, description = "The certificate used for signing the request, in base64 encoding.  Must be contained if a signature is contained. ", schema = @Schema()) @RequestHeader(value = "TPP-Signature-Certificate", required = false) byte[] tpPSignatureCertificate) {
         return checkAvailabilityOfFunds(xRequestID, body, authorization, consentID, digest, signature, tpPSignatureCertificate);
     }
 
     // Override this method
-    default ResponseEntity<InlineResponse2008> checkAvailabilityOfFunds(UUID xRequestID,ConfirmationOfFunds body,String authorization,String consentID,String digest,String signature,byte[] tpPSignatureCertificate) {
-        if(getObjectMapper().isPresent() && getAcceptHeader().isPresent()) {
+    default ResponseEntity<InlineResponse2003> checkAvailabilityOfFunds(UUID xRequestID, ConfirmationOfFunds body, String authorization, String consentID, String digest, String signature, byte[] tpPSignatureCertificate) {
+        if (getObjectMapper().isPresent() && getAcceptHeader().isPresent()) {
             if (getAcceptHeader().get().contains("application/json")) {
                 try {
-                    return new ResponseEntity<>(getObjectMapper().get().readValue("{\n  \"fundsAvailable\" : true\n}", InlineResponse2008.class), HttpStatus.NOT_IMPLEMENTED);
+                    return new ResponseEntity<>(getObjectMapper().get().readValue("{\n  \"fundsAvailable\" : true\n}", InlineResponse2003.class), HttpStatus.NOT_IMPLEMENTED);
                 } catch (IOException e) {
                     log.error("Couldn't serialize response for content type application/json", e);
                     return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);

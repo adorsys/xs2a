@@ -94,17 +94,17 @@ class CardAccountModelMapperTest {
         Xs2aCardAccountDetailsHolder xs2aAccountDetailsHolder = jsonReader.getObjectFromFile("json/service/mapper/card-account-model-mapper/CardAccountModelMapper-xs2a-card-account-details-holder.json", Xs2aCardAccountDetailsHolder.class);
 
         // When
-        InlineResponse2007 actualInlineResponse2007 = mapper.mapToInlineResponse2007(xs2aAccountDetailsHolder);
-        actualInlineResponse2007.getCardAccount().getBalances().get(0).setLastChangeDateTime(OFFSET_DATE_TIME);
+        InlineResponse2002 actualInlineResponse2002 = mapper.mapToInlineResponse2002(xs2aAccountDetailsHolder);
+        actualInlineResponse2002.getCardAccount().getBalances().get(0).setLastChangeDateTime(OFFSET_DATE_TIME);
 
         CardAccountDetails expectedAccountDetails = jsonReader.getObjectFromFile("json/service/mapper/card-account-model-mapper/CardAccountModelMapper-card-account-details-expected.json", CardAccountDetails.class);
         expectedAccountDetails.getBalances().get(0).setLastChangeDateTime(OFFSET_DATE_TIME);
 
         // Then
-        assertLinks(expectedAccountDetails.getLinks(), actualInlineResponse2007.getCardAccount().getLinks());
+        assertLinks(expectedAccountDetails.getLinks(), actualInlineResponse2002.getCardAccount().getLinks());
 
-        expectedAccountDetails.setLinks(actualInlineResponse2007.getCardAccount().getLinks());
-        assertThat(actualInlineResponse2007.getCardAccount()).isEqualTo(expectedAccountDetails);
+        expectedAccountDetails.setLinks(actualInlineResponse2002.getCardAccount().getLinks());
+        assertThat(actualInlineResponse2002.getCardAccount()).isEqualTo(expectedAccountDetails);
     }
 
     @Test

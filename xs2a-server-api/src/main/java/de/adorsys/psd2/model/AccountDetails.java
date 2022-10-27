@@ -1,3 +1,21 @@
+/*
+ * Copyright 2018-2022 adorsys GmbH & Co KG
+ *
+ * This program is free software: you can redistribute it and/or modify it
+ * under the terms of the GNU Affero General Public License as published
+ * by the Free Software Foundation, either version 3 of the License, or (at
+ * your option) any later version. This program is distributed in the hope that
+ * it will be useful, but WITHOUT ANY WARRANTY; without even the implied
+ * warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program. If not, see https://www.gnu.org/licenses/.
+ *
+ * This project is also available under a separate commercial license. You can
+ * contact us at psd2@adorsys.com.
+ */
+
 package de.adorsys.psd2.model;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
@@ -18,7 +36,7 @@ import java.util.Objects;
  */
 @Schema(description = "The ASPSP shall give at least one of the account reference identifiers:   - iban   - bban   - pan   - maskedPan   - msisdn If the account is a multicurrency account currency code in \"currency\" is set to \"XXX\". ")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-05-06T13:00:42.214155+03:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-10-26T13:16:54.081225+03:00[Europe/Kiev]")
 
 
 public class AccountDetails   {
@@ -108,15 +126,17 @@ public class AccountDetails   {
     return this;
   }
 
-  /**
-   * This shall be filled, if addressable resource are created by the ASPSP on the /accounts or /card-accounts endpoint.
-   * @return resourceId
-   **/
-  @Schema(description = "This shall be filled, if addressable resource are created by the ASPSP on the /accounts or /card-accounts endpoint.")
+    /**
+     * This shall be filled, if addressable resource are created by the ASPSP on the /accounts or /card-accounts endpoint.
+     *
+     * @return resourceId
+     **/
+    @Schema(description = "This shall be filled, if addressable resource are created by the ASPSP on the /accounts or /card-accounts endpoint.")
+    @JsonProperty("resourceId")
 
     public String getResourceId() {
-    return resourceId;
-  }
+        return resourceId;
+    }
 
   public void setResourceId(String resourceId) {
     this.resourceId = resourceId;
@@ -127,14 +147,17 @@ public class AccountDetails   {
     return this;
   }
 
-  /**
-   * IBAN of an account.
-   * @return iban
-   **/
-  @Schema(example = "FR7612345987650123456789014", description = "IBAN of an account.")
+    /**
+     * IBAN of an account.
+     *
+     * @return iban
+     **/
+    @Schema(example = "FR7612345987650123456789014", description = "IBAN of an account.")
+    @JsonProperty("iban")
 
-  @Pattern(regexp="[A-Z]{2,2}[0-9]{2,2}[a-zA-Z0-9]{1,30}")   public String getIban() {
-    return iban;
+    @Pattern(regexp = "[A-Z]{2,2}[0-9]{2,2}[a-zA-Z0-9]{1,30}")
+    public String getIban() {
+        return iban;
   }
 
   public void setIban(String iban) {
@@ -143,16 +166,19 @@ public class AccountDetails   {
 
   public AccountDetails bban(String bban) {
     this.bban = bban;
-    return this;
+      return this;
   }
 
-  /**
-   * Basic Bank Account Number (BBAN) Identifier.  This data element can be used in the body of the consent request.   Message for retrieving account access consent from this account. This   data elements is used for payment accounts which have no IBAN.   ISO20022: Basic Bank Account Number (BBAN).       Identifier used nationally by financial institutions, i.e., in individual countries,    generally as part of a National Account Numbering Scheme(s),    which uniquely identifies the account of a customer.
-   * @return bban
-   **/
-  @Schema(example = "BARC12345612345678", description = "Basic Bank Account Number (BBAN) Identifier.  This data element can be used in the body of the consent request.   Message for retrieving account access consent from this account. This   data elements is used for payment accounts which have no IBAN.   ISO20022: Basic Bank Account Number (BBAN).       Identifier used nationally by financial institutions, i.e., in individual countries,    generally as part of a National Account Numbering Scheme(s),    which uniquely identifies the account of a customer. ")
+    /**
+     * Basic Bank Account Number (BBAN) Identifier.  This data element can be used in the body of the consent request.   Message for retrieving account access consent from this account. This   data elements is used for payment accounts which have no IBAN.   ISO20022: Basic Bank Account Number (BBAN).       Identifier used nationally by financial institutions, i.e., in individual countries,    generally as part of a National Account Numbering Scheme(s),    which uniquely identifies the account of a customer.
+     *
+     * @return bban
+     **/
+    @Schema(example = "BARC12345612345678", description = "Basic Bank Account Number (BBAN) Identifier.  This data element can be used in the body of the consent request.   Message for retrieving account access consent from this account. This   data elements is used for payment accounts which have no IBAN.   ISO20022: Basic Bank Account Number (BBAN).       Identifier used nationally by financial institutions, i.e., in individual countries,    generally as part of a National Account Numbering Scheme(s),    which uniquely identifies the account of a customer. ")
+    @JsonProperty("bban")
 
-  @Pattern(regexp="[a-zA-Z0-9]{1,30}")   public String getBban() {
+    @Pattern(regexp = "[a-zA-Z0-9]{1,30}")
+    public String getBban() {
     return bban;
   }
 
@@ -162,16 +188,19 @@ public class AccountDetails   {
 
   public AccountDetails msisdn(String msisdn) {
     this.msisdn = msisdn;
-    return this;
+      return this;
   }
 
-  /**
-   * Mobile phone number.
-   * @return msisdn
-   **/
-  @Schema(example = "+49 170 1234567", description = "Mobile phone number.")
+    /**
+     * Mobile phone number.
+     *
+     * @return msisdn
+     **/
+    @Schema(example = "+49 170 1234567", description = "Mobile phone number.")
+    @JsonProperty("msisdn")
 
-  @Size(max=35)   public String getMsisdn() {
+    @Size(max = 35)
+    public String getMsisdn() {
     return msisdn;
   }
 
@@ -180,18 +209,21 @@ public class AccountDetails   {
   }
 
   public AccountDetails currency(String currency) {
-    this.currency = currency;
-    return this;
+      this.currency = currency;
+      return this;
   }
 
-  /**
-   * ISO 4217 Alpha 3 currency code.
-   * @return currency
-   **/
-  @Schema(example = "EUR", required = true, description = "ISO 4217 Alpha 3 currency code. ")
-      @NotNull
+    /**
+     * ISO 4217 Alpha 3 currency code.
+     *
+     * @return currency
+     **/
+    @Schema(example = "EUR", required = true, description = "ISO 4217 Alpha 3 currency code. ")
+    @JsonProperty("currency")
+    @NotNull
 
-  @Pattern(regexp="[A-Z]{3}")   public String getCurrency() {
+    @Pattern(regexp = "[A-Z]{3}")
+    public String getCurrency() {
     return currency;
   }
 
@@ -200,17 +232,19 @@ public class AccountDetails   {
   }
 
   public AccountDetails name(String name) {
-    this.name = name;
-    return this;
+      this.name = name;
+      return this;
   }
 
-  /**
-   * Name of the account, as assigned by the ASPSP, in agreement with the account owner in order to provide an additional means of identification of the account.
-   * @return name
-   **/
-  @Schema(description = "Name of the account, as assigned by the ASPSP, in agreement with the account owner in order to provide an additional means of identification of the account.")
+    /**
+     * Name of the account, as assigned by the ASPSP, in agreement with the account owner in order to provide an additional means of identification of the account.
+     *
+     * @return name
+     **/
+    @Schema(description = "Name of the account, as assigned by the ASPSP, in agreement with the account owner in order to provide an additional means of identification of the account.")
+    @JsonProperty("name")
 
-  @Size(max=70)   public String getName() {
+@Size(max=70)   public String getName() {
     return name;
   }
 
@@ -219,17 +253,19 @@ public class AccountDetails   {
   }
 
   public AccountDetails displayName(String displayName) {
-    this.displayName = displayName;
-    return this;
+      this.displayName = displayName;
+      return this;
   }
 
-  /**
-   * Name of the account as defined by the PSU within online channels.
-   * @return displayName
-   **/
-  @Schema(description = "Name of the account as defined by the PSU within online channels. ")
+    /**
+     * Name of the account as defined by the PSU within online channels.
+     *
+     * @return displayName
+     **/
+    @Schema(description = "Name of the account as defined by the PSU within online channels. ")
+    @JsonProperty("displayName")
 
-  @Size(max=70)   public String getDisplayName() {
+@Size(max=70)   public String getDisplayName() {
     return displayName;
   }
 
@@ -238,17 +274,19 @@ public class AccountDetails   {
   }
 
   public AccountDetails product(String product) {
-    this.product = product;
-    return this;
+      this.product = product;
+      return this;
   }
 
-  /**
-   * Product name of the bank for this account, proprietary definition.
-   * @return product
-   **/
-  @Schema(description = "Product name of the bank for this account, proprietary definition.")
+    /**
+     * Product name of the bank for this account, proprietary definition.
+     *
+     * @return product
+     **/
+    @Schema(description = "Product name of the bank for this account, proprietary definition.")
+    @JsonProperty("product")
 
-  @Size(max=35)   public String getProduct() {
+@Size(max=35)   public String getProduct() {
     return product;
   }
 
@@ -257,17 +295,19 @@ public class AccountDetails   {
   }
 
   public AccountDetails cashAccountType(String cashAccountType) {
-    this.cashAccountType = cashAccountType;
-    return this;
+      this.cashAccountType = cashAccountType;
+      return this;
   }
 
-  /**
-   * ExternalCashAccountType1Code from ISO 20022.
-   * @return cashAccountType
-   **/
-  @Schema(description = "ExternalCashAccountType1Code from ISO 20022. ")
+    /**
+     * ExternalCashAccountType1Code from ISO 20022.
+     *
+     * @return cashAccountType
+     **/
+    @Schema(description = "ExternalCashAccountType1Code from ISO 20022. ")
+    @JsonProperty("cashAccountType")
 
-    public String getCashAccountType() {
+  public String getCashAccountType() {
     return cashAccountType;
   }
 
@@ -275,16 +315,18 @@ public class AccountDetails   {
     this.cashAccountType = cashAccountType;
   }
 
-  public AccountDetails status(AccountStatus status) {
-    this.status = status;
-    return this;
-  }
+    public AccountDetails status(AccountStatus status) {
+        this.status = status;
+        return this;
+    }
 
-  /**
-   * Get status
-   * @return status
-   **/
-  @Schema(description = "")
+    /**
+     * Get status
+     *
+     * @return status
+     **/
+    @Schema(description = "")
+    @JsonProperty("status")
 
     @Valid
     public AccountStatus getStatus() {
@@ -292,21 +334,23 @@ public class AccountDetails   {
   }
 
   public void setStatus(AccountStatus status) {
-    this.status = status;
+      this.status = status;
   }
 
-  public AccountDetails bic(String bic) {
-    this.bic = bic;
-    return this;
-  }
+    public AccountDetails bic(String bic) {
+        this.bic = bic;
+        return this;
+    }
 
-  /**
-   * BICFI
-   * @return bic
-   **/
-  @Schema(example = "AAAADEBBXXX", description = "BICFI ")
+    /**
+     * BICFI
+     *
+     * @return bic
+     **/
+    @Schema(example = "AAAADEBBXXX", description = "BICFI ")
+    @JsonProperty("bic")
 
-  @Pattern(regexp="[A-Z]{6,6}[A-Z2-9][A-NP-Z0-9]([A-Z0-9]{3,3}){0,1}")   public String getBic() {
+@Pattern(regexp="[A-Z]{6,6}[A-Z2-9][A-NP-Z0-9]([A-Z0-9]{3,3}){0,1}")   public String getBic() {
     return bic;
   }
 
@@ -314,86 +358,93 @@ public class AccountDetails   {
     this.bic = bic;
   }
 
-  public AccountDetails linkedAccounts(String linkedAccounts) {
-    this.linkedAccounts = linkedAccounts;
-    return this;
-  }
+    public AccountDetails linkedAccounts(String linkedAccounts) {
+        this.linkedAccounts = linkedAccounts;
+        return this;
+    }
 
-  /**
-   * Case of a set of pending card transactions, the APSP will provide the relevant cash account the card is set up on.
-   * @return linkedAccounts
-   **/
-  @Schema(description = "Case of a set of pending card transactions, the APSP will provide the relevant cash account the card is set up on.")
+    /**
+     * Case of a set of pending card transactions, the APSP will provide the relevant cash account the card is set up on.
+     *
+     * @return linkedAccounts
+     **/
+    @Schema(description = "Case of a set of pending card transactions, the APSP will provide the relevant cash account the card is set up on.")
+  @JsonProperty("linkedAccounts")
 
-  @Size(max=70)   public String getLinkedAccounts() {
+@Size(max=70)   public String getLinkedAccounts() {
     return linkedAccounts;
   }
 
   public void setLinkedAccounts(String linkedAccounts) {
-    this.linkedAccounts = linkedAccounts;
+      this.linkedAccounts = linkedAccounts;
   }
 
-  public AccountDetails usage(UsageEnum usage) {
-    this.usage = usage;
-    return this;
-  }
+    public AccountDetails usage(UsageEnum usage) {
+        this.usage = usage;
+        return this;
+    }
 
-  /**
-   * Specifies the usage of the account:   * PRIV: private personal account   * ORGA: professional account
-   * @return usage
-   **/
-  @Schema(description = "Specifies the usage of the account:   * PRIV: private personal account   * ORGA: professional account ")
+    /**
+     * Specifies the usage of the account:   * PRIV: private personal account   * ORGA: professional account
+     *
+     * @return usage
+     **/
+    @Schema(description = "Specifies the usage of the account:   * PRIV: private personal account   * ORGA: professional account ")
+  @JsonProperty("usage")
 
-  @Size(max=4)   public UsageEnum getUsage() {
+@Size(max=4)   public UsageEnum getUsage() {
     return usage;
   }
 
   public void setUsage(UsageEnum usage) {
-    this.usage = usage;
+      this.usage = usage;
   }
 
-  public AccountDetails details(String details) {
-    this.details = details;
-    return this;
-  }
+    public AccountDetails details(String details) {
+        this.details = details;
+        return this;
+    }
 
-  /**
-   * Specifications that might be provided by the ASPSP:   - characteristics of the account   - characteristics of the relevant card
-   * @return details
-   **/
-  @Schema(description = "Specifications that might be provided by the ASPSP:   - characteristics of the account   - characteristics of the relevant card ")
+    /**
+     * Specifications that might be provided by the ASPSP:   - characteristics of the account   - characteristics of the relevant card
+     *
+     * @return details
+     **/
+    @Schema(description = "Specifications that might be provided by the ASPSP:   - characteristics of the account   - characteristics of the relevant card ")
+  @JsonProperty("details")
 
-  @Size(max=500)   public String getDetails() {
+@Size(max=500)   public String getDetails() {
     return details;
   }
 
   public void setDetails(String details) {
-    this.details = details;
+      this.details = details;
   }
 
-  public AccountDetails balances(BalanceList balances) {
-    this.balances = balances;
-    return this;
-  }
+    public AccountDetails balances(BalanceList balances) {
+        this.balances = balances;
+        return this;
+    }
 
   /**
    * Get balances
    * @return balances
    **/
   @Schema(description = "")
+  @JsonProperty("balances")
 
-    @Valid
-    public BalanceList getBalances() {
+  @Valid
+  public BalanceList getBalances() {
     return balances;
   }
 
-  public void setBalances(BalanceList balances) {
-    this.balances = balances;
-  }
+    public void setBalances(BalanceList balances) {
+        this.balances = balances;
+    }
 
-  public AccountDetails _links(Map _links) {
-    this._links = _links;
-    return this;
+    public AccountDetails _links(Map _links) {
+        this._links = _links;
+        return this;
   }
 
   /**
@@ -401,28 +452,31 @@ public class AccountDetails   {
    * @return _links
    **/
   @Schema(description = "")
+  @JsonProperty("_links")
 
-    @Valid
-    public Map getLinks() {
+  @Valid
+  public Map getLinks() {
     return _links;
   }
 
-  public void setLinks(Map _links) {
-    this._links = _links;
-  }
+    public void setLinks(Map _links) {
+        this._links = _links;
+    }
 
-  public AccountDetails ownerName(String ownerName) {
-    this.ownerName = ownerName;
-    return this;
-  }
+    public AccountDetails ownerName(String ownerName) {
+        this.ownerName = ownerName;
+        return this;
+    }
 
-  /**
-   * Name of the legal account owner.  If there is more than one owner, then e.g. two names might be noted here.  For a corporate account, the corporate name is used for this attribute. Even if supported by the ASPSP, the provision of this field might depend on the fact whether an explicit consent to this specific additional account information has been given by the PSU.
-   * @return ownerName
-   **/
-  @Schema(example = "John Doe", description = "Name of the legal account owner.  If there is more than one owner, then e.g. two names might be noted here.  For a corporate account, the corporate name is used for this attribute. Even if supported by the ASPSP, the provision of this field might depend on the fact whether an explicit consent to this specific additional account information has been given by the PSU. ")
+    /**
+     * Name of the legal account owner.  If there is more than one owner, then e.g. two names might be noted here.  For a corporate account, the corporate name is used for this attribute. Even if supported by the ASPSP, the provision of this field might depend on the fact whether an explicit consent to this specific additional account information has been given by the PSU.
+     *
+     * @return ownerName
+     **/
+    @Schema(example = "John Doe", description = "Name of the legal account owner.  If there is more than one owner, then e.g. two names might be noted here.  For a corporate account, the corporate name is used for this attribute. Even if supported by the ASPSP, the provision of this field might depend on the fact whether an explicit consent to this specific additional account information has been given by the PSU. ")
+  @JsonProperty("ownerName")
 
-  @Size(max=140)   public String getOwnerName() {
+@Size(max=140)   public String getOwnerName() {
     return ownerName;
   }
 

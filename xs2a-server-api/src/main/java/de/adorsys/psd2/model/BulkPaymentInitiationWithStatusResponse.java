@@ -1,3 +1,21 @@
+/*
+ * Copyright 2018-2022 adorsys GmbH & Co KG
+ *
+ * This program is free software: you can redistribute it and/or modify it
+ * under the terms of the GNU Affero General Public License as published
+ * by the Free Software Foundation, either version 3 of the License, or (at
+ * your option) any later version. This program is distributed in the hope that
+ * it will be useful, but WITHOUT ANY WARRANTY; without even the implied
+ * warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program. If not, see https://www.gnu.org/licenses/.
+ *
+ * This project is also available under a separate commercial license. You can
+ * contact us at psd2@adorsys.com.
+ */
+
 package de.adorsys.psd2.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -18,20 +36,20 @@ import java.util.Objects;
  */
 @Schema(description = "Generic JSON response body consistion of the corresponding bulk payment initation JSON body together with an optional transaction status field. ")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-05-06T13:00:42.214155+03:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-10-26T13:16:54.081225+03:00[Europe/Kiev]")
 
 
 public class BulkPaymentInitiationWithStatusResponse {
-  @JsonProperty("batchBookingPreferred")
-  private Boolean batchBookingPreferred = null;
+    @JsonProperty("batchBookingPreferred")
+    private Boolean batchBookingPreferred = null;
 
-  @JsonProperty("requestedExecutionDate")
-  private LocalDate requestedExecutionDate = null;
+    @JsonProperty("requestedExecutionDate")
+    private LocalDate requestedExecutionDate = null;
 
-  @JsonProperty("acceptorTransactionDateTime")
-  private OffsetDateTime acceptorTransactionDateTime = null;
+    @JsonProperty("acceptorTransactionDateTime")
+    private OffsetDateTime acceptorTransactionDateTime = null;
 
-  @JsonProperty("debtorAccount")
+    @JsonProperty("debtorAccount")
   private AccountReference debtorAccount = null;
 
   @JsonProperty("paymentInformationId")
@@ -53,15 +71,17 @@ public class BulkPaymentInitiationWithStatusResponse {
     return this;
   }
 
-  /**
-   * If this element equals 'true', the PSU prefers only one booking entry.  If this element equals 'false', the PSU prefers individual booking of all contained individual transactions.   The ASPSP will follow this preference according to contracts agreed on with the PSU.
-   * @return batchBookingPreferred
-   **/
-  @Schema(example = "false", description = "If this element equals 'true', the PSU prefers only one booking entry.  If this element equals 'false', the PSU prefers individual booking of all contained individual transactions.   The ASPSP will follow this preference according to contracts agreed on with the PSU. ")
+    /**
+     * If this element equals 'true', the PSU prefers only one booking entry.  If this element equals 'false', the PSU prefers individual booking of all contained individual transactions.   The ASPSP will follow this preference according to contracts agreed on with the PSU.
+     *
+     * @return batchBookingPreferred
+     **/
+    @Schema(example = "false", description = "If this element equals 'true', the PSU prefers only one booking entry.  If this element equals 'false', the PSU prefers individual booking of all contained individual transactions.   The ASPSP will follow this preference according to contracts agreed on with the PSU. ")
+    @JsonProperty("batchBookingPreferred")
 
     public Boolean isBatchBookingPreferred() {
-    return batchBookingPreferred;
-  }
+        return batchBookingPreferred;
+    }
 
   public void setBatchBookingPreferred(Boolean batchBookingPreferred) {
     this.batchBookingPreferred = batchBookingPreferred;
@@ -72,15 +92,17 @@ public class BulkPaymentInitiationWithStatusResponse {
     return this;
   }
 
-  /**
-   * Get requestedExecutionDate
-   * @return requestedExecutionDate
-   **/
-  @Schema(description = "")
+    /**
+     * Get requestedExecutionDate
+     *
+     * @return requestedExecutionDate
+     **/
+    @Schema(description = "")
+    @JsonProperty("requestedExecutionDate")
 
     @Valid
     public LocalDate getRequestedExecutionDate() {
-    return requestedExecutionDate;
+        return requestedExecutionDate;
   }
 
   public void setRequestedExecutionDate(LocalDate requestedExecutionDate) {
@@ -89,18 +111,20 @@ public class BulkPaymentInitiationWithStatusResponse {
 
   public BulkPaymentInitiationWithStatusResponse acceptorTransactionDateTime(OffsetDateTime acceptorTransactionDateTime) {
     this.acceptorTransactionDateTime = acceptorTransactionDateTime;
-    return this;
+      return this;
   }
 
-  /**
-   * Get acceptorTransactionDateTime
-   * @return acceptorTransactionDateTime
-   **/
-  @Schema(description = "")
+    /**
+     * Get acceptorTransactionDateTime
+     *
+     * @return acceptorTransactionDateTime
+     **/
+    @Schema(description = "")
+    @JsonProperty("acceptorTransactionDateTime")
 
     @Valid
     public OffsetDateTime getAcceptorTransactionDateTime() {
-    return acceptorTransactionDateTime;
+        return acceptorTransactionDateTime;
   }
 
   public void setAcceptorTransactionDateTime(OffsetDateTime acceptorTransactionDateTime) {
@@ -109,15 +133,17 @@ public class BulkPaymentInitiationWithStatusResponse {
 
   public BulkPaymentInitiationWithStatusResponse debtorAccount(AccountReference debtorAccount) {
     this.debtorAccount = debtorAccount;
-    return this;
+      return this;
   }
 
-  /**
-   * Get debtorAccount
-   * @return debtorAccount
-   **/
-  @Schema(required = true, description = "")
-      @NotNull
+    /**
+     * Get debtorAccount
+     *
+     * @return debtorAccount
+     **/
+    @Schema(required = true, description = "")
+    @JsonProperty("debtorAccount")
+    @NotNull
 
     @Valid
     public AccountReference getDebtorAccount() {
@@ -130,16 +156,19 @@ public class BulkPaymentInitiationWithStatusResponse {
 
   public BulkPaymentInitiationWithStatusResponse paymentInformationId(String paymentInformationId) {
     this.paymentInformationId = paymentInformationId;
-    return this;
+      return this;
   }
 
-  /**
-   * Get paymentInformationId
-   * @return paymentInformationId
-   **/
-  @Schema(description = "")
+    /**
+     * Get paymentInformationId
+     *
+     * @return paymentInformationId
+     **/
+    @Schema(description = "")
+    @JsonProperty("paymentInformationId")
 
-  @Size(max=35)   public String getPaymentInformationId() {
+    @Size(max = 35)
+    public String getPaymentInformationId() {
     return paymentInformationId;
   }
 
@@ -153,16 +182,18 @@ public class BulkPaymentInitiationWithStatusResponse {
   }
 
   public BulkPaymentInitiationWithStatusResponse addPaymentsItem(PaymentInitiationBulkElementJson paymentsItem) {
-    this.payments.add(paymentsItem);
-    return this;
+      this.payments.add(paymentsItem);
+      return this;
   }
 
-  /**
-   * A list of generic JSON bodies payment initations for bulk payments via JSON.  Note: Some fields from single payments do not occcur in a bulk payment element
-   * @return payments
-   **/
-  @Schema(required = true, description = "A list of generic JSON bodies payment initations for bulk payments via JSON.  Note: Some fields from single payments do not occcur in a bulk payment element ")
-      @NotNull
+    /**
+     * A list of generic JSON bodies payment initations for bulk payments via JSON.  Note: Some fields from single payments do not occcur in a bulk payment element
+     *
+     * @return payments
+     **/
+    @Schema(required = true, description = "A list of generic JSON bodies payment initations for bulk payments via JSON.  Note: Some fields from single payments do not occcur in a bulk payment element ")
+    @JsonProperty("payments")
+    @NotNull
     @Valid
     public List<PaymentInitiationBulkElementJson> getPayments() {
     return payments;
@@ -173,15 +204,17 @@ public class BulkPaymentInitiationWithStatusResponse {
   }
 
   public BulkPaymentInitiationWithStatusResponse transactionStatus(TransactionStatus transactionStatus) {
-    this.transactionStatus = transactionStatus;
-    return this;
+      this.transactionStatus = transactionStatus;
+      return this;
   }
 
-  /**
-   * Get transactionStatus
-   * @return transactionStatus
-   **/
-  @Schema(description = "")
+    /**
+     * Get transactionStatus
+     *
+     * @return transactionStatus
+     **/
+    @Schema(description = "")
+    @JsonProperty("transactionStatus")
 
     @Valid
     public TransactionStatus getTransactionStatus() {
@@ -201,17 +234,19 @@ public class BulkPaymentInitiationWithStatusResponse {
     if (this.tppMessages == null) {
       this.tppMessages = new ArrayList<>();
     }
-    this.tppMessages.add(tppMessagesItem);
-    return this;
+      this.tppMessages.add(tppMessagesItem);
+      return this;
   }
 
-  /**
-   * Messages to the TPP on operational issues.
-   * @return tppMessages
-   **/
-  @Schema(description = "Messages to the TPP on operational issues.")
-      @Valid
-    public List<TppMessageGeneric> getTppMessages() {
+    /**
+     * Messages to the TPP on operational issues.
+     *
+     * @return tppMessages
+     **/
+    @Schema(description = "Messages to the TPP on operational issues.")
+    @JsonProperty("tppMessages")
+    @Valid
+  public List<TppMessageGeneric> getTppMessages() {
     return tppMessages;
   }
 

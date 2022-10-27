@@ -1,3 +1,21 @@
+/*
+ * Copyright 2018-2022 adorsys GmbH & Co KG
+ *
+ * This program is free software: you can redistribute it and/or modify it
+ * under the terms of the GNU Affero General Public License as published
+ * by the Free Software Foundation, either version 3 of the License, or (at
+ * your option) any later version. This program is distributed in the hope that
+ * it will be useful, but WITHOUT ANY WARRANTY; without even the implied
+ * warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program. If not, see https://www.gnu.org/licenses/.
+ *
+ * This project is also available under a separate commercial license. You can
+ * contact us at psd2@adorsys.com.
+ */
+
 package de.adorsys.psd2.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -6,7 +24,6 @@ import org.springframework.validation.annotation.Validated;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
 import java.time.LocalDate;
 import java.util.Objects;
 
@@ -15,7 +32,7 @@ import java.util.Objects;
  */
 @Schema(description = "Details of underlying standing orders. ")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-05-06T13:00:42.214155+03:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-10-26T13:16:54.081225+03:00[Europe/Kiev]")
 
 
 public class StandingOrderDetails   {
@@ -51,17 +68,19 @@ public class StandingOrderDetails   {
     return this;
   }
 
-  /**
-   * The first applicable day of execution starting from this date is the first payment.
-   * @return startDate
-   **/
-  @Schema(required = true, description = "The first applicable day of execution starting from this date is the first payment. ")
-      @NotNull
+    /**
+     * The first applicable day of execution starting from this date is the first payment.
+     *
+     * @return startDate
+     **/
+    @Schema(required = true, description = "The first applicable day of execution starting from this date is the first payment. ")
+    @JsonProperty("startDate")
+    @NotNull
 
     @Valid
     public LocalDate getStartDate() {
-    return startDate;
-  }
+        return startDate;
+    }
 
   public void setStartDate(LocalDate startDate) {
     this.startDate = startDate;
@@ -72,16 +91,18 @@ public class StandingOrderDetails   {
     return this;
   }
 
-  /**
-   * Get frequency
-   * @return frequency
-   **/
-  @Schema(required = true, description = "")
-      @NotNull
+    /**
+     * Get frequency
+     *
+     * @return frequency
+     **/
+    @Schema(required = true, description = "")
+    @JsonProperty("frequency")
+    @NotNull
 
     @Valid
     public FrequencyCode getFrequency() {
-    return frequency;
+        return frequency;
   }
 
   public void setFrequency(FrequencyCode frequency) {
@@ -90,14 +111,16 @@ public class StandingOrderDetails   {
 
   public StandingOrderDetails endDate(LocalDate endDate) {
     this.endDate = endDate;
-    return this;
+      return this;
   }
 
-  /**
-   * The last applicable day of execution. If not given, it is an infinite standing order.
-   * @return endDate
-   **/
-  @Schema(description = "The last applicable day of execution. If not given, it is an infinite standing order. ")
+    /**
+     * The last applicable day of execution. If not given, it is an infinite standing order.
+     *
+     * @return endDate
+     **/
+    @Schema(description = "The last applicable day of execution. If not given, it is an infinite standing order. ")
+    @JsonProperty("endDate")
 
     @Valid
     public LocalDate getEndDate() {
@@ -110,14 +133,16 @@ public class StandingOrderDetails   {
 
   public StandingOrderDetails executionRule(ExecutionRule executionRule) {
     this.executionRule = executionRule;
-    return this;
+      return this;
   }
 
-  /**
-   * Get executionRule
-   * @return executionRule
-   **/
-  @Schema(description = "")
+    /**
+     * Get executionRule
+     *
+     * @return executionRule
+     **/
+    @Schema(description = "")
+    @JsonProperty("executionRule")
 
     @Valid
     public ExecutionRule getExecutionRule() {
@@ -130,14 +155,16 @@ public class StandingOrderDetails   {
 
   public StandingOrderDetails withinAMonthFlag(Boolean withinAMonthFlag) {
     this.withinAMonthFlag = withinAMonthFlag;
-    return this;
+      return this;
   }
 
-  /**
-   * This element is only used in case of frequency equals \"Monthly\".  If this element equals false it has no effect. If this element equals true, then the execution rule is overruled if the day of execution would fall into a different month using the execution rule.  Example: executionRule equals \"preceding\", dayOfExecution equals \"02\" and the second of a month is a Sunday.  In this case, the transaction date would be on the last day of the month before.  This would be overruled if withinAMonthFlag equals true and the payment is processed on Monday the third of the Month. Remark: This attribute is rarely supported in the market.
-   * @return withinAMonthFlag
-   **/
-  @Schema(description = "This element is only used in case of frequency equals \"Monthly\".  If this element equals false it has no effect. If this element equals true, then the execution rule is overruled if the day of execution would fall into a different month using the execution rule.  Example: executionRule equals \"preceding\", dayOfExecution equals \"02\" and the second of a month is a Sunday.  In this case, the transaction date would be on the last day of the month before.  This would be overruled if withinAMonthFlag equals true and the payment is processed on Monday the third of the Month. Remark: This attribute is rarely supported in the market. ")
+    /**
+     * This element is only used in case of frequency equals \"Monthly\".  If this element equals false it has no effect. If this element equals true, then the execution rule is overruled if the day of execution would fall into a different month using the execution rule.  Example: executionRule equals \"preceding\", dayOfExecution equals \"02\" and the second of a month is a Sunday.  In this case, the transaction date would be on the last day of the month before.  This would be overruled if withinAMonthFlag equals true and the payment is processed on Monday the third of the Month. Remark: This attribute is rarely supported in the market.
+     *
+     * @return withinAMonthFlag
+     **/
+    @Schema(description = "This element is only used in case of frequency equals \"Monthly\".  If this element equals false it has no effect. If this element equals true, then the execution rule is overruled if the day of execution would fall into a different month using the execution rule.  Example: executionRule equals \"preceding\", dayOfExecution equals \"02\" and the second of a month is a Sunday.  In this case, the transaction date would be on the last day of the month before.  This would be overruled if withinAMonthFlag equals true and the payment is processed on Monday the third of the Month. Remark: This attribute is rarely supported in the market. ")
+    @JsonProperty("withinAMonthFlag")
 
     public Boolean isWithinAMonthFlag() {
     return withinAMonthFlag;
@@ -149,14 +176,16 @@ public class StandingOrderDetails   {
 
   public StandingOrderDetails monthsOfExecution(MonthsOfExecution monthsOfExecution) {
     this.monthsOfExecution = monthsOfExecution;
-    return this;
+      return this;
   }
 
-  /**
-   * Get monthsOfExecution
-   * @return monthsOfExecution
-   **/
-  @Schema(description = "")
+    /**
+     * Get monthsOfExecution
+     *
+     * @return monthsOfExecution
+     **/
+    @Schema(description = "")
+    @JsonProperty("monthsOfExecution")
 
     @Valid
     public MonthsOfExecution getMonthsOfExecution() {
@@ -168,17 +197,19 @@ public class StandingOrderDetails   {
   }
 
   public StandingOrderDetails multiplicator(Integer multiplicator) {
-    this.multiplicator = multiplicator;
-    return this;
+      this.multiplicator = multiplicator;
+      return this;
   }
 
-  /**
-   * This is multiplying the given frequency resulting the exact frequency, e.g. Frequency=weekly and multiplicator=3 means every 3 weeks. Remark: This attribute is rarely supported in the market.
-   * @return multiplicator
-   **/
-  @Schema(description = "This is multiplying the given frequency resulting the exact frequency, e.g. Frequency=weekly and multiplicator=3 means every 3 weeks. Remark: This attribute is rarely supported in the market. ")
+    /**
+     * This is multiplying the given frequency resulting the exact frequency, e.g. Frequency=weekly and multiplicator=3 means every 3 weeks. Remark: This attribute is rarely supported in the market.
+     *
+     * @return multiplicator
+     **/
+    @Schema(description = "This is multiplying the given frequency resulting the exact frequency, e.g. Frequency=weekly and multiplicator=3 means every 3 weeks. Remark: This attribute is rarely supported in the market. ")
+    @JsonProperty("multiplicator")
 
-    public Integer getMultiplicator() {
+  public Integer getMultiplicator() {
     return multiplicator;
   }
 
@@ -187,18 +218,20 @@ public class StandingOrderDetails   {
   }
 
   public StandingOrderDetails dayOfExecution(DayOfExecution dayOfExecution) {
-    this.dayOfExecution = dayOfExecution;
-    return this;
+      this.dayOfExecution = dayOfExecution;
+      return this;
   }
 
-  /**
-   * Get dayOfExecution
-   * @return dayOfExecution
-   **/
-  @Schema(description = "")
+    /**
+     * Get dayOfExecution
+     *
+     * @return dayOfExecution
+     **/
+    @Schema(description = "")
+    @JsonProperty("dayOfExecution")
 
     @Valid
-  @Size(max=2)   public DayOfExecution getDayOfExecution() {
+    public DayOfExecution getDayOfExecution() {
     return dayOfExecution;
   }
 
@@ -207,15 +240,17 @@ public class StandingOrderDetails   {
   }
 
   public StandingOrderDetails limitAmount(Amount limitAmount) {
-    this.limitAmount = limitAmount;
-    return this;
+      this.limitAmount = limitAmount;
+      return this;
   }
 
-  /**
-   * Get limitAmount
-   * @return limitAmount
-   **/
-  @Schema(description = "")
+    /**
+     * Get limitAmount
+     *
+     * @return limitAmount
+     **/
+    @Schema(description = "")
+    @JsonProperty("limitAmount")
 
     @Valid
     public Amount getLimitAmount() {

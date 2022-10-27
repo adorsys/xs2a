@@ -1,3 +1,21 @@
+/*
+ * Copyright 2018-2022 adorsys GmbH & Co KG
+ *
+ * This program is free software: you can redistribute it and/or modify it
+ * under the terms of the GNU Affero General Public License as published
+ * by the Free Software Foundation, either version 3 of the License, or (at
+ * your option) any later version. This program is distributed in the hope that
+ * it will be useful, but WITHOUT ANY WARRANTY; without even the implied
+ * warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program. If not, see https://www.gnu.org/licenses/.
+ *
+ * This project is also available under a separate commercial license. You can
+ * contact us at psd2@adorsys.com.
+ */
+
 package de.adorsys.psd2.model;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
@@ -16,7 +34,7 @@ import java.util.Objects;
  */
 @Schema(description = "It is contained in addition to the data element 'chosenScaMethod' if challenge data is needed for SCA. In rare cases this attribute is also used in the context of the 'startAuthorisationWithPsuAuthentication' link. ")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-05-06T13:00:42.214155+03:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-10-26T13:16:54.081225+03:00[Europe/Kiev]")
 
 
 public class ChallengeData   {
@@ -74,15 +92,17 @@ public class ChallengeData   {
     return this;
   }
 
-  /**
-   * PNG data (max. 512 kilobyte) to be displayed to the PSU, Base64 encoding, cp. [RFC4648]. This attribute is used only, when PHOTO_OTP or CHIP_OTP is the selected SCA method.
-   * @return image
-   **/
-  @Schema(description = "PNG data (max. 512 kilobyte) to be displayed to the PSU, Base64 encoding, cp. [RFC4648]. This attribute is used only, when PHOTO_OTP or CHIP_OTP is the selected SCA method. ")
+    /**
+     * PNG data (max. 512 kilobyte) to be displayed to the PSU, Base64 encoding, cp. [RFC4648]. This attribute is used only, when PHOTO_OTP or CHIP_OTP is the selected SCA method.
+     *
+     * @return image
+     **/
+    @Schema(description = "PNG data (max. 512 kilobyte) to be displayed to the PSU, Base64 encoding, cp. [RFC4648]. This attribute is used only, when PHOTO_OTP or CHIP_OTP is the selected SCA method. ")
+    @JsonProperty("image")
 
     public byte[] getImage() {
-    return image;
-  }
+        return image;
+    }
 
   public void setImage(byte[] image) {
     this.image = image;
@@ -101,14 +121,16 @@ public class ChallengeData   {
     return this;
   }
 
-  /**
-   * A collection of strings as challenge data.
-   * @return data
-   **/
-  @Schema(description = "A collection of strings as challenge data.")
+    /**
+     * A collection of strings as challenge data.
+     *
+     * @return data
+     **/
+    @Schema(description = "A collection of strings as challenge data.")
+    @JsonProperty("data")
 
     public List<String> getData() {
-    return data;
+        return data;
   }
 
   public void setData(List<String> data) {
@@ -117,14 +139,16 @@ public class ChallengeData   {
 
   public ChallengeData imageLink(String imageLink) {
     this.imageLink = imageLink;
-    return this;
+      return this;
   }
 
-  /**
-   * A link where the ASPSP will provides the challenge image for the TPP.
-   * @return imageLink
-   **/
-  @Schema(description = "A link where the ASPSP will provides the challenge image for the TPP.")
+    /**
+     * A link where the ASPSP will provides the challenge image for the TPP.
+     *
+     * @return imageLink
+     **/
+    @Schema(description = "A link where the ASPSP will provides the challenge image for the TPP.")
+    @JsonProperty("imageLink")
 
     public String getImageLink() {
     return imageLink;
@@ -136,14 +160,16 @@ public class ChallengeData   {
 
   public ChallengeData otpMaxLength(Integer otpMaxLength) {
     this.otpMaxLength = otpMaxLength;
-    return this;
+      return this;
   }
 
-  /**
-   * The maximal length for the OTP to be typed in by the PSU.
-   * @return otpMaxLength
-   **/
-  @Schema(description = "The maximal length for the OTP to be typed in by the PSU.")
+    /**
+     * The maximal length for the OTP to be typed in by the PSU.
+     *
+     * @return otpMaxLength
+     **/
+    @Schema(description = "The maximal length for the OTP to be typed in by the PSU.")
+    @JsonProperty("otpMaxLength")
 
     public Integer getOtpMaxLength() {
     return otpMaxLength;
@@ -154,15 +180,17 @@ public class ChallengeData   {
   }
 
   public ChallengeData otpFormat(OtpFormatEnum otpFormat) {
-    this.otpFormat = otpFormat;
-    return this;
+      this.otpFormat = otpFormat;
+      return this;
   }
 
-  /**
-   * The format type of the OTP to be typed in. The admitted values are \"characters\" or \"integer\".
-   * @return otpFormat
-   **/
-  @Schema(description = "The format type of the OTP to be typed in. The admitted values are \"characters\" or \"integer\".")
+    /**
+     * The format type of the OTP to be typed in. The admitted values are \"characters\" or \"integer\".
+     *
+     * @return otpFormat
+     **/
+    @Schema(description = "The format type of the OTP to be typed in. The admitted values are \"characters\" or \"integer\".")
+    @JsonProperty("otpFormat")
 
     public OtpFormatEnum getOtpFormat() {
     return otpFormat;
@@ -174,14 +202,16 @@ public class ChallengeData   {
 
   public ChallengeData additionalInformation(String additionalInformation) {
     this.additionalInformation = additionalInformation;
-    return this;
+      return this;
   }
 
-  /**
-   * Additional explanation for the PSU to explain e.g. fallback mechanism for the chosen SCA method. The TPP is obliged to show this to the PSU.
-   * @return additionalInformation
-   **/
-  @Schema(description = "Additional explanation for the PSU to explain e.g. fallback mechanism for the chosen SCA method. The TPP is obliged to show this to the PSU. ")
+    /**
+     * Additional explanation for the PSU to explain e.g. fallback mechanism for the chosen SCA method. The TPP is obliged to show this to the PSU.
+     *
+     * @return additionalInformation
+     **/
+    @Schema(description = "Additional explanation for the PSU to explain e.g. fallback mechanism for the chosen SCA method. The TPP is obliged to show this to the PSU. ")
+    @JsonProperty("additionalInformation")
 
     public String getAdditionalInformation() {
     return additionalInformation;

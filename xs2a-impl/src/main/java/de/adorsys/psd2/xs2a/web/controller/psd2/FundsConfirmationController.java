@@ -49,6 +49,6 @@ public class FundsConfirmationController implements ConfirmationOfFundsServicePi
 
         return responseObject.hasError()
                    ? responseErrorMapper.generateErrorResponse(responseObject.getError())
-                   : responseMapper.ok(responseObject, fundsConfirmationModelMapper::mapToInlineResponse2008);
+                   : responseMapper.ok(responseObject, fundsConfirmationModelMapper::mapToInlineResponse2003);
     }
 }

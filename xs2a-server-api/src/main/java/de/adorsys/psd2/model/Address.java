@@ -1,3 +1,21 @@
+/*
+ * Copyright 2018-2022 adorsys GmbH & Co KG
+ *
+ * This program is free software: you can redistribute it and/or modify it
+ * under the terms of the GNU Affero General Public License as published
+ * by the Free Software Foundation, either version 3 of the License, or (at
+ * your option) any later version. This program is distributed in the hope that
+ * it will be useful, but WITHOUT ANY WARRANTY; without even the implied
+ * warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program. If not, see https://www.gnu.org/licenses/.
+ *
+ * This project is also available under a separate commercial license. You can
+ * contact us at psd2@adorsys.com.
+ */
+
 package de.adorsys.psd2.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -13,7 +31,7 @@ import java.util.Objects;
  * Address
  */
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-05-06T13:00:42.214155+03:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-10-26T13:16:54.081225+03:00[Europe/Kiev]")
 
 
 public class Address   {
@@ -37,15 +55,18 @@ public class Address   {
     return this;
   }
 
-  /**
-   * Get streetName
-   * @return streetName
-   **/
-  @Schema(description = "")
+    /**
+     * Get streetName
+     *
+     * @return streetName
+     **/
+    @Schema(description = "")
+    @JsonProperty("streetName")
 
-  @Size(max=70)   public String getStreetName() {
-    return streetName;
-  }
+    @Size(max = 70)
+    public String getStreetName() {
+        return streetName;
+    }
 
   public void setStreetName(String streetName) {
     this.streetName = streetName;
@@ -56,14 +77,16 @@ public class Address   {
     return this;
   }
 
-  /**
-   * Get buildingNumber
-   * @return buildingNumber
-   **/
-  @Schema(description = "")
+    /**
+     * Get buildingNumber
+     *
+     * @return buildingNumber
+     **/
+    @Schema(description = "")
+    @JsonProperty("buildingNumber")
 
     public String getBuildingNumber() {
-    return buildingNumber;
+        return buildingNumber;
   }
 
   public void setBuildingNumber(String buildingNumber) {
@@ -72,14 +95,16 @@ public class Address   {
 
   public Address townName(String townName) {
     this.townName = townName;
-    return this;
+      return this;
   }
 
-  /**
-   * Get townName
-   * @return townName
-   **/
-  @Schema(description = "")
+    /**
+     * Get townName
+     *
+     * @return townName
+     **/
+    @Schema(description = "")
+    @JsonProperty("townName")
 
     public String getTownName() {
     return townName;
@@ -91,14 +116,16 @@ public class Address   {
 
   public Address postCode(String postCode) {
     this.postCode = postCode;
-    return this;
+      return this;
   }
 
-  /**
-   * Get postCode
-   * @return postCode
-   **/
-  @Schema(description = "")
+    /**
+     * Get postCode
+     *
+     * @return postCode
+     **/
+    @Schema(description = "")
+    @JsonProperty("postCode")
 
     public String getPostCode() {
     return postCode;
@@ -109,18 +136,21 @@ public class Address   {
   }
 
   public Address country(String country) {
-    this.country = country;
-    return this;
+      this.country = country;
+      return this;
   }
 
-  /**
-   * ISO 3166 ALPHA2 country code.
-   * @return country
-   **/
-  @Schema(example = "SE", required = true, description = "ISO 3166 ALPHA2 country code.")
-      @NotNull
+    /**
+     * ISO 3166 ALPHA2 country code.
+     *
+     * @return country
+     **/
+    @Schema(example = "SE", required = true, description = "ISO 3166 ALPHA2 country code.")
+    @JsonProperty("country")
+    @NotNull
 
-  @Pattern(regexp="[A-Z]{2}")   public String getCountry() {
+    @Pattern(regexp = "[A-Z]{2}")
+    public String getCountry() {
     return country;
   }
 

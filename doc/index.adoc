@@ -38,18 +38,18 @@ Might contain also important migration information for the developers, how to mi
 xref:Filing_a_bug.adoc[This document] contains a summary of how to report an issue to XS2A Team.
 
 == New features since XS2A v.5.0
-xref:XS2A. Details of realisation/Read Account data Request.adoc[Download Link]
+xref:XS2A. Details of realisation/Read Account data Requests.adoc[Download Link]
 
 During request of Transaction List, in case when transaction report has a huge size, ASPSP can provide Download Link in Read Transaction List Response, it enables to download transaction report.
 
 xref:XS2A. Details of realisation/Payment Initiation Service.adoc[Country validation]
 
 According to BG Specification every country can have their local requirements for information included in the Payment Request.
-Payment validation on XS2A side can support different countries.  It is up to ASPSP to decide for which countries payment validation will be performed.
+Payment validation on XS2A side can support different countries.It is up to ASPSP to decide for which countries payment validation will be performed.
 
 xref:XS2A. Details of realisation/Account Information Service.adoc[Account Owner Name Service]
 
-Service enables TPP to ask for additional account information during the consent creation process. ASPSP can provide service with explicit consent from the client and
+Service enables TPP to ask for additional account information during the consent creation process.ASPSP can provide service with explicit consent from the client and
 can deliver the account owner name with related account information.
 
 xref:XS2A. Details of realisation/Strong customer authentication.adoc[OAuth Redirect SCA Approach]
@@ -63,19 +63,19 @@ TPP access to XS2A resources may be verified based on incoming Header, which can
 
 xref:XS2A. Details of realisation/Multicurrency Accounts.adoc[Multicurrency Accounts]
 
-XS2A supports flows for multicurrency accounts. A multicurrency account is an account that is a collection of different sub-accounts which are all addressed by the same account identifier like an
-IBAN by e.g. payment initiating parties. The sub-accounts are legally different accounts and they all differ in their currency, balances, and transactions. An account identifier like an IBAN together
+XS2A supports flows for multicurrency accounts.A multicurrency account is an account that is a collection of different sub-accounts which are all addressed by the same account identifier like an
+IBAN by e.g. payment initiating parties.The sub-accounts are legally different accounts and they all differ in their currency, balances, and transactions.An account identifier like an IBAN together
 with the currency always addresses a sub-account of a multicurrency account uniquely.
 
-xref:XS2A. Details of realisation/Read Account data Request.adoc[Standing order report]
+xref:XS2A. Details of realisation/Read Account data Requests.adoc[Standing order report]
 
-This service is offering a list of all standing orders related to a dedicated payment account. It can be provided during Read Transaction List Request/Response.
+This service is offering a list of all standing orders related to a dedicated payment account.It can be provided during Read Transaction List Request/Response.
 
 xref:XS2A. Details of realisation/Account Information Service.adoc[Consent Revocation]
 
 In case PSU decides to close an account in the bank - ASPSP enables to revoke all AIS and PIIS consents of account in one step.
 
-xref:XS2A. Details of realisation/Read Account data Request.adoc[Delta access for transaction list request]
+xref:XS2A. Details of realisation/Read Account data Requests.adoc[Delta access for transaction list request]
 
 A new feature enables to present Transaction List for the period dateFrom and dateTo, or all transactions after the transaction with identification "entryReference" and get all transactions after the last
 report access for this PSU (“deltalist”).
@@ -90,12 +90,12 @@ Resource Notification Push Service will be implemented in the future and will al
 xref:XS2A. Details of realisation/Common features.adoc[Signature and digest verifier]
 
 ASPSP can require the TPP to send a digital signature during initiation PIS or AIS requests.
-Digital signature can be validated in XS2A validator module, which contains validators for signature and digest Headers. A keyID check is also added.
+Digital signature can be validated in XS2A validator module, which contains validators for signature and digest Headers.A keyID check is also added.
 
 xref:XS2A. Details of realisation/Strong customer authentication.adoc[Confirmation of authorisation]
 
 For counteraction of the fraud attacks in the Redirect Approach, there is additional step for confirmation of Authorisation (Payment Initiation, Establish AIS Consent, Payment Cancellation process).
-TPP should provide confirmation Code during Confirmation of Authorisation Call. The verification of the Confirmation Code can be performed by XS2A or by ASPSP.
+TPP should provide confirmation Code during Confirmation of Authorisation Call.The verification of the Confirmation Code can be performed by XS2A or by ASPSP.
 
 xref:XS2A. Details of realisation/Common features.adoc[Validation of TPPs URIs]
 
@@ -110,5 +110,4 @@ This endpoint is not directly related to credit cards as such, but the financial
 
 xref:XS2A. Details of realisation/Funds Confirmation Service.adoc[PIIS Consent]
 
-Functionality allows PSU to Establish Funds Confirmation Consent to TPP throuhg XS2A interface.
-
+Functionality allows PSU to Establish Funds Confirmation Consent to TPP through XS2A interface.

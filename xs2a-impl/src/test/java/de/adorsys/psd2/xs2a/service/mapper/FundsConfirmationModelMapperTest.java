@@ -21,7 +21,7 @@ package de.adorsys.psd2.xs2a.service.mapper;
 import de.adorsys.psd2.mapper.Xs2aObjectMapper;
 import de.adorsys.psd2.model.Amount;
 import de.adorsys.psd2.model.ConfirmationOfFunds;
-import de.adorsys.psd2.model.InlineResponse2008;
+import de.adorsys.psd2.model.InlineResponse2003;
 import de.adorsys.psd2.xs2a.core.profile.AccountReference;
 import de.adorsys.psd2.xs2a.domain.fund.FundsConfirmationRequest;
 import de.adorsys.psd2.xs2a.domain.fund.FundsConfirmationResponse;
@@ -71,9 +71,9 @@ class FundsConfirmationModelMapperTest {
         FundsConfirmationResponse fundsConfirmationResponse = new FundsConfirmationResponse(true);
 
         // When
-        InlineResponse2008 actual = fundsConfirmationModelMapper.mapToInlineResponse2008(fundsConfirmationResponse);
+        InlineResponse2003 actual = fundsConfirmationModelMapper.mapToInlineResponse2003(fundsConfirmationResponse);
 
-        InlineResponse2008 expected = new InlineResponse2008().fundsAvailable(true);
+        InlineResponse2003 expected = new InlineResponse2003().fundsAvailable(true);
 
         // Then
         assertThat(actual).isEqualTo(expected);

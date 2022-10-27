@@ -94,7 +94,7 @@ class AccountModelMapperTest {
         Xs2aAccountDetailsHolder xs2aAccountDetailsHolder = jsonReader.getObjectFromFile("json/service/mapper/account-model-mapper/AccountModelMapper-xs2a-account-details-holder.json", Xs2aAccountDetailsHolder.class);
 
         // When
-        InlineResponse2003 actualInlineResponse200 = mapper.mapToInlineResponse2003(xs2aAccountDetailsHolder);
+        InlineResponse200 actualInlineResponse200 = mapper.mapToInlineResponse200(xs2aAccountDetailsHolder);
 
         AccountDetails expectedAccountDetails = jsonReader.getObjectFromFile("json/service/mapper/account-model-mapper/AccountModelMapper-account-details-expected.json", AccountDetails.class);
 

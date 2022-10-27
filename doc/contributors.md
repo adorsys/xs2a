@@ -17,3 +17,7 @@ Here is a list of contributors to this project:
 * [Mykola Shumyn](https://github.com/KSWest), LLC Golden Dimension
 * [Ihor Kuchevskyi](https://github.com/jldfin), LLC Golden Dimension
 * [Serhii Shymkov](https://github.com/Seregy), LLC Golden Dimension
+* [Hryhorii Hevorkian](mailto:hhe@adorsys.com.ua), LLC Golden Dimension
+* [Kateryna Yashnyk](mailto:kya@adorsys.com.ua), LLC Golden Dimension
+* [Serhii Semenykhin](mailto:sse@adorsys.com.ua), LLC Golden Dimension
+* [Olga Levandovska](mailto:ole@adorsys.com.ua), LLC Golden Dimension
