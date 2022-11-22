@@ -19,6 +19,7 @@
 package de.adorsys.psd2.xs2a.web.filter.holder;
 
 import de.adorsys.psd2.consent.api.service.TppService;
+import de.adorsys.psd2.validator.certificate.util.CertificateExtractorUtil;
 import de.adorsys.psd2.validator.certificate.util.TppCertificateData;
 import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
 import de.adorsys.psd2.xs2a.core.tpp.TppRole;
@@ -29,11 +30,10 @@ import de.adorsys.psd2.xs2a.service.validator.tpp.TppRoleValidationService;
 import de.adorsys.psd2.xs2a.web.error.TppErrorMessageWriter;
 import de.adorsys.psd2.xs2a.web.filter.TppErrorMessage;
 import de.adorsys.psd2.xs2a.web.mapper.Xs2aTppInfoMapper;
+import no.difi.certvalidator.api.CertificateValidationException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.ArgumentCaptor;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
+import org.mockito.*;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import javax.servlet.http.HttpServletRequest;
@@ -178,7 +178,16 @@ class QwacCertificateServiceTest {
         //Then
         verify(tppInfoHolder).setTppInfo(tppInfoArgumentCaptor.capture());
         TppInfo tppInfo = tppInfoArgumentCaptor.getValue();
-        verify(tppService, never()).updateTppInfo(tppInfo);
+        verify(tppService, times(1)).updateTppInfo(tppInfo);
         assertNull(tppInfo.getTppRoles());
+    }
+
+    @Test
+    void doFilter_certificateValidationException() throws Exception {
+        try (MockedStatic<CertificateExtractorUtil> certificateExtractorUtilMockedStatic = Mockito.mockStatic(CertificateExtractorUtil.class)) {
+            certificateExtractorUtilMockedStatic.when(() -> CertificateExtractorUtil.extract(anyString())).thenThrow(CertificateValidationException.class);
+
+            assertFalse(qwacCertificateService.isApplicable(request, response, TEST_QWAC_CERTIFICATE_VALID));
+        }
     }
 }

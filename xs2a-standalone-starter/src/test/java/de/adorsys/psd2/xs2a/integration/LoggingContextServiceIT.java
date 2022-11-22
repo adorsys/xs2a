@@ -137,5 +137,8 @@ class LoggingContextServiceIT {
         cmsMockRestServer
             .expect(ExpectedCount.manyTimes(), requestTo(CMS_BASE_URL + "/tpp/stop-list"))
             .andRespond(withSuccess("false", MediaType.APPLICATION_JSON));
+        cmsMockRestServer
+            .expect(ExpectedCount.once(), requestTo(CMS_BASE_URL + "/tpp"))
+            .andRespond(withSuccess("true", MediaType.APPLICATION_JSON));
     }
 }

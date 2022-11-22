@@ -60,6 +60,15 @@ class TppRoleValidationServiceTest {
         assertThat(tppRoleValidationService.hasAccess(buildTppInfo(TppRole.PIISP), request)).isFalse();
     }
 
+    @Test
+    void shouldFail_when_nullRole() {
+        MockHttpServletRequest request = new MockHttpServletRequest();
+        request.setMethod("POST");
+        request.setRequestURI("/v1/payments/sepa");
+
+        assertThat(tppRoleValidationService.hasAccess(buildTppInfo(null), request)).isFalse();
+    }
+
     @ParameterizedTest
     @MethodSource("params")
     void shouldSuccess_when_aspspRole(String method, String uri) {
