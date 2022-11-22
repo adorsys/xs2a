@@ -1471,6 +1471,7 @@ class AisAuthorisationProcessorServiceImplTest {
 
         AisConsent aisConsent = new AisConsent();
         aisConsent.setConsentTppInformation(new ConsentTppInformation());
+        aisConsent.setPsuIdDataList(new ArrayList<>());
 
         when(xs2aAisConsentService.getAccountConsentById(ENCRYPTED_CONSENT_ID)).thenReturn(Optional.of(aisConsent));
 

@@ -21,6 +21,7 @@ package de.adorsys.psd2.consent.service;
 import de.adorsys.psd2.consent.api.CmsResponse;
 import de.adorsys.psd2.consent.domain.TppInfoEntity;
 import de.adorsys.psd2.consent.repository.TppInfoRepository;
+import de.adorsys.psd2.consent.service.mapper.TppInfoMapper;
 import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
 import de.adorsys.xs2a.reader.JsonReader;
 import org.junit.jupiter.api.BeforeEach;
@@ -46,6 +47,9 @@ class TppServiceInternalTest {
     private TppServiceInternal tppServiceInternal;
     @Mock
     private TppInfoRepository tppInfoRepository;
+    @Mock
+    private TppInfoMapper tppInfoMapper;
+
     private final JsonReader jsonReader = new JsonReader();
     private TppInfo tppInfo;
     private TppInfoEntity tppInfoEntity;
@@ -75,6 +79,7 @@ class TppServiceInternalTest {
         //Given
         tppInfoEntity.setTppRoles(null);
         ArgumentCaptor<TppInfoEntity> argument = ArgumentCaptor.forClass(TppInfoEntity.class);
+        when(tppInfoMapper.mapToTppInfoEntity(tppInfo)).thenReturn(tppInfoEntity);
         when(tppInfoRepository.findFirstByAuthorisationNumberAndInstanceId(tppInfo.getAuthorisationNumber(), INSTANCE_ID)).thenReturn(Optional.of(tppInfoEntity));
         //When
         CmsResponse<Boolean> updateTppInfo = tppServiceInternal.updateTppInfo(tppInfo);
@@ -88,6 +93,7 @@ class TppServiceInternalTest {
     void updateTppInfo_tppFoundAndRolesNotChangedAndUpdated() {
         //Given
         when(tppInfoRepository.findFirstByAuthorisationNumberAndInstanceId(tppInfo.getAuthorisationNumber(), INSTANCE_ID)).thenReturn(Optional.of(tppInfoEntity));
+        when(tppInfoMapper.mapToTppInfoEntity(tppInfo)).thenReturn(tppInfoEntity);
         //When
         CmsResponse<Boolean> updateTppInfo = tppServiceInternal.updateTppInfo(tppInfo);
         //Then

@@ -25,6 +25,7 @@ import org.hibernate.annotations.NaturalId;
 
 import javax.persistence.*;
 import java.util.List;
+import java.util.Objects;
 
 @Data
 @Entity(name = "tpp_info")
@@ -69,4 +70,25 @@ public class TppInfoEntity extends InstanceDependableEntity {
 
     @Column(name = "state")
     private String state;
+
+    public boolean equalsWithoutId(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        TppInfoEntity tppInfoEntity = (TppInfoEntity) o;
+        return Objects.equals(this.authorisationNumber, tppInfoEntity.authorisationNumber) &&
+                   Objects.equals(this.tppName, tppInfoEntity.tppName) &&
+                   Objects.equals(this.tppRoles, tppInfoEntity.tppRoles) &&
+                   Objects.equals(this.authorityId, tppInfoEntity.authorityId) &&
+                   Objects.equals(this.authorityName, tppInfoEntity.authorityName) &&
+                   Objects.equals(this.country, tppInfoEntity.country) &&
+                   Objects.equals(this.organisation, tppInfoEntity.organisation) &&
+                   Objects.equals(this.organisationUnit, tppInfoEntity.organisationUnit) &&
+                   Objects.equals(this.city, tppInfoEntity.city) &&
+                   Objects.equals(this.state, tppInfoEntity.state);
+    }
+
 }
