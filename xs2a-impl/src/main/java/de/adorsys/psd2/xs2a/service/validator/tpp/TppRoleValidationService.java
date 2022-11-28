@@ -30,7 +30,6 @@ public class TppRoleValidationService {
 
     public boolean hasAccess(TppInfo tppInfo, HttpServletRequest request) {
         List<TppRole> tppRoles = tppInfo.getTppRoles();
-
         if (tppRoles == null) {
             return false;
         }
