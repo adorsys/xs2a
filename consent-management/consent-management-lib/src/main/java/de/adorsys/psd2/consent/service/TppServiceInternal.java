@@ -22,17 +22,15 @@ import de.adorsys.psd2.consent.api.CmsResponse;
 import de.adorsys.psd2.consent.api.service.TppService;
 import de.adorsys.psd2.consent.domain.TppInfoEntity;
 import de.adorsys.psd2.consent.repository.TppInfoRepository;
+import de.adorsys.psd2.consent.service.mapper.TppInfoMapper;
 import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
-import de.adorsys.psd2.xs2a.core.tpp.TppRole;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.collections4.CollectionUtils;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
 import java.util.Optional;
 
 @Slf4j
@@ -41,6 +39,7 @@ import java.util.Optional;
 @Transactional(readOnly = true)
 public class TppServiceInternal implements TppService {
     private final TppInfoRepository tppInfoRepository;
+    private final TppInfoMapper tppInfoMapper;
 
     @Value("${xs2a.cms.service.instance-id:UNDEFINED}")
     private String serviceInstanceId;
@@ -55,18 +54,27 @@ public class TppServiceInternal implements TppService {
                        .build();
         }
         TppInfoEntity tppInfoEntity = tppInfoEntityOptional.get();
-        if (isRolesChanged(tppInfoEntity.getTppRoles(), tppInfo.getTppRoles())) {
-            tppInfoEntity.setTppRoles(tppInfo.getTppRoles());
+        TppInfoEntity tppInfoEntityFromRequest = tppInfoMapper.mapToTppInfoEntity(tppInfo);
+
+        if (!tppInfoEntityFromRequest.equalsWithoutId(tppInfoEntity)) {
+            updateTppInfoEntity(tppInfoEntity, tppInfo);
+
         }
         return CmsResponse.<Boolean>builder()
                    .payload(true)
                    .build();
     }
 
-    private boolean isRolesChanged(List<TppRole> savedTppRoles, List<TppRole> tppRoles) {
-        return CollectionUtils.isNotEmpty(savedTppRoles) && CollectionUtils.isEmpty(tppRoles)
-                   || CollectionUtils.isEmpty(savedTppRoles) && CollectionUtils.isNotEmpty(tppRoles)
-                   || CollectionUtils.isNotEmpty(savedTppRoles) && CollectionUtils.isNotEmpty(tppRoles) &&
-                           !CollectionUtils.isEqualCollection(savedTppRoles, tppRoles);
+    private void updateTppInfoEntity(TppInfoEntity tppInfoEntityToUpdate, TppInfo tppInfo) {
+        tppInfoEntityToUpdate.setTppName(tppInfo.getTppName());
+        tppInfoEntityToUpdate.setTppRoles(tppInfo.getTppRoles());
+        tppInfoEntityToUpdate.setAuthorityId(tppInfo.getAuthorityId());
+        tppInfoEntityToUpdate.setAuthorityName(tppInfo.getAuthorityName());
+        tppInfoEntityToUpdate.setCountry(tppInfo.getCountry());
+        tppInfoEntityToUpdate.setOrganisation(tppInfo.getOrganisation());
+        tppInfoEntityToUpdate.setOrganisationUnit(tppInfo.getOrganisationUnit());
+        tppInfoEntityToUpdate.setCity(tppInfo.getCity());
+        tppInfoEntityToUpdate.setState(tppInfo.getState());
     }
+
 }

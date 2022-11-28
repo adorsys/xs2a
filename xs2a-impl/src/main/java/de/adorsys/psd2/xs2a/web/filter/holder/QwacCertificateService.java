@@ -94,6 +94,7 @@ public class QwacCertificateService {
                 buildRoleInvalidErrorResponse(response, tppCertificateData);
                 return false;
             }
+            tppService.updateTppInfo(tppInfo);
             tppInfoHolder.setTppInfo(tppInfo);
             return true;
         } catch (CertificateValidationException e) {
@@ -130,7 +131,7 @@ public class QwacCertificateService {
         List<TppRole> xs2aTppRoles = tppCertificateData.getPspRoles().stream()
             .map(TppRole::valueOf)
             .collect(Collectors.toList());
-        setTppRolesAndUpdateTppInfo(tppInfo, xs2aTppRoles);
+        setTppRoles(tppInfo, xs2aTppRoles);
     }
 
     private void processTppRolesFromHeader(TppInfo tppInfo, String tppRolesAllowedHeader) {
@@ -138,13 +139,12 @@ public class QwacCertificateService {
             .map(roles -> roles.split(","))
             .map(Arrays::asList)
             .map(xs2aTppInfoMapper::mapToTppRoles)
-            .ifPresent(roles -> setTppRolesAndUpdateTppInfo(tppInfo, roles));
+            .ifPresent(roles -> setTppRoles(tppInfo, roles));
     }
 
-    private void setTppRolesAndUpdateTppInfo(TppInfo tppInfo, List<TppRole> roles) {
+    private void setTppRoles(TppInfo tppInfo, List<TppRole> roles) {
         if (!roles.isEmpty()) {
             tppInfo.setTppRoles(roles);
-            tppService.updateTppInfo(tppInfo);
         }
     }
 
