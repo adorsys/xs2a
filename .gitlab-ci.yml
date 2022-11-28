@@ -196,14 +196,18 @@ Lint:XS2A_PMD_CPD_Report:
     expire_in: "10 day"
 
 Lint:XS2A_core_dockerfiles:
-  image: docker:20.10
+  image: docker
   stage: "Lint"
   services:
-    - docker:20.10-dind
+    - docker:dind
   except:
     - schedules
     - support-14.x
     - master
+  variables:
+    DOCKER_HOST: tcp://docker:2375
+    DOCKER_TLS_CERTDIR: ""
+    DOCKER_DRIVER: overlay2
   script:
     - echo "Run Xs2a core dockerfile check"
     - docker run --rm -i hadolint/hadolint < ./consent-management/cms-standalone-service/Dockerfile

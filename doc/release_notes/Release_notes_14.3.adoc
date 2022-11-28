@@ -1,3 +1,15 @@
 = Release notes v.14.3
 
 == Table of Contents
+
+* Bugfix: TPP Information does not get updated
+
+* Bugfix: `tpp-roles-allowed` header validation
+
+== Bugfix: TPP Information does not get updated
+
+From now on, any further XS2A request with the same TPP authorisation number in QWAC certificate causes TPP information fields updating in `tpp_info` and `tpp_info_role` SQL tables if they were changed in the certificate.
+
+== Bugfix: `tpp-roles-allowed` header validation
+
+From now on, while providing wrong values for `tpp-roles-allowed` header, TPP will receive `401 UNAUTHORISED` HTTP error response with `ROLE_INVALID` error code.
