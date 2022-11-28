@@ -23,7 +23,7 @@
 	<parent>
 		<artifactId>consent-management</artifactId>
 		<groupId>de.adorsys.psd2</groupId>
-		<version>14.3-SNAPSHOT</version>
+		<version>14.3</version>
 		<relativePath>../pom.xml</relativePath>
 	</parent>
 
