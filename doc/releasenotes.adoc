@@ -8,6 +8,7 @@ For upcoming versions see our xref:roadmap.adoc[Roadmap].
 
 === Mainline 15.x (Development. Planned to be released after 31.12.2022 as 16.0 Stable version)
 
+* xref:release_notes/Release_notes_15.4.adoc[Version 15.4 (release date: xx.xx.2022)]
 * xref:release_notes/Release_notes_15.3.adoc[Version 15.3 (release date: 28.11.2022)]
 * xref:release_notes/Release_notes_15.2.adoc[Version 15.2 (release date: 27.10.2022)]
 * xref:release_notes/Release_notes_15.1.adoc[Version 15.1 (release date: 26.09.2022)]
@@ -15,6 +16,7 @@ For upcoming versions see our xref:roadmap.adoc[Roadmap].
 
 === Mainline 14.x (Stable. Supported minimum till 31.12.2022)
 
+* xref:release_notes/Release_notes_14.4.adoc[Version 14.4 (release date: xx.xx.2022)]
 * xref:release_notes/Release_notes_14.3.adoc[Version 14.3 (release date: 28.11.2022)]
 * xref:release_notes/Release_notes_14.2.adoc[Version 14.2 (release date: 27.10.2022)]
 * xref:release_notes/Release_notes_14.1.adoc[Version 14.1 (release date: 26.09.2022)]
