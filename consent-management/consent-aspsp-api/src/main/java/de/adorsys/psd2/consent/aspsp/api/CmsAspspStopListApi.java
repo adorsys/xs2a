@@ -28,7 +28,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import static de.adorsys.psd2.consent.aspsp.api.config.CmsPsuApiDefaultValue.DEFAULT_SERVICE_INSTANCE_ID;
+import static de.adorsys.psd2.consent.aspsp.api.config.CmsPsuApiDefaultValue.*;
 
 @RequestMapping(path = "aspsp-api/v1/tpp/stop-list")
 @Tag(name = CmsAspspApiTagName.ASPSP_TPP_STOP_LIST, description = "Provides access to the consent management system TPP Stop List")
@@ -54,7 +54,11 @@ public interface CmsAspspStopListApi {
         @Parameter(description = "Service instance ID", example = "instance id")
         @RequestHeader(value = "instance-id", required = false, defaultValue = DEFAULT_SERVICE_INSTANCE_ID) String instanceId,
         @Parameter(description = "Period of TPP locking (in milliseconds)", example = "1000")
-        @RequestHeader(value = "lock-period", required = false) Long lockPeriod);
+        @RequestHeader(value = "lock-period", required = false) Long lockPeriod,
+        @Parameter(description = "ID of the person who blocked the Tpp", example = "XXXXBANK")
+        @RequestHeader(value = "updated-by", required = false, defaultValue = DEFAULT_UPDATEDBY) String updatedBy,
+        @Parameter(description = "Reason why a Tpp is blocked", example = "Fraud")
+        @RequestHeader(value = "reason", required = false, defaultValue = DEFAULT_REASON) String reason);
 
     @DeleteMapping(path = "/unblock")
     @Operation(description = "Unblocks TPP by TPP authorisation number")
@@ -63,5 +67,9 @@ public interface CmsAspspStopListApi {
         @Parameter(description = "ID of TPP", example = "PSDDE-FAKENCA-87B2AC")
         @RequestHeader(value = "tpp-authorisation-number") String tppAuthorisationNumber,
         @Parameter(description = "Service instance ID", example = "instance id")
-        @RequestHeader(value = "instance-id", required = false, defaultValue = DEFAULT_SERVICE_INSTANCE_ID) String instanceId);
+        @RequestHeader(value = "instance-id", required = false, defaultValue = DEFAULT_SERVICE_INSTANCE_ID) String instanceId,
+        @Parameter(description = "ID of the person who unblocked the Tpp", example = "XXXXBANK")
+        @RequestHeader(value = "updated-by", required = false, defaultValue = DEFAULT_UPDATEDBY) String updatedBy,
+        @Parameter(description = "Reason why a Tpp is unblocked", example = "Fraud")
+        @RequestHeader(value = "reason", required = false, defaultValue = DEFAULT_REASON) String reason);
 }

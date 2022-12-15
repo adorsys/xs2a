@@ -35,6 +35,9 @@ public class TppStopListMapper {
                        tppStopListRecord.setBlockingExpirationTimestamp(entity.getBlockingExpirationTimestamp());
                        tppStopListRecord.setStatus(entity.getStatus());
                        tppStopListRecord.setInstanceId(entity.getInstanceId());
+                       tppStopListRecord.setUpdatedBy(entity.getUpdatedBy());
+                       tppStopListRecord.setReason(entity.getReason());
+                       tppStopListRecord.setChangedAt(entity.getChangedAt());
                        return tppStopListRecord;
                    })
                    .orElse(null);
