@@ -141,7 +141,7 @@ class CmsAspspTppServiceInternalTest {
 
     @Test
     void getTppInfoRecord_Fail_TppEntityIsNotExistInDB() {
-        when(tppInfoRepository.findFirstByAuthorisationNumberAndInstanceId(AUTHORISATION_NUMBER_NOT_EXISTING, INSTANCE_ID))
+        when(tppInfoRepository.findByAuthorisationNumber(AUTHORISATION_NUMBER_NOT_EXISTING))
             .thenReturn(Optional.empty());
 
         Optional<TppInfo> result = cmsAspspTppService.getTppInfo(AUTHORISATION_NUMBER_NOT_EXISTING, INSTANCE_ID);
@@ -151,7 +151,7 @@ class CmsAspspTppServiceInternalTest {
 
     @Test
     void getTppInfoRecord_Success_TppEntityIsExistInDB() {
-        when(tppInfoRepository.findFirstByAuthorisationNumberAndInstanceId(AUTHORISATION_NUMBER, INSTANCE_ID))
+        when(tppInfoRepository.findByAuthorisationNumber(AUTHORISATION_NUMBER))
             .thenReturn(Optional.of(tppInfoEntity));
 
         when(tppInfoMapper.mapToTppInfo(tppInfoEntity))

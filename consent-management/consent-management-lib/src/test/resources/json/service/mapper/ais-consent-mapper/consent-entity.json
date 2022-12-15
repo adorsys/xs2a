@@ -21,7 +21,6 @@
   "tppInformation": {
     "tppRedirectPreferred": true,
     "tppInfo": {
-      "instanceId": "UNDEFINED",
       "authorisationNumber": "TPP_AUTHORISATION_NUMBER",
       "tppRoles": [
         "AISP",

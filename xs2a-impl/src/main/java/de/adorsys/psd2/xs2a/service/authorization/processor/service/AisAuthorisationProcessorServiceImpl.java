@@ -51,6 +51,8 @@ import de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiStartAuthorisationRespon
 import de.adorsys.psd2.xs2a.spi.domain.consent.SpiVerifyScaAuthorisationResponse;
 import de.adorsys.psd2.xs2a.spi.domain.psu.SpiPsuData;
 import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponse;
+import de.adorsys.psd2.xs2a.spi.domain.sca.SpiScaApproach;
+import de.adorsys.psd2.xs2a.spi.domain.sca.SpiScaStatus;
 import de.adorsys.psd2.xs2a.spi.service.AisConsentSpi;
 import org.springframework.stereotype.Service;
 
@@ -136,7 +138,7 @@ public class AisAuthorisationProcessorServiceImpl extends ConsentAuthorisationPr
 
     @Override
     protected SpiResponse<SpiStartAuthorisationResponse> getSpiStartAuthorisationResponse(SpiContextData spiContextData, ScaApproach scaApproach, ScaStatus scaStatus, String authorisationId, AisConsent consent, SpiAspspConsentDataProvider spiAspspConsentDataProvider) {
-        return aisConsentSpi.startAuthorisation(spiContextData, scaApproach, scaStatus, authorisationId, aisConsentMapper.mapToSpiAccountConsent(consent), spiAspspConsentDataProvider);
+        return aisConsentSpi.startAuthorisation(spiContextData, SpiScaApproach.valueOf(scaApproach.name()), SpiScaStatus.valueOf(scaStatus.name()), authorisationId, aisConsentMapper.mapToSpiAccountConsent(consent), spiAspspConsentDataProvider);
     }
 
     @Override

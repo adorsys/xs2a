@@ -32,6 +32,7 @@ import de.adorsys.psd2.xs2a.spi.domain.SpiAspspConsentDataProvider;
 import de.adorsys.psd2.xs2a.spi.domain.SpiContextData;
 import de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiScaStatusResponse;
 import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponse;
+import de.adorsys.psd2.xs2a.spi.domain.sca.SpiScaStatus;
 import de.adorsys.psd2.xs2a.spi.service.PaymentAuthorisationSpi;
 import de.adorsys.psd2.xs2a.spi.service.SpiPayment;
 import org.jetbrains.annotations.NotNull;
@@ -65,7 +66,7 @@ public class PaymentServiceForAuthorisationImpl extends PaymentServiceForAuthori
     SpiResponse<SpiScaStatusResponse> getScaStatus(@NotNull ScaStatus scaStatus, @NotNull SpiContextData contextData,
                                                    @NotNull String authorisationId, @NotNull SpiPayment businessObject,
                                                    @NotNull SpiAspspConsentDataProvider aspspConsentDataProvider) {
-        return paymentAuthorisationSpi.getScaStatus(scaStatus, contextData, authorisationId, businessObject,
+        return paymentAuthorisationSpi.getScaStatus(SpiScaStatus.valueOf(scaStatus.name()), contextData, authorisationId, businessObject,
                                                     aspspConsentDataProvider);
     }
 }

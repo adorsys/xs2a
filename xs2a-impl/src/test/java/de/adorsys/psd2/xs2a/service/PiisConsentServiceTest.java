@@ -68,6 +68,7 @@ import de.adorsys.psd2.xs2a.spi.domain.consent.SpiInitiatePiisConsentResponse;
 import de.adorsys.psd2.xs2a.spi.domain.piis.SpiPiisConsent;
 import de.adorsys.psd2.xs2a.spi.domain.psu.SpiPsuData;
 import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponse;
+import de.adorsys.psd2.xs2a.spi.domain.sca.SpiScaStatus;
 import de.adorsys.psd2.xs2a.spi.service.PiisConsentSpi;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -532,7 +533,7 @@ class PiisConsentServiceTest {
         when(aspspConsentDataProviderFactory.getSpiAspspDataProviderFor(CONSENT_ID))
             .thenReturn(aspspConsentDataProvider);
 
-        when(piisConsentSpi.getScaStatus(ScaStatus.RECEIVED, SPI_CONTEXT_DATA, AUTHORISATION_ID, xs2aToSpiPiisConsentMapper.mapToSpiPiisConsent(piisConsent), aspspConsentDataProvider))
+        when(piisConsentSpi.getScaStatus(SpiScaStatus.RECEIVED, SPI_CONTEXT_DATA, AUTHORISATION_ID, xs2aToSpiPiisConsentMapper.mapToSpiPiisConsent(piisConsent), aspspConsentDataProvider))
             .thenReturn(SpiResponse.<SpiScaStatusResponse>builder()
                             .payload(new SpiScaStatusResponse(ScaStatus.FINALISED, true, "psu message", null, null))
                             .build());
@@ -564,7 +565,7 @@ class PiisConsentServiceTest {
         SpiResponse<SpiScaStatusResponse> spiResponse = SpiResponse.<SpiScaStatusResponse>builder()
                                                             .error(tppMessage)
                                                             .build();
-        when(piisConsentSpi.getScaStatus(ScaStatus.RECEIVED, SPI_CONTEXT_DATA, AUTHORISATION_ID, xs2aToSpiPiisConsentMapper.mapToSpiPiisConsent(piisConsent), aspspConsentDataProvider))
+        when(piisConsentSpi.getScaStatus(SpiScaStatus.RECEIVED, SPI_CONTEXT_DATA, AUTHORISATION_ID, xs2aToSpiPiisConsentMapper.mapToSpiPiisConsent(piisConsent), aspspConsentDataProvider))
             .thenReturn(spiResponse);
         when(spiErrorMapper.mapToErrorHolder(spiResponse, ServiceType.PIIS))
             .thenReturn(ErrorHolder.builder(ErrorType.PIIS_400).build());

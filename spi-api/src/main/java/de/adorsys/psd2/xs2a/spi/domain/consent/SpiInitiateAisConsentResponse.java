@@ -38,5 +38,6 @@ public class SpiInitiateAisConsentResponse {
     private boolean multilevelScaRequired;
     private String psuMessage;
     private List<SpiAuthenticationObject> scaMethods;
+    @Deprecated // TODO: change with SpiTppMessageInformation in 15.8
     private Set<TppMessageInformation> tppMessages;
 }
