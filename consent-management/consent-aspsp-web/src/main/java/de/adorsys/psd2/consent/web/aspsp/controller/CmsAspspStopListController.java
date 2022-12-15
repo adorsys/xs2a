@@ -41,15 +41,15 @@ public class CmsAspspStopListController implements CmsAspspStopListApi {
     }
 
     @Override
-    public ResponseEntity<Boolean> blockTpp(String tppAuthorisationNumber, String instanceId, Long lockPeriod) {
+    public ResponseEntity<Boolean> blockTpp(String tppAuthorisationNumber, String instanceId, Long lockPeriod, String updatedBy, String reason) {
         Duration lockPeriodDuration = lockPeriod != null ? Duration.ofMillis(lockPeriod) : null;
-        boolean isBlocked = cmsAspspTppService.blockTpp(tppAuthorisationNumber, instanceId, lockPeriodDuration);
+        boolean isBlocked = cmsAspspTppService.blockTpp(tppAuthorisationNumber, instanceId, lockPeriodDuration, updatedBy, reason);
         return new ResponseEntity<>(isBlocked, HttpStatus.OK);
     }
 
     @Override
-    public ResponseEntity<Boolean> unblockTpp(String tppAuthorisationNumber, String instanceId) {
-        boolean isUnblocked = cmsAspspTppService.unblockTpp(tppAuthorisationNumber, instanceId);
+    public ResponseEntity<Boolean> unblockTpp(String tppAuthorisationNumber, String instanceId, String updatedBy, String reason) {
+        boolean isUnblocked = cmsAspspTppService.unblockTpp(tppAuthorisationNumber, instanceId, updatedBy, reason);
         return new ResponseEntity<>(isUnblocked, HttpStatus.OK);
     }
 }

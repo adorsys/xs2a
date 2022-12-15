@@ -50,6 +50,8 @@ class CmsAspspStopListControllerTest {
     private final String BLOCK_TPP_AUTH_NUMBER = "/aspsp-api/v1/tpp/stop-list/block";
     private final String UNBLOCK_TPP_AUTH_NUMBER = "/aspsp-api/v1/tpp/stop-list/unblock";
     private final String INSTANCE_ID = "UNDEFINED";
+    private final String UPDATEDBY = "UNDEFINED";
+    private final String REASON = "UNDEFINED";
     private final String TPP_STOP_LIST_PATH = "json/tpp-stop-list-record.json";
     private final Long lockPeriod = 1000L;
     private final String TRUE = "true";
@@ -59,7 +61,6 @@ class CmsAspspStopListControllerTest {
 
     @Mock
     private CmsAspspTppService cmsAspspTppService;
-
     private MockMvc mockMvc;
     private JsonReader jsonReader = new JsonReader();
     private HttpHeaders httpHeaders = new HttpHeaders();
@@ -110,7 +111,7 @@ class CmsAspspStopListControllerTest {
     @Test
     void blockTpp() throws Exception {
         Duration lockPeriodDuration = Duration.ofMillis(lockPeriod);
-        when(cmsAspspTppService.blockTpp(tppAuthorisationNumber, INSTANCE_ID, lockPeriodDuration))
+        when(cmsAspspTppService.blockTpp(tppAuthorisationNumber, INSTANCE_ID, lockPeriodDuration, UPDATEDBY, REASON))
             .thenReturn(true);
 
         mockMvc.perform(put(BLOCK_TPP_AUTH_NUMBER)
@@ -119,12 +120,12 @@ class CmsAspspStopListControllerTest {
             .andExpect(status().is(HttpStatus.OK.value()))
             .andExpect(content().string(TRUE));
 
-        verify(cmsAspspTppService, times(1)).blockTpp(tppAuthorisationNumber, INSTANCE_ID, lockPeriodDuration);
+        verify(cmsAspspTppService, times(1)).blockTpp(tppAuthorisationNumber, INSTANCE_ID, lockPeriodDuration, UPDATEDBY, REASON);
     }
 
     @Test
     void unblockTpp() throws Exception {
-        when(cmsAspspTppService.unblockTpp(tppAuthorisationNumber, INSTANCE_ID))
+        when(cmsAspspTppService.unblockTpp(tppAuthorisationNumber, INSTANCE_ID, UPDATEDBY, REASON))
             .thenReturn(true);
 
         mockMvc.perform(delete(UNBLOCK_TPP_AUTH_NUMBER)
@@ -133,6 +134,6 @@ class CmsAspspStopListControllerTest {
             .andExpect(status().is(HttpStatus.OK.value()))
             .andExpect(content().string(TRUE));
 
-        verify(cmsAspspTppService, times(1)).unblockTpp(tppAuthorisationNumber, INSTANCE_ID);
+        verify(cmsAspspTppService, times(1)).unblockTpp(tppAuthorisationNumber, INSTANCE_ID, UPDATEDBY, REASON);
     }
 }

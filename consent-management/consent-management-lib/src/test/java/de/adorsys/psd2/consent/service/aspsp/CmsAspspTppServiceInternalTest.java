@@ -44,6 +44,8 @@ class CmsAspspTppServiceInternalTest {
     private final Duration BLOCKING_DURATION = Duration.ofMillis(15000);
     private final String AUTHORISATION_NUMBER_NOT_EXISTING = "Not existing Authorisation number";
     private final String INSTANCE_ID = "Instance id";
+    private final String UPDATEDBY = "UNDEFINED";
+    private final String REASON = "UNDEFINED";
 
     @InjectMocks
     private CmsAspspTppServiceInternal cmsAspspTppService;
@@ -98,7 +100,7 @@ class CmsAspspTppServiceInternalTest {
         doNothing()
             .when(tppStopListEntity).block(BLOCKING_DURATION);
 
-        boolean isBlocked = cmsAspspTppService.blockTpp(AUTHORISATION_NUMBER, INSTANCE_ID, BLOCKING_DURATION);
+        boolean isBlocked = cmsAspspTppService.blockTpp(AUTHORISATION_NUMBER, INSTANCE_ID, BLOCKING_DURATION, UPDATEDBY, REASON);
 
         assertTrue(isBlocked);
     }
@@ -108,7 +110,7 @@ class CmsAspspTppServiceInternalTest {
         when(stopListRepository.findByTppAuthorisationNumberAndInstanceId(AUTHORISATION_NUMBER_NOT_EXISTING, INSTANCE_ID))
             .thenReturn(Optional.empty());
 
-        boolean isBlocked = cmsAspspTppService.blockTpp(AUTHORISATION_NUMBER_NOT_EXISTING, INSTANCE_ID, null);
+        boolean isBlocked = cmsAspspTppService.blockTpp(AUTHORISATION_NUMBER_NOT_EXISTING, INSTANCE_ID, null, UPDATEDBY, REASON);
 
         assertTrue(isBlocked);
     }
@@ -118,9 +120,9 @@ class CmsAspspTppServiceInternalTest {
         when(stopListRepository.findByTppAuthorisationNumberAndInstanceId(AUTHORISATION_NUMBER_NOT_EXISTING, INSTANCE_ID))
             .thenReturn(Optional.empty());
 
-        boolean isUnblocked = cmsAspspTppService.unblockTpp(AUTHORISATION_NUMBER_NOT_EXISTING, INSTANCE_ID);
+        boolean isUnblocked = cmsAspspTppService.unblockTpp(AUTHORISATION_NUMBER_NOT_EXISTING, INSTANCE_ID, UPDATEDBY, REASON);
 
-        assertTrue(isUnblocked);
+        assertFalse(isUnblocked);
         verify(stopListRepository, never()).save(any(TppStopListEntity.class));
     }
 
@@ -132,7 +134,7 @@ class CmsAspspTppServiceInternalTest {
         doNothing()
             .when(tppStopListEntity).unblock();
 
-        boolean isUnblocked = cmsAspspTppService.unblockTpp(AUTHORISATION_NUMBER, INSTANCE_ID);
+        boolean isUnblocked = cmsAspspTppService.unblockTpp(AUTHORISATION_NUMBER, INSTANCE_ID, UPDATEDBY, REASON);
 
         assertTrue(isUnblocked);
     }
