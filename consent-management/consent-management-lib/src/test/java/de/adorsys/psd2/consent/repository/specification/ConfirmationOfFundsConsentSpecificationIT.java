@@ -70,22 +70,21 @@ class ConfirmationOfFundsConsentSpecificationIT extends BaseTest {
         tppInfo = tppInfoRepository.save(
             jsonReader.getObjectFromFile("json/specification/tpp-info-entity.json", TppInfoEntity.class));
 
-        ConsentEntity consentEntityFirst = jsonReader.getObjectFromFile("json/specification/consent-entity.json", ConsentEntity.class);
-        ConsentEntity consentEntitySecond = jsonReader.getObjectFromFile("json/specification/consent-entity.json", ConsentEntity.class);
-        consentEntityFirst.getTppInformation().setTppInfo(tppInfo);
-        consentEntitySecond.getTppInformation().setTppInfo(tppInfo);
+        ConsentEntity consentEntity = jsonReader.getObjectFromFile("json/specification/consent-entity.json", ConsentEntity.class);
+        consentEntity.getTppInformation().setTppInfo(tppInfo);
 
-        consentEntityFirst.setId(1L);
-        consentEntityFirst.setExternalId(UUID.randomUUID().toString());
-        consentEntityFirst.setConsentType(ConsentType.PIIS_ASPSP.getName());
-        consentEntityFirst.getAspspAccountAccesses().get(0).setConsent(consentEntityFirst);
-        piisAspspConsent = consentJpaRepository.save(consentEntityFirst);
+        consentEntity.setId(1L);
+        consentEntity.setExternalId(UUID.randomUUID().toString());
+        consentEntity.setConsentType(ConsentType.PIIS_ASPSP.getName());
+        consentEntity.getAspspAccountAccesses().get(0).setConsent(consentEntity);
 
-        consentEntitySecond.setId(2L);
-        consentEntitySecond.setExternalId(UUID.randomUUID().toString());
-        consentEntitySecond.setConsentType(ConsentType.PIIS_TPP.getName());
-        consentEntitySecond.getAspspAccountAccesses().get(0).setConsent(consentEntitySecond);
-        piisTppConsent = consentJpaRepository.save(consentEntitySecond);
+        piisAspspConsent = consentJpaRepository.save(consentEntity);
+
+        consentEntity.setId(2L);
+        consentEntity.setExternalId(UUID.randomUUID().toString());
+        consentEntity.setConsentType(ConsentType.PIIS_TPP.getName());
+        consentEntity.getAspspAccountAccesses().get(0).setConsent(consentEntity);
+        piisTppConsent = consentJpaRepository.save(consentEntity);
     }
 
     @Test
