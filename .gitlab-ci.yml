@@ -335,11 +335,16 @@ Test:AsciiDoc:
 
 build_dockerhub_image_develop_private:
   stage: "Package"
+  services:
+    - docker:dind
   except:
     - schedules
   only:
     - develop
   variables:
+    DOCKER_HOST: tcp://docker:2375
+    DOCKER_TLS_CERTDIR: ""
+    DOCKER_DRIVER: overlay2
     DOCKER_TAG: develop
     DOCKERHUB_REGISTRY: gitlab-registry.adorsys.de
     DOCKERHUB_NAMESPACE: "adorsys/xs2a/aspsp-xs2a"
