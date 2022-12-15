@@ -1,9 +1,8 @@
 {
 	"info": {
-		"_postman_id": "e1bbc234-9313-438a-92cd-184b54f866c0",
+		"_postman_id": "f077f212-85de-4a73-9472-29a07107e325",
 		"name": "XS2A requests 15x",
-		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-		"_exporter_id": "6572081"
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
 	"item": [
 		{
@@ -118042,6 +118041,9 @@
 													"   pm.expect(jsonData).to.have.property('status');",
 													"   pm.expect(jsonData).to.have.property('blockingExpirationTimestamp');",
 													"   pm.expect(jsonData).to.have.property('instanceId');",
+													"   pm.expect(jsonData).to.have.property('updatedBy');",
+													"   pm.expect(jsonData).to.have.property('changedAt');",
+													"   pm.expect(jsonData).to.have.property('reason');",
 													"});",
 													"",
 													"pm.test(\"Tpp is blocked\", () => {",
@@ -118129,11 +118131,6 @@
 												"key": "instance-id",
 												"value": "UNDEFINED",
 												"type": "text"
-											},
-											{
-												"key": "lock-period",
-												"value": "86400000",
-												"type": "text"
 											}
 										],
 										"body": {
@@ -118175,6 +118172,9 @@
 													"   pm.expect(jsonData).to.have.property('status');",
 													"   pm.expect(jsonData).to.not.have.property('blockingExpirationTimestamp');",
 													"   pm.expect(jsonData).to.have.property('instanceId');",
+													"   pm.expect(jsonData).to.have.property('updatedBy');",
+													"   pm.expect(jsonData).to.have.property('changedAt');",
+													"   pm.expect(jsonData).to.have.property('reason');",
 													"});",
 													"",
 													"pm.test(\"Tpp is unblocked\", () => {",
@@ -118224,6 +118224,68 @@
 												"v1",
 												"tpp",
 												"stop-list"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "5. Unblock non-existing TPP",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"pm.test(\"Status code is 200\", () => {",
+													"    pm.response.to.have.status(200);",
+													"});",
+													"",
+													"const jsonData = pm.response.text();",
+													"",
+													"pm.test(\"Tpp is not unblocked\", () => {",
+													"   pm.expect(jsonData).to.be.eq('false');",
+													"});"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"method": "DELETE",
+										"header": [
+											{
+												"key": "Content-Type",
+												"name": "Content-Type",
+												"value": "application/json",
+												"type": "text"
+											},
+											{
+												"key": "tpp-authorisation-number",
+												"value": "PSDDE-FAKENCA-87B2AD111",
+												"type": "text"
+											},
+											{
+												"key": "instance-id",
+												"value": "UNDEFINED",
+												"type": "text"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": ""
+										},
+										"url": {
+											"raw": "{{protocol}}://{{url_cms}}/aspsp-api/v1/tpp/stop-list/unblock",
+											"protocol": "{{protocol}}",
+											"host": [
+												"{{url_cms}}"
+											],
+											"path": [
+												"aspsp-api",
+												"v1",
+												"tpp",
+												"stop-list",
+												"unblock"
 											]
 										}
 									},

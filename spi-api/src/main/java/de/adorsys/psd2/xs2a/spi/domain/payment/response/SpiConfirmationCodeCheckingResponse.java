@@ -25,7 +25,9 @@ import lombok.Value;
 @Value
 public class SpiConfirmationCodeCheckingResponse {
 
+    @Deprecated // TODO: change with SpiScaStatus in 15.8
     private ScaStatus scaStatus;
+    @Deprecated // TODO: change with SpiConsentStatus in 15.8
     private ConsentStatus consentStatus;
 
 }

@@ -30,9 +30,7 @@ import java.util.Objects;
 @Data
 @Entity(name = "tpp_info")
 @NoArgsConstructor
-// TODO: remove 'extends InstanceDependableEntity' in release 15.4 https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/-/issues/1794
-// Deprecated instance_id
-public class TppInfoEntity extends InstanceDependableEntity {
+public class TppInfoEntity {
     @Id
     @Column(name = "tpp_info_id")
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "tpp_info_generator")

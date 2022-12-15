@@ -29,8 +29,11 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
 public class SpiAuthorizationCodeResult extends SpiWithExemptionResponse {
+    @Deprecated // TODO: change with SpiChallengeData in 15.8
     private ChallengeData challengeData;
+    @Deprecated // TODO: change with SpiAuthenticationObject in 15.8
     private AuthenticationObject selectedScaMethod;
+    @Deprecated // TODO: change with SpiScaStatus in 15.8
     private ScaStatus scaStatus;
 
     public SpiAuthorizationCodeResult(boolean scaExempted, ChallengeData challengeData,

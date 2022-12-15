@@ -64,7 +64,7 @@ class TppServiceInternalTest {
     @Test
     void updateTppInfo_tppNotFound() {
         //Given
-        when(tppInfoRepository.findFirstByAuthorisationNumberAndInstanceId(tppInfo.getAuthorisationNumber(), INSTANCE_ID)).thenReturn(Optional.empty());
+        when(tppInfoRepository.findByAuthorisationNumber(tppInfo.getAuthorisationNumber())).thenReturn(Optional.empty());
         //When
         CmsResponse<Boolean> updateTppInfo = tppServiceInternal.updateTppInfo(tppInfo);
         //Then
@@ -80,7 +80,7 @@ class TppServiceInternalTest {
         tppInfoEntity.setTppRoles(null);
         ArgumentCaptor<TppInfoEntity> argument = ArgumentCaptor.forClass(TppInfoEntity.class);
         when(tppInfoMapper.mapToTppInfoEntity(tppInfo)).thenReturn(tppInfoEntity);
-        when(tppInfoRepository.findFirstByAuthorisationNumberAndInstanceId(tppInfo.getAuthorisationNumber(), INSTANCE_ID)).thenReturn(Optional.of(tppInfoEntity));
+        when(tppInfoRepository.findByAuthorisationNumber(tppInfo.getAuthorisationNumber())).thenReturn(Optional.of(tppInfoEntity));
         //When
         CmsResponse<Boolean> updateTppInfo = tppServiceInternal.updateTppInfo(tppInfo);
         //Then
@@ -92,7 +92,7 @@ class TppServiceInternalTest {
     @Test
     void updateTppInfo_tppFoundAndRolesNotChangedAndUpdated() {
         //Given
-        when(tppInfoRepository.findFirstByAuthorisationNumberAndInstanceId(tppInfo.getAuthorisationNumber(), INSTANCE_ID)).thenReturn(Optional.of(tppInfoEntity));
+        when(tppInfoRepository.findByAuthorisationNumber(tppInfo.getAuthorisationNumber())).thenReturn(Optional.of(tppInfoEntity));
         when(tppInfoMapper.mapToTppInfoEntity(tppInfo)).thenReturn(tppInfoEntity);
         //When
         CmsResponse<Boolean> updateTppInfo = tppServiceInternal.updateTppInfo(tppInfo);

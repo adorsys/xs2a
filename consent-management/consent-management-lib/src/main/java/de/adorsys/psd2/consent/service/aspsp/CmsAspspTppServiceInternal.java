@@ -92,7 +92,7 @@ public class CmsAspspTppServiceInternal implements CmsAspspTppService {
     @NotNull
     @Override
     public Optional<TppInfo> getTppInfo(@NotNull String tppAuthorisationNumber, @NotNull String instanceId) {
-        Optional<TppInfoEntity> tppInfoEntityOptional = tppInfoRepository.findFirstByAuthorisationNumberAndInstanceId(tppAuthorisationNumber, instanceId);
+        Optional<TppInfoEntity> tppInfoEntityOptional = tppInfoRepository.findByAuthorisationNumber(tppAuthorisationNumber);
         return tppInfoEntityOptional.map(tppInfoMapper::mapToTppInfo);
     }
 }

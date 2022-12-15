@@ -38,11 +38,13 @@ public class SpiStartAuthorisationResponse {
      * SCA approach regarding SCA starting.
      */
     @NotNull
+    @Deprecated // TODO: change with SpiScaApproach in 15.8
     ScaApproach scaApproach;
     /**
      * SCA status regarding SCA starting.
      */
     @NotNull
+    @Deprecated // TODO: change with SpiScaStatus in 15.8
     ScaStatus scaStatus;
     /**
      * Message to PSU regarding SCA starting.
@@ -53,5 +55,6 @@ public class SpiStartAuthorisationResponse {
      * Warnings for TPP regarding SCA starting.
      */
     @Nullable
+    @Deprecated // TODO: change with SpiTppMessageInformation in 15.8
     Set<TppMessageInformation> tppMessages;
 }
