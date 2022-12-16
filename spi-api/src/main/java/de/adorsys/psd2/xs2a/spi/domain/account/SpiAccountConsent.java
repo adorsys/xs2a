@@ -44,11 +44,14 @@ public class SpiAccountConsent implements SpiConsent {
     private LocalDate expireDate;
     private int frequencyPerDay;
     private LocalDate lastActionDate;
+    @Deprecated // TODO: change with SpiConsentStatus in 14.8
     private ConsentStatus consentStatus;
     private boolean withBalance;
     private boolean tppRedirectPreferred;
     private List<SpiPsuData> psuData;
+    @Deprecated // TODO: change with SpiTppInfo in 14.8
     private TppInfo tppInfo;
+    @Deprecated // TODO: change with SpiAisConsentRequestType in 14.8
     private AisConsentRequestType aisConsentRequestType;
     private OffsetDateTime statusChangeTimestamp;
     private OffsetDateTime creationTimestamp;

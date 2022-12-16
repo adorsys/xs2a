@@ -1,3 +1,32 @@
 = Release notes v.15.4
 
 == Table of Contents
+
+* Removed column from `tpp_info` SQL table
+
+* Extended `tpp_stop_list` SQL table
+
+* Changes in SPI level: authorisation methods
+
+== Removed column from `tpp_info` SQL table
+
+Column `instance_id` was removed from `tpp_info` SQL table. Also, corresponding changes were made in `TppInfoEntity` class.
+
+== Extended `tpp_stop_list` SQL table
+
+Columns `updated_by`, `changed_at` and `reason` were added to this table to store:
+
+- user who changed a TPP status (for example, login, name etc.);
+- timestamp of a TPP status changing;
+- reason of this change (ex, fraud, suspicious activity).
+
+By changing one should mean the last updating of this entry. Information should be provided in a form of headers in the
+CMS `/aspsp-api/v1/tpp/stop-list` endpoint. Corresponding headers are `updated-by` and `reason`. Timestamp of status
+switching is set automatically.
+
+== Changes in SPI level: authorisation methods
+
+From now on, `AuthorisationSpi` class has changed its method signatures. Models `ScaStatus` and `ScaApproach` are
+replaced with `SpiScaStatus` and `SpiScaApproach` correspondingly. Please pay attention, that in XS2A version 15.8
+`spi-api` module will have no dependencies on `xs2a-core` and `xs2a-core-payments` (all models fields from these modules
+will be changed with corresponding SPI models).

@@ -37,6 +37,7 @@ public class SpiBulkPayment implements SpiPayment {
     private String debtorName;
     private LocalDate requestedExecutionDate;
     private OffsetDateTime requestedExecutionTime;
+    @Deprecated // TODO: change with SpiTransactionStatus in 14.8
     private TransactionStatus paymentStatus;
     private List<SpiSinglePayment> payments;
     private String paymentProduct;

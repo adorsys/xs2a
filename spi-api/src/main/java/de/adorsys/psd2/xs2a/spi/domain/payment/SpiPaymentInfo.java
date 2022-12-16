@@ -36,7 +36,9 @@ import java.util.List;
 public class SpiPaymentInfo implements SpiPayment {
     private String paymentId;
     private String paymentProduct;
+    @Deprecated // TODO: change with SpiTransactionStatus in 14.8
     private PaymentType paymentType;
+    @Deprecated // TODO: change with SpiTransactionStatus in 14.8
     private TransactionStatus status;
     private byte[] paymentData;
     private List<SpiPsuData> psuDataList;

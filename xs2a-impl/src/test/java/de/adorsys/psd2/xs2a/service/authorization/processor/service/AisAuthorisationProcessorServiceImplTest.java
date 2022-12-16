@@ -59,6 +59,8 @@ import de.adorsys.psd2.xs2a.spi.domain.authorisation.*;
 import de.adorsys.psd2.xs2a.spi.domain.consent.SpiVerifyScaAuthorisationResponse;
 import de.adorsys.psd2.xs2a.spi.domain.psu.SpiPsuData;
 import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponse;
+import de.adorsys.psd2.xs2a.spi.domain.sca.SpiScaApproach;
+import de.adorsys.psd2.xs2a.spi.domain.sca.SpiScaStatus;
 import de.adorsys.psd2.xs2a.spi.service.AisConsentSpi;
 import de.adorsys.psd2.xs2a.util.reader.TestSpiDataProvider;
 import de.adorsys.xs2a.reader.JsonReader;
@@ -90,7 +92,9 @@ class AisAuthorisationProcessorServiceImplTest {
     private static final String TEST_AUTHORISATION_ID = "assddsff";
     private static final PsuIdData TEST_PSU_DATA = new PsuIdData("test-user", null, null, null, null);
     private static final ScaApproach TEST_SCA_APPROACH = ScaApproach.EMBEDDED;
+    private static final SpiScaApproach TEST_SPI_SCA_APPROACH = SpiScaApproach.EMBEDDED;
     private static final ScaStatus TEST_SCA_STATUS = ScaStatus.RECEIVED;
+    private static final SpiScaStatus TEST_SPI_SCA_STATUS = SpiScaStatus.RECEIVED;
     private static final Set<TppMessageInformation> TEST_TPP_MESSAGES = buildTppMessageInformationSet();
     private static final String TEST_PSU_MESSAGE = "psu message";
     private static final ErrorType TEST_ERROR_TYPE_400 = AIS_400;
@@ -1604,7 +1608,7 @@ class AisAuthorisationProcessorServiceImplTest {
         SpiResponse<SpiStartAuthorisationResponse> spiResponse = SpiResponse.<SpiStartAuthorisationResponse>builder()
                                                                      .payload(new SpiStartAuthorisationResponse(TEST_SCA_APPROACH, TEST_SCA_STATUS, TEST_PSU_MESSAGE, TEST_TPP_MESSAGES))
                                                                      .build();
-        when(aisConsentSpi.startAuthorisation(SPI_CONTEXT_DATA, TEST_SCA_APPROACH, TEST_SCA_STATUS, TEST_AUTHORISATION_ID, spiAccountConsent, spiAspspConsentDataProvider))
+        when(aisConsentSpi.startAuthorisation(SPI_CONTEXT_DATA, TEST_SPI_SCA_APPROACH, TEST_SPI_SCA_STATUS, TEST_AUTHORISATION_ID, spiAccountConsent, spiAspspConsentDataProvider))
             .thenReturn(spiResponse);
 
         // When
@@ -1627,7 +1631,7 @@ class AisAuthorisationProcessorServiceImplTest {
         SpiResponse<SpiStartAuthorisationResponse> spiResponse = SpiResponse.<SpiStartAuthorisationResponse>builder()
                                                                      .error(new TppMessage(MessageErrorCode.FORMAT_ERROR_ABSENT_HEADER))
                                                                      .build();
-        when(aisConsentSpi.startAuthorisation(SPI_CONTEXT_DATA, TEST_SCA_APPROACH, TEST_SCA_STATUS, TEST_AUTHORISATION_ID, spiAccountConsent, spiAspspConsentDataProvider))
+        when(aisConsentSpi.startAuthorisation(SPI_CONTEXT_DATA, TEST_SPI_SCA_APPROACH, TEST_SPI_SCA_STATUS, TEST_AUTHORISATION_ID, spiAccountConsent, spiAspspConsentDataProvider))
             .thenReturn(spiResponse);
         ErrorHolder errorHolder = ErrorHolder.builder(TEST_ERROR_TYPE_400).build();
         when(spiErrorMapper.mapToErrorHolder(eq(spiResponse), any())).thenReturn(errorHolder);

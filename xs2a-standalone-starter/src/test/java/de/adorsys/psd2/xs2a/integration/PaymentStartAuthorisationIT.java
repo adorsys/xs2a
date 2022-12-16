@@ -55,6 +55,8 @@ import de.adorsys.psd2.xs2a.spi.domain.payment.SpiPaymentInfo;
 import de.adorsys.psd2.xs2a.spi.domain.payment.response.SpiPaymentExecutionResponse;
 import de.adorsys.psd2.xs2a.spi.domain.psu.SpiPsuData;
 import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponse;
+import de.adorsys.psd2.xs2a.spi.domain.sca.SpiScaApproach;
+import de.adorsys.psd2.xs2a.spi.domain.sca.SpiScaStatus;
 import de.adorsys.psd2.xs2a.spi.service.CommonPaymentSpi;
 import de.adorsys.psd2.xs2a.spi.service.PaymentAuthorisationSpi;
 import de.adorsys.psd2.xs2a.spi.service.SpiPayment;
@@ -233,8 +235,8 @@ class PaymentStartAuthorisationIT {
                                                                                                      null,
                                                                                                      null);
         given(paymentAuthorisationSpi.startAuthorisation(any(SpiContextData.class),
-                                                         eq(ScaApproach.EMBEDDED),
-                                                         eq(ScaStatus.STARTED),
+                                                         eq(SpiScaApproach.EMBEDDED),
+                                                         eq(SpiScaStatus.STARTED),
                                                          anyString(),
                                                          any(SpiPayment.class),
                                                          any(SpiAspspConsentDataProvider.class)))

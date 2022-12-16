@@ -25,6 +25,8 @@ import org.jetbrains.annotations.NotNull;
 
 @Value
 public class SpiConsentConfirmationCodeValidationResponse {
+    @Deprecated // TODO: change with SpiScaStatus in 14.8
     @NotNull private ScaStatus scaStatus;
+    @Deprecated // TODO: change with SpiConsentStatus in 14.8
     @NotNull private ConsentStatus consentStatus;
 }

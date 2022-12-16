@@ -30,8 +30,10 @@ import java.util.List;
 @Data
 public class SpiCommonPayment implements SpiPayment {
     private String paymentId;
+    @Deprecated // TODO: change with SpiPaymentType in 14.8
     private PaymentType paymentType;
     private String paymentProduct;
+    @Deprecated // TODO: change with SpiTransactionStatus in 14.8
     private TransactionStatus paymentStatus;
     private OffsetDateTime statusChangeTimestamp;
     private List<SpiPsuData> psuDataList;

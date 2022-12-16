@@ -31,6 +31,7 @@ import java.util.Set;
 public class SpiScaStatusResponse {
 
     @NotNull
+    @Deprecated // TODO: change with SpiScaStatus in 14.8
     ScaStatus scaStatus;
     @Nullable
     Boolean trustedBeneficiaryFlag;
@@ -38,5 +39,6 @@ public class SpiScaStatusResponse {
     String psuMessage;
 
     SpiLinks links;
+    @Deprecated // TODO: change with SpiTppMessageInformation in 14.8
     Set<TppMessageInformation> tppMessageInformation;
 }

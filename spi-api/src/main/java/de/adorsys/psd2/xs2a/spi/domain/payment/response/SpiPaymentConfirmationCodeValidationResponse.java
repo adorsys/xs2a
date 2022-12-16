@@ -25,6 +25,8 @@ import org.jetbrains.annotations.NotNull;
 
 @Value
 public class SpiPaymentConfirmationCodeValidationResponse {
+    @Deprecated // TODO: change with SpiScaStatus in 14.8
     @NotNull private ScaStatus scaStatus;
+    @Deprecated // TODO: change with SpiTransactionStatus in 14.8
     @NotNull private TransactionStatus transactionStatus;
 }

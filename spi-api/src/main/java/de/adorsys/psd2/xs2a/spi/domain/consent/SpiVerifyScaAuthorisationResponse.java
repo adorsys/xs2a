@@ -26,6 +26,7 @@ import org.jetbrains.annotations.NotNull;
 @Value
 public class SpiVerifyScaAuthorisationResponse {
     @NotNull
+    @Deprecated // TODO: change with SpiConsentStatus in 14.8
     private ConsentStatus consentStatus;
     private SpiAuthorisationStatus spiAuthorisationStatus;
 

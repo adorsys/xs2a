@@ -30,6 +30,7 @@ import javax.validation.constraints.NotNull;
 @Value
 public class SpiAuthorisationDecoupledScaResponse {
     @NotNull
+    @Deprecated // TODO: change with SpiScaStatus in 14.8
     private ScaStatus scaStatus;
     private String psuMessage;
 }

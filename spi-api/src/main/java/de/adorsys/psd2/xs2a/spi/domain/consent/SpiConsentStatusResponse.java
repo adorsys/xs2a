@@ -26,6 +26,7 @@ import org.jetbrains.annotations.Nullable;
 @Value
 public class SpiConsentStatusResponse {
     @NotNull
+    @Deprecated // TODO: change with SpiConsentStatus in 14.8
     private ConsentStatus consentStatus;
 
     @Nullable
