@@ -41,6 +41,7 @@ public class SpiPiisConsent implements SpiConsent {
     private LocalDate lastActionDate;
     private LocalDate expireDate;
     private List<SpiPsuData> psuData;
+    @Deprecated // TODO: change with SpiConsentStatus in 14.8
     private ConsentStatus consentStatus;
     private SpiAccountReference account;
     private OffsetDateTime creationTimestamp;
@@ -51,5 +52,6 @@ public class SpiPiisConsent implements SpiConsent {
     private String registrationInformation;
     private OffsetDateTime statusChangeTimestamp;
     private String tppAuthorisationNumber;
+    @Deprecated // TODO: change with SpiConsentType in 14.8
     private ConsentType consentType;
 }

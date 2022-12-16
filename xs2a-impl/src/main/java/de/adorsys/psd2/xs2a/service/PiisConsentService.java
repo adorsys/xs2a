@@ -70,6 +70,7 @@ import de.adorsys.psd2.xs2a.spi.domain.consent.SpiConsentStatusResponse;
 import de.adorsys.psd2.xs2a.spi.domain.consent.SpiInitiatePiisConsentResponse;
 import de.adorsys.psd2.xs2a.spi.domain.piis.SpiPiisConsent;
 import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponse;
+import de.adorsys.psd2.xs2a.spi.domain.sca.SpiScaStatus;
 import de.adorsys.psd2.xs2a.spi.service.PiisConsentSpi;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -260,7 +261,7 @@ public class PiisConsentService {
         ScaStatus scaStatus = cmsConsentScaStatusResponse.getBody().getScaStatus();
         SpiPiisConsent spiPiisConsent = xs2aToSpiPiisConsentMapper.mapToSpiPiisConsent(cmsConsentScaStatusResponse.getBody().getPiisConsent());
 
-        SpiResponse<SpiScaStatusResponse> spiScaStatusResponse = piisConsentSpi.getScaStatus(scaStatus, contextData, authorisationId, spiPiisConsent, spiAspspConsentDataProvider);
+        SpiResponse<SpiScaStatusResponse> spiScaStatusResponse = piisConsentSpi.getScaStatus(SpiScaStatus.valueOf(scaStatus.name()), contextData, authorisationId, spiPiisConsent, spiAspspConsentDataProvider);
 
         if (spiScaStatusResponse.hasError()) {
             ErrorHolder errorHolder = spiErrorMapper.mapToErrorHolder(spiScaStatusResponse, ServiceType.PIIS);

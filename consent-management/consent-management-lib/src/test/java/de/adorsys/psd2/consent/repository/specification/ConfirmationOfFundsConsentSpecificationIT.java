@@ -26,7 +26,6 @@ import de.adorsys.psd2.integration.test.BaseTest;
 import de.adorsys.psd2.integration.test.TestDBConfiguration;
 import de.adorsys.psd2.xs2a.core.consent.ConsentType;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,7 +41,6 @@ import java.util.UUID;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-@Disabled
 @ActiveProfiles("integration-test")
 @EnableJpaRepositories("de.adorsys.psd2.consent.repository")
 @ExtendWith(SpringExtension.class)
@@ -78,11 +76,14 @@ class ConfirmationOfFundsConsentSpecificationIT extends BaseTest {
         consentEntity.setId(1L);
         consentEntity.setExternalId(UUID.randomUUID().toString());
         consentEntity.setConsentType(ConsentType.PIIS_ASPSP.getName());
+        consentEntity.getAspspAccountAccesses().get(0).setConsent(consentEntity);
+
         piisAspspConsent = consentJpaRepository.save(consentEntity);
 
         consentEntity.setId(2L);
         consentEntity.setExternalId(UUID.randomUUID().toString());
         consentEntity.setConsentType(ConsentType.PIIS_TPP.getName());
+        consentEntity.getAspspAccountAccesses().get(0).setConsent(consentEntity);
         piisTppConsent = consentJpaRepository.save(consentEntity);
     }
 

@@ -35,6 +35,7 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class SpiContextData {
     private SpiPsuData psuData;
+    @Deprecated // TODO: change with SpiTppInfo in 14.8
     private TppInfo tppInfo;
     private UUID xRequestId;
     private UUID internalRequestId;

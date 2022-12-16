@@ -28,10 +28,12 @@ import java.util.List;
 public interface SpiPayment {
     String getPaymentId();
 
+    @Deprecated // TODO: change with SpiPaymentType in 14.8
     PaymentType getPaymentType();
 
     String getPaymentProduct();
 
+    @Deprecated // TODO: change with SpiTransactionStatus in 14.8
     TransactionStatus getPaymentStatus();
 
     void setPaymentStatus(TransactionStatus paymentStatus);

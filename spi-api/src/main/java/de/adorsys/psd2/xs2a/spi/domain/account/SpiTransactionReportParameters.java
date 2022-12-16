@@ -31,6 +31,7 @@ public class SpiTransactionReportParameters {
     boolean withBalance;
     @Nullable LocalDate dateFrom;
     @Nullable LocalDate dateTo;
+    @Deprecated // TODO: change with SpiBookingStatus in 14.8
     @NotNull BookingStatus bookingStatus;
     private String entryReferenceFrom;
     private Boolean deltaList;

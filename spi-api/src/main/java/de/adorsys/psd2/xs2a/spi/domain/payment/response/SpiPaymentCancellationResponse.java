@@ -36,5 +36,6 @@ public class SpiPaymentCancellationResponse extends SpiPaymentResponse {
      * Provides a possibility to update status to an actual one. If not provided status will not be updated.
      * If TransactionStatus.CANC is returned, payment will be cancelled immediately without further processing.
      */
+    @Deprecated // TODO: change with SpiTransactionStatus in 14.8
     private TransactionStatus transactionStatus;
 }

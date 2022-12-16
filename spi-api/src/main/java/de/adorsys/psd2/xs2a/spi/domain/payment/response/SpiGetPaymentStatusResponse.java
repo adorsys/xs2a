@@ -41,6 +41,7 @@ public class SpiGetPaymentStatusResponse {
      * The current transaction status of the requested payment.
      */
     @NotNull
+    @Deprecated // TODO: change with SpiTransactionStatus in 14.8
     private TransactionStatus transactionStatus;
 
     /**
@@ -69,5 +70,6 @@ public class SpiGetPaymentStatusResponse {
     @Nullable
     private String psuMessage;
     private final SpiLinks links;
+    @Deprecated // TODO: change with SpiTppMessageInformation in 14.8
     private final Set<TppMessageInformation> tppMessageInformation;
 }

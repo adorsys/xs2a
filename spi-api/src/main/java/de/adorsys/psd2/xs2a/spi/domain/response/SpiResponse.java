@@ -41,6 +41,7 @@ public class SpiResponse<T> {
      * provide the error explanation to TPP
      */
     @NotNull
+    @Deprecated // TODO: change with SpiTppMessage in 14.8
     private final List<TppMessage> errors = new ArrayList<>();
 
     private SpiResponse(SpiResponseBuilder<T> builder) {

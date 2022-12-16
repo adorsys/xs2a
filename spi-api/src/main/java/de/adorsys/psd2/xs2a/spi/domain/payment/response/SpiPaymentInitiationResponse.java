@@ -30,6 +30,7 @@ import java.util.Set;
 
 @Data
 public abstract class SpiPaymentInitiationResponse {
+    @Deprecated // TODO: change with SpiTransactionStatus in 14.8
     private TransactionStatus transactionStatus;
     private String paymentId;
     private SpiAmount spiTransactionFees;
@@ -37,8 +38,10 @@ public abstract class SpiPaymentInitiationResponse {
     private boolean multilevelScaRequired;
     private List<SpiAuthenticationObject> scaMethods;
     private String chosenScaMethod;
+    @Deprecated // TODO: change with SpiChallengeData in 14.8
     private ChallengeData challengeData;
     private String psuMessage;
+    @Deprecated // TODO: change with SpiTppMessageInformation in 14.8
     private Set<TppMessageInformation> tppMessages;
     private String aspspAccountId;
     private SpiAmount currencyConversionFee;

@@ -35,8 +35,11 @@ import java.util.List;
 public class SpiPeriodicPayment extends SpiSinglePayment {
     private LocalDate startDate;
     private LocalDate endDate;
+    @Deprecated // TODO: change with SpiPisExecutionRule in 14.8
     private PisExecutionRule executionRule;
+    @Deprecated // TODO: change with SpiFrequencyCode in 14.8
     private FrequencyCode frequency;
+    @Deprecated // TODO: change with SpiPisDayOfExecution in 14.8
     private PisDayOfExecution dayOfExecution;
     private List<String> monthsOfExecution;
     private String contentType;

@@ -31,6 +31,7 @@ import java.util.List;
 @EqualsAndHashCode(callSuper = true)
 public class SpiAvailableScaMethodsResponse extends SpiWithExemptionResponse {
 
+    @Deprecated // TODO: change with SpiAuthenticationObject in 14.8
     private List<AuthenticationObject> availableScaMethods;
 
     public SpiAvailableScaMethodsResponse(boolean scaExempted, List<AuthenticationObject> availableScaMethods) {

@@ -32,11 +32,14 @@ public class SpiStandingOrderDetails {
 
     private LocalDate startDate;
     private LocalDate endDate;
+    @Deprecated // TODO: change with SpiPisExecutionRule in 14.8
     private PisExecutionRule executionRule;
     private Boolean withinAMonthFlag;
+    @Deprecated // TODO: change with SpiFrequencyCode in 14.8
     private FrequencyCode frequency;
     private List<String> monthsOfExecution;
     private Integer multiplicator;
+    @Deprecated // TODO: change with SpiPisDayOfExecution in 14.8
     private PisDayOfExecution dayOfExecution;
     private SpiAmount limitAmount;
 }

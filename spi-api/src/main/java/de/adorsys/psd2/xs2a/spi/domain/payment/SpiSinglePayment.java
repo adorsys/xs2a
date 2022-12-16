@@ -45,6 +45,7 @@ public class SpiSinglePayment implements SpiPayment {
     private String creditorId;
     private String creditorName;
     private SpiAddress creditorAddress;
+    @Deprecated // TODO: change with SpiTransactionStatus in 14.8
     private TransactionStatus paymentStatus;
     protected String paymentProduct;
     private LocalDate requestedExecutionDate;
@@ -53,6 +54,7 @@ public class SpiSinglePayment implements SpiPayment {
     private OffsetDateTime statusChangeTimestamp;
     private String ultimateDebtor;
     private String ultimateCreditor;
+    @Deprecated // TODO: change with SpiPurposeCode in 14.8
     private PurposeCode purposeCode;
     private String remittanceInformationUnstructured;
     private List<String> remittanceInformationUnstructuredArray;

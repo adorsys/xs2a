@@ -29,6 +29,7 @@ import lombok.Getter;
 @EqualsAndHashCode(callSuper = true)
 public final class SpiPaymentExecutionResponse extends SpiPaymentResponse {
     @Getter
+    @Deprecated // TODO: change with SpiTransactionStatus in 14.8
     private TransactionStatus transactionStatus;
 
     public SpiPaymentExecutionResponse(TransactionStatus transactionStatus) {

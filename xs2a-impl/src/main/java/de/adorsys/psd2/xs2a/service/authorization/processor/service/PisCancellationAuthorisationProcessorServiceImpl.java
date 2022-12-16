@@ -54,6 +54,8 @@ import de.adorsys.psd2.xs2a.spi.domain.authorisation.*;
 import de.adorsys.psd2.xs2a.spi.domain.payment.response.SpiPaymentExecutionResponse;
 import de.adorsys.psd2.xs2a.spi.domain.psu.SpiPsuData;
 import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponse;
+import de.adorsys.psd2.xs2a.spi.domain.sca.SpiScaApproach;
+import de.adorsys.psd2.xs2a.spi.domain.sca.SpiScaStatus;
 import de.adorsys.psd2.xs2a.spi.service.PaymentCancellationSpi;
 import de.adorsys.psd2.xs2a.spi.service.SpiPayment;
 import lombok.extern.slf4j.Slf4j;
@@ -165,7 +167,7 @@ public class PisCancellationAuthorisationProcessorServiceImpl extends PaymentBas
 
     @Override
     protected SpiResponse<SpiStartAuthorisationResponse> getSpiStartAuthorisationResponse(SpiContextData spiContextData, ScaApproach scaApproach, ScaStatus scaStatus, String authorisationId, SpiPayment spiPayment, SpiAspspConsentDataProvider spiAspspDataProviderFor) {
-        return paymentCancellationSpi.startAuthorisation(spiContextData, scaApproach, scaStatus, authorisationId, spiPayment, spiAspspDataProviderFor);
+        return paymentCancellationSpi.startAuthorisation(spiContextData, SpiScaApproach.valueOf(scaApproach.name()), SpiScaStatus.valueOf(scaStatus.name()), authorisationId, spiPayment, spiAspspDataProviderFor);
     }
 
     @Override

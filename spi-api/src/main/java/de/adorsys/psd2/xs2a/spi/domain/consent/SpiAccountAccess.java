@@ -35,8 +35,11 @@ public class SpiAccountAccess {
     private List<SpiAccountReference> accounts;
     private List<SpiAccountReference> balances;
     private List<SpiAccountReference> transactions;
+    @Deprecated // TODO: change with SpiAccountAccessType in 14.8
     private AccountAccessType availableAccounts;
+    @Deprecated // TODO: change with SpiAccountAccessType in 14.8
     private AccountAccessType allPsd2;
+    @Deprecated // TODO: change with SpiAccountAccessType in 14.8
     private AccountAccessType availableAccountsWithBalance;
     private SpiAdditionalInformationAccess spiAdditionalInformationAccess;
 
