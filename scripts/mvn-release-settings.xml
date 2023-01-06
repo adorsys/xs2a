@@ -1,5 +1,5 @@
 <!--
-  ~ Copyright 2018-2022 adorsys GmbH & Co KG
+  ~ Copyright 2018-2023 adorsys GmbH & Co KG
   ~
   ~ This program is free software: you can redistribute it and/or modify it
   ~ under the terms of the GNU Affero General Public License as published
@@ -22,12 +22,6 @@
   http://maven.apache.org/xsd/settings-1.0.0.xsd">
     <servers>
         <server>
-            <!-- Maven Central Deployment -->
-            <id>sonatype</id>
-            <username>${env.SONATYPE_USERNAME}</username>
-            <password>${env.SONATYPE_PASSWORD}</password>
-        </server>
-        <server>
             <!-- private artifact repository-->
             <id>gitlab-maven</id>
             <configuration>
@@ -40,16 +34,4 @@
             </configuration>
         </server>
     </servers>
-    <profiles>
-        <profile>
-            <id>sonatype</id>
-            <activation>
-                <activeByDefault>true</activeByDefault>
-            </activation>
-            <properties>
-                <gpg.executable>${env.GPG_EXECUTABLE}</gpg.executable>
-                <gpg.passphrase>${env.GPG_PASSPHRASE}</gpg.passphrase>
-            </properties>
-        </profile>
-    </profiles>
 </settings>
