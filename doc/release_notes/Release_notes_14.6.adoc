@@ -1,3 +1,9 @@
 = Release notes v.14.6
 
 == Table of Contents
+
+* Changed type of column in `consent` SQL table
+
+== Changed type of column in `consent` SQL table
+
+From now on, the type of `status_change_timestamp` column in `consent` table is DATETIME (before it was DATE).

@@ -156,4 +156,5 @@
     <include relativeToChangelogFile="true" file="migration/0126-remove-deprecated-consent-tables.xml"/>
     <include relativeToChangelogFile="true" file="migration/0127-create-missing-indexes-for-consent-related-tables.xml"/>
     <include relativeToChangelogFile="true" file="migration/0128-create-missing-indexes-for-payment-related-tables.xml"/>
+    <include relativeToChangelogFile="true" file="migration/0129-change-column-date-to-datetime-in-consent-table.xml"/>
 </databaseChangeLog>
