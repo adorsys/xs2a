@@ -61,7 +61,6 @@ variables:
 .build_java: &build_java
   script:
     - jabba use ${JAVA_VERSION}
-    - cat /sys/fs/cgroup/memory/memory.limit_in_bytes
     - env BUILD_NUMBER=$CI_PIPELINE_IID ./scripts/set_xs2a_connector_version_in_swagger.sh
     - java -XX:+PrintFlagsFinal -version | grep -Ei "maxheapsize|maxram"
     - mvn -ntp -DskipITs -DskipTests -Dci.build.number=Build\:${CI_PIPELINE_ID} clean install
@@ -69,7 +68,6 @@ variables:
 .java_tests: &java_tests
   script:
     - jabba use $JAVA_VERSION
-    - cat /sys/fs/cgroup/memory/memory.limit_in_bytes
     - java -XX:+PrintFlagsFinal -version | grep -Ei "maxheapsize|maxram"
     - mvn -ntp -DskipITs --fail-at-end clean install -q
 
@@ -106,7 +104,6 @@ variables:
   stage: "Release"
   script:
     - jabba use $BUILD_JAVA_VERSION
-    - cat /sys/fs/cgroup/memory/memory.limit_in_bytes
     - java -XX:+PrintFlagsFinal -version | grep -Ei "maxheapsize|maxram"
     - mvn -ntp --settings scripts/mvn-release-settings.xml -Pgitlab-maven -DskipTests -U deploy
   cache:
@@ -261,7 +258,6 @@ Test:IT_Java11:
   script:
 #    - jabba use ${JAVA_VERSION}
     - echo "DOCKER_HOST=${DOCKER_HOST}"
-    - cat /sys/fs/cgroup/memory/memory.limit_in_bytes
     - java -XX:+PrintFlagsFinal -version | grep -Ei "maxheapsize|maxram"
     - mvn -ntp failsafe:integration-test failsafe:verify
   variables:
@@ -293,7 +289,6 @@ Test:Javadoc_Java11:
     JAVA_VERSION: "system@1.11"
   script:
     - jabba use ${JAVA_VERSION}
-    - cat /sys/fs/cgroup/memory/memory.limit_in_bytes
     - java -XX:+PrintFlagsFinal -version | grep -Ei "maxheapsize|maxram"
     - mvn -ntp -Dmaven.test.skip=true -Pjavadoc verify javadoc:javadoc
 
