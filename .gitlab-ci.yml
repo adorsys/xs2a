@@ -15,8 +15,7 @@ stages:
   - "Compile" # build jar and provide as artifact
   - "Test"    # run tests and code quality checks
   - "Package" # dockerize jar and push to docker registry
-  - "Deploy"  # push to openshift registry (snapshot deployment) or release registry
-  - "Release"    # release
+  - "Release" # release
 
 # ------------------------------------------------------------------
 # variables
@@ -348,38 +347,6 @@ build_dockerhub_image_develop_private:
 ##########
 # deploy #
 ##########
-
-Deploy to Openshift (develop):
-  stage: "Deploy"
-  cache: {}
-  dependencies: []
-  only:
-    - develop
-  except:
-    - schedules
-  variables:
-    GIT_STRATEGY: none
-    DOCKER_TAG: develop # Dockerhub source tag
-    DOCKERHUB_REGISTRY: gitlab-registry.adorsys.de
-    DOCKERHUB_NAMESPACE: "adorsys/xs2a/aspsp-xs2a"
-    OPENSHIFT_NAMESPACE: ${OPENSHIFT_NAMESPACE_ADORSYS_XS2A_DEV} # Openshift target namespace
-  <<: *deploy_openshift
-
-# Build NIGHTLY image and deploy (scheduled) to INTEG
-
-Deploy to Openshift (nightly):
-  stage: "Deploy"
-  cache: {}
-  dependencies: []
-  only:
-    - schedules
-  variables:
-    GIT_STRATEGY: none
-    DOCKER_TAG: develop # Dockerhub source tag
-    DOCKERHUB_REGISTRY: gitlab-registry.adorsys.de
-    DOCKERHUB_NAMESPACE: "adorsys/xs2a/aspsp-xs2a"
-    OPENSHIFT_NAMESPACE: ${OPENSHIFT_NAMESPACE_ADORSYS_XS2A_INTEG} # Openshift target namespace
-  <<: *deploy_openshift
 
 # Build MASTER image and deploy to DEMO
 
