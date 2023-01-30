@@ -16,7 +16,6 @@ stages:
   - "Test"    # run tests and code quality checks
   - "Release" # release
   - "Package" # dockerize jar and push to docker registry
-  - "Deploy"  # push to openshift registry (snapshot deployment) or release registry
 # ------------------------------------------------------------------
 # variables
 # ------------------------------------------------------------------
@@ -306,22 +305,6 @@ Test:AsciiDoc:
 ################
 # support-14.x #
 ################
-
-Deploy to Openshift (support-14.x):
-  stage: "Deploy"
-  cache: {}
-  dependencies: []
-  only:
-    - support-14.x
-  except:
-    - schedules
-  variables:
-    GIT_STRATEGY: none
-    DOCKERHUB_REGISTRY: gitlab-registry.adorsys.de
-    DOCKERHUB_NAMESPACE: "adorsys/xs2a/aspsp-xs2a"
-    DOCKER_TAG: support14x # Dockerhub source tag
-    OPENSHIFT_NAMESPACE: ${OPENSHIFT_NAMESPACE_SUPPORT14X} # Openshift target namespace
-  <<: *deploy_openshift
 
 # Build MASTER image and deploy to DEMO
 
