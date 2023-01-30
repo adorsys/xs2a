@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2022 adorsys GmbH & Co KG
+ * Copyright 2018-2023 adorsys GmbH & Co KG
  *
  * This program is free software: you can redistribute it and/or modify it
  * under the terms of the GNU Affero General Public License as published
@@ -69,9 +69,9 @@ public class CertificateRequest {
         description = "Name of the state/province of your corporation headquarter")
     private String stateOrProvinceName;
 
-    @Schema(example = "Germany",
-        description = "Name of the country your corporation is registered")
-    private String countryName;
+    @Schema(example = "DE",
+        description = "Code of the country your corporation is registered")
+    private String countryCode;
 
     @Schema(example = "365",
         description = "Number of days the certificate is valid")
@@ -82,7 +82,10 @@ public class CertificateRequest {
     private int validity = 365;
 
     @NotNull
-    @Schema(description = "XS2A Sandbox")
+    @Schema(example = "Fake NCA",
+        description = "Common name of your corporation")
     private String commonName;
 
+    @Schema(example = "false", description = "Enables or disables OCSP check")
+    private boolean ocspCheckNeeded = false;
 }
