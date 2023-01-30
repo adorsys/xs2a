@@ -68,6 +68,7 @@ public class CmsConsentMapper {
         cmsConsent.setMultilevelScaRequired(entity.isMultilevelScaRequired());
         cmsConsent.setExpireDate(entity.getExpireDate());
         cmsConsent.setLastActionDate(entity.getLastActionDate());
+        cmsConsent.setStatusChangeTimestamp(entity.getStatusChangeTimestamp());
         cmsConsent.setAuthorisations(authorisationMapper.mapToAuthorisations(authorisations));
         cmsConsent.setUsages(usages);
         cmsConsent.setTppAccountAccesses(accessMapper.mapTppAccessesToAccountAccess(entity.getTppAccountAccesses(),
@@ -99,6 +100,7 @@ public class CmsConsentMapper {
         entity.setAuthorisationTemplate(authorisationTemplateMapper.mapToAuthorisationTemplateEntity(cmsConsent.getAuthorisationTemplate()));
         entity.setRecurringIndicator(cmsConsent.isRecurringIndicator());
         entity.setLastActionDate(LocalDate.now());
+        entity.setStatusChangeTimestamp(cmsConsent.getStatusChangeTimestamp());
         entity.setInternalRequestId(cmsConsent.getInternalRequestId());
         entity.setTppInformation(consentTppInformationMapper.mapToConsentTppInformationEntity(cmsConsent.getTppInformation()));
         AccountAccess tppAccountAccesses = cmsConsent.getTppAccountAccesses();
