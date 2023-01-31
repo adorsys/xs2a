@@ -24,27 +24,8 @@ stages:
 variables:
   DOCKER_IMAGE_NAME_CMS_MANAGEMENT: "xs2a-consent-management"
   DOCKER_IMAGE_NAME_ASPSP_PROFILE: "xs2a-aspsp-profile"
-  # DOCKER_IMAGE_NAME_XS2A: "xs2a-service"
   DOCKER_IMAGE_NAME_CERTIFICATE_GENERATOR: "xs2a-certificate-generator"
   DOCKER_IMAGE_NAME_JMETER_TEST: "xs2a-performance-tests"
-
-  ###########################
-  # Public Dockerhub Images #
-  ###########################
-
-  DOCKERHUB_REGISTRY: "docker.io"
-
-  DOCKERHUB_NAMESPACE: "adorsys"
-
-  ############################
-  # Private Openshift Images #
-  ############################
-
-  OPENSHIFT_NAMESPACE_SUPPORT: "multibanking-xs2a"
-
-
-  OPENSHIFT_NAMESPACE_ADORSYS_XS2A_DEV: "adorsys-xs2a-dev"
-  OPENSHIFT_NAMESPACE_ADORSYS_XS2A_INTEG: "adorsys-xs2a-integ"
 
   ###########################
   # Build variables         #
@@ -70,21 +51,6 @@ variables:
     - java -XX:+PrintFlagsFinal -version | grep -Ei "maxheapsize|maxram"
     - mvn -ntp -DskipITs --fail-at-end clean install -q
 
-# Build docker images and push them to Dockerhub (depending on ${DOCKER_TAG})
-# .build_dockerhub_image: &build_dockerhub_image
-#   script:
-#     - docker build -t "${DOCKERHUB_REGISTRY}/${DOCKERHUB_NAMESPACE}/${DOCKER_IMAGE_NAME_CMS_MANAGEMENT}:${DOCKER_TAG}" consent-management/cms-standalone-service
-#     - docker build -t "${DOCKERHUB_REGISTRY}/${DOCKERHUB_NAMESPACE}/${DOCKER_IMAGE_NAME_ASPSP_PROFILE}:${DOCKER_TAG}" aspsp-profile/aspsp-profile-server
-#     - docker build -t "${DOCKERHUB_REGISTRY}/${DOCKERHUB_NAMESPACE}/${DOCKER_IMAGE_NAME_XS2A}:${DOCKER_TAG}" xs2a-standalone-starter
-#     - docker build -t "${DOCKERHUB_REGISTRY}/${DOCKERHUB_NAMESPACE}/${DOCKER_IMAGE_NAME_CERTIFICATE_GENERATOR}:${DOCKER_TAG}" certificate-generator
-
-#     - docker login -u ${DOCKER_HUB_LOGIN} -p ${DOCKER_HUB_PASS}
-#     - docker push "${DOCKERHUB_REGISTRY}/${DOCKERHUB_NAMESPACE}/${DOCKER_IMAGE_NAME_CMS_MANAGEMENT}:${DOCKER_TAG}"
-#     - docker push "${DOCKERHUB_REGISTRY}/${DOCKERHUB_NAMESPACE}/${DOCKER_IMAGE_NAME_ASPSP_PROFILE}:${DOCKER_TAG}"
-#     - docker push "${DOCKERHUB_REGISTRY}/${DOCKERHUB_NAMESPACE}/${DOCKER_IMAGE_NAME_XS2A}:${DOCKER_TAG}"
-#     - docker push "${DOCKERHUB_REGISTRY}/${DOCKERHUB_NAMESPACE}/${DOCKER_IMAGE_NAME_CERTIFICATE_GENERATOR}:${DOCKER_TAG}"
-#     - docker logout
-
 .push_dockerhub_images_private: &push_dockerhub_images_private
   script:
     - docker build -t "${DOCKERHUB_REGISTRY}/${DOCKERHUB_NAMESPACE}/${DOCKER_IMAGE_NAME_CMS_MANAGEMENT}:${DOCKER_TAG}" consent-management/cms-standalone-service
@@ -98,7 +64,6 @@ variables:
     - docker push "${DOCKERHUB_REGISTRY}/${DOCKERHUB_NAMESPACE}/${DOCKER_IMAGE_NAME_JMETER_TEST}:${DOCKER_TAG}"
     - docker logout
 
-# release java artifact privately
 .release_java_private: &release_java_private
   stage: "Release"
   script:
@@ -110,26 +75,6 @@ variables:
     paths:
       - /builds/adorsys/xs2a/xs2a-conector-examples/.m2/repository
 
-# Copy Dockerhub images to Openshift (depending on ${DOCKER_TAG} and ${OPENSHIFT_NAMESPACE})
-.deploy_openshift: &deploy_openshift
-  script:
-    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
-    - >-
-      skopeo copy
-      --dest-creds=openshift:${OPENSHIFT_TOKEN}
-      "docker://${DOCKERHUB_REGISTRY}/${DOCKERHUB_NAMESPACE}/${DOCKER_IMAGE_NAME_CMS_MANAGEMENT}:${DOCKER_TAG}"
-      "docker://${OPENSHIFT_REGISTRY}/${OPENSHIFT_NAMESPACE}/${DOCKER_IMAGE_NAME_CMS_MANAGEMENT}:latest"
-    - >-
-      skopeo copy
-      --dest-creds=openshift:${OPENSHIFT_TOKEN}
-      "docker://${DOCKERHUB_REGISTRY}/${DOCKERHUB_NAMESPACE}/${DOCKER_IMAGE_NAME_ASPSP_PROFILE}:${DOCKER_TAG}"
-      "docker://${OPENSHIFT_REGISTRY}/${OPENSHIFT_NAMESPACE}/${DOCKER_IMAGE_NAME_ASPSP_PROFILE}:latest"
-    - >-
-      skopeo copy
-      --dest-creds=openshift:${OPENSHIFT_TOKEN}
-      "docker://${DOCKERHUB_REGISTRY}/${DOCKERHUB_NAMESPACE}/${DOCKER_IMAGE_NAME_CERTIFICATE_GENERATOR}:${DOCKER_TAG}"
-      "docker://${OPENSHIFT_REGISTRY}/${OPENSHIFT_NAMESPACE}/${DOCKER_IMAGE_NAME_CERTIFICATE_GENERATOR}:latest"
-
 # ------------------------------------------------------------------
 # jobs
 # ------------------------------------------------------------------
@@ -138,7 +83,7 @@ variables:
 # lint
 #-------------------------------------------------------------------
 
-Lint:Docker_compose:
+Lint (Docker compose):
   image: maven:3.6-jdk-11-slim
   stage: "Lint"
   except:
@@ -150,7 +95,7 @@ Lint:Docker_compose:
     - echo "Run Docker compose lint"
     - docker-compose -f docker-compose.yml config  -q
 
-Lint:Ci_file:
+Lint (Ci file):
   image: debian:stretch-slim
   stage: "Lint"
   except:
@@ -162,7 +107,7 @@ Lint:Ci_file:
     - echo "Run Gitlab ci file lint"
     - yamllint -d relaxed .gitlab-ci.yml
 
-Lint:XS2A_yaml_json_xml:
+Lint (YAML, JSON, XML):
   image: debian:stretch-slim
   stage: "Lint"
   except:
@@ -178,7 +123,7 @@ Lint:XS2A_yaml_json_xml:
   # commented cause get error Unsupported version '1.1'
   #     - find ./ -type f \( -iname "*.xml" ! -iname pom.xml \) -exec xmllint --noout {} \;
 
-Lint:XS2A_PMD_CPD_Report:
+Lint (PMD CPD):
   image: maven:3.6-jdk-11-slim
   stage: "Lint"
   except:
@@ -199,7 +144,7 @@ Lint:XS2A_PMD_CPD_Report:
     name: "${CI_PROJECT_NAME}-${CI_BUILD_REF_NAME#*v}-pmd"
     expire_in: "10 day"
 
-Lint:XS2A_core_dockerfiles:
+Lint (dockerfiles):
   image: docker
   stage: "Lint"
   services:
@@ -223,7 +168,7 @@ Lint:XS2A_core_dockerfiles:
 # Compile
 #-------------------------------------------------------------------
 
-Build:XS2A_Java11:
+Build XS2A:
   stage: "Compile"
   except:
     - schedules
@@ -247,7 +192,7 @@ Build:XS2A_Java11:
 # Test
 #-------------------
 
-Test:IT_Java11:
+Test (IT):
   stage: "Test"
   image: maven:3.6.3-jdk-11
   services:
@@ -267,19 +212,7 @@ Test:IT_Java11:
     JAVA_TOOL_OPTIONS: "-Djavax.net.ssl.trustStorePassword=changeit -XX:MaxRAM=3G"
     TESTCONTAINERS_RYUK_DISABLED: "true"
 
-# Test:DOCKER_test_image_build:
-#   stage: "Test"
-#   except:
-#     - schedules
-#   script:
-#     - docker build -t "${DOCKERHUB_REGISTRY}/${DOCKERHUB_NAMESPACE}/${DOCKER_IMAGE_NAME_CMS_MANAGEMENT}:${DOCKER_TAG}" consent-management/cms-standalone-service
-#     - docker build -t "${DOCKERHUB_REGISTRY}/${DOCKERHUB_NAMESPACE}/${DOCKER_IMAGE_NAME_ASPSP_PROFILE}:${DOCKER_TAG}" aspsp-profile/aspsp-profile-server
-#     - docker build -t "${DOCKERHUB_REGISTRY}/${DOCKERHUB_NAMESPACE}/${DOCKER_IMAGE_NAME_XS2A}:${DOCKER_TAG}" xs2a-standalone-starter
-#     - docker build -t "${DOCKERHUB_REGISTRY}/${DOCKERHUB_NAMESPACE}/${DOCKER_IMAGE_NAME_CERTIFICATE_GENERATOR}:${DOCKER_TAG}" certificate-generator
-#   variables:
-#     DOCKER_TAG: develop
-
-Test:Javadoc_Java11:
+Test (Javadoc):
   stage: "Test"
   except:
     - schedules
@@ -291,7 +224,7 @@ Test:Javadoc_Java11:
     - java -XX:+PrintFlagsFinal -version | grep -Ei "maxheapsize|maxram"
     - mvn -ntp -Dmaven.test.skip=true -Pjavadoc verify javadoc:javadoc
 
-Test:Unit_Tests_XS2A_Java11:
+Test (Unit Tests):
   stage: "Test"
   except:
     - schedules
@@ -300,7 +233,7 @@ Test:Unit_Tests_XS2A_Java11:
     JAVA_VERSION: "system@1.11"
     JAVA_TOOL_OPTIONS: "-Djavax.net.ssl.trustStorePassword=changeit -XX:MaxRAM=3G"
 
-Test:AsciiDoc:
+Test (ASCII Doc):
   stage: "Test"
   except:
     - schedules
@@ -323,11 +256,7 @@ Test:AsciiDoc:
 #     paths:
 #       - "./performance-test/jmeter-test/report"
 
-###########
-# develop #
-###########
-
-build_dockerhub_image_develop_private:
+Build and push to private repo (develop):
   stage: "Package"
   services:
     - docker:dind
@@ -344,54 +273,56 @@ build_dockerhub_image_develop_private:
     DOCKERHUB_NAMESPACE: "adorsys/xs2a/aspsp-xs2a"
   <<: *push_dockerhub_images_private
 
-##########
-# deploy #
-##########
-
-# Build MASTER image and deploy to DEMO
-
-Push to DockerHub (master):
+Build and push to private repo (master):
   stage: "Package"
+  services:
+    - docker:dind
   only:
     - master
   variables:
+    DOCKER_HOST: tcp://docker:2375
+    DOCKER_TLS_CERTDIR: ""
+    DOCKER_DRIVER: overlay2
     DOCKER_TAG: latest
     DOCKERHUB_REGISTRY: gitlab-registry.adorsys.de
     DOCKERHUB_NAMESPACE: "adorsys/xs2a/aspsp-xs2a"
   <<: *push_dockerhub_images_private
 
-# Build RELEASE image and deploy (manual) to DEMO
-
-Push to DockerHub (Release):
+Build and push to private repo (Tags):
   stage: "Package"
+  services:
+    - docker:dind
   only:
     - tags
   variables:
+    DOCKER_HOST: tcp://docker:2375
+    DOCKER_TLS_CERTDIR: ""
+    DOCKER_DRIVER: overlay2
     DOCKER_TAG: $CI_COMMIT_TAG
     DOCKERHUB_REGISTRY: gitlab-registry.adorsys.de
     DOCKERHUB_NAMESPACE: "adorsys/xs2a/aspsp-xs2a"
   <<: *push_dockerhub_images_private
 
-release_snapshot_artifacts_private:
+Release snapshot artifacts (develop):
   stage: "Release"
-  except:
-    - schedules
-  cache: {}
-  variables:
-    BUILD_JAVA_VERSION: system@1.11
-    JAVA_TOOL_OPTIONS: "-Djavax.net.ssl.trustStorePassword=changeit -XX:MaxRAM=3G"
   only:
     - develop
-  <<: *release_java_private
-
-release_artifacts_private:
-  stage: "Release"
   except:
     - schedules
   cache: {}
   variables:
     BUILD_JAVA_VERSION: system@1.11
     JAVA_TOOL_OPTIONS: "-Djavax.net.ssl.trustStorePassword=changeit -XX:MaxRAM=3G"
+  <<: *release_java_private
+
+Release snapshot artifacts (tags):
+  stage: "Release"
   only:
     - tags
+  except:
+    - schedules
+  cache: {}
+  variables:
+    BUILD_JAVA_VERSION: system@1.11
+    JAVA_TOOL_OPTIONS: "-Djavax.net.ssl.trustStorePassword=changeit -XX:MaxRAM=3G"
   <<: *release_java_private
