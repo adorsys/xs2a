@@ -1,5 +1,6 @@
 FROM adorsys/java:11
-LABEL maintainer="https://github.com/adorsys/xs2a"
+
+LABEL maintainer="https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a"
 
 ENV SERVER_PORT 8092
 ENV JAVA_OPTS -Xmx1024m
