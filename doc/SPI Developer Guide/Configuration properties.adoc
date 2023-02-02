@@ -5,7 +5,7 @@
 |===
 |Property |Description |Default value
 
-|xs2a.license.url|Link to license agreement|https://github.com/adorsys/xs2a/blob/master/LICENSE.md
+|xs2a.license.url|Link to license agreement|https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/-/blob/master/LICENSE
 
 |xs2a.rest-consent-config.read-timeout.ms|Read timeout for consent REST API in ms|10000
 |xs2a.rest-consent-config.connection-timeout.ms|Connection timeout for consent REST API in ms|1000

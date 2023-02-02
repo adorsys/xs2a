@@ -20,7 +20,7 @@ able to provide an even better service going forward.
 For more information, advice for your XS2A implementation project or if your use case
 requires more time to adapt this change, please contact us at psd2@adorsys.com.
 
-For additional details please see the section [FAQ on Licensing Change](https://github.com/adorsys/xs2a#faq-on-licensing-change).
+For additional details please see the section [FAQ on Licensing Change](#faq-on-licensing-change).
 
 ## What is it
 
@@ -52,7 +52,7 @@ You can check out our [Swagger API yaml file](xs2a-impl/src/main/resources/stati
 
 ## Project documentation
 
-[Documentation site](https://adorsys.github.io/xs2a/) provides actual automatically build documentation, such as:
+[Documentation](doc/index.adoc) provides actual automatically build documentation, such as:
 * Architecture documentation
 * Use-cases diagrams
 * Developer guides
@@ -62,8 +62,8 @@ You can check out our [Swagger API yaml file](xs2a-impl/src/main/resources/stati
 
 ### Getting Started
 
-* If you want to play with the framework in isolated environment, check out [XS2A-Sandbox](https://github.com/adorsys/xs2a-sandbox) Repository.
-* To know how to write a connector to your banking system see our [xs2a-connector-examples](https://github.com/adorsys/xs2a-connector-examples) repository and [SPI Developer Guide](https://adorsys.github.io/xs2a/SPI%20Developer%20Guide/SPI_Developer_Guide.html)
+* If you want to play with the framework in isolated environment, check out [Modelbank](https://git.adorsys.de/adorsys/xs2a/psd2-dynamic-sandbox) Repository.
+* To know how to write a connector to your banking system see our [XS2A Connector Examples](https://git.adorsys.de/adorsys/xs2a/xs2a-connector-examples) repository and [SPI Developer Guide](doc/SPI Developer Guide/SPI_Developer_Guide.adoc)
 * [These instructions](doc/GETTING_STARTED.adoc) will help you to get a copy of the project up and running on your local machine for development and testing purposes. 
 
 ## Development and contributing
