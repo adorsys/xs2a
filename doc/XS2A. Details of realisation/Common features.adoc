@@ -6,7 +6,7 @@
 
 toc::[]
 === Support of Relative and Global links in responses
-In https://github.com/adorsys/xs2a/tree/develop/aspsp-profile[ASPSP Profile] support of relative links look like:
+In https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/-/tree/develop/aspsp-profile[ASPSP Profile] support of relative links look like:
 ```
 forceXs2aBaseLinksUrl: true
 xs2aBaseLinksUrl: "/"
@@ -82,7 +82,7 @@ And request is not rejected.
 
 **Generating certificate with validity less than 365 days**
 
-* Clone https://github.com/adorsys/xs2a, build and execute certificate-generator. Alternatively use the TPP certificate generator mentioned in 01 Links to the environments.
+* Clone https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a, build and execute certificate-generator. Alternatively use the TPP certificate generator mentioned in 01 Links to the environments.
 * Launch application and open swagger-ui.html, fill in certificate data and execute the request.
 * Mocked certificate in xs2a-impl uses the data provided as example in Swagger UI for the request with the following changes:  commonName attribute contains empty value and roles attribute contains PISP, AISP and PIISP roles.
 
@@ -98,7 +98,7 @@ There are several ways to bypass this restriction:
 
 *b. Adjusting xs2a-certificate-generator:*
 
-* Clone https://github.com/adorsys/xs2a and find certificate-generator service;
+* Clone https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a and find certificate-generator service;
 * Remove__ @Max(365)__ from _validity_ field in the
  ```de.adorsys.psd2.certificate.generator.model.CertificateRequest.class ```;
 

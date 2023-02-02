@@ -15,9 +15,9 @@ Following transactions require strong customer authentication (SCA) of the PSU a
 
 === SCA Approaches
 
-XS2A Interface supports multiple SCA approaches. https://github.com/adorsys/xs2a/tree/develop/aspsp-profile[ASPSP-Profile] may contain a list of approaches (in order of priority - first one with the highest priority).
+XS2A Interface supports multiple SCA approaches. https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/-/tree/support-14x/aspsp-profile[ASPSP-Profile] may contain a list of approaches (in order of priority - first one with the highest priority).
 Choice of SCA approach also depends on header parameter in initial request - TPP-Redirect-Preferred.
-If TPP-Redirect-Preferred is true and ASPSP supports REDIRECT approach, then REDIRECT approach is used. Otherwise first approach in ASPSP-profile is used.
+If TPP-Redirect-Preferred is true and ASPSP supports REDIRECT approach, then REDIRECT approach is used. Otherwise, first approach in ASPSP-profile is used.
 
 .A list of SCA approaches in ASPSP-Profile
 |===
@@ -193,4 +193,4 @@ Statuses which are defined finalised:
 * Failed(The SCA routine failed);
 * Exempted (SCA was exempted for the related transaction, the related authorisation is successful).
 
-After setting finalised status for Authorisation status isn't allowed to be changed in CMS any more.
+After setting finalised status for Authorisation status isn't allowed to be changed in CMS anymore.

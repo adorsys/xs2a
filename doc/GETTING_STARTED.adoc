@@ -11,7 +11,7 @@
 
 === Clone git repository and build a project
 ```bash
-$ git clone https://github.com/adorsys/xs2a.git
+$ git clone https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a.git
 $ cd xs2a
 $ mvn clean install
 ```
