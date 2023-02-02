@@ -49,7 +49,7 @@
     <name>xs2a</name>
     <description>OpenSource PSD2 XS2A API implementation</description>
 
-    <url>https://github.com/adorsys/xs2a</url>
+    <url>https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a</url>
 
     <licenses>
         <license>

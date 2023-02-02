@@ -28,7 +28,7 @@ xref:version_policy.adoc[Version Policy] describes the main rules of Versioning,
 xref:roadmap.adoc[Roadmap] contains brief information about upcoming features and bugfixes.
 May be changed without a note.
 
-For the versions available, see the https://github.com/adorsys/xs2a/tags[tags on this repository]
+For the versions available, see the https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/-/tags[tags on this repository]
 and xref:releasenotes.adoc[Release notes for each version].
 
 xref:releasenotes.adoc[Release notes] contain information about changes included into releases.
@@ -38,7 +38,7 @@ Might contain also important migration information for the developers, how to mi
 xref:Filing_a_bug.adoc[This document] contains a summary of how to report an issue to XS2A Team.
 
 == New features since XS2A v.5.0
-xref:XS2A. Details of realisation/Read Account data Requests.adoc[Download Link]
+xref:XS2A. Details of realisation/Read Account Data Requests.adoc[Download Link]
 
 During request of Transaction List, in case when transaction report has a huge size, ASPSP can provide Download Link in Read Transaction List Response, it enables to download transaction report.
 
