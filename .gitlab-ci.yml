@@ -256,7 +256,7 @@ Test (ASCII Doc):
 #     paths:
 #       - "./performance-test/jmeter-test/report"
 
-Build and push to private repo (develop):
+Build and push images to private repo (develop):
   stage: "Package"
   services:
     - docker:dind
@@ -273,7 +273,7 @@ Build and push to private repo (develop):
     DOCKERHUB_NAMESPACE: "adorsys/xs2a/aspsp-xs2a"
   <<: *push_dockerhub_images_private
 
-Build and push to private repo (master):
+Build and push images to private repo (master):
   stage: "Package"
   services:
     - docker:dind
@@ -288,7 +288,7 @@ Build and push to private repo (master):
     DOCKERHUB_NAMESPACE: "adorsys/xs2a/aspsp-xs2a"
   <<: *push_dockerhub_images_private
 
-Build and push to private repo (Tags):
+Build and push images to private repo (Tags):
   stage: "Package"
   services:
     - docker:dind
