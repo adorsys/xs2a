@@ -240,7 +240,7 @@ Test (ASCII Doc):
   script:
     - make pages
 
-Build and push to private repo (support-14.x):
+Build and push images to private repo (support-14.x):
   stage: "Package"
   services:
     - docker:dind
@@ -257,7 +257,7 @@ Build and push to private repo (support-14.x):
     DOCKERHUB_NAMESPACE: "adorsys/xs2a/aspsp-xs2a"
   <<: *push_dockerhub_images_private
 
-Build and push to private repo (Tags):
+Build and push images to private repo (Tags):
   stage: "Package"
   services:
     - docker:dind
