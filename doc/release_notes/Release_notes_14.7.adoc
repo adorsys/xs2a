@@ -1,3 +1,9 @@
 = Release notes v.14.7
 
 == Table of Contents
+
+* Updated postman tests
+
+== Updated postman tests
+
+XS2A Postman tests were updated.
