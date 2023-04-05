@@ -1,8 +1,9 @@
 {
 	"info": {
-		"_postman_id": "f077f212-85de-4a73-9472-29a07107e325",
+		"_postman_id": "e7376d5a-7550-40e6-9fa7-1e513de3b9a0",
 		"name": "XS2A requests 15x",
-		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "26321578"
 	},
 	"item": [
 		{
@@ -93199,7 +93200,7 @@
 														},
 														{
 															"key": "json_standingorderType",
-															"value": "{\n  \"startDate\": \"2023-03-01\",\n  \"endDate\": \"2025-03-01\",\n  \"frequency\": \"Monthly\",\n  \"executionRule\": \"preceding\",\n  \"dayOfExecution\": \"1\"\n}",
+															"value": "{\n  \"startDate\": \"2025-03-01\",\n  \"endDate\": \"2027-03-01\",\n  \"frequency\": \"Monthly\",\n  \"executionRule\": \"preceding\",\n  \"dayOfExecution\": \"1\"\n}",
 															"type": "text"
 														}
 													]
@@ -93703,7 +93704,7 @@
 														},
 														{
 															"key": "json_standingorderType",
-															"value": "{\n  \"startDate\": \"2023-03-01\",\n  \"endDate\": \"2025-03-01\",\n  \"frequency\": \"Monthly\",\n  \"executionRule\": \"preceding\",\n  \"dayOfExecution\": \"1\"\n}",
+															"value": "{\n  \"startDate\": \"2025-03-01\",\n  \"endDate\": \"2027-03-01\",\n  \"frequency\": \"Monthly\",\n  \"executionRule\": \"preceding\",\n  \"dayOfExecution\": \"1\"\n}",
 															"type": "text"
 														}
 													]
@@ -94207,7 +94208,7 @@
 														},
 														{
 															"key": "json_standingorderType",
-															"value": "{\n  \"startDate\": \"2023-03-01\",\n  \"endDate\": \"2025-03-01\",\n  \"frequency\": \"Monthly\",\n  \"executionRule\": \"preceding\",\n  \"dayOfExecution\": \"1\"\n}",
+															"value": "{\n  \"startDate\": \"2025-03-01\",\n  \"endDate\": \"2027-03-01\",\n  \"frequency\": \"Monthly\",\n  \"executionRule\": \"preceding\",\n  \"dayOfExecution\": \"1\"\n}",
 															"type": "text"
 														}
 													]
@@ -94711,7 +94712,7 @@
 														},
 														{
 															"key": "json_standingorderType",
-															"value": "{\n  \"startDate\": \"2023-03-01\",\n  \"endDate\": \"2025-03-01\",\n  \"frequency\": \"Monthly\",\n  \"executionRule\": \"preceding\",\n  \"dayOfExecution\": \"1\"\n}",
+															"value": "{\n  \"startDate\": \"2025-03-01\",\n  \"endDate\": \"2027-03-01\",\n  \"frequency\": \"Monthly\",\n  \"executionRule\": \"preceding\",\n  \"dayOfExecution\": \"1\"\n}",
 															"type": "text"
 														}
 													]
@@ -97324,7 +97325,7 @@
 										},
 										{
 											"key": "json_standingorderType",
-											"value": "{\n  \"startDate\": \"2023-03-01\",\n  \"endDate\": \"2025-03-01\",\n  \"frequency\": \"Monthly\",\n  \"executionRule\": \"preceding\",\n  \"dayOfExecution\": \"1\"\n}",
+											"value": "{\n  \"startDate\": \"2025-03-01\",\n  \"endDate\": \"2027-03-01\",\n  \"frequency\": \"Monthly\",\n  \"executionRule\": \"preceding\",\n  \"dayOfExecution\": \"1\"\n}",
 											"type": "text"
 										}
 									]
