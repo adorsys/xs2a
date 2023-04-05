@@ -217,7 +217,7 @@
         <jacoco-maven-plugin.version>0.8.5</jacoco-maven-plugin.version>
         <sonar-maven-plugin.version>3.7.0.1746</sonar-maven-plugin.version>
 
-        <spring.version>5.3.19</spring.version>
+        <spring.version>5.3.26</spring.version>
         <spring-test.version>${spring.version}</spring-test.version>
         <spring-web.version>${spring.version}</spring-web.version>
         <spring-context.version>${spring.version}</spring-context.version>
@@ -226,9 +226,9 @@
         <spring-aop.version>${spring.version}</spring-aop.version>
         <spring-webmvc.version>${spring.version}</spring-webmvc.version>
         <spring-core.version>${spring.version}</spring-core.version>
-        <spring-data-jpa.version>2.7.6</spring-data-jpa.version>
-        <spring-boot.version>2.7.0</spring-boot.version>
-        <spring-boot-starter-web.version>2.7.0</spring-boot-starter-web.version>
+        <spring-data-jpa.version>2.7.10</spring-data-jpa.version>
+        <spring-boot.version>2.7.10</spring-boot.version>
+        <spring-boot-starter-web.version>2.7.10</spring-boot-starter-web.version>
 
         <archunit.version>0.13.1</archunit.version>
 
