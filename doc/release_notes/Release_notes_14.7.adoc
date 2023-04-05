@@ -3,7 +3,24 @@
 == Table of Contents
 
 * Updated postman tests
+* Bumped dependency versions
 
 == Updated postman tests
 
 XS2A Postman tests were updated.
+
+== Bumped dependency versions
+
+Versions of dependencies were updated:
+
+- spring-test was bumped up to 5.3.26;
+- spring-web - to 5.3.26;
+- spring-context - to 5.3.26;
+- spring-jdbc - to 5.3.26;
+- spring-beans - to 5.3.26;
+- spring-aop - to 5.3.26;
+- spring-webmvc - to 5.3.26;
+- spring-core - to 5.3.26;
+- spring-data-jpa - to 2.7.10;
+- spring-boot - to 2.7.10;
+- spring-boot-starter-web - to 2.7.10.
