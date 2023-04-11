@@ -9,7 +9,7 @@
   "consentTppInformation": {
     "tppRedirectPreferred": "true"
   },
-  "lastActionDate": "2019-12-31",
+  "lastActionDateTime": "2019-12-31T15:30:35.035",
   "consentTppInformation": {
     "tppRedirectPreferred": true,
     "tppNotificationUri": "http://super-redirect.info",

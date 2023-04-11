@@ -2,7 +2,19 @@
 
 == Table of Contents
 
+* Changed type of column in `consent` SQL table
+
+* Postman tests were updated
+
 * Bumped dependency versions
+
+== Changed type of column in `consent` SQL table
+
+From now on, the type of `last_action_date` column in `consent` table is DATETIME (before it was DATE) and its name is changed to `last_action_date_time`.
+
+== Postman tests were updated
+
+Some Postman collections were updated due to incorrect date and expired QWAC certificate.
 
 == Bumped dependency versions
 

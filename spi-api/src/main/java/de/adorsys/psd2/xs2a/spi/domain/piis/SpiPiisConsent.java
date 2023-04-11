@@ -28,6 +28,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 import java.util.List;
 
@@ -38,7 +39,10 @@ public class SpiPiisConsent implements SpiConsent {
     private String id;
     private boolean recurringIndicator;
     private OffsetDateTime requestDateTime;
+
+    @Deprecated // TODO: remove in 15.10
     private LocalDate lastActionDate;
+    private LocalDateTime lastActionDateTime;
     private LocalDate expireDate;
     private List<SpiPsuData> psuData;
     @Deprecated // TODO: change with SpiConsentStatus in 15.8

@@ -21,11 +21,7 @@ package de.adorsys.psd2.consent.service.psu;
 import com.fasterxml.jackson.core.type.TypeReference;
 import de.adorsys.psd2.consent.api.CmsResponse;
 import de.adorsys.psd2.consent.api.WrongChecksumException;
-import de.adorsys.psd2.consent.api.ais.AdditionalTppInfo;
-import de.adorsys.psd2.consent.api.ais.AisAccountAccess;
-import de.adorsys.psd2.consent.api.ais.AisAccountConsentAuthorisation;
-import de.adorsys.psd2.consent.api.ais.CmsAisAccountConsent;
-import de.adorsys.psd2.consent.api.ais.CmsAisConsentResponse;
+import de.adorsys.psd2.consent.api.ais.*;
 import de.adorsys.psd2.consent.api.service.ConsentService;
 import de.adorsys.psd2.consent.domain.AuthorisationEntity;
 import de.adorsys.psd2.consent.domain.PsuData;
@@ -76,6 +72,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 import java.util.Arrays;
@@ -590,7 +587,7 @@ class CmsPsuAisServiceInternalTest {
                             .payload(true)
                             .build());
         ConsentEntity aisConsentValid = buildConsentWithStatus(ConsentStatus.VALID);
-        when(aisConsentVerifyingRepository.verifyAndSave(aisConsentValid))
+        when(aisConsentVerifyingRepository.verifyAndSave(any(ConsentEntity.class)))
             .thenReturn(aisConsentValid);
 
         // When
@@ -638,7 +635,7 @@ class CmsPsuAisServiceInternalTest {
         when(aisConsentSpecification.byConsentIdAndInstanceId(EXTERNAL_CONSENT_ID, DEFAULT_SERVICE_INSTANCE_ID))
             .thenReturn((root, criteriaQuery, criteriaBuilder) -> null);
         ConsentEntity aisConsentRejected = buildConsentWithStatus(ConsentStatus.REJECTED);
-        when(aisConsentVerifyingRepository.verifyAndSave(aisConsentRejected))
+        when(aisConsentVerifyingRepository.verifyAndSave(any(ConsentEntity.class)))
             .thenReturn(aisConsentRejected);
 
         // When
@@ -689,7 +686,7 @@ class CmsPsuAisServiceInternalTest {
             .thenReturn((root, criteriaQuery, criteriaBuilder) -> null);
 
         ConsentEntity aisConsentRevoked = buildConsentWithStatus(ConsentStatus.REVOKED_BY_PSU);
-        when(aisConsentVerifyingRepository.verifyAndSave(aisConsentRevoked))
+        when(aisConsentVerifyingRepository.verifyAndSave(any(ConsentEntity.class)))
             .thenReturn(aisConsentRevoked);
 
         // When
@@ -742,7 +739,7 @@ class CmsPsuAisServiceInternalTest {
 
         ConsentEntity aisConsent = buildConsentWithStatus(ConsentStatus.PARTIALLY_AUTHORISED);
         aisConsent.setMultilevelScaRequired(true);
-        when(aisConsentVerifyingRepository.verifyAndSave(aisConsent))
+        when(aisConsentVerifyingRepository.verifyAndSave(any(ConsentEntity.class)))
             .thenReturn(aisConsent);
         ArgumentCaptor<ConsentEntity> argumentCaptor = ArgumentCaptor.forClass(ConsentEntity.class);
 
@@ -1211,7 +1208,7 @@ class CmsPsuAisServiceInternalTest {
 
         aisConsent.setCreationTimestamp(OffsetDateTime.of(2018, 10, 10, 10, 10, 10, 10, ZoneOffset.UTC));
         aisConsent.setValidUntil(VALID_UNTIL.plusDays(1));
-        aisConsent.setLastActionDate(LocalDate.now());
+        aisConsent.setLastActionDateTime(LocalDateTime.now());
         aisConsent.setPsuDataList(Collections.singletonList(psuData));
         aisConsent.setConsentStatus(ConsentStatus.RECEIVED);
         aisConsent.setCreationTimestamp(OffsetDateTime.of(2018, 10, 10, 10, 10, 10, 10, ZoneOffset.UTC));

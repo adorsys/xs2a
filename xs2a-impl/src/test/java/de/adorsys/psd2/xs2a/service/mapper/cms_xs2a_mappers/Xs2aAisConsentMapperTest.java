@@ -153,7 +153,7 @@ class Xs2aAisConsentMapperTest {
         assertEquals(aisConsent.getValidUntil(), cmsConsent.getValidUntil());
         assertEquals(aisConsent.getExpireDate(), cmsConsent.getExpireDate());
         assertEquals(aisConsent.getFrequencyPerDay(), cmsConsent.getFrequencyPerDay());
-        assertEquals(aisConsent.getLastActionDate(), cmsConsent.getLastActionDate());
+        assertEquals(aisConsent.getLastActionDateTime(), cmsConsent.getLastActionDateTime());
         assertEquals(aisConsent.getConsentStatus(), cmsConsent.getConsentStatus());
         assertEquals(aisConsent.getAuthorisationTemplate(), cmsConsent.getAuthorisationTemplate());
         assertEquals(aisConsent.getPsuIdDataList(), cmsConsent.getPsuIdDataList());
@@ -183,7 +183,7 @@ class Xs2aAisConsentMapperTest {
         assertEquals(aisConsent.getValidUntil(), cmsConsent.getValidUntil());
         assertEquals(aisConsent.getExpireDate(), cmsConsent.getExpireDate());
         assertEquals(aisConsent.getFrequencyPerDay(), cmsConsent.getFrequencyPerDay());
-        assertEquals(aisConsent.getLastActionDate(), cmsConsent.getLastActionDate());
+        assertEquals(aisConsent.getLastActionDateTime(), cmsConsent.getLastActionDateTime());
         assertEquals(aisConsent.getConsentStatus(), cmsConsent.getConsentStatus());
         assertEquals(aisConsent.getAuthorisationTemplate(), cmsConsent.getAuthorisationTemplate());
         assertEquals(aisConsent.getPsuIdDataList(), cmsConsent.getPsuIdDataList());

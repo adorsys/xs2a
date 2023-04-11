@@ -61,7 +61,11 @@ public class Xs2aAisConsentMapper {
                             ac.getValidUntil(),
                             ac.getExpireDate(),
                             ac.getFrequencyPerDay(),
-                            ac.getLastActionDate(),
+                            // TODO: remove in 15.10
+                            ac.getLastActionDateTime() == null
+                                ? null
+                                : ac.getLastActionDateTime().toLocalDate(),
+                            ac.getLastActionDateTime(),
                             ac.getConsentStatus(),
                             ac.isWithBalance(),
                             ac.getConsentTppInformation().isTppRedirectPreferred(),
@@ -132,7 +136,7 @@ public class Xs2aAisConsentMapper {
                        aisConsent.setValidUntil(ac.getValidUntil());
                        aisConsent.setExpireDate(ac.getExpireDate());
                        aisConsent.setFrequencyPerDay(ac.getFrequencyPerDay());
-                       aisConsent.setLastActionDate(ac.getLastActionDate());
+                       aisConsent.setLastActionDateTime(ac.getLastActionDateTime());
                        aisConsent.setConsentStatus(ac.getConsentStatus());
                        aisConsent.setAuthorisationTemplate(ac.getAuthorisationTemplate());
                        aisConsent.setPsuIdDataList(ac.getPsuIdDataList());
