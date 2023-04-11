@@ -28,6 +28,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 import java.util.List;
 
@@ -39,7 +40,7 @@ public class CmsConfirmationOfFundsConsent {
     private AccountReference account;
     private LocalDate validUntil;
     private LocalDate expireDate;
-    private LocalDate lastActionDate;
+    private LocalDateTime lastActionDateTime;
     private ConsentStatus consentStatus;
     private boolean tppRedirectPreferred;
     private List<PsuIdData> psuIdDataList;

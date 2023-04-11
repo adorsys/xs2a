@@ -70,7 +70,7 @@ class AisConsentConfirmationExpirationServiceTest {
         ConsentEntity consent = aisConsentCaptor.getValue();
         assertEquals(ConsentStatus.EXPIRED, consent.getConsentStatus());
         assertEquals(TODAY, consent.getExpireDate());
-        assertEquals(TODAY, consent.getLastActionDate());
+        assertEquals(TODAY, consent.getLastActionDateTime().toLocalDate());
     }
 
     @Test

@@ -8,7 +8,7 @@
       "recurringIndicator": true,
       "validUntil": "2021-10-10",
       "frequencyPerDay": 5,
-      "lastActionDate": "2019-09-03",
+      "lastActionDateTime": "2019-09-03T15:30:35.035",
       "consentStatus": "EXPIRED",
       "withBalance": false,
       "tppRedirectPreferred": false,

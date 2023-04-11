@@ -28,7 +28,7 @@ import de.adorsys.psd2.xs2a.core.profile.AdditionalInformationAccess;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.Map;
@@ -67,7 +67,7 @@ public class CmsConsentMapper {
         cmsConsent.setRecurringIndicator(entity.isRecurringIndicator());
         cmsConsent.setMultilevelScaRequired(entity.isMultilevelScaRequired());
         cmsConsent.setExpireDate(entity.getExpireDate());
-        cmsConsent.setLastActionDate(entity.getLastActionDate());
+        cmsConsent.setLastActionDateTime(entity.getLastActionDateTime());
         cmsConsent.setStatusChangeTimestamp(entity.getStatusChangeTimestamp());
         cmsConsent.setAuthorisations(authorisationMapper.mapToAuthorisations(authorisations));
         cmsConsent.setUsages(usages);
@@ -99,7 +99,7 @@ public class CmsConsentMapper {
         entity.getPsuDataList().forEach(p -> p.setInstanceId(cmsConsent.getInstanceId()));
         entity.setAuthorisationTemplate(authorisationTemplateMapper.mapToAuthorisationTemplateEntity(cmsConsent.getAuthorisationTemplate()));
         entity.setRecurringIndicator(cmsConsent.isRecurringIndicator());
-        entity.setLastActionDate(LocalDate.now());
+        entity.setLastActionDateTime(LocalDateTime.now());
         entity.setStatusChangeTimestamp(cmsConsent.getStatusChangeTimestamp());
         entity.setInternalRequestId(cmsConsent.getInternalRequestId());
         entity.setTppInformation(consentTppInformationMapper.mapToConsentTppInformationEntity(cmsConsent.getTppInformation()));

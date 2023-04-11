@@ -35,7 +35,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -105,7 +105,7 @@ public class CmsPsuPiisServiceInternal implements CmsPsuPiisService {
     }
 
     private void revokeConsent(ConsentEntity consent) {
-        consent.setLastActionDate(LocalDate.now());
+        consent.setLastActionDateTime(LocalDateTime.now());
         consent.setConsentStatus(ConsentStatus.REVOKED_BY_PSU);
     }
 }

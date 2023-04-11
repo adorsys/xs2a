@@ -66,7 +66,7 @@ class CmsConsentMapperTest {
         //Then
         ConsentEntity expected = jsonReader.getObjectFromFile("json/service/mapper/cms-consent-mapper/new-consent-entity.json", ConsentEntity.class);
         expected.setExternalId(actual.getExternalId());
-        expected.setLastActionDate(actual.getLastActionDate());
+        expected.setLastActionDateTime(actual.getLastActionDateTime());
         expected.setRequestDateTime(actual.getRequestDateTime());
         expected.setCreationTimestamp(actual.getCreationTimestamp());
         assertEquals(expected, actual);

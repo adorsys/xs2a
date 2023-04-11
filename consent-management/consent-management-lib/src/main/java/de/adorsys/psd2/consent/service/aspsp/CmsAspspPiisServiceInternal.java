@@ -43,6 +43,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -133,7 +134,7 @@ public class CmsAspspPiisServiceInternal implements CmsAspspPiisService {
     }
 
     private void changeStatusAndLastActionDate(ConsentEntity consentEntity, ConsentStatus consentStatus) {
-        consentEntity.setLastActionDate(LocalDate.now());
+        consentEntity.setLastActionDateTime(LocalDateTime.now());
         consentEntity.setConsentStatus(consentStatus);
     }
 

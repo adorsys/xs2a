@@ -31,7 +31,7 @@ import org.jetbrains.annotations.Nullable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -59,7 +59,7 @@ public class CmsAspspPsuAccountServiceInternal implements CmsAspspPsuAccountServ
         }
 
         filteredConsents.forEach(cst -> {
-            cst.setLastActionDate(LocalDate.now());
+            cst.setLastActionDateTime(LocalDateTime.now());
             cst.setConsentStatus(ConsentStatus.REVOKED_BY_PSU);
         });
 

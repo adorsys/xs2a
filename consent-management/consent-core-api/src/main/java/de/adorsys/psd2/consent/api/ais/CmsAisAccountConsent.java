@@ -29,6 +29,7 @@ import lombok.NoArgsConstructor;
 import org.jetbrains.annotations.Nullable;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.Map;
@@ -43,7 +44,7 @@ public class CmsAisAccountConsent {
     private LocalDate validUntil;
     private LocalDate expireDate;
     private int frequencyPerDay;
-    private LocalDate lastActionDate;
+    private LocalDateTime lastActionDateTime;
     private ConsentStatus consentStatus;
     private boolean withBalance;
     private boolean tppRedirectPreferred;

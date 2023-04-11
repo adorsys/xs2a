@@ -33,6 +33,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -69,7 +70,7 @@ public class AisConsentConfirmationExpirationServiceImpl implements AisConsentCo
         LocalDate now = LocalDate.now();
         consent.setConsentStatus(ConsentStatus.EXPIRED);
         consent.setExpireDate(now);
-        consent.setLastActionDate(now);
+        consent.setLastActionDateTime(LocalDateTime.now());
         return consentJpaRepository.save(consent);
     }
 
@@ -103,7 +104,7 @@ public class AisConsentConfirmationExpirationServiceImpl implements AisConsentCo
         List<AuthorisationEntity> authorisations = authorisationRepository.findAllByParentExternalIdAndType(consent.getExternalId(), AuthorisationType.CONSENT);
         authorisations.forEach(auth -> auth.setScaStatus(ScaStatus.FAILED));
         authorisationRepository.saveAll(authorisations);
-        consent.setLastActionDate(LocalDate.now());
+        consent.setLastActionDateTime(LocalDateTime.now());
         return consent;
     }
 }
