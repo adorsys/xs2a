@@ -4,16 +4,16 @@ Starting the 1st of August 2022 XS2A-core Team is providing development within t
 
 *Stable branch 14.x*
 
-Stable branch will contain bugfixing and possibly necessary changes to support mandatory endpoints defined by Berlin Group NextGenPSD2 Spec 1.3.11 with all Errata files. Will be supported at least till 31.12.2022
+Stable branch will contain bugfixing and possibly necessary changes to support mandatory endpoints defined by Berlin Group NextGenPSD2 Spec 1.3.11 with all Errata files. Will be supported at least till 31.12.2022.
 
 *Development branch 15.x*
 
 Development branch is oriented on implementation of new features and optional endpoints.
-No backward compatibility with 14.x is guaranteed. Will be released as Stable version 16.x after 31.12.2022
+No backward compatibility with 14.x is guaranteed. Will be released as Stable version 16.x in the nearest future.
 
 [cols="1,3,3,2"]
 |====
-|release date|version 14.x (Stable)|version 15.x (Development)| XS2A extention (commercial)
+|release date|version 14.x (Stable)|version 15.x (Development)| XS2A extension (commercial)
 
 |01.08.2022| 14.0| 15.0| |
 
@@ -31,7 +31,62 @@ a| * All fixes and updates from v.14.0
 
 a|
 
-|*For future development*|  *14.x*| *15.x*| *XS2A extentions (commercial)*
+|26.09.2022| 14.1| 15.1| |
+
+a| * Added DB indexes for application performance improving
+
+a| * Added DB indexes for application performance improving
+* Migrated to PSD2 new yaml 1.3.12.
+
+a|
+
+|27.10.2022| 14.2| 15.2| |
+
+a| * Documentation updated
+* TPP responses fixed
+
+a| * Documentation updated
+* TPP responses fixed
+a|
+
+|28.11.2022| 14.3| 15.3| |
+
+a| * Bugfixes
+
+a| * Bugfixes
+
+a|
+
+|19.12.2022| 14.4| 15.4| |
+
+a|
+
+a| * SQL tables re-organisation:
+
+** Removed column from `tpp_info` SQL table
+
+** Extended `tpp_stop_list` SQL table
+
+a|
+
+|09.01.2023| 14.5| 15.5| |
+
+a| * Spring-related dependencies updated to avoid vulnerabilities
+
+a| * Spring-related dependencies updated to avoid vulnerabilities
+
+a|
+
+
+|30.01.2023| 14.6| 15.6| |
+
+a| * SQL table extended
+
+a| * SQL table extended
+
+a|
+
+|*For future development*|  *16.x*| *17.x*| *XS2A extentions (commercial)*
 
 | | | |AIS - current & savings accounts plugin
 
