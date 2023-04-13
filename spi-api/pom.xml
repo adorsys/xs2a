@@ -22,7 +22,7 @@
     <parent>
         <artifactId>xs2a</artifactId>
         <groupId>de.adorsys.psd2</groupId>
-        <version>14.7</version>
+        <version>14.8-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
