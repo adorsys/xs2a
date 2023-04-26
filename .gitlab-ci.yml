@@ -96,7 +96,7 @@ Lint (Docker compose):
     - docker-compose -f docker-compose.yml config  -q
 
 Lint (Ci file):
-  image: debian:stretch-slim
+  image: debian:stable-slim
   stage: "Lint"
   except:
     - schedules
@@ -108,7 +108,7 @@ Lint (Ci file):
     - yamllint -d relaxed .gitlab-ci.yml
 
 Lint (YAML, JSON, XML):
-  image: debian:stretch-slim
+  image: debian:stable-slim
   stage: "Lint"
   except:
     - schedules
@@ -149,6 +149,8 @@ Lint (dockerfiles):
   stage: "Lint"
   services:
     - docker:dind
+  tags:
+    - aws
   except:
     - schedules
     - develop
@@ -197,6 +199,8 @@ Test (IT):
   image: maven:3.6.3-jdk-11
   services:
     - docker:dind
+  tags:
+    - aws
   except:
     - schedules
   script:
@@ -260,6 +264,8 @@ Build and push images to private repo (develop):
   stage: "Package"
   services:
     - docker:dind
+  tags:
+    - aws
   except:
     - schedules
   only:
@@ -277,6 +283,8 @@ Build and push images to private repo (master):
   stage: "Package"
   services:
     - docker:dind
+  tags:
+    - aws
   only:
     - master
   variables:
@@ -292,6 +300,8 @@ Build and push images to private repo (Tags):
   stage: "Package"
   services:
     - docker:dind
+  tags:
+    - aws
   only:
     - tags
   variables:
