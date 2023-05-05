@@ -21,13 +21,12 @@ package de.adorsys.psd2.xs2a.service.payment.status;
 import de.adorsys.psd2.consent.api.pis.CommonPaymentData;
 import de.adorsys.psd2.xs2a.core.domain.ErrorHolder;
 import de.adorsys.psd2.xs2a.core.mapper.ServiceType;
+import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
 import de.adorsys.psd2.xs2a.domain.pis.CommonPayment;
 import de.adorsys.psd2.xs2a.domain.pis.ReadPaymentStatusResponse;
 import de.adorsys.psd2.xs2a.service.mapper.MediaTypeMapper;
 import de.adorsys.psd2.xs2a.service.mapper.cms_xs2a_mappers.CmsToXs2aPaymentMapper;
-import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiErrorMapper;
-import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiToXs2aLinksMapper;
-import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.Xs2aToSpiPaymentInfoMapper;
+import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.*;
 import de.adorsys.psd2.xs2a.service.spi.SpiAspspConsentDataProviderFactory;
 import de.adorsys.psd2.xs2a.spi.domain.SpiAspspConsentDataProvider;
 import de.adorsys.psd2.xs2a.spi.domain.SpiContextData;
@@ -54,6 +53,8 @@ public class ReadCommonPaymentStatusService implements ReadPaymentStatusService 
     private final SpiAspspConsentDataProviderFactory aspspConsentDataProviderFactory;
     private final MediaTypeMapper mediaTypeMapper;
     private final SpiToXs2aLinksMapper spiToXs2aLinksMapper;
+    private final SpiToXs2aTransactionStatusMapper spiToXs2aTransactionStatusMapper;
+    private final SpiToXs2aTppMessageInformationMapper spiToXs2aTppMessageInformationMapper;
 
     @Override
     public ReadPaymentStatusResponse readPaymentStatus(CommonPaymentData commonPaymentData, SpiContextData spiContextData, @NotNull String encryptedPaymentId, String acceptMediaType) {
@@ -73,11 +74,13 @@ public class ReadCommonPaymentStatusService implements ReadPaymentStatusService 
         }
 
         SpiGetPaymentStatusResponse payload = spiResponse.getPayload();
-        return new ReadPaymentStatusResponse(payload.getTransactionStatus(), payload.getFundsAvailable(),
+        TransactionStatus transactionStatusFromSpi = spiToXs2aTransactionStatusMapper.mapToXs2aTransactionStatus(payload.getTransactionStatus());
+
+        return new ReadPaymentStatusResponse(transactionStatusFromSpi, payload.getFundsAvailable(),
                                              mediaTypeMapper.mapToMediaType(payload.getResponseContentType()),
                                              payload.getPaymentStatusRaw(), payload.getPsuMessage(),
                                              spiToXs2aLinksMapper.toXs2aLinks(payload.getLinks()),
-                                             payload.getTppMessageInformation()
+                                             spiToXs2aTppMessageInformationMapper.toTppMessageInformationSet(payload.getTppMessageInformation())
         );
     }
 }

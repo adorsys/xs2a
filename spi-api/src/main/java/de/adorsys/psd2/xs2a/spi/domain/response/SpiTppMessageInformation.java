@@ -18,6 +18,7 @@
 
 package de.adorsys.psd2.xs2a.spi.domain.response;
 
+import de.adorsys.psd2.xs2a.spi.domain.error.SpiMessageErrorCode;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 

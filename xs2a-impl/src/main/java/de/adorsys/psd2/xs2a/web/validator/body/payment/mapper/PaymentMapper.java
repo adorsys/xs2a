@@ -30,6 +30,7 @@ import de.adorsys.psd2.xs2a.core.profile.AccountReference;
 import de.adorsys.psd2.xs2a.domain.pis.BulkPayment;
 import de.adorsys.psd2.xs2a.domain.pis.PeriodicPayment;
 import de.adorsys.psd2.xs2a.domain.pis.SinglePayment;
+import de.adorsys.psd2.xs2a.web.mapper.ChargeBearerMapper;
 import de.adorsys.psd2.xs2a.web.mapper.PurposeCodeMapper;
 import de.adorsys.psd2.xs2a.web.mapper.RemittanceMapper;
 import org.apache.commons.collections.CollectionUtils;
@@ -48,12 +49,14 @@ public class PaymentMapper {
     private final Xs2aObjectMapper xs2aObjectMapper;
     private final PurposeCodeMapper purposeCodeMapper;
     private final RemittanceMapper remittanceMapper;
+    private final ChargeBearerMapper chargeBearerMapper;
 
     @Autowired
-    public PaymentMapper(Xs2aObjectMapper xs2aObjectMapper, PurposeCodeMapper purposeCodeMapper, RemittanceMapper remittanceMapper) {
+    public PaymentMapper(Xs2aObjectMapper xs2aObjectMapper, PurposeCodeMapper purposeCodeMapper, RemittanceMapper remittanceMapper, ChargeBearerMapper chargeBearerMapper) {
         this.xs2aObjectMapper = xs2aObjectMapper;
         this.purposeCodeMapper = purposeCodeMapper;
         this.remittanceMapper = remittanceMapper;
+        this.chargeBearerMapper = chargeBearerMapper;
     }
 
     public SinglePayment mapToSinglePayment(Object body) {
@@ -93,7 +96,7 @@ public class PaymentMapper {
         payment.setPurposeCode(purposeCodeMapper.mapToPurposeCode(paymentRequest.getPurposeCode()));
         payment.setInstructionIdentification(paymentRequest.getInstructionIdentification());
         payment.setDebtorName(paymentRequest.getDebtorName());
-        payment.setChargeBearer(paymentRequest.getChargeBearer());
+        payment.setChargeBearer(chargeBearerMapper.mapToChargeBearer(paymentRequest.getChargeBearer()));
 
         return payment;
     }
@@ -224,7 +227,7 @@ public class PaymentMapper {
                        payment.setRemittanceInformationStructuredArray(mapToRemittanceArray(p.getRemittanceInformationStructuredArray()));
                        payment.setInstructionIdentification(p.getInstructionIdentification());
                        payment.setDebtorName(p.getDebtorName());
-                       payment.setChargeBearer(p.getChargeBearer());
+                       payment.setChargeBearer(chargeBearerMapper.mapToChargeBearer(p.getChargeBearer()));
 
                        return payment;
                    })

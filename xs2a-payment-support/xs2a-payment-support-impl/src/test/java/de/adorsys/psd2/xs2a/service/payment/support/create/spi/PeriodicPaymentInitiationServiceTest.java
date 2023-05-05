@@ -24,7 +24,6 @@ import de.adorsys.psd2.xs2a.core.error.ErrorType;
 import de.adorsys.psd2.xs2a.core.error.MessageErrorCode;
 import de.adorsys.psd2.xs2a.core.error.TppMessage;
 import de.adorsys.psd2.xs2a.core.mapper.ServiceType;
-import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.domain.pis.PaymentInitiationResponse;
 import de.adorsys.psd2.xs2a.domain.pis.PeriodicPayment;
@@ -37,7 +36,10 @@ import de.adorsys.psd2.xs2a.service.payment.support.TestSpiDataProvider;
 import de.adorsys.psd2.xs2a.service.spi.InitialSpiAspspConsentDataProvider;
 import de.adorsys.psd2.xs2a.service.spi.SpiAspspConsentDataProviderFactory;
 import de.adorsys.psd2.xs2a.spi.domain.SpiContextData;
+import de.adorsys.psd2.xs2a.spi.domain.error.SpiMessageErrorCode;
+import de.adorsys.psd2.xs2a.spi.domain.error.SpiTppMessage;
 import de.adorsys.psd2.xs2a.spi.domain.payment.SpiPeriodicPayment;
+import de.adorsys.psd2.xs2a.spi.domain.payment.SpiTransactionStatus;
 import de.adorsys.psd2.xs2a.spi.domain.payment.response.SpiPeriodicPaymentInitiationResponse;
 import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponse;
 import de.adorsys.psd2.xs2a.spi.service.PeriodicPaymentSpi;
@@ -66,6 +68,7 @@ class PeriodicPaymentInitiationServiceTest {
     private static final PeriodicPaymentInitiationResponse PERIODIC_PAYMENT_RESPONSE = new PeriodicPaymentInitiationResponse();
 
     private static final TppMessage FORMAT_ERROR = new TppMessage(MessageErrorCode.FORMAT_ERROR);
+    private static final SpiTppMessage SPI_FORMAT_ERROR = new SpiTppMessage(SpiMessageErrorCode.FORMAT_ERROR);
     private static final ErrorHolder EXPECTED_ERROR = ErrorHolder.builder(ErrorType.PIS_404)
                                                           .tppMessages(TppMessageInformation.of(MessageErrorCode.RESOURCE_UNKNOWN_404_NO_PAYMENT))
                                                           .build();
@@ -117,7 +120,7 @@ class PeriodicPaymentInitiationServiceTest {
     void createPeriodicPayment_periodicPaymentSpi_initiatePayment_failed() {
         // Given
         SpiResponse<SpiPeriodicPaymentInitiationResponse> expectedFailureResponse = SpiResponse.<SpiPeriodicPaymentInitiationResponse>builder()
-                                                                                        .error(FORMAT_ERROR)
+                                                                                        .error(SPI_FORMAT_ERROR)
                                                                                         .build();
         when(xs2aToSpiPeriodicPaymentMapper.mapToSpiPeriodicPayment(PERIODIC_PAYMENT, PRODUCT))
             .thenReturn(SPI_PERIODIC_PAYMENT);
@@ -138,7 +141,7 @@ class PeriodicPaymentInitiationServiceTest {
     private static SpiPeriodicPaymentInitiationResponse buildSpiPeriodicPaymentInitiationResponse() {
         SpiPeriodicPaymentInitiationResponse response = new SpiPeriodicPaymentInitiationResponse();
         response.setPaymentId(PAYMENT_ID);
-        response.setTransactionStatus(TransactionStatus.RCVD);
+        response.setTransactionStatus(SpiTransactionStatus.RCVD);
         response.setAspspAccountId(ASPSP_ACCOUNT_ID);
         return response;
     }

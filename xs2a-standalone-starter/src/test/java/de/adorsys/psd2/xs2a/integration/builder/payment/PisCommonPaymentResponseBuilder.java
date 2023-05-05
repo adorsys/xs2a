@@ -26,6 +26,7 @@ import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import de.adorsys.psd2.xs2a.integration.builder.PsuIdDataBuilder;
 import de.adorsys.psd2.xs2a.integration.builder.TppInfoBuilder;
 import de.adorsys.psd2.xs2a.spi.domain.payment.SpiPaymentInfo;
+import de.adorsys.psd2.xs2a.spi.domain.payment.SpiTransactionStatus;
 import de.adorsys.psd2.xs2a.spi.domain.payment.response.SpiCommonPaymentInitiationResponse;
 import de.adorsys.psd2.xs2a.spi.domain.payment.response.SpiGetPaymentStatusResponse;
 import de.adorsys.psd2.xs2a.spi.domain.payment.response.SpiPaymentInitiationResponse;
@@ -83,7 +84,7 @@ public class PisCommonPaymentResponseBuilder {
     public static SpiResponse<SpiPaymentInitiationResponse> buildSpiPaymentInitiationResponse() {
         SpiPaymentInitiationResponse response = new SpiCommonPaymentInitiationResponse();
         response.setPaymentId(PAYMENT_ID);
-        response.setTransactionStatus(TransactionStatus.RCVD);
+        response.setTransactionStatus(SpiTransactionStatus.RCVD);
         response.setAspspAccountId(ASPSP_ACCOUNT_ID);
         response.setSpiTransactionFeeIndicator(false);
         response.setMultilevelScaRequired(false);

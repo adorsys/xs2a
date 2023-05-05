@@ -31,7 +31,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @ExtendWith(SpringExtension.class)
-@ContextConfiguration(classes = {Xs2aToSpiPaymentMapper.class, Xs2aToSpiPsuDataMapper.class})
+@ContextConfiguration(classes = {Xs2aToSpiPaymentMapper.class, Xs2aToSpiPsuDataMapper.class, Xs2aToSpiPaymentTypeMapperImpl.class, Xs2aToSpiTransactionStatusMapperImpl.class})
 class Xs2aToSpiPaymentMapperTest {
 
     @Autowired

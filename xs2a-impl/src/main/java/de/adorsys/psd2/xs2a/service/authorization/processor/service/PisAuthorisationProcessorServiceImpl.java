@@ -40,10 +40,7 @@ import de.adorsys.psd2.xs2a.service.consent.PisAspspDataService;
 import de.adorsys.psd2.xs2a.service.consent.Xs2aPisCommonPaymentService;
 import de.adorsys.psd2.xs2a.service.context.SpiContextDataProvider;
 import de.adorsys.psd2.xs2a.service.mapper.cms_xs2a_mappers.Xs2aPisCommonPaymentMapper;
-import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiErrorMapper;
-import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiToXs2aCurrencyConversionInfoMapper;
-import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.Xs2aToSpiPaymentMapper;
-import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.Xs2aToSpiPsuDataMapper;
+import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.*;
 import de.adorsys.psd2.xs2a.service.payment.Xs2aUpdatePaymentAfterSpiService;
 import de.adorsys.psd2.xs2a.service.spi.SpiAspspConsentDataProviderFactory;
 import de.adorsys.psd2.xs2a.spi.domain.SpiAspspConsentDataProvider;
@@ -76,6 +73,7 @@ public class PisAuthorisationProcessorServiceImpl extends PaymentBaseAuthorisati
     private final SpiContextDataProvider spiContextDataProvider;
     private final CurrencyConversionInfoSpi currencyConversionInfoSpi;
     private final SpiToXs2aCurrencyConversionInfoMapper spiToXs2aCurrencyConversionInfoMapper;
+    private final SpiToXs2aTransactionStatusMapper spiToXs2aTransactionStatusMapper;
 
     public PisAuthorisationProcessorServiceImpl(List<PisScaAuthorisationService> services,
                                                 Xs2aToSpiPaymentMapper xs2aToSpiPaymentMapper, PisExecutePaymentService pisExecutePaymentService,
@@ -89,10 +87,19 @@ public class PisAuthorisationProcessorServiceImpl extends PaymentBaseAuthorisati
                                                 PisCommonDecoupledService pisCommonDecoupledService,
                                                 Xs2aToSpiPsuDataMapper xs2aToSpiPsuDataMapper,
                                                 CurrencyConversionInfoSpi currencyConversionInfoSpi,
-                                                SpiToXs2aCurrencyConversionInfoMapper spiToXs2aCurrencyConversionInfoMapper) {
+                                                SpiToXs2aCurrencyConversionInfoMapper spiToXs2aCurrencyConversionInfoMapper,
+                                                SpiToXs2aAuthenticationObjectMapper spiToXs2aAuthenticationObjectMapper,
+                                                SpiToXs2aChallengeDataMapper spiToXs2aChallengeDataMapper,
+                                                SpiToXs2aScaStatusMapper spiToXs2aScaStatusMapper,
+                                                SpiToXs2aScaApproachMapper spiToXs2aScaApproachMapper,
+                                                SpiToXs2aTppMessageInformationMapper spiToXs2aTppMessageInformationMapper,
+                                                SpiToXs2aPaymentTypeMapper spiToXs2aPaymentTypeMapper,
+                                                SpiToXs2aTransactionStatusMapper spiToXs2aTransactionStatusMapper) {
         super(services, xs2aAuthorisationService, xs2aPisCommonPaymentService, xs2aToSpiPaymentMapper,
               spiContextDataProvider, aspspConsentDataProviderFactory, spiErrorMapper,
-              pisAspspDataService, xs2aPisCommonPaymentMapper, xs2aToSpiPsuDataMapper);
+              pisAspspDataService, xs2aPisCommonPaymentMapper, xs2aToSpiPsuDataMapper,
+              spiToXs2aAuthenticationObjectMapper, spiToXs2aChallengeDataMapper, spiToXs2aScaStatusMapper,
+              spiToXs2aScaApproachMapper, spiToXs2aTppMessageInformationMapper, spiToXs2aPaymentTypeMapper);
         this.pisExecutePaymentService = pisExecutePaymentService;
         this.spiErrorMapper = spiErrorMapper;
         this.aspspConsentDataProviderFactory = aspspConsentDataProviderFactory;
@@ -103,6 +110,7 @@ public class PisAuthorisationProcessorServiceImpl extends PaymentBaseAuthorisati
         this.spiContextDataProvider = spiContextDataProvider;
         this.currencyConversionInfoSpi = currencyConversionInfoSpi;
         this.spiToXs2aCurrencyConversionInfoMapper = spiToXs2aCurrencyConversionInfoMapper;
+        this.spiToXs2aTransactionStatusMapper = spiToXs2aTransactionStatusMapper;
     }
 
     @Override
@@ -142,7 +150,7 @@ public class PisAuthorisationProcessorServiceImpl extends PaymentBaseAuthorisati
     @Override
     void updatePaymentDataByPaymentResponse(String paymentId, SpiResponse<SpiPaymentExecutionResponse> spiResponse) {
         SpiPaymentExecutionResponse payload = spiResponse.getPayload();
-        TransactionStatus paymentStatus = payload.getTransactionStatus();
+        TransactionStatus paymentStatus = spiToXs2aTransactionStatusMapper.mapToXs2aTransactionStatus(payload.getTransactionStatus());
 
         if (paymentStatus == TransactionStatus.PATC) {
             xs2aPisCommonPaymentService.updateMultilevelSca(paymentId, true);
@@ -226,7 +234,7 @@ public class PisAuthorisationProcessorServiceImpl extends PaymentBaseAuthorisati
             return new Xs2aUpdatePisCommonPaymentPsuDataResponse(errorHolder, paymentId, authorisationId, psuData);
         }
 
-        TransactionStatus paymentStatus = spiResponse.getPayload().getTransactionStatus();
+        TransactionStatus paymentStatus = spiToXs2aTransactionStatusMapper.mapToXs2aTransactionStatus(spiResponse.getPayload().getTransactionStatus());
 
         if (paymentStatus == TransactionStatus.PATC) {
             xs2aPisCommonPaymentService.updateMultilevelSca(paymentId, true);

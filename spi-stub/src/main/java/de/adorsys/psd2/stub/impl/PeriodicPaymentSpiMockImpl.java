@@ -20,19 +20,19 @@ package de.adorsys.psd2.stub.impl;
 
 import de.adorsys.psd2.stub.impl.service.PaymentServiceMock;
 import de.adorsys.psd2.stub.impl.service.SpiMockData;
-import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
-import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import de.adorsys.psd2.xs2a.spi.domain.SpiAspspConsentDataProvider;
 import de.adorsys.psd2.xs2a.spi.domain.SpiContextData;
 import de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiCheckConfirmationCodeRequest;
 import de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiScaConfirmation;
 import de.adorsys.psd2.xs2a.spi.domain.common.SpiAmount;
 import de.adorsys.psd2.xs2a.spi.domain.payment.SpiPeriodicPayment;
+import de.adorsys.psd2.xs2a.spi.domain.payment.SpiTransactionStatus;
 import de.adorsys.psd2.xs2a.spi.domain.payment.response.SpiGetPaymentStatusResponse;
 import de.adorsys.psd2.xs2a.spi.domain.payment.response.SpiPaymentConfirmationCodeValidationResponse;
 import de.adorsys.psd2.xs2a.spi.domain.payment.response.SpiPaymentExecutionResponse;
 import de.adorsys.psd2.xs2a.spi.domain.payment.response.SpiPeriodicPaymentInitiationResponse;
 import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponse;
+import de.adorsys.psd2.xs2a.spi.domain.sca.SpiScaStatus;
 import de.adorsys.psd2.xs2a.spi.service.PeriodicPaymentSpi;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -56,7 +56,7 @@ public class PeriodicPaymentSpiMockImpl implements PeriodicPaymentSpi {
     public SpiResponse<SpiPeriodicPaymentInitiationResponse> initiatePayment(@NotNull SpiContextData contextData, @NotNull SpiPeriodicPayment payment, @NotNull SpiAspspConsentDataProvider aspspConsentDataProvider) {
         log.info("PeriodicPaymentSpi#initiatePayment: contextData {}, spiPeriodicPayment {}, aspspConsentData {}", contextData, payment, aspspConsentDataProvider.loadAspspConsentData());
         SpiPeriodicPaymentInitiationResponse response = new SpiPeriodicPaymentInitiationResponse();
-        response.setTransactionStatus(TransactionStatus.RCVD);
+        response.setTransactionStatus(SpiTransactionStatus.RCVD);
         response.setPaymentId(UUID.randomUUID().toString());
         response.setAspspAccountId("11111-11111");
 
@@ -102,7 +102,7 @@ public class PeriodicPaymentSpiMockImpl implements PeriodicPaymentSpi {
         log.info("PeriodicPaymentSpi#executePaymentWithoutSca: contextData {}, spiPeriodicPayment {}, aspspConsentData {}", contextData, payment, aspspConsentDataProvider.loadAspspConsentData());
 
         return SpiResponse.<SpiPaymentExecutionResponse>builder()
-                   .payload(new SpiPaymentExecutionResponse(TransactionStatus.ACCP))
+                   .payload(new SpiPaymentExecutionResponse(SpiTransactionStatus.ACCP))
                    .build();
     }
 
@@ -112,7 +112,7 @@ public class PeriodicPaymentSpiMockImpl implements PeriodicPaymentSpi {
         log.info("PeriodicPaymentSpi#verifyScaAuthorisationAndExecutePayment: contextData {}, spiScaConfirmation{}, spiPeriodicPayment {}, aspspConsentData {}", contextData, spiScaConfirmation, payment, aspspConsentDataProvider.loadAspspConsentData());
 
         return SpiResponse.<SpiPaymentExecutionResponse>builder()
-                   .payload(new SpiPaymentExecutionResponse(TransactionStatus.ACCP))
+                   .payload(new SpiPaymentExecutionResponse(SpiTransactionStatus.ACCP))
                    .build();
     }
 
@@ -121,7 +121,7 @@ public class PeriodicPaymentSpiMockImpl implements PeriodicPaymentSpi {
         log.info("PeriodicPaymentSpi#checkConfirmationCode: contextData {}, spiCheckConfirmationCodeRequest{}, authorisationId {}, aspspConsentData {}", contextData, spiCheckConfirmationCodeRequest.getConfirmationCode(), spiCheckConfirmationCodeRequest.getAuthorisationId(), aspspConsentDataProvider.loadAspspConsentData());
 
         return SpiResponse.<SpiPaymentConfirmationCodeValidationResponse>builder()
-                   .payload(new SpiPaymentConfirmationCodeValidationResponse(ScaStatus.FINALISED, TransactionStatus.ACSP))
+                   .payload(new SpiPaymentConfirmationCodeValidationResponse(SpiScaStatus.FINALISED, SpiTransactionStatus.ACSP))
                    .build();
     }
 

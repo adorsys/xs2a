@@ -36,9 +36,7 @@ import de.adorsys.psd2.xs2a.service.authorization.processor.model.AuthorisationP
 import de.adorsys.psd2.xs2a.service.authorization.processor.model.AuthorisationProcessorResponse;
 import de.adorsys.psd2.xs2a.service.consent.Xs2aPiisConsentService;
 import de.adorsys.psd2.xs2a.service.context.SpiContextDataProvider;
-import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiErrorMapper;
-import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.Xs2aToSpiPiisConsentMapper;
-import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.Xs2aToSpiPsuDataMapper;
+import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.*;
 import de.adorsys.psd2.xs2a.service.spi.SpiAspspConsentDataProviderFactory;
 import de.adorsys.psd2.xs2a.spi.domain.SpiAspspConsentDataProvider;
 import de.adorsys.psd2.xs2a.spi.domain.SpiContextData;
@@ -76,8 +74,14 @@ public class PiisAuthorisationProcessorServiceImpl extends ConsentAuthorisationP
                                                  PiisConsentSpi piisConsentSpi,
                                                  Xs2aToSpiPiisConsentMapper xs2aToSpiPiisConsentMapper,
                                                  CommonDecoupledPiisService commonDecoupledPiisService,
-                                                 PiisScaAuthorisationService piisScaAuthorisationService) {
-        super(authorisationService, spiContextDataProvider, aspspConsentDataProviderFactory, spiErrorMapper, psuDataMapper);
+                                                 PiisScaAuthorisationService piisScaAuthorisationService,
+                                                 SpiToXs2aScaStatusMapper spiToXs2aScaStatusMapper,
+                                                 SpiToXs2aScaApproachMapper spiToXs2aScaApproachMapper,
+                                                 SpiToXs2aTppMessageInformationMapper spiToXs2aTppMessageInformationMapper,
+                                                 SpiToXs2aConsentStatusMapper spiToXs2aConsentStatusMapper,
+                                                 SpiToXs2aAuthenticationObjectMapper spiToXs2aAuthenticationObjectMapper,
+                                                 SpiToXs2aChallengeDataMapper spiToXs2aChallengeDataMapper) {
+        super(authorisationService, spiContextDataProvider, aspspConsentDataProviderFactory, spiErrorMapper, spiToXs2aScaStatusMapper, spiToXs2aScaApproachMapper, spiToXs2aTppMessageInformationMapper, spiToXs2aConsentStatusMapper, spiToXs2aAuthenticationObjectMapper, spiToXs2aChallengeDataMapper, psuDataMapper);
         this.services = services;
         this.piisConsentService = piisConsentService;
         this.piisConsentSpi = piisConsentSpi;

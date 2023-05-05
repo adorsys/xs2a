@@ -77,7 +77,7 @@ class ScaMethodsMapperTest {
     }
 
     @Test
-    void mapToAuthenticationObjectList_withNull_returnNull(){
+    void mapToAuthenticationObjectList_withNull_returnNull() {
         // When
         List<de.adorsys.psd2.xs2a.core.authorisation.AuthenticationObject> scaMethodsList = scaMethodsMapper.mapToAuthenticationObjectList(null);
 

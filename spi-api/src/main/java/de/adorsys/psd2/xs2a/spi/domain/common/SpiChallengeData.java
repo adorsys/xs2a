@@ -18,13 +18,19 @@
 
 package de.adorsys.psd2.xs2a.spi.domain.common;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.ArrayUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import java.util.List;
 
 @Data
 @AllArgsConstructor
+@NoArgsConstructor
 public class SpiChallengeData {
     private byte[] image;
     private List<String> data;
@@ -32,4 +38,15 @@ public class SpiChallengeData {
     private Integer otpMaxLength;
     private SpiOtpFormat otpFormat;
     private String additionalInformation;
+
+    @JsonIgnore
+    public boolean isEmpty() {
+        return ArrayUtils.isEmpty(image)
+                   && CollectionUtils.isEmpty(data)
+                   && StringUtils.isBlank(imageLink)
+                   && otpMaxLength == null
+                   && otpFormat == null
+                   && StringUtils.isBlank(additionalInformation);
+
+    }
 }

@@ -43,9 +43,7 @@ import de.adorsys.psd2.xs2a.service.consent.PisPsuDataService;
 import de.adorsys.psd2.xs2a.service.consent.Xs2aPisCommonPaymentService;
 import de.adorsys.psd2.xs2a.service.context.SpiContextDataProvider;
 import de.adorsys.psd2.xs2a.service.mapper.cms_xs2a_mappers.Xs2aPisCommonPaymentMapper;
-import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiErrorMapper;
-import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.Xs2aToSpiPaymentMapper;
-import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.Xs2aToSpiPsuDataMapper;
+import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.*;
 import de.adorsys.psd2.xs2a.service.payment.Xs2aUpdatePaymentAfterSpiService;
 import de.adorsys.psd2.xs2a.service.spi.SpiAspspConsentDataProviderFactory;
 import de.adorsys.psd2.xs2a.spi.domain.SpiAspspConsentDataProvider;
@@ -84,10 +82,18 @@ public class PisCancellationAuthorisationProcessorServiceImpl extends PaymentBas
                                                             Xs2aPisCommonPaymentService xs2aPisCommonPaymentService,
                                                             PisCommonDecoupledService pisCommonDecoupledService,
                                                             PisPsuDataService pisPsuDataService,
-                                                            Xs2aToSpiPsuDataMapper xs2aToSpiPsuDataMapper) {
+                                                            Xs2aToSpiPsuDataMapper xs2aToSpiPsuDataMapper,
+                                                            SpiToXs2aAuthenticationObjectMapper spiToXs2aAuthenticationObjectMapper,
+                                                            SpiToXs2aChallengeDataMapper spiToXs2aChallengeDataMapper,
+                                                            SpiToXs2aScaStatusMapper spiToXs2aScaStatusMapper,
+                                                            SpiToXs2aScaApproachMapper spiToXs2aScaApproachMapper,
+                                                            SpiToXs2aTppMessageInformationMapper spiToXs2aTppMessageInformationMapper,
+                                                            SpiToXs2aPaymentTypeMapper spiToXs2aPaymentTypeMapper) {
         super(services, xs2aAuthorisationService, xs2aPisCommonPaymentService, xs2aToSpiPaymentMapper,
               spiContextDataProvider, aspspConsentDataProviderFactory, spiErrorMapper,
-              pisAspspDataService, xs2aPisCommonPaymentMapper, xs2aToSpiPsuDataMapper);
+              pisAspspDataService, xs2aPisCommonPaymentMapper, xs2aToSpiPsuDataMapper, spiToXs2aAuthenticationObjectMapper,
+              spiToXs2aChallengeDataMapper, spiToXs2aScaStatusMapper, spiToXs2aScaApproachMapper,
+              spiToXs2aTppMessageInformationMapper, spiToXs2aPaymentTypeMapper);
         this.paymentCancellationSpi = paymentCancellationSpi;
         this.spiErrorMapper = spiErrorMapper;
         this.aspspConsentDataProviderFactory = aspspConsentDataProviderFactory;
@@ -113,8 +119,8 @@ public class PisCancellationAuthorisationProcessorServiceImpl extends PaymentBas
 
     @Override
     SpiResponse<SpiPaymentExecutionResponse> verifyScaAuthorisationAndExecutePayment(Authorisation authorisation,
-                                                                            SpiPayment payment, SpiScaConfirmation spiScaConfirmation,
-                                                                            SpiContextData contextData, SpiAspspConsentDataProvider spiAspspConsentDataProvider) {
+                                                                                     SpiPayment payment, SpiScaConfirmation spiScaConfirmation,
+                                                                                     SpiContextData contextData, SpiAspspConsentDataProvider spiAspspConsentDataProvider) {
         return paymentCancellationSpi.verifyScaAuthorisationAndCancelPaymentWithResponse(contextData, spiScaConfirmation, payment, spiAspspConsentDataProvider);
     }
 

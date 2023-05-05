@@ -53,46 +53,46 @@ class SpiToXs2aChallengeDataMapperTest {
     @Test
     void toChallengeData_validData_otpFormatIsCharacter() {
         ChallengeData expected = jsonReader.getObjectFromFile("json/service/mapper/spi_xs2a_mappers/challenge-data-expected.json", ChallengeData.class);
-        ChallengeData actual  = mapper.toChallengeData(getTestSpiChallengeData_otpFormatIsCharacters());
+        ChallengeData actual = mapper.toChallengeData(getTestSpiChallengeData_otpFormatIsCharacters());
         assertEquals(expected, actual);
     }
 
     @Test
     void toChallengeData_validData_otpFormatIsInteger() {
-        ChallengeData actual  = mapper.toChallengeData(getTestSpiChallengeData_otpFormatIsInteger());
+        ChallengeData actual = mapper.toChallengeData(getTestSpiChallengeData_otpFormatIsInteger());
         assertEquals(OtpFormat.INTEGER, actual.getOtpFormat());
     }
 
     @Test
     void toChallengeData_validData_otpFormatIsNull() {
-        ChallengeData actual  = mapper.toChallengeData(getTestSpiChallengeData_otpFormatIsNull());
+        ChallengeData actual = mapper.toChallengeData(getTestSpiChallengeData_otpFormatIsNull());
         assertNull(actual.getOtpFormat());
     }
 
     private SpiChallengeData getTestSpiChallengeData_otpFormatIsCharacters() {
         return new SpiChallengeData(new byte[0],
-            List.of("test data"),
-            "imagelink",
-            10,
-            SpiOtpFormat.CHARACTERS,
-            "additionalInformation");
+                                    List.of("test data"),
+                                    "imagelink",
+                                    10,
+                                    SpiOtpFormat.CHARACTERS,
+                                    "additionalInformation");
     }
 
     private SpiChallengeData getTestSpiChallengeData_otpFormatIsInteger() {
         return new SpiChallengeData(new byte[0],
-            List.of("test data"),
-            "imagelink",
-            10,
-            SpiOtpFormat.INTEGER,
-            "additionalInformation");
+                                    List.of("test data"),
+                                    "imagelink",
+                                    10,
+                                    SpiOtpFormat.INTEGER,
+                                    "additionalInformation");
     }
 
     private SpiChallengeData getTestSpiChallengeData_otpFormatIsNull() {
         return new SpiChallengeData(new byte[0],
-            List.of("test data"),
-            "imagelink",
-            10,
-            null,
-            "additionalInformation");
+                                    List.of("test data"),
+                                    "imagelink",
+                                    10,
+                                    null,
+                                    "additionalInformation");
     }
 }

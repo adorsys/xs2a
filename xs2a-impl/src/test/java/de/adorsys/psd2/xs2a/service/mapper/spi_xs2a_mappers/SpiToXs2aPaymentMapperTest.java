@@ -45,7 +45,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.Mockito.mock;
 
 @ExtendWith(SpringExtension.class)
-@ContextConfiguration(classes = {SpiToXs2aPaymentMapperImpl.class, ScaMethodsMapperImpl.class})
+@ContextConfiguration(classes = {SpiToXs2aPaymentMapperImpl.class, ScaMethodsMapperImpl.class, SpiToXs2aTppMessageInformationMapperImpl.class, SpiToXs2aPaymentTypeMapperImpl.class, SpiToXs2aChallengeDataMapperImpl.class})
 class SpiToXs2aPaymentMapperTest {
 
     @Autowired

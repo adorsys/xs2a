@@ -18,9 +18,9 @@
 
 package de.adorsys.psd2.xs2a.service.payment.support;
 
-import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
 import de.adorsys.psd2.xs2a.spi.domain.SpiContextData;
 import de.adorsys.psd2.xs2a.spi.domain.psu.SpiPsuData;
+import de.adorsys.psd2.xs2a.spi.domain.tpp.SpiTppInfo;
 
 import java.util.UUID;
 
@@ -62,7 +62,7 @@ public class TestSpiDataProvider {
                 .psuAcceptLanguage(PSU_ACCEPT_LANGUAGE)
                 .psuHttpMethod(PSU_HTTP_METHOD)
                 .psuDeviceId(PSU_DEVICE_ID).build(),
-            new TppInfo(),
+            new SpiTppInfo(),
             X_REQUEST_ID,
             INTERNAL_REQUEST_ID,
             AUTHORISATION,
@@ -77,7 +77,7 @@ public class TestSpiDataProvider {
         return new SpiContextData(null, null, null, null, null, null, null, null, null);
     }
 
-    public static SpiContextData buildWithPsuTppAuthToken(SpiPsuData psuData, TppInfo tppInfo, String oAuth2Token) {
+    public static SpiContextData buildWithPsuTppAuthToken(SpiPsuData psuData, SpiTppInfo tppInfo, String oAuth2Token) {
         return new SpiContextData(psuData, tppInfo, X_REQUEST_ID, INTERNAL_REQUEST_ID, oAuth2Token, TPP_BRAND_LOGGING_INFORMATION, null, null, null);
     }
 

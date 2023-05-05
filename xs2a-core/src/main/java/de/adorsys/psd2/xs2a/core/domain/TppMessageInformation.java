@@ -21,12 +21,14 @@ package de.adorsys.psd2.xs2a.core.domain;
 import de.adorsys.psd2.xs2a.core.error.MessageErrorCode;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.RequiredArgsConstructor;
 
 import static de.adorsys.psd2.xs2a.core.domain.MessageCategory.ERROR;
 import static de.adorsys.psd2.xs2a.core.domain.MessageCategory.WARNING;
 
 @Data
 @EqualsAndHashCode
+@RequiredArgsConstructor
 public class TppMessageInformation {
     private MessageCategory category;
     private MessageErrorCode messageErrorCode;

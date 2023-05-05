@@ -23,6 +23,7 @@ import de.adorsys.psd2.xs2a.service.authorization.CommonDecoupledConsentService;
 import de.adorsys.psd2.xs2a.service.authorization.Xs2aAuthorisationService;
 import de.adorsys.psd2.xs2a.service.context.SpiContextDataProvider;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiErrorMapper;
+import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiToXs2aScaStatusMapper;
 import de.adorsys.psd2.xs2a.service.spi.SpiAspspConsentDataProviderFactory;
 import de.adorsys.psd2.xs2a.spi.domain.SpiAspspConsentDataProvider;
 import de.adorsys.psd2.xs2a.spi.domain.SpiContextData;
@@ -40,8 +41,8 @@ public class CommonDecoupledPiisService extends CommonDecoupledConsentService<Sp
                                       SpiAspspConsentDataProviderFactory aspspConsentDataProviderFactory,
                                       SpiContextDataProvider spiContextDataProvider,
                                       Xs2aAuthorisationService authorisationService,
-                                      PiisConsentSpi piisConsentSpi) {
-        super(spiErrorMapper, aspspConsentDataProviderFactory, spiContextDataProvider, authorisationService);
+                                      PiisConsentSpi piisConsentSpi, SpiToXs2aScaStatusMapper spiToXs2aScaStatusMapper) {
+        super(spiErrorMapper, aspspConsentDataProviderFactory, spiContextDataProvider, authorisationService, spiToXs2aScaStatusMapper);
         this.piisConsentSpi = piisConsentSpi;
     }
 

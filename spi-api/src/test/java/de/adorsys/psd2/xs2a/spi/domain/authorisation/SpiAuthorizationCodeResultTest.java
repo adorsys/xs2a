@@ -18,7 +18,7 @@
 
 package de.adorsys.psd2.xs2a.spi.domain.authorisation;
 
-import de.adorsys.psd2.xs2a.core.authorisation.AuthenticationObject;
+import de.adorsys.psd2.xs2a.spi.domain.common.SpiAuthenticationObject;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -29,7 +29,7 @@ class SpiAuthorizationCodeResultTest {
     @Test
     void isEmpty_works_by_null_ChallengeData() {
         SpiAuthorizationCodeResult spiAuthorizationCodeResult = new SpiAuthorizationCodeResult();
-        spiAuthorizationCodeResult.setSelectedScaMethod(new AuthenticationObject());
+        spiAuthorizationCodeResult.setSelectedScaMethod(new SpiAuthenticationObject());
 
         assertFalse(spiAuthorizationCodeResult.isEmpty());
     }
