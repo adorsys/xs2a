@@ -71,9 +71,9 @@ class SpiToXs2aTransactionMapperTest {
     void mapToXs2aTransactionList() {
         //Given
         Transactions expected = jsonReader
-            .getObjectFromFile("json/service/mapper/spi_xs2a_mappers/transactions.json", Transactions.class);
+                                    .getObjectFromFile("json/service/mapper/spi_xs2a_mappers/transactions.json", Transactions.class);
         List<SpiTransaction> spiTransactions = Collections
-            .singletonList(jsonReader.getObjectFromFile("json/service/mapper/spi_xs2a_mappers/spi-transaction.json", SpiTransaction.class));
+                                                   .singletonList(jsonReader.getObjectFromFile("json/service/mapper/spi_xs2a_mappers/spi-transaction.json", SpiTransaction.class));
 
         //When
         List<Transactions> actual = mapper.mapToXs2aTransactionList(spiTransactions);
@@ -124,11 +124,11 @@ class SpiToXs2aTransactionMapperTest {
     void mapToXs2aTransaction_withAdditionalInfoStructured() {
         //Given
         Xs2aAdditionalInformationStructured expected = jsonReader
-            .getObjectFromFile("json/service/mapper/spi_xs2a_mappers/xs2a-additional-info-structured-expected.json", Xs2aAdditionalInformationStructured.class);
+                                                           .getObjectFromFile("json/service/mapper/spi_xs2a_mappers/xs2a-additional-info-structured-expected.json", Xs2aAdditionalInformationStructured.class);
 
         //When
         Xs2aAdditionalInformationStructured actual = mapper
-            .mapToXs2aTransaction(getTestSpiTransaction_additionalInfo()).getAdditionalInformationStructured();
+                                                         .mapToXs2aTransaction(getTestSpiTransaction_additionalInfo()).getAdditionalInformationStructured();
 
         //Then
         assertThat(actual)
@@ -147,11 +147,11 @@ class SpiToXs2aTransactionMapperTest {
 
     private SpiTransaction getTestSpiTransaction_additionalInfo() {
         return jsonReader
-            .getObjectFromFile("json/service/mapper/spi_xs2a_mappers/spi-transaction-additional-info-struct.json", SpiTransaction.class);
+                   .getObjectFromFile("json/service/mapper/spi_xs2a_mappers/spi-transaction-additional-info-struct.json", SpiTransaction.class);
     }
 
     private SpiTransaction getTestSpiTransaction_additionalInfo_nullStandingOrderDetails() {
         return jsonReader
-            .getObjectFromFile("json/service/mapper/spi_xs2a_mappers/spi-transaction-additional-info-struct-stand-order-details-null.json", SpiTransaction.class);
+                   .getObjectFromFile("json/service/mapper/spi_xs2a_mappers/spi-transaction-additional-info-struct-stand-order-details-null.json", SpiTransaction.class);
     }
 }

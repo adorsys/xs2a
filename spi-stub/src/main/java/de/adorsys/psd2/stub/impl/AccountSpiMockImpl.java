@@ -18,14 +18,14 @@
 
 package de.adorsys.psd2.stub.impl;
 
-import de.adorsys.psd2.xs2a.core.ais.BookingStatus;
-import de.adorsys.psd2.xs2a.core.pis.FrequencyCode;
-import de.adorsys.psd2.xs2a.core.pis.PisDayOfExecution;
-import de.adorsys.psd2.xs2a.core.pis.PisExecutionRule;
 import de.adorsys.psd2.xs2a.spi.domain.SpiAspspConsentDataProvider;
 import de.adorsys.psd2.xs2a.spi.domain.SpiContextData;
 import de.adorsys.psd2.xs2a.spi.domain.account.*;
 import de.adorsys.psd2.xs2a.spi.domain.common.SpiAmount;
+import de.adorsys.psd2.xs2a.spi.domain.consent.SpiBookingStatus;
+import de.adorsys.psd2.xs2a.spi.domain.payment.SpiFrequencyCode;
+import de.adorsys.psd2.xs2a.spi.domain.payment.SpiPisDayOfExecution;
+import de.adorsys.psd2.xs2a.spi.domain.payment.SpiPisExecutionRule;
 import de.adorsys.psd2.xs2a.spi.domain.payment.SpiRemittance;
 import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponse;
 import de.adorsys.psd2.xs2a.spi.service.AccountSpi;
@@ -40,11 +40,7 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.Month;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Currency;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 @Slf4j
 @Service
@@ -105,7 +101,7 @@ public class AccountSpiMockImpl implements AccountSpi {
         log.info("AccountSpi#requestTransactionsForAccount: contextData {}, acceptMediaType {}, withBalance {}, dateFrom {}, dateTo {}, bookingStatus {}, accountReference {}, accountConsent-id {}, aspspConsentData {}", contextData, spiTransactionReportParameters.getAcceptMediaType(), spiTransactionReportParameters.isWithBalance(), spiTransactionReportParameters.getDateFrom(), spiTransactionReportParameters.getDateTo(), spiTransactionReportParameters.getBookingStatus(), accountReference, accountConsent.getId(), aspspConsentDataProvider.loadAspspConsentData());
 
 
-        List<SpiTransaction> transactions = BookingStatus.INFORMATION == spiTransactionReportParameters.getBookingStatus() ?
+        List<SpiTransaction> transactions = SpiBookingStatus.INFORMATION == spiTransactionReportParameters.getBookingStatus() ?
                                                 buildSpiInformationTransactionList() :
                                                 buildSpiTransactionList();
 
@@ -201,8 +197,8 @@ public class AccountSpiMockImpl implements AccountSpi {
     private SpiTransaction buildInformationSpiTransaction() {
         SpiStandingOrderDetails standingOrderDetails = new SpiStandingOrderDetails(LocalDate.of(2021, Month.JANUARY, 4),
                                                                                    LocalDate.of(2021, Month.MARCH, 12),
-                                                                                   PisExecutionRule.PRECEDING, null,
-                                                                                   FrequencyCode.MONTHLY, null, null, PisDayOfExecution.DAY_24, null);
+                                                                                   SpiPisExecutionRule.PRECEDING, null,
+                                                                                   SpiFrequencyCode.MONTHLY, null, null, SpiPisDayOfExecution.DAY_24, null);
 
         SpiAdditionalInformationStructured additionalInformationStructured = new SpiAdditionalInformationStructured(standingOrderDetails);
         return new SpiTransaction(null, null, null, null, null,

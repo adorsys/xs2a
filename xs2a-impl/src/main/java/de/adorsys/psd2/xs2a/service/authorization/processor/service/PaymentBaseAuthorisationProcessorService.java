@@ -44,9 +44,7 @@ import de.adorsys.psd2.xs2a.service.consent.PisAspspDataService;
 import de.adorsys.psd2.xs2a.service.consent.Xs2aPisCommonPaymentService;
 import de.adorsys.psd2.xs2a.service.context.SpiContextDataProvider;
 import de.adorsys.psd2.xs2a.service.mapper.cms_xs2a_mappers.Xs2aPisCommonPaymentMapper;
-import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiErrorMapper;
-import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.Xs2aToSpiPaymentMapper;
-import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.Xs2aToSpiPsuDataMapper;
+import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.*;
 import de.adorsys.psd2.xs2a.service.spi.SpiAspspConsentDataProviderFactory;
 import de.adorsys.psd2.xs2a.spi.domain.SpiAspspConsentDataProvider;
 import de.adorsys.psd2.xs2a.spi.domain.SpiContextData;
@@ -81,6 +79,12 @@ abstract class PaymentBaseAuthorisationProcessorService extends BaseAuthorisatio
     private final PisAspspDataService pisAspspDataService;
     private final Xs2aPisCommonPaymentMapper xs2aPisCommonPaymentMapper;
     private final Xs2aToSpiPsuDataMapper xs2aToSpiPsuDataMapper;
+    private final SpiToXs2aAuthenticationObjectMapper spiToXs2aAuthenticationObjectMapper;
+    private final SpiToXs2aChallengeDataMapper spiToXs2aChallengeDataMapper;
+    private final SpiToXs2aScaStatusMapper spiToXs2aScaStatusMapper;
+    private final SpiToXs2aScaApproachMapper spiToXs2aScaApproachMapper;
+    private final SpiToXs2aTppMessageInformationMapper spiToXs2aTppMessageInformationMapper;
+    private final SpiToXs2aPaymentTypeMapper spiToXs2aPaymentTypeMapper;
 
     protected PaymentBaseAuthorisationProcessorService(List<PisScaAuthorisationService> services,
                                                        Xs2aAuthorisationService xs2aAuthorisationService,
@@ -91,7 +95,14 @@ abstract class PaymentBaseAuthorisationProcessorService extends BaseAuthorisatio
                                                        SpiErrorMapper spiErrorMapper,
                                                        PisAspspDataService pisAspspDataService,
                                                        Xs2aPisCommonPaymentMapper xs2aPisCommonPaymentMapper,
-                                                       Xs2aToSpiPsuDataMapper xs2aToSpiPsuDataMapper) {
+                                                       Xs2aToSpiPsuDataMapper xs2aToSpiPsuDataMapper,
+                                                       SpiToXs2aAuthenticationObjectMapper spiToXs2aAuthenticationObjectMapper,
+                                                       SpiToXs2aChallengeDataMapper spiToXs2aChallengeDataMapper,
+                                                       SpiToXs2aScaStatusMapper spiToXs2aScaStatusMapper,
+                                                       SpiToXs2aScaApproachMapper spiToXs2aScaApproachMapper,
+                                                       SpiToXs2aTppMessageInformationMapper spiToXs2aTppMessageInformationMapper,
+                                                       SpiToXs2aPaymentTypeMapper spiToXs2aPaymentTypeMapper) {
+        super(spiToXs2aChallengeDataMapper);
         this.services = services;
         this.xs2aAuthorisationService = xs2aAuthorisationService;
         this.xs2aPisCommonPaymentService = xs2aPisCommonPaymentService;
@@ -102,6 +113,12 @@ abstract class PaymentBaseAuthorisationProcessorService extends BaseAuthorisatio
         this.pisAspspDataService = pisAspspDataService;
         this.xs2aPisCommonPaymentMapper = xs2aPisCommonPaymentMapper;
         this.xs2aToSpiPsuDataMapper = xs2aToSpiPsuDataMapper;
+        this.spiToXs2aAuthenticationObjectMapper = spiToXs2aAuthenticationObjectMapper;
+        this.spiToXs2aChallengeDataMapper = spiToXs2aChallengeDataMapper;
+        this.spiToXs2aScaStatusMapper = spiToXs2aScaStatusMapper;
+        this.spiToXs2aScaApproachMapper = spiToXs2aScaApproachMapper;
+        this.spiToXs2aTppMessageInformationMapper = spiToXs2aTppMessageInformationMapper;
+        this.spiToXs2aPaymentTypeMapper = spiToXs2aPaymentTypeMapper;
     }
 
     @Override
@@ -127,10 +144,10 @@ abstract class PaymentBaseAuthorisationProcessorService extends BaseAuthorisatio
 
         SpiStartAuthorisationResponse startAuthorisationResponse = spiResponse.getPayload();
 
-        ScaStatus scaStatusFromSpi = startAuthorisationResponse.getScaStatus();
-        ScaApproach scaApproachFromSpi = startAuthorisationResponse.getScaApproach();
+        ScaStatus scaStatusFromSpi = spiToXs2aScaStatusMapper.mapToXs2aScaStatus(startAuthorisationResponse.getScaStatus());
+        ScaApproach scaApproachFromSpi = spiToXs2aScaApproachMapper.mapToXs2aScaApproach(startAuthorisationResponse.getScaApproach());
         String psuMessage = startAuthorisationResponse.getPsuMessage();
-        Set<TppMessageInformation> tppMessages = startAuthorisationResponse.getTppMessages();
+        Set<TppMessageInformation> tppMessages = spiToXs2aTppMessageInformationMapper.toTppMessageInformationSet(startAuthorisationResponse.getTppMessages());
 
         return new CreatePaymentAuthorisationProcessorResponse(scaStatusFromSpi, scaApproachFromSpi, psuMessage, tppMessages, paymentId, psuIdData);
     }
@@ -201,9 +218,9 @@ abstract class PaymentBaseAuthorisationProcessorService extends BaseAuthorisatio
 
         SpiPayment payment = getSpiPayment(request.getPaymentId());
         SpiResponse<SpiPaymentExecutionResponse> spiResponse = verifyScaAuthorisationAndExecutePayment(authorisation, payment,
-                                                                                              spiScaConfirmation,
-                                                                                              contextData,
-                                                                                              aspspConsentDataProvider);
+                                                                                                       spiScaConfirmation,
+                                                                                                       contextData,
+                                                                                                       aspspConsentDataProvider);
 
         if (spiResponse.hasError()) {
             ErrorHolder errorHolder = spiErrorMapper.mapToErrorHolder(spiResponse, ServiceType.PIS);
@@ -235,10 +252,10 @@ abstract class PaymentBaseAuthorisationProcessorService extends BaseAuthorisatio
                                                                               SpiAspspConsentDataProvider spiAspspConsentDataProvider);
 
     abstract SpiResponse<SpiPaymentExecutionResponse> verifyScaAuthorisationAndExecutePayment(Authorisation authorisation,
-                                                                 SpiPayment payment,
-                                                                 SpiScaConfirmation spiScaConfirmation,
-                                                                 SpiContextData contextData,
-                                                                 SpiAspspConsentDataProvider spiAspspConsentDataProvider);
+                                                                                              SpiPayment payment,
+                                                                                              SpiScaConfirmation spiScaConfirmation,
+                                                                                              SpiContextData contextData,
+                                                                                              SpiAspspConsentDataProvider spiAspspConsentDataProvider);
 
     abstract SpiResponse<SpiPsuAuthorisationResponse> authorisePsu(PaymentAuthorisationParameters request, SpiPayment payment,
                                                                    SpiAspspConsentDataProvider aspspConsentDataProvider, SpiPsuData spiPsuData,
@@ -260,7 +277,7 @@ abstract class PaymentBaseAuthorisationProcessorService extends BaseAuthorisatio
     abstract boolean needProcessExemptedSca(PaymentType paymentType, boolean isScaExempted);
 
     abstract Xs2aCurrencyConversionInfo getCurrencyConversionInfo(SpiContextData contextData, SpiPayment payment,
-                                                                   String authorisationId, SpiAspspConsentDataProvider aspspConsentDataProvider);
+                                                                  String authorisationId, SpiAspspConsentDataProvider aspspConsentDataProvider);
 
     PisScaAuthorisationService getService(ScaApproach scaApproach) {
         return services.stream().filter(s -> s.getScaApproachServiceType() == scaApproach).findFirst()
@@ -322,7 +339,7 @@ abstract class PaymentBaseAuthorisationProcessorService extends BaseAuthorisatio
             return executePaymentWithoutSca(authorisationProcessorRequest, psuData, paymentType, payment, contextData, EXEMPTED, xs2aCurrencyConversionInfo);
         }
 
-        List<AuthenticationObject> spiScaMethods = availableScaMethods.getAvailableScaMethods();
+        List<AuthenticationObject> spiScaMethods = spiToXs2aAuthenticationObjectMapper.toAuthenticationObjectList(availableScaMethods.getAvailableScaMethods());
 
         return processScaMethods(authorisationProcessorRequest, psuData, paymentType, payment, aspspConsentDataProvider,
                                  contextData, spiScaMethods, xs2aCurrencyConversionInfo);
@@ -366,7 +383,7 @@ abstract class PaymentBaseAuthorisationProcessorService extends BaseAuthorisatio
         SpiPayment payment = getSpiPayment(request.getPaymentId());
 
         Xs2aCurrencyConversionInfo xs2aCurrencyConversionInfo = getCurrencyConversionInfo(contextData, payment, authorisationId, aspspConsentDataProvider);
-        return new Xs2aUpdatePisCommonPaymentPsuDataResponse(PSUIDENTIFIED, paymentId, authorisationId, psuData,xs2aCurrencyConversionInfo);
+        return new Xs2aUpdatePisCommonPaymentPsuDataResponse(PSUIDENTIFIED, paymentId, authorisationId, psuData, xs2aCurrencyConversionInfo);
     }
 
     Xs2aUpdatePisCommonPaymentPsuDataResponse buildUpdateResponseWhenScaMethodsAreMultiple(PaymentAuthorisationParameters request,
@@ -424,16 +441,18 @@ abstract class PaymentBaseAuthorisationProcessorService extends BaseAuthorisatio
         }
 
         SpiAuthorizationCodeResult authorizationCodeResult = authCodeResponse.getPayload();
-        if (needProcessExemptedSca(payment.getPaymentType(), authorizationCodeResult.isScaExempted())) {
+        PaymentType paymentTypeFromSpi = spiToXs2aPaymentTypeMapper.mapToXs2aPaymentType(payment.getPaymentType());
+
+        if (needProcessExemptedSca(paymentTypeFromSpi, authorizationCodeResult.isScaExempted())) {
             writeInfoLog(authorisationProcessorRequest, psuData, "SCA was exempted for the payment after AuthorisationSpi#requestAuthorisationCode.");
-            return executePaymentWithoutSca(authorisationProcessorRequest, psuData, payment.getPaymentType(), payment, contextData, EXEMPTED, xs2aCurrencyConversionInfo);
+            return executePaymentWithoutSca(authorisationProcessorRequest, psuData, paymentTypeFromSpi, payment, contextData, EXEMPTED, xs2aCurrencyConversionInfo);
         }
 
-        ScaStatus scaStatus = ObjectUtils.defaultIfNull(authorizationCodeResult.getScaStatus(), ScaStatus.SCAMETHODSELECTED);
+        ScaStatus scaStatus = ObjectUtils.defaultIfNull(spiToXs2aScaStatusMapper.mapToXs2aScaStatus(authorizationCodeResult.getScaStatus()), ScaStatus.SCAMETHODSELECTED);
 
         Xs2aUpdatePisCommonPaymentPsuDataResponse response = new Xs2aUpdatePisCommonPaymentPsuDataResponse(
             scaStatus, payment.getPaymentId(), authorisationId, psuData, xs2aCurrencyConversionInfo);
-        response.setChosenScaMethod(authorizationCodeResult.getSelectedScaMethod());
+        response.setChosenScaMethod(spiToXs2aAuthenticationObjectMapper.toAuthenticationObject(authorizationCodeResult.getSelectedScaMethod()));
         response.setChallengeData(mapToChallengeData(authorizationCodeResult));
         return response;
     }
@@ -469,9 +488,11 @@ abstract class PaymentBaseAuthorisationProcessorService extends BaseAuthorisatio
         Xs2aCurrencyConversionInfo xs2aCurrencyConversionInfo = getCurrencyConversionInfo(contextData, payment, request.getAuthorisationId(), aspspConsentDataProvider);
 
         SpiAuthorizationCodeResult authorizationCodeResult = spiResponse.getPayload();
-        if (needProcessExemptedSca(payment.getPaymentType(), authorizationCodeResult.isScaExempted())) {
+        PaymentType paymentTypeFromSpi = spiToXs2aPaymentTypeMapper.mapToXs2aPaymentType(payment.getPaymentType());
+
+        if (needProcessExemptedSca(paymentTypeFromSpi, authorizationCodeResult.isScaExempted())) {
             writeInfoLog(authorisationProcessorRequest, psuData, "SCA was exempted for the payment after AuthorisationSpi#requestAuthorisationCode.");
-            return executePaymentWithoutSca(authorisationProcessorRequest, psuData, payment.getPaymentType(), payment, contextData, EXEMPTED, xs2aCurrencyConversionInfo);
+            return executePaymentWithoutSca(authorisationProcessorRequest, psuData, paymentTypeFromSpi, payment, contextData, EXEMPTED, xs2aCurrencyConversionInfo);
         }
 
         if (authorizationCodeResult.isEmpty()) {
@@ -482,8 +503,8 @@ abstract class PaymentBaseAuthorisationProcessorService extends BaseAuthorisatio
             return new Xs2aUpdatePisCommonPaymentPsuDataResponse(errorHolder, paymentId, authorisationId, psuData);
         }
 
-        AuthenticationObject authenticationObject = authorizationCodeResult.getSelectedScaMethod();
-        ChallengeData challengeData = authorizationCodeResult.getChallengeData();
+        AuthenticationObject authenticationObject = spiToXs2aAuthenticationObjectMapper.toAuthenticationObject(authorizationCodeResult.getSelectedScaMethod());
+        ChallengeData challengeData = spiToXs2aChallengeDataMapper.toChallengeData(authorizationCodeResult.getChallengeData());
 
         Xs2aUpdatePisCommonPaymentPsuDataResponse response = new Xs2aUpdatePisCommonPaymentPsuDataResponse(
             SCAMETHODSELECTED, paymentId, authorisationId, psuData, xs2aCurrencyConversionInfo);

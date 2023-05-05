@@ -37,31 +37,31 @@ import org.mapstruct.Mapping;
 import org.mapstruct.NullValueMappingStrategy;
 
 @Mapper(componentModel = "spring", nullValueMappingStrategy = NullValueMappingStrategy.RETURN_DEFAULT,
-uses = {ScaMethodsMapper.class})
+    uses = {ScaMethodsMapper.class, SpiToXs2aTppMessageInformationMapper.class})
 public interface SpiToXs2aPaymentMapper {
     @Mapping(target = "psuMessage", source = "spi.psuMessage")
-    @Mapping(target = "tppMessageInformation", source ="spi.tppMessages")
+    @Mapping(target = "tppMessageInformation", source = "spi.tppMessages")
     @Mapping(target = "transactionFeeIndicator", source = "spi.spiTransactionFeeIndicator")
     @Mapping(target = "aspspConsentDataProvider", source = "aspspConsentDataProvider")
     SinglePaymentInitiationResponse mapToPaymentInitiateResponse(SpiSinglePaymentInitiationResponse spi,
                                                                  InitialSpiAspspConsentDataProvider aspspConsentDataProvider);
 
     @Mapping(target = "psuMessage", source = "spi.psuMessage")
-    @Mapping(target = "tppMessageInformation", source ="spi.tppMessages")
+    @Mapping(target = "tppMessageInformation", source = "spi.tppMessages")
     @Mapping(target = "transactionFeeIndicator", source = "spi.spiTransactionFeeIndicator")
     @Mapping(target = "aspspConsentDataProvider", source = "aspspConsentDataProvider")
     PeriodicPaymentInitiationResponse mapToPaymentInitiateResponse(SpiPeriodicPaymentInitiationResponse spi,
                                                                    InitialSpiAspspConsentDataProvider aspspConsentDataProvider);
 
     @Mapping(target = "psuMessage", source = "spi.psuMessage")
-    @Mapping(target = "tppMessageInformation", source ="spi.tppMessages")
+    @Mapping(target = "tppMessageInformation", source = "spi.tppMessages")
     @Mapping(target = "transactionFeeIndicator", source = "spi.spiTransactionFeeIndicator")
     @Mapping(target = "aspspConsentDataProvider", source = "aspspConsentDataProvider")
     BulkPaymentInitiationResponse mapToPaymentInitiateResponse(SpiBulkPaymentInitiationResponse spi,
                                                                InitialSpiAspspConsentDataProvider aspspConsentDataProvider);
 
     @Mapping(target = "psuMessage", source = "spi.psuMessage")
-    @Mapping(target = "tppMessageInformation", source ="spi.tppMessages")
+    @Mapping(target = "tppMessageInformation", source = "spi.tppMessages")
     @Mapping(target = "paymentType", source = "type")
     @Mapping(target = "transactionFeeIndicator", source = "spi.spiTransactionFeeIndicator")
     @Mapping(target = "aspspConsentDataProvider", source = "aspspConsentDataProvider")

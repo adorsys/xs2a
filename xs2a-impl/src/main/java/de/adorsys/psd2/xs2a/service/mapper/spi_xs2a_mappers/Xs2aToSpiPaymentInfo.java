@@ -27,12 +27,14 @@ import org.springframework.stereotype.Component;
 @AllArgsConstructor
 public class Xs2aToSpiPaymentInfo {
     private final Xs2aToSpiPsuDataMapper xs2aToSpiPsuDataMapper;
+    private final Xs2aToSpiPaymentTypeMapper xs2aToSpiPaymentTypeMapper;
+    private final Xs2aToSpiTransactionStatusMapper xs2aToSpiTransactionStatusMapper;
 
     public SpiPaymentInfo mapToSpiPaymentRequest(CommonPayment payment, String paymentProduct) {
         SpiPaymentInfo request = new SpiPaymentInfo(paymentProduct);
         request.setPaymentId(payment.getPaymentId());
-        request.setPaymentType(payment.getPaymentType());
-        request.setPaymentStatus(payment.getTransactionStatus());
+        request.setPaymentType(xs2aToSpiPaymentTypeMapper.mapToSpiPaymentType(payment.getPaymentType()));
+        request.setPaymentStatus(xs2aToSpiTransactionStatusMapper.mapToSpiTransactionStatus(payment.getTransactionStatus()));
         request.setPsuDataList(xs2aToSpiPsuDataMapper.mapToSpiPsuDataList(payment.getPsuDataList()));
         request.setPaymentData(payment.getPaymentData());
         request.setStatusChangeTimestamp(payment.getStatusChangeTimestamp());

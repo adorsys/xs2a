@@ -18,7 +18,6 @@
 
 package de.adorsys.psd2.xs2a.service.payment.support;
 
-import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import de.adorsys.psd2.xs2a.service.authorization.pis.PisExecutePaymentService;
 import de.adorsys.psd2.xs2a.service.payment.support.mapper.spi.SpiPaymentMapper;
 import de.adorsys.psd2.xs2a.service.profile.StandardPaymentProductsResolver;
@@ -26,6 +25,7 @@ import de.adorsys.psd2.xs2a.spi.domain.SpiAspspConsentDataProvider;
 import de.adorsys.psd2.xs2a.spi.domain.SpiContextData;
 import de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiScaConfirmation;
 import de.adorsys.psd2.xs2a.spi.domain.payment.SpiPaymentInfo;
+import de.adorsys.psd2.xs2a.spi.domain.payment.SpiPaymentType;
 import de.adorsys.psd2.xs2a.spi.domain.payment.response.SpiPaymentExecutionResponse;
 import de.adorsys.psd2.xs2a.spi.domain.payment.response.SpiPaymentInitiationResponse;
 import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponse;
@@ -45,17 +45,17 @@ public class PisExecutePaymentServiceSupportImpl implements PisExecutePaymentSer
 
     @Override
     public SpiResponse<SpiPaymentExecutionResponse> verifyScaAuthorisationAndExecutePaymentWithPaymentResponse(SpiContextData contextData,
-                                                                                                      SpiScaConfirmation spiScaConfirmation,
-                                                                                                      SpiPayment payment,
-                                                                                                      SpiAspspConsentDataProvider spiAspspConsentDataProvider) {
+                                                                                                               SpiScaConfirmation spiScaConfirmation,
+                                                                                                               SpiPayment payment,
+                                                                                                               SpiAspspConsentDataProvider spiAspspConsentDataProvider) {
         if (standardPaymentProductsResolver.isRawPaymentProduct(payment.getPaymentProduct())) {
             return verifyScaAndExecutePaymentWithPaymentResponse(commonPaymentSpi, (SpiPaymentInfo) payment, spiScaConfirmation, contextData, spiAspspConsentDataProvider);
         }
 
-        PaymentType paymentType = payment.getPaymentType();
-        if (PaymentType.SINGLE == paymentType) {
+        SpiPaymentType paymentType = payment.getPaymentType();
+        if (SpiPaymentType.SINGLE == paymentType) {
             return verifyScaAndExecutePaymentWithPaymentResponse(singlePaymentSpi, spiPaymentMapper.mapToSpiSinglePayment(payment), spiScaConfirmation, contextData, spiAspspConsentDataProvider);
-        } else if (PaymentType.PERIODIC == paymentType) {
+        } else if (SpiPaymentType.PERIODIC == paymentType) {
             return verifyScaAndExecutePaymentWithPaymentResponse(periodicPaymentSpi, spiPaymentMapper.mapToSpiPeriodicPayment(payment), spiScaConfirmation, contextData, spiAspspConsentDataProvider);
         } else {
             return verifyScaAndExecutePaymentWithPaymentResponse(bulkPaymentSpi, spiPaymentMapper.mapToSpiBulkPayment(payment), spiScaConfirmation, contextData, spiAspspConsentDataProvider);
@@ -68,10 +68,10 @@ public class PisExecutePaymentServiceSupportImpl implements PisExecutePaymentSer
             return executeWithoutSca(commonPaymentSpi, (SpiPaymentInfo) payment, contextData, aspspConsentDataProvider);
         }
 
-        PaymentType paymentType = payment.getPaymentType();
-        if (PaymentType.SINGLE == paymentType) {
+        SpiPaymentType paymentType = payment.getPaymentType();
+        if (SpiPaymentType.SINGLE == paymentType) {
             return executeWithoutSca(singlePaymentSpi, spiPaymentMapper.mapToSpiSinglePayment(payment), contextData, aspspConsentDataProvider);
-        } else if (PaymentType.PERIODIC == paymentType) {
+        } else if (SpiPaymentType.PERIODIC == paymentType) {
             return executeWithoutSca(periodicPaymentSpi, spiPaymentMapper.mapToSpiPeriodicPayment(payment), contextData, aspspConsentDataProvider);
         } else {
             return executeWithoutSca(bulkPaymentSpi, spiPaymentMapper.mapToSpiBulkPayment(payment), contextData, aspspConsentDataProvider);
@@ -79,10 +79,10 @@ public class PisExecutePaymentServiceSupportImpl implements PisExecutePaymentSer
     }
 
     private <T extends SpiPayment> SpiResponse<SpiPaymentExecutionResponse> verifyScaAndExecutePaymentWithPaymentResponse(PaymentSpi<T, ? extends SpiPaymentInitiationResponse> paymentSpi,
-                                                                                              T payment,
-                                                                                              SpiScaConfirmation spiScaConfirmation,
-                                                                                              SpiContextData contextData,
-                                                                                              SpiAspspConsentDataProvider spiAspspConsentDataProvider) {
+                                                                                                                          T payment,
+                                                                                                                          SpiScaConfirmation spiScaConfirmation,
+                                                                                                                          SpiContextData contextData,
+                                                                                                                          SpiAspspConsentDataProvider spiAspspConsentDataProvider) {
         return paymentSpi.verifyScaAuthorisationAndExecutePaymentWithPaymentResponse(contextData, spiScaConfirmation, payment, spiAspspConsentDataProvider);
     }
 

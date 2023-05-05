@@ -18,7 +18,6 @@
 
 package de.adorsys.psd2.xs2a.spi.domain.consent;
 
-import de.adorsys.psd2.xs2a.core.ais.AccountAccessType;
 import de.adorsys.psd2.xs2a.spi.domain.account.SpiAccountReference;
 import org.junit.jupiter.api.Test;
 
@@ -53,9 +52,9 @@ class SpiAccountAccessTest {
             new SpiAccountAccess(Collections.singletonList(getReference()), null, null, null, null, null, null),    //accounts are present
             new SpiAccountAccess(null, Collections.singletonList(getReference()), null, null, null, null, null),    //accounts are present
             new SpiAccountAccess(null, null, Collections.singletonList(getReference()), null, null, null, null),      //balances are present
-            new SpiAccountAccess(null, null, null, AccountAccessType.ALL_ACCOUNTS, null, null, null),                  //availableAccount flag is present
-            new SpiAccountAccess(null, null, null, null, AccountAccessType.ALL_ACCOUNTS, null, null),       //allPsd2 flag is present
-            new SpiAccountAccess(null, null, null, null, null, AccountAccessType.ALL_ACCOUNTS, null)           //availableAccountWithBalances flag is present
+            new SpiAccountAccess(null, null, null, SpiAccountAccessType.ALL_ACCOUNTS, null, null, null),                  //availableAccount flag is present
+            new SpiAccountAccess(null, null, null, null, SpiAccountAccessType.ALL_ACCOUNTS, null, null),       //allPsd2 flag is present
+            new SpiAccountAccess(null, null, null, null, null, SpiAccountAccessType.ALL_ACCOUNTS, null)           //availableAccountWithBalances flag is present
         );
         //then:
         listOfAccesses

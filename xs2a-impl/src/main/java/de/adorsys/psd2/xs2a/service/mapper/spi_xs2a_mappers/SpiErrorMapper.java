@@ -21,9 +21,10 @@ package de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers;
 import de.adorsys.psd2.xs2a.core.domain.ErrorHolder;
 import de.adorsys.psd2.xs2a.core.domain.TppMessageInformation;
 import de.adorsys.psd2.xs2a.core.error.ErrorType;
-import de.adorsys.psd2.xs2a.core.error.TppMessage;
 import de.adorsys.psd2.xs2a.core.mapper.ServiceType;
+import de.adorsys.psd2.xs2a.spi.domain.error.SpiTppMessage;
 import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponse;
+import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
@@ -31,15 +32,19 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 
 @Component
+@RequiredArgsConstructor
 public class SpiErrorMapper {
+
+    private final SpiToXs2aMessageErrorCodeMapper spiToXs2aMessageErrorCodeMapper;
+
     public ErrorHolder mapToErrorHolder(SpiResponse<?> spiResponse, ServiceType serviceType) {
-        List<TppMessage> errors = spiResponse.getErrors();
+        List<SpiTppMessage> errors = spiResponse.getErrors();
 
         if (errors.isEmpty()) {
             throw new IllegalArgumentException("SPI response must contain errors for mapping");
         }
 
-        TppMessage firstTppMessage = errors.get(0);
+        SpiTppMessage firstTppMessage = errors.get(0);
 
         TppMessageInformation[] tppMessages = errors.stream()
                                                   .map(this::mapToMessageError)
@@ -51,14 +56,14 @@ public class SpiErrorMapper {
         return ErrorHolder.builder(errorType).tppMessages(tppMessages).build();
     }
 
-    private TppMessageInformation mapToMessageError(TppMessage tppMessage) {
+    private TppMessageInformation mapToMessageError(SpiTppMessage tppMessage) {
         if (StringUtils.isBlank(tppMessage.getMessageText())) {
             if (ArrayUtils.isNotEmpty(tppMessage.getMessageTextArgs())) {
-                return TppMessageInformation.of(tppMessage.getErrorCode(), tppMessage.getMessageTextArgs());
+                return TppMessageInformation.of(spiToXs2aMessageErrorCodeMapper.mapToXs2aMessageErrorCode(tppMessage.getErrorCode()), tppMessage.getMessageTextArgs());
             } else {
-                return TppMessageInformation.of(tppMessage.getErrorCode());
+                return TppMessageInformation.of(spiToXs2aMessageErrorCodeMapper.mapToXs2aMessageErrorCode(tppMessage.getErrorCode()));
             }
         }
-        return TppMessageInformation.buildWithCustomError(tppMessage.getErrorCode(), tppMessage.getMessageText());
+        return TppMessageInformation.buildWithCustomError(spiToXs2aMessageErrorCodeMapper.mapToXs2aMessageErrorCode(tppMessage.getErrorCode()), tppMessage.getMessageText());
     }
 }

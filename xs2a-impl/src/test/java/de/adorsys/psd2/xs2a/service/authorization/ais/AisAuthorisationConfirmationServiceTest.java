@@ -25,7 +25,6 @@ import de.adorsys.psd2.xs2a.core.authorisation.Authorisation;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
 import de.adorsys.psd2.xs2a.core.domain.ErrorHolder;
 import de.adorsys.psd2.xs2a.core.error.ErrorType;
-import de.adorsys.psd2.xs2a.core.error.TppMessage;
 import de.adorsys.psd2.xs2a.core.mapper.ServiceType;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
@@ -37,6 +36,8 @@ import de.adorsys.psd2.xs2a.service.consent.Xs2aAisConsentService;
 import de.adorsys.psd2.xs2a.service.context.SpiContextDataProvider;
 import de.adorsys.psd2.xs2a.service.mapper.cms_xs2a_mappers.Xs2aAisConsentMapper;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiErrorMapper;
+import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiToXs2aConsentStatusMapper;
+import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiToXs2aScaStatusMapper;
 import de.adorsys.psd2.xs2a.service.profile.AspspProfileServiceWrapper;
 import de.adorsys.psd2.xs2a.service.spi.SpiAspspConsentDataProviderFactory;
 import de.adorsys.psd2.xs2a.spi.domain.SpiAspspConsentDataProvider;
@@ -44,7 +45,11 @@ import de.adorsys.psd2.xs2a.spi.domain.SpiContextData;
 import de.adorsys.psd2.xs2a.spi.domain.account.SpiAccountConsent;
 import de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiCheckConfirmationCodeRequest;
 import de.adorsys.psd2.xs2a.spi.domain.consent.SpiConsentConfirmationCodeValidationResponse;
+import de.adorsys.psd2.xs2a.spi.domain.consent.SpiConsentStatus;
+import de.adorsys.psd2.xs2a.spi.domain.error.SpiMessageErrorCode;
+import de.adorsys.psd2.xs2a.spi.domain.error.SpiTppMessage;
 import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponse;
+import de.adorsys.psd2.xs2a.spi.domain.sca.SpiScaStatus;
 import de.adorsys.psd2.xs2a.spi.service.AisConsentSpi;
 import de.adorsys.psd2.xs2a.util.reader.TestSpiDataProvider;
 import de.adorsys.xs2a.reader.JsonReader;
@@ -58,7 +63,8 @@ import java.util.Optional;
 
 import static de.adorsys.psd2.consent.api.CmsError.TECHNICAL_ERROR;
 import static de.adorsys.psd2.xs2a.core.domain.TppMessageInformation.of;
-import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.*;
+import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.CONSENT_UNKNOWN_403;
+import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.SCA_INVALID;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
 
@@ -95,6 +101,10 @@ class AisAuthorisationConfirmationServiceTest {
     private SpiAccountConsent spiAccountConsent;
     @Mock
     private SpiAspspConsentDataProvider aspspConsentDataProvider;
+    @Mock
+    private SpiToXs2aConsentStatusMapper spiToXs2aConsentStatusMapper;
+    @Mock
+    private SpiToXs2aScaStatusMapper spiToXs2aScaStatusMapper;
 
     @Test
     void processAuthorisationConfirmation_success_checkOnSpi() {
@@ -122,8 +132,9 @@ class AisAuthorisationConfirmationServiceTest {
             .thenReturn(aspspConsentDataProvider);
         when(aisConsentSpi.checkConfirmationCode(contextData, spiCheckConfirmationCodeRequest, aspspConsentDataProvider))
             .thenReturn(SpiResponse.<SpiConsentConfirmationCodeValidationResponse>builder()
-                            .payload(new SpiConsentConfirmationCodeValidationResponse(ScaStatus.FINALISED, ConsentStatus.VALID))
+                            .payload(new SpiConsentConfirmationCodeValidationResponse(SpiScaStatus.FINALISED, SpiConsentStatus.VALID))
                             .build());
+        when(spiToXs2aScaStatusMapper.mapToXs2aScaStatus(SpiScaStatus.FINALISED)).thenReturn(ScaStatus.FINALISED);
 
         // when
         ResponseObject<UpdateConsentPsuDataResponse> actualResult = aisAuthorisationConfirmationService.processAuthorisationConfirmation(request);
@@ -153,14 +164,15 @@ class AisAuthorisationConfirmationServiceTest {
         SpiConsentConfirmationCodeValidationResponse spiConsentConfirmationCodeValidationResponse = preparationsForNotifyConfirmationCodeValidation(true);
         SpiResponse<SpiConsentConfirmationCodeValidationResponse> spiResponse = SpiResponse.<SpiConsentConfirmationCodeValidationResponse>builder().payload(spiConsentConfirmationCodeValidationResponse).build();
         when(aisConsentSpi.notifyConfirmationCodeValidation(contextData, true, spiAccountConsent, aspspConsentDataProvider)).thenReturn(spiResponse);
+        when(spiToXs2aScaStatusMapper.mapToXs2aScaStatus(SpiScaStatus.FINALISED)).thenReturn(ScaStatus.FINALISED);
 
         // when
         ResponseObject<UpdateConsentPsuDataResponse> actualResult = aisAuthorisationConfirmationService.processAuthorisationConfirmation(request);
 
         // then
         assertThat(actualResult).isEqualToComparingFieldByField(expectedResult);
-        verify(authorisationService, times(1)).updateAuthorisationStatus(AUTHORISATION_ID, spiConsentConfirmationCodeValidationResponse.getScaStatus());
-        verify(aisConsentService, times(1)).updateConsentStatus(CONSENT_ID, spiConsentConfirmationCodeValidationResponse.getConsentStatus());
+        verify(authorisationService, times(1)).updateAuthorisationStatus(AUTHORISATION_ID, ScaStatus.FINALISED);
+        verify(aisConsentService, times(1)).updateConsentStatus(CONSENT_ID, ConsentStatus.VALID);
         verify(aisConsentSpi, times(1)).checkConfirmationCodeInternally(AUTHORISATION_ID, CONFIRMATION_CODE, SCA_AUTHENTICATION_DATA, aspspConsentDataProvider);
     }
 
@@ -228,6 +240,7 @@ class AisAuthorisationConfirmationServiceTest {
             .thenReturn(CmsResponse.<Authorisation>builder()
                             .payload(aisConsentAuthorizationResponse)
                             .build());
+        when(spiToXs2aScaStatusMapper.mapToXs2aScaStatus(SpiScaStatus.FAILED)).thenReturn(ScaStatus.FAILED);
         SpiContextData contextData = getSpiContextData();
         SpiConsentConfirmationCodeValidationResponse spiConsentConfirmationCodeValidationResponse = preparationsForNotifyConfirmationCodeValidation(false);
         SpiResponse<SpiConsentConfirmationCodeValidationResponse> spiResponse = SpiResponse.<SpiConsentConfirmationCodeValidationResponse>builder().payload(spiConsentConfirmationCodeValidationResponse).build();
@@ -238,8 +251,8 @@ class AisAuthorisationConfirmationServiceTest {
 
         // then
         assertThat(actualResult).isEqualToComparingFieldByField(expectedResult);
-        verify(authorisationService, times(1)).updateAuthorisationStatus(AUTHORISATION_ID, spiConsentConfirmationCodeValidationResponse.getScaStatus());
-        verify(aisConsentService, times(1)).updateConsentStatus(CONSENT_ID, spiConsentConfirmationCodeValidationResponse.getConsentStatus());
+        verify(authorisationService, times(1)).updateAuthorisationStatus(AUTHORISATION_ID, ScaStatus.FAILED);
+        verify(aisConsentService, times(1)).updateConsentStatus(CONSENT_ID, ConsentStatus.REJECTED);
     }
 
     @Test
@@ -321,7 +334,7 @@ class AisAuthorisationConfirmationServiceTest {
         when(spiContextDataProvider.provideWithPsuIdData(buildPsuIdData())).thenReturn(contextData);
         when(aisConsentMapper.mapToSpiAccountConsent(consent)).thenReturn(spiAccountConsent);
         when(aspspConsentDataProviderFactory.getSpiAspspDataProviderFor(CONSENT_ID)).thenReturn(aspspConsentDataProvider);
-        SpiResponse<SpiConsentConfirmationCodeValidationResponse> spiResponse = SpiResponse.<SpiConsentConfirmationCodeValidationResponse>builder().error(new TppMessage(SCA_INVALID)).build();
+        SpiResponse<SpiConsentConfirmationCodeValidationResponse> spiResponse = SpiResponse.<SpiConsentConfirmationCodeValidationResponse>builder().error(new SpiTppMessage(SpiMessageErrorCode.SCA_INVALID)).build();
         when(aisConsentSpi.notifyConfirmationCodeValidation(contextData, false, spiAccountConsent, aspspConsentDataProvider)).thenReturn(spiResponse);
         when(spiErrorMapper.mapToErrorHolder(spiResponse, ServiceType.AIS)).thenReturn(errorHolder);
 
@@ -340,7 +353,7 @@ class AisAuthorisationConfirmationServiceTest {
         PsuIdData psuIdData = buildPsuIdData();
         ConsentAuthorisationsParameters request = buildUpdateConsentPsuDataReq();
         SpiResponse<SpiConsentConfirmationCodeValidationResponse> spiResponse = SpiResponse.<SpiConsentConfirmationCodeValidationResponse>builder()
-                                                                                    .error(new TppMessage(PSU_CREDENTIALS_INVALID))
+                                                                                    .error(new SpiTppMessage(SpiMessageErrorCode.PSU_CREDENTIALS_INVALID))
                                                                                     .build();
         ErrorHolder errorHolder = ErrorHolder.builder(ErrorType.AIS_403)
                                       .tppMessages(of(CONSENT_UNKNOWN_403))
@@ -425,7 +438,7 @@ class AisAuthorisationConfirmationServiceTest {
         when(aspspConsentDataProviderFactory.getSpiAspspDataProviderFor(CONSENT_ID)).thenReturn(aspspConsentDataProvider);
 
         return confirmationCodeValidationResult
-                   ? new SpiConsentConfirmationCodeValidationResponse(ScaStatus.FINALISED, ConsentStatus.VALID)
-                   : new SpiConsentConfirmationCodeValidationResponse(ScaStatus.FAILED, ConsentStatus.REJECTED);
+                   ? new SpiConsentConfirmationCodeValidationResponse(SpiScaStatus.FINALISED, SpiConsentStatus.VALID)
+                   : new SpiConsentConfirmationCodeValidationResponse(SpiScaStatus.FAILED, SpiConsentStatus.REJECTED);
     }
 }

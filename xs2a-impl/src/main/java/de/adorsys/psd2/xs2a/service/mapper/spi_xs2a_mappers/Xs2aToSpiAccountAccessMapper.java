@@ -31,15 +31,16 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class Xs2aToSpiAccountAccessMapper {
     private final Xs2aToSpiAccountReferenceMapper xs2aToSpiAccountReferenceMapper;
+    private final Xs2aToSpiAccountAccessTypeMapper xs2aToSpiAccountAccessTypeMapper;
 
     public SpiAccountAccess mapToAccountAccess(AisConsent aisConsent) {
         return new SpiAccountAccess(
             xs2aToSpiAccountReferenceMapper.mapToSpiAccountReferences(aisConsent.getAccess().getAccounts()),
             xs2aToSpiAccountReferenceMapper.mapToSpiAccountReferences(aisConsent.getAccess().getBalances()),
             xs2aToSpiAccountReferenceMapper.mapToSpiAccountReferences(aisConsent.getAccess().getTransactions()),
-            aisConsent.getConsentData().getAvailableAccounts(),
-            aisConsent.getConsentData().getAllPsd2(),
-            aisConsent.getConsentData().getAvailableAccountsWithBalance(),
+            xs2aToSpiAccountAccessTypeMapper.mapToSpiAccountAccessType(aisConsent.getConsentData().getAvailableAccounts()),
+            xs2aToSpiAccountAccessTypeMapper.mapToSpiAccountAccessType(aisConsent.getConsentData().getAllPsd2()),
+            xs2aToSpiAccountAccessTypeMapper.mapToSpiAccountAccessType(aisConsent.getConsentData().getAvailableAccountsWithBalance()),
             mapToSpiAdditionalInformationAccess(aisConsent.getAccess().getAdditionalInformationAccess())
         );
     }
