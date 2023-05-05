@@ -25,6 +25,8 @@ import de.adorsys.psd2.xs2a.core.sca.ChallengeData;
 import de.adorsys.psd2.xs2a.domain.authorisation.CommonAuthorisationParameters;
 import de.adorsys.psd2.xs2a.service.authorization.processor.model.AuthorisationProcessorRequest;
 import de.adorsys.psd2.xs2a.service.authorization.processor.model.AuthorisationProcessorResponse;
+import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiToXs2aAuthorizationMapper;
+import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiToXs2aChallengeDataMapper;
 import de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiAuthorizationCodeResult;
 import lombok.extern.slf4j.Slf4j;
 
@@ -34,6 +36,13 @@ import java.util.Optional;
 @Slf4j
 abstract class BaseAuthorisationProcessorService implements AuthorisationProcessorService {
     private static final String UNSUPPORTED_ERROR_MESSAGE = "Current SCA status is not supported";
+    private final SpiToXs2aChallengeDataMapper challengeDataMapper;
+    protected final SpiToXs2aAuthorizationMapper spiToXs2aAuthorizationMapper;
+
+    protected BaseAuthorisationProcessorService(SpiToXs2aChallengeDataMapper challengeDataMapper, SpiToXs2aAuthorizationMapper spiToXs2aAuthorizationMapper) {
+        this.challengeDataMapper = challengeDataMapper;
+        this.spiToXs2aAuthorizationMapper = spiToXs2aAuthorizationMapper;
+    }
 
     @Override
     public AuthorisationProcessorResponse doScaStarted(AuthorisationProcessorRequest authorisationProcessorRequest) {
@@ -68,7 +77,7 @@ abstract class BaseAuthorisationProcessorService implements AuthorisationProcess
         if (authorizationCodeResult == null || authorizationCodeResult.isEmpty()) {
             return null;
         }
-        return authorizationCodeResult.getChallengeData();
+        return challengeDataMapper.toChallengeData(authorizationCodeResult.getChallengeData());
     }
 
     PsuIdData extractPsuIdData(CommonAuthorisationParameters request,

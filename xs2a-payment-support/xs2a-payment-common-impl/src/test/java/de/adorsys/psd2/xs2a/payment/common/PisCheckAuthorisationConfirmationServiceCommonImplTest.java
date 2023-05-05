@@ -18,14 +18,14 @@
 
 package de.adorsys.psd2.xs2a.payment.common;
 
-import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
-import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import de.adorsys.psd2.xs2a.spi.domain.SpiAspspConsentDataProvider;
 import de.adorsys.psd2.xs2a.spi.domain.SpiContextData;
 import de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiCheckConfirmationCodeRequest;
 import de.adorsys.psd2.xs2a.spi.domain.payment.SpiPaymentInfo;
+import de.adorsys.psd2.xs2a.spi.domain.payment.SpiTransactionStatus;
 import de.adorsys.psd2.xs2a.spi.domain.payment.response.SpiPaymentConfirmationCodeValidationResponse;
 import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponse;
+import de.adorsys.psd2.xs2a.spi.domain.sca.SpiScaStatus;
 import de.adorsys.psd2.xs2a.spi.service.CommonPaymentSpi;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -59,7 +59,7 @@ class PisCheckAuthorisationConfirmationServiceCommonImplTest {
         SpiPaymentInfo payment = new SpiPaymentInfo(PAYMENT_PRODUCT);
 
         SpiResponse<SpiPaymentConfirmationCodeValidationResponse> commonServiceResponse = SpiResponse.<SpiPaymentConfirmationCodeValidationResponse>builder()
-                                                                                              .payload(new SpiPaymentConfirmationCodeValidationResponse(ScaStatus.FINALISED, TransactionStatus.ACSP))
+                                                                                              .payload(new SpiPaymentConfirmationCodeValidationResponse(SpiScaStatus.FINALISED, SpiTransactionStatus.ACSP))
                                                                                               .build();
         when(commonPaymentSpi.checkConfirmationCode(spiContextData, spiCheckConfirmationCodeRequest, spiAspspConsentDataProvider))
             .thenReturn(commonServiceResponse);

@@ -1,3 +1,10 @@
 = Release notes v.14.8
 
 == Table of Contents
+
+* Changes in SPI level
+
+== Changes in SPI level
+
+From now on, `spi-api` module has no dependencies on `xs2a-core` and `xs2a-core-payments` (all models from these
+modules have to be replaced with corresponding SPI models).

@@ -18,15 +18,12 @@
 
 package de.adorsys.psd2.xs2a.spi.domain.consent;
 
-import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
-import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
+import de.adorsys.psd2.xs2a.spi.domain.sca.SpiScaStatus;
 import lombok.Value;
 import org.jetbrains.annotations.NotNull;
 
 @Value
 public class SpiConsentConfirmationCodeValidationResponse {
-    @Deprecated // TODO: change with SpiScaStatus in 14.8
-    @NotNull private ScaStatus scaStatus;
-    @Deprecated // TODO: change with SpiConsentStatus in 14.8
-    @NotNull private ConsentStatus consentStatus;
+    @NotNull private SpiScaStatus scaStatus;
+    @NotNull private SpiConsentStatus consentStatus;
 }

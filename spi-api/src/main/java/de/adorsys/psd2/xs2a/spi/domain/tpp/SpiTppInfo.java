@@ -19,8 +19,6 @@
 package de.adorsys.psd2.xs2a.spi.domain.tpp;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import de.adorsys.psd2.xs2a.core.tpp.TppRedirectUri;
-import de.adorsys.psd2.xs2a.core.tpp.TppRole;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.apache.commons.lang3.StringUtils;
@@ -36,8 +34,7 @@ public class SpiTppInfo {
     private String authorisationNumber;
 
     private String tppName;
-    @Deprecated // TODO: change with SpiTppRole in 14.8
-    private List<TppRole> tppRoles;
+    private List<SpiTppRole> tppRoles;
 
     private String authorityId;
 
@@ -54,8 +51,7 @@ public class SpiTppInfo {
     private String state;
 
     @Nullable
-    @Deprecated // TODO: change with SpiTppRedirectUri in 14.8
-    private TppRedirectUri cancelTppRedirectUri;
+    private SpiTppRedirectUri cancelTppRedirectUri;
 
     private String issuerCN;
 

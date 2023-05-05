@@ -43,6 +43,7 @@ import de.adorsys.psd2.xs2a.service.mapper.cms_xs2a_mappers.Xs2aAisConsentMapper
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiCardTransactionListToXs2aAccountReportMapper;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiErrorMapper;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiToXs2aBalanceMapper;
+import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.Xs2aToSpiConsentMapper;
 import de.adorsys.psd2.xs2a.service.profile.AspspProfileServiceWrapper;
 import de.adorsys.psd2.xs2a.service.spi.SpiAspspConsentDataProviderFactory;
 import de.adorsys.psd2.xs2a.service.validator.ais.account.GetCardTransactionsReportValidator;
@@ -50,6 +51,7 @@ import de.adorsys.psd2.xs2a.service.validator.ais.account.dto.CardTransactionsRe
 import de.adorsys.psd2.xs2a.spi.domain.account.SpiAccountReference;
 import de.adorsys.psd2.xs2a.spi.domain.account.SpiCardTransactionReport;
 import de.adorsys.psd2.xs2a.spi.domain.account.SpiTransactionReportParameters;
+import de.adorsys.psd2.xs2a.spi.domain.error.SpiMessageErrorCode;
 import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponse;
 import de.adorsys.psd2.xs2a.spi.service.CardAccountSpi;
 import lombok.AllArgsConstructor;
@@ -65,7 +67,6 @@ import java.util.Optional;
 import static de.adorsys.psd2.xs2a.core.error.ErrorType.AIS_400;
 import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.CONSENT_UNKNOWN_400;
 import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.REQUESTED_FORMATS_INVALID;
-import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.SERVICE_NOT_SUPPORTED;
 
 @Slf4j
 @Service
@@ -87,6 +88,7 @@ public class CardTransactionService {
     private final AccountHelperService accountHelperService;
     private final LoggingContextService loggingContextService;
     private final CardAccountHandler cardAccountHandler;
+    private final Xs2aToSpiConsentMapper xs2aToSpiConsentMapper;
 
     /**
      * Read Card transaction reports of a given account addressed by "account-id", depending on the steering parameter
@@ -161,7 +163,7 @@ public class CardTransactionService {
 
     private SpiTransactionReportParameters buildSpiTransactionReportParameters(Xs2aCardTransactionsReportByPeriodRequest request) {
         return new SpiTransactionReportParameters(request.getAcceptHeader(), Boolean.FALSE, request.getDateFrom(), request.getDateTo(),
-                                                  request.getBookingStatus(), request.getEntryReferenceFrom(), request.getDeltaList(), null, null);
+                                                  xs2aToSpiConsentMapper.mapToSpiBookingStatus(request.getBookingStatus()), request.getEntryReferenceFrom(), request.getDeltaList(), null, null);
     }
 
     private SpiAccountReference getRequestedAccountReference(AisConsent aisConsent, String accountId) {
@@ -172,7 +174,7 @@ public class CardTransactionService {
     private ResponseObject<Xs2aCardTransactionsReport> checkSpiResponseForCardTransactionsReport(Xs2aCardTransactionsReportByPeriodRequest request,
                                                                                                  SpiResponse<SpiCardTransactionReport> spiResponse) {
         // in this particular call we use NOT_SUPPORTED to indicate that requested Content-type is not ok for us
-        if (spiResponse.getErrors().get(0).getErrorCode() == SERVICE_NOT_SUPPORTED) {
+        if (spiResponse.getErrors().get(0).getErrorCode() == SpiMessageErrorCode.SERVICE_NOT_SUPPORTED) {
             log.info("Account-ID [{}], Consent-ID: [{}]. Get transactions report by period failed: requested content-type not json or text.",
                      request.getAccountId(), request.getConsentId());
             return ResponseObject.<Xs2aCardTransactionsReport>builder()

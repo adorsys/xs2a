@@ -36,9 +36,7 @@ import de.adorsys.psd2.xs2a.service.authorization.processor.model.AuthorisationP
 import de.adorsys.psd2.xs2a.service.authorization.processor.model.AuthorisationProcessorResponse;
 import de.adorsys.psd2.xs2a.service.consent.Xs2aPiisConsentService;
 import de.adorsys.psd2.xs2a.service.context.SpiContextDataProvider;
-import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiErrorMapper;
-import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.Xs2aToSpiPiisConsentMapper;
-import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.Xs2aToSpiPsuDataMapper;
+import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.*;
 import de.adorsys.psd2.xs2a.service.spi.SpiAspspConsentDataProviderFactory;
 import de.adorsys.psd2.xs2a.spi.domain.SpiAspspConsentDataProvider;
 import de.adorsys.psd2.xs2a.spi.domain.SpiContextData;
@@ -49,8 +47,6 @@ import de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiStartAuthorisationRespon
 import de.adorsys.psd2.xs2a.spi.domain.consent.SpiVerifyScaAuthorisationResponse;
 import de.adorsys.psd2.xs2a.spi.domain.psu.SpiPsuData;
 import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponse;
-import de.adorsys.psd2.xs2a.spi.domain.sca.SpiScaApproach;
-import de.adorsys.psd2.xs2a.spi.domain.sca.SpiScaStatus;
 import de.adorsys.psd2.xs2a.spi.service.PiisConsentSpi;
 import org.springframework.stereotype.Service;
 
@@ -65,6 +61,7 @@ public class PiisAuthorisationProcessorServiceImpl extends ConsentAuthorisationP
     private final Xs2aToSpiPiisConsentMapper xs2aToSpiPiisConsentMapper;
     private final CommonDecoupledPiisService commonDecoupledPiisService;
     private final PiisScaAuthorisationService piisScaAuthorisationService;
+    private final Xs2aToSpiAuthorizationMapper xs2aToSpiAuthorizationMapper;
 
     public PiisAuthorisationProcessorServiceImpl(Xs2aAuthorisationService authorisationService,
                                                  SpiContextDataProvider spiContextDataProvider,
@@ -76,14 +73,22 @@ public class PiisAuthorisationProcessorServiceImpl extends ConsentAuthorisationP
                                                  PiisConsentSpi piisConsentSpi,
                                                  Xs2aToSpiPiisConsentMapper xs2aToSpiPiisConsentMapper,
                                                  CommonDecoupledPiisService commonDecoupledPiisService,
-                                                 PiisScaAuthorisationService piisScaAuthorisationService) {
-        super(authorisationService, spiContextDataProvider, aspspConsentDataProviderFactory, spiErrorMapper, psuDataMapper);
+                                                 PiisScaAuthorisationService piisScaAuthorisationService,
+                                                 SpiToXs2aChallengeDataMapper challengeDataMapper,
+                                                 SpiToXs2aTppMessageInformationMapper tppMessageInformationMapper,
+                                                 SpiToXs2aAuthenticationObjectMapper authenticationObjectMapper,
+                                                 SpiToXs2aAuthorizationMapper spiToXs2authorizationMapper,
+                                                 Xs2aToSpiAuthorizationMapper xs2aToSpiAuthorizationMapper,
+                                                 SpiToXs2aConsentMapper consentMapper) {
+        super(authorisationService, spiContextDataProvider, aspspConsentDataProviderFactory, spiErrorMapper, psuDataMapper,
+              challengeDataMapper, tppMessageInformationMapper, authenticationObjectMapper, spiToXs2authorizationMapper, consentMapper);
         this.services = services;
         this.piisConsentService = piisConsentService;
         this.piisConsentSpi = piisConsentSpi;
         this.xs2aToSpiPiisConsentMapper = xs2aToSpiPiisConsentMapper;
         this.commonDecoupledPiisService = commonDecoupledPiisService;
         this.piisScaAuthorisationService = piisScaAuthorisationService;
+        this.xs2aToSpiAuthorizationMapper = xs2aToSpiAuthorizationMapper;
     }
 
     @Override
@@ -137,7 +142,7 @@ public class PiisAuthorisationProcessorServiceImpl extends ConsentAuthorisationP
 
     @Override
     protected SpiResponse<SpiStartAuthorisationResponse> getSpiStartAuthorisationResponse(SpiContextData spiContextData, ScaApproach scaApproach, ScaStatus scaStatus, String authorisationId, PiisConsent consent, SpiAspspConsentDataProvider spiAspspConsentDataProvider) {
-        return piisConsentSpi.startAuthorisation(spiContextData, SpiScaApproach.valueOf(scaApproach.name()), SpiScaStatus.valueOf(scaStatus.name()), authorisationId, xs2aToSpiPiisConsentMapper.mapToSpiPiisConsent(consent), spiAspspConsentDataProvider);
+        return piisConsentSpi.startAuthorisation(spiContextData, xs2aToSpiAuthorizationMapper.mapToSpiScaApproach(scaApproach), xs2aToSpiAuthorizationMapper.mapToSpiScaStatus(scaStatus), authorisationId, xs2aToSpiPiisConsentMapper.mapToSpiPiisConsent(consent), spiAspspConsentDataProvider);
     }
 
     @Override

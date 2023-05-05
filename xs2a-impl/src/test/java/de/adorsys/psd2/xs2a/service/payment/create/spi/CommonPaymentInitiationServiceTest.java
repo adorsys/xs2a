@@ -22,7 +22,6 @@ import de.adorsys.psd2.xs2a.core.domain.ErrorHolder;
 import de.adorsys.psd2.xs2a.core.domain.TppMessageInformation;
 import de.adorsys.psd2.xs2a.core.error.ErrorType;
 import de.adorsys.psd2.xs2a.core.error.MessageErrorCode;
-import de.adorsys.psd2.xs2a.core.error.TppMessage;
 import de.adorsys.psd2.xs2a.core.mapper.ServiceType;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
@@ -32,10 +31,12 @@ import de.adorsys.psd2.xs2a.domain.pis.PaymentInitiationResponse;
 import de.adorsys.psd2.xs2a.service.context.SpiContextDataProvider;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiErrorMapper;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiToXs2aPaymentMapper;
-import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.Xs2aToSpiPaymentInfo;
+import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.Xs2aToSpiPaymentInfoMapper;
 import de.adorsys.psd2.xs2a.service.spi.InitialSpiAspspConsentDataProvider;
 import de.adorsys.psd2.xs2a.service.spi.SpiAspspConsentDataProviderFactory;
 import de.adorsys.psd2.xs2a.spi.domain.SpiContextData;
+import de.adorsys.psd2.xs2a.spi.domain.error.SpiMessageErrorCode;
+import de.adorsys.psd2.xs2a.spi.domain.error.SpiTppMessage;
 import de.adorsys.psd2.xs2a.spi.domain.payment.SpiPaymentInfo;
 import de.adorsys.psd2.xs2a.spi.domain.payment.response.SpiCommonPaymentInitiationResponse;
 import de.adorsys.psd2.xs2a.spi.domain.payment.response.SpiPaymentInitiationResponse;
@@ -63,14 +64,14 @@ class CommonPaymentInitiationServiceTest {
     private static final SpiCommonPaymentInitiationResponse SPI_PAYMENT_INITIATION_RESPONSE = new SpiCommonPaymentInitiationResponse();
     private static final SpiResponse<SpiPaymentInitiationResponse> SPI_COMMON_RESPONSE = buildSpiResponse();
     private static final CommonPaymentInitiationResponse COMMON_PAYMENT_RESPONSE = new CommonPaymentInitiationResponse();
-    private static final TppMessage FORMAT_ERROR = new TppMessage(MessageErrorCode.FORMAT_ERROR);
+    private static final SpiTppMessage FORMAT_ERROR = new SpiTppMessage(SpiMessageErrorCode.FORMAT_ERROR);
     private static final ErrorHolder EXPECTED_ERROR = ErrorHolder.builder(ErrorType.PIS_404)
                                                           .tppMessages(TppMessageInformation.of(MessageErrorCode.RESOURCE_UNKNOWN_404_NO_PAYMENT))
                                                           .build();
     @Mock
     private CommonPaymentSpi commonPaymentSpi;
     @Mock
-    private Xs2aToSpiPaymentInfo xs2aToSpiPaymentInfo;
+    private Xs2aToSpiPaymentInfoMapper xs2aToSpiPaymentInfoMapper;
     @Mock
     private SpiToXs2aPaymentMapper spiToXs2aPaymentMapper;
     @Mock
@@ -94,7 +95,7 @@ class CommonPaymentInitiationServiceTest {
 
     @Test
     void createCommonPayment_success() {
-        when(xs2aToSpiPaymentInfo.mapToSpiPaymentRequest(COMMON_PAYMENT, PRODUCT))
+        when(xs2aToSpiPaymentInfoMapper.mapToSpiPaymentInfo(COMMON_PAYMENT, PRODUCT))
             .thenReturn(SPI_PAYMENT_INFO);
         when(commonPaymentSpi.initiatePayment(SPI_CONTEXT_DATA, SPI_PAYMENT_INFO, initialSpiAspspConsentDataProvider))
             .thenReturn(SPI_COMMON_RESPONSE);
@@ -116,7 +117,7 @@ class CommonPaymentInitiationServiceTest {
         SpiResponse<SpiPaymentInitiationResponse> expectedFailureResponse = SpiResponse.<SpiPaymentInitiationResponse>builder()
                                                                                 .error(FORMAT_ERROR)
                                                                                 .build();
-        when(xs2aToSpiPaymentInfo.mapToSpiPaymentRequest(COMMON_PAYMENT, PRODUCT))
+        when(xs2aToSpiPaymentInfoMapper.mapToSpiPaymentInfo(COMMON_PAYMENT, PRODUCT))
             .thenReturn(SPI_PAYMENT_INFO);
         when(commonPaymentSpi.initiatePayment(SPI_CONTEXT_DATA, SPI_PAYMENT_INFO, initialSpiAspspConsentDataProvider))
             .thenReturn(expectedFailureResponse);

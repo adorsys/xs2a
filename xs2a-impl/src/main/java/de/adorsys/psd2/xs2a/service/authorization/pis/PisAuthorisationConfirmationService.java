@@ -38,9 +38,7 @@ import de.adorsys.psd2.xs2a.domain.consent.pis.PaymentAuthorisationParameters;
 import de.adorsys.psd2.xs2a.domain.consent.pis.Xs2aUpdatePisCommonPaymentPsuDataResponse;
 import de.adorsys.psd2.xs2a.service.context.SpiContextDataProvider;
 import de.adorsys.psd2.xs2a.service.mapper.cms_xs2a_mappers.Xs2aPisCommonPaymentMapper;
-import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiErrorMapper;
-import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiToXs2aCurrencyConversionInfoMapper;
-import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.Xs2aToSpiPaymentMapper;
+import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.*;
 import de.adorsys.psd2.xs2a.service.payment.Xs2aUpdatePaymentAfterSpiService;
 import de.adorsys.psd2.xs2a.service.profile.AspspProfileServiceWrapper;
 import de.adorsys.psd2.xs2a.service.spi.SpiAspspConsentDataProviderFactory;
@@ -73,6 +71,8 @@ public class PisAuthorisationConfirmationService {
     private final Xs2aUpdatePaymentAfterSpiService xs2aUpdatePaymentAfterSpiService;
     private final CurrencyConversionInfoSpi currencyConversionInfoSpi;
     private final SpiToXs2aCurrencyConversionInfoMapper spiToXs2aCurrencyConversionInfoMapper;
+    private final SpiToXs2aTransactionMapper transactionMapper;
+    private final SpiToXs2aAuthorizationMapper authorizationMapper;
 
     /**
      * Checks authorisation confirmation data. Has two possible flows:
@@ -145,7 +145,7 @@ public class PisAuthorisationConfirmationService {
         if (spiResponse.isSuccessful()) {
             SpiPaymentConfirmationCodeValidationResponse payload = spiResponse.getPayload();
             authorisationServiceEncrypted.updateAuthorisation(request.getAuthorisationId(), updatePaymentRequest);
-            xs2aUpdatePaymentAfterSpiService.updatePaymentStatus(request.getPaymentId(), payload.getTransactionStatus());
+            xs2aUpdatePaymentAfterSpiService.updatePaymentStatus(request.getPaymentId(), transactionMapper.mapToTransactionStatus(payload.getTransactionStatus()));
         }
 
         return response;
@@ -164,7 +164,7 @@ public class PisAuthorisationConfirmationService {
                                                                                               SpiPaymentConfirmationCodeValidationResponse spiConfirmationResponse,
                                                                                               Xs2aCurrencyConversionInfo xs2aCurrencyConversionInfo) {
         return new Xs2aUpdatePisCommonPaymentPsuDataResponse(
-            spiConfirmationResponse.getScaStatus(), request.getPaymentId(), request.getAuthorisationId(),
+            authorizationMapper.mapToScaStatus(spiConfirmationResponse.getScaStatus()), request.getPaymentId(), request.getAuthorisationId(),
             request.getPsuData(), xs2aCurrencyConversionInfo);
     }
 
@@ -186,11 +186,11 @@ public class PisAuthorisationConfirmationService {
             xs2aUpdatePisCommonPaymentPsuDataResponse = buildConfirmationCodeSpiErrorResponse(spiResponse, request.getPaymentId(), request.getAuthorisationId(), request.getPsuData());
         } else {
             SpiPaymentConfirmationCodeValidationResponse codeValidationResponse = spiResponse.getPayload();
-            xs2aUpdatePaymentAfterSpiService.updatePaymentStatus(request.getPaymentId(), codeValidationResponse.getTransactionStatus());
+            xs2aUpdatePaymentAfterSpiService.updatePaymentStatus(request.getPaymentId(), transactionMapper.mapToTransactionStatus(codeValidationResponse.getTransactionStatus()));
 
             Xs2aCurrencyConversionInfo xs2aCurrencyConversionInfo = getCurrencyConversionInfo(contextData, payment, authorisationResponse.getAuthorisationId(), aspspConsentDataProvider);
             xs2aUpdatePisCommonPaymentPsuDataResponse = new Xs2aUpdatePisCommonPaymentPsuDataResponse(
-                codeValidationResponse.getScaStatus(),
+                authorizationMapper.mapToScaStatus(codeValidationResponse.getScaStatus()),
                 request.getPaymentId(),
                 request.getAuthorisationId(),
                 request.getPsuData(),

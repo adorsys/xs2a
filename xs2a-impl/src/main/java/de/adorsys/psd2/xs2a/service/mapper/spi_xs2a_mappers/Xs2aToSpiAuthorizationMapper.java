@@ -16,19 +16,18 @@
  * contact us at psd2@adorsys.com.
  */
 
-package de.adorsys.psd2.xs2a.spi.domain.common;
+package de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers;
 
-import lombok.Data;
+import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
+import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
+import de.adorsys.psd2.xs2a.spi.domain.sca.SpiScaApproach;
+import de.adorsys.psd2.xs2a.spi.domain.sca.SpiScaStatus;
+import org.mapstruct.Mapper;
 
-@Data
-public class SpiAuthenticationObject {
-    private String authenticationType;
-    private String authenticationMethodId;
-    private String authenticationVersion;
-    private String name;
-    private String explanation;
-    /**
-     * Represents, whether current authentication object requires decoupled SCA
-     */
-    private boolean decoupled;
+@Mapper(componentModel = "spring")
+public interface Xs2aToSpiAuthorizationMapper {
+
+    SpiScaStatus mapToSpiScaStatus(ScaStatus scaStatus);
+
+    SpiScaApproach mapToSpiScaApproach(ScaApproach scaApproach);
 }

@@ -21,9 +21,10 @@ package de.adorsys.psd2.xs2a.service.mapper;
 import de.adorsys.psd2.xs2a.core.domain.ErrorHolder;
 import de.adorsys.psd2.xs2a.core.domain.TppMessageInformation;
 import de.adorsys.psd2.xs2a.core.error.ErrorType;
-import de.adorsys.psd2.xs2a.core.error.TppMessage;
+import de.adorsys.psd2.xs2a.core.error.MessageErrorCode;
 import de.adorsys.psd2.xs2a.core.mapper.ServiceType;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiErrorMapper;
+import de.adorsys.psd2.xs2a.spi.domain.error.SpiTppMessage;
 import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponse;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -33,7 +34,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.util.Arrays;
 import java.util.Collections;
 
-import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.*;
+import static de.adorsys.psd2.xs2a.spi.domain.error.SpiMessageErrorCode.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -47,9 +48,9 @@ class SpiErrorMapperTest {
         String message = "error message";
         ErrorType errorType = ErrorType.PIS_401;
         SpiResponse spiResponse = SpiResponse.builder()
-                                      .error(new TppMessage(PSU_CREDENTIALS_INVALID, message))
+                                      .error(new SpiTppMessage(PSU_CREDENTIALS_INVALID, message))
                                       .build();
-        TppMessageInformation expectedTppMessage = TppMessageInformation.buildWithCustomError(PSU_CREDENTIALS_INVALID, message);
+        TppMessageInformation expectedTppMessage = TppMessageInformation.buildWithCustomError(MessageErrorCode.PSU_CREDENTIALS_INVALID, message);
 
         // When
         ErrorHolder errorHolder = spiErrorMapper.mapToErrorHolder(spiResponse, ServiceType.PIS);
@@ -65,9 +66,9 @@ class SpiErrorMapperTest {
         // Given
         ErrorType errorType = ErrorType.PIS_401;
         SpiResponse spiResponse = SpiResponse.builder()
-                                      .error(new TppMessage(PSU_CREDENTIALS_INVALID))
+                                      .error(new SpiTppMessage(PSU_CREDENTIALS_INVALID))
                                       .build();
-        TppMessageInformation expectedTppMessage = TppMessageInformation.of(PSU_CREDENTIALS_INVALID);
+        TppMessageInformation expectedTppMessage = TppMessageInformation.of(MessageErrorCode.PSU_CREDENTIALS_INVALID);
 
         // When
         ErrorHolder errorHolder = spiErrorMapper.mapToErrorHolder(spiResponse, ServiceType.PIS);
@@ -84,9 +85,9 @@ class SpiErrorMapperTest {
         Object[] messageTextArgs = new Object[]{"parameter"};
         ErrorType errorType = ErrorType.PIS_401;
         SpiResponse spiResponse = SpiResponse.builder()
-                                      .error(new TppMessage(PSU_CREDENTIALS_INVALID, messageTextArgs))
+                                      .error(new SpiTppMessage(PSU_CREDENTIALS_INVALID, messageTextArgs))
                                       .build();
-        TppMessageInformation expectedTppMessage = TppMessageInformation.of(PSU_CREDENTIALS_INVALID, messageTextArgs);
+        TppMessageInformation expectedTppMessage = TppMessageInformation.of(MessageErrorCode.PSU_CREDENTIALS_INVALID, messageTextArgs);
 
         // When
         ErrorHolder errorHolder = spiErrorMapper.mapToErrorHolder(spiResponse, ServiceType.PIS);
@@ -108,7 +109,7 @@ class SpiErrorMapperTest {
 
         // Then
         assertNotNull(errorHolder);
-        assertEquals(PSU_CREDENTIALS_INVALID, errorHolder.getTppMessageInformationList().iterator().next().getMessageErrorCode());
+        assertEquals(MessageErrorCode.PSU_CREDENTIALS_INVALID, errorHolder.getTppMessageInformationList().iterator().next().getMessageErrorCode());
         assertEquals(errorType, errorHolder.getErrorType());
     }
 
@@ -116,17 +117,17 @@ class SpiErrorMapperTest {
     void mapToErrorHolder_withMultipleErrorsInResponse() {
         // Given
         ErrorType firstErrorType = ErrorType.PIS_400;
-        TppMessage firstError = new TppMessage(FORMAT_ERROR);
+        SpiTppMessage firstError = new SpiTppMessage(FORMAT_ERROR);
 
 
-        TppMessage secondError = new TppMessage(CANCELLATION_INVALID);
+        SpiTppMessage secondError = new SpiTppMessage(CANCELLATION_INVALID);
 
         SpiResponse spiResponse = SpiResponse.builder()
                                       .error(Arrays.asList(firstError, secondError))
                                       .build();
 
-        TppMessageInformation expectedFirstTppMessage = TppMessageInformation.of(FORMAT_ERROR);
-        TppMessageInformation expectedSecondTppMessage = TppMessageInformation.of(CANCELLATION_INVALID);
+        TppMessageInformation expectedFirstTppMessage = TppMessageInformation.of(MessageErrorCode.FORMAT_ERROR);
+        TppMessageInformation expectedSecondTppMessage = TppMessageInformation.of(MessageErrorCode.CANCELLATION_INVALID);
 
         // When
         ErrorHolder errorHolder = spiErrorMapper.mapToErrorHolder(spiResponse, ServiceType.PIS);
@@ -148,7 +149,7 @@ class SpiErrorMapperTest {
 
     private static SpiResponse<Void> buildSpiResponseTransactionStatus() {
         return SpiResponse.<Void>builder()
-                   .error(new TppMessage(PSU_CREDENTIALS_INVALID))
+                   .error(new SpiTppMessage(PSU_CREDENTIALS_INVALID))
                    .build();
     }
 

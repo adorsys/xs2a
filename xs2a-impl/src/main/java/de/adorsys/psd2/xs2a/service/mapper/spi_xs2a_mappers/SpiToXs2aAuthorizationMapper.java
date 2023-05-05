@@ -16,9 +16,18 @@
  * contact us at psd2@adorsys.com.
  */
 
-package de.adorsys.psd2.xs2a.spi.domain.common;
+package de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers;
 
-public enum SpiOtpFormat {
-    CHARACTERS,
-    INTEGER;
+import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
+import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
+import de.adorsys.psd2.xs2a.spi.domain.sca.SpiScaApproach;
+import de.adorsys.psd2.xs2a.spi.domain.sca.SpiScaStatus;
+import org.mapstruct.Mapper;
+
+@Mapper(componentModel = "spring")
+public interface SpiToXs2aAuthorizationMapper {
+
+    ScaStatus mapToScaStatus(SpiScaStatus spiScaStatus);
+
+    ScaApproach mapToScaApproach(SpiScaApproach spiScaApproach);
 }

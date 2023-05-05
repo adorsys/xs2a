@@ -18,8 +18,8 @@
 
 package de.adorsys.psd2.xs2a.spi.domain.response;
 
-import de.adorsys.psd2.xs2a.core.error.MessageErrorCode;
-import de.adorsys.psd2.xs2a.core.error.TppMessage;
+import de.adorsys.psd2.xs2a.spi.domain.error.SpiMessageErrorCode;
+import de.adorsys.psd2.xs2a.spi.domain.error.SpiTppMessage;
 import lombok.Value;
 import org.apache.commons.collections4.CollectionUtils;
 import org.jetbrains.annotations.NotNull;
@@ -41,8 +41,7 @@ public class SpiResponse<T> {
      * provide the error explanation to TPP
      */
     @NotNull
-    @Deprecated // TODO: change with SpiTppMessage in 14.8
-    private final List<TppMessage> errors = new ArrayList<>();
+    private final List<SpiTppMessage> errors = new ArrayList<>();
 
     private SpiResponse(SpiResponseBuilder<T> builder) {
         this.payload = builder.payload;
@@ -67,7 +66,7 @@ public class SpiResponse<T> {
 
     public static class SpiResponseBuilder<T> {
         private T payload;
-        private List<TppMessage> errors = new ArrayList<>();
+        private List<SpiTppMessage> errors = new ArrayList<>();
 
         private SpiResponseBuilder() {
         }
@@ -77,12 +76,12 @@ public class SpiResponse<T> {
             return this;
         }
 
-        public SpiResponseBuilder<T> error(@NotNull TppMessage error) {
+        public SpiResponseBuilder<T> error(@NotNull SpiTppMessage error) {
             this.errors.add(error);
             return this;
         }
 
-        public SpiResponseBuilder<T> error(List<TppMessage> errors) {
+        public SpiResponseBuilder<T> error(List<SpiTppMessage> errors) {
             if (CollectionUtils.isNotEmpty(errors)) {
                 this.errors.addAll(errors);
             }
@@ -92,7 +91,7 @@ public class SpiResponse<T> {
         public SpiResponse<T> build() {
 
             if (payload == null && CollectionUtils.isEmpty(errors)) {
-                this.error(new TppMessage(MessageErrorCode.INTERNAL_SERVER_ERROR));
+                this.error(new SpiTppMessage(SpiMessageErrorCode.INTERNAL_SERVER_ERROR));
             }
 
             return new SpiResponse<>(this);

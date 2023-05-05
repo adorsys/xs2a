@@ -28,7 +28,6 @@ import de.adorsys.psd2.xs2a.core.domain.ErrorHolder;
 import de.adorsys.psd2.xs2a.core.domain.TppMessageInformation;
 import de.adorsys.psd2.xs2a.core.error.ErrorType;
 import de.adorsys.psd2.xs2a.core.error.MessageErrorCode;
-import de.adorsys.psd2.xs2a.core.error.TppMessage;
 import de.adorsys.psd2.xs2a.core.mapper.ServiceType;
 import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
@@ -38,9 +37,7 @@ import de.adorsys.psd2.xs2a.domain.consent.pis.PaymentAuthorisationParameters;
 import de.adorsys.psd2.xs2a.domain.consent.pis.Xs2aUpdatePisCommonPaymentPsuDataResponse;
 import de.adorsys.psd2.xs2a.service.context.SpiContextDataProvider;
 import de.adorsys.psd2.xs2a.service.mapper.cms_xs2a_mappers.Xs2aPisCommonPaymentMapper;
-import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiErrorMapper;
-import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiToXs2aCurrencyConversionInfoMapper;
-import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.Xs2aToSpiPaymentMapper;
+import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.*;
 import de.adorsys.psd2.xs2a.service.payment.Xs2aUpdatePaymentAfterSpiService;
 import de.adorsys.psd2.xs2a.service.profile.AspspProfileServiceWrapper;
 import de.adorsys.psd2.xs2a.service.spi.SpiAspspConsentDataProviderFactory;
@@ -49,9 +46,13 @@ import de.adorsys.psd2.xs2a.spi.domain.SpiContextData;
 import de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiCheckConfirmationCodeRequest;
 import de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiCurrencyConversionInfo;
 import de.adorsys.psd2.xs2a.spi.domain.common.SpiAmount;
+import de.adorsys.psd2.xs2a.spi.domain.error.SpiMessageErrorCode;
+import de.adorsys.psd2.xs2a.spi.domain.error.SpiTppMessage;
 import de.adorsys.psd2.xs2a.spi.domain.payment.SpiSinglePayment;
+import de.adorsys.psd2.xs2a.spi.domain.payment.SpiTransactionStatus;
 import de.adorsys.psd2.xs2a.spi.domain.payment.response.SpiPaymentConfirmationCodeValidationResponse;
 import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponse;
+import de.adorsys.psd2.xs2a.spi.domain.sca.SpiScaStatus;
 import de.adorsys.psd2.xs2a.spi.service.CurrencyConversionInfoSpi;
 import de.adorsys.psd2.xs2a.util.reader.TestSpiDataProvider;
 import de.adorsys.xs2a.reader.JsonReader;
@@ -65,7 +66,6 @@ import java.math.BigDecimal;
 import java.util.Currency;
 
 import static de.adorsys.psd2.consent.api.CmsError.TECHNICAL_ERROR;
-import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.PSU_CREDENTIALS_INVALID;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
 
@@ -107,6 +107,10 @@ class PisAuthorisationConfirmationServiceTest {
     private CurrencyConversionInfoSpi currencyConversionInfoSpi;
     @Mock
     private SpiToXs2aCurrencyConversionInfoMapper spiToXs2aCurrencyConversionInfoMapper;
+    @Mock
+    private SpiToXs2aTransactionMapper transactionMapper;
+    @Mock
+    private SpiToXs2aAuthorizationMapper authorizationMapper;
 
     @Test
     void processAuthorisationConfirmation_success_checkOnSpi() {
@@ -114,6 +118,7 @@ class PisAuthorisationConfirmationServiceTest {
         PsuIdData psuIdData = buildPsuIdData();
         PaymentAuthorisationParameters request = buildUpdatePisCommonPaymentPsuDataRequest();
         TransactionStatus transactionStatus = TransactionStatus.ACSP;
+        SpiTransactionStatus spiTransactionStatus = SpiTransactionStatus.ACSP;
         Xs2aUpdatePisCommonPaymentPsuDataResponse expectedResult = new Xs2aUpdatePisCommonPaymentPsuDataResponse(
             ScaStatus.FINALISED, PAYMENT_ID, AUTHORISATION_ID, psuIdData, null);
         Authorisation authorisationResponse = buildGetPisAuthorisationResponse();
@@ -140,7 +145,7 @@ class PisAuthorisationConfirmationServiceTest {
             .thenReturn(aspspConsentDataProvider);
         when(pisCheckAuthorisationConfirmationService.checkConfirmationCode(contextData, spiCheckConfirmationCodeRequest, SPI_SINGLE_PAYMENT, aspspConsentDataProvider))
             .thenReturn(SpiResponse.<SpiPaymentConfirmationCodeValidationResponse>builder()
-                            .payload(new SpiPaymentConfirmationCodeValidationResponse(ScaStatus.FINALISED, transactionStatus))
+                            .payload(new SpiPaymentConfirmationCodeValidationResponse(SpiScaStatus.FINALISED, spiTransactionStatus))
                             .build());
 
         SpiAmount spiAmount = new SpiAmount(Currency.getInstance("EUR"), BigDecimal.valueOf(34));
@@ -149,6 +154,8 @@ class PisAuthorisationConfirmationServiceTest {
             .thenReturn(SpiResponse.<SpiCurrencyConversionInfo>builder()
                             .payload(spiCurrencyConversionInfo)
                             .build());
+        when(transactionMapper.mapToTransactionStatus(spiTransactionStatus)).thenReturn(transactionStatus);
+        when(authorizationMapper.mapToScaStatus(SpiScaStatus.FINALISED)).thenReturn(ScaStatus.FINALISED);
 
         // when
         Xs2aUpdatePisCommonPaymentPsuDataResponse actualResult = pisAuthorisationConfirmationService.processAuthorisationConfirmation(request);
@@ -181,7 +188,7 @@ class PisAuthorisationConfirmationServiceTest {
             .thenReturn(SPI_SINGLE_PAYMENT);
 
         SpiContextData contextData = getSpiContextData();
-        SpiPaymentConfirmationCodeValidationResponse response = new SpiPaymentConfirmationCodeValidationResponse(ScaStatus.FINALISED, TransactionStatus.ACSP);
+        SpiPaymentConfirmationCodeValidationResponse response = new SpiPaymentConfirmationCodeValidationResponse(SpiScaStatus.FINALISED, SpiTransactionStatus.ACSP);
         SpiResponse<SpiPaymentConfirmationCodeValidationResponse> spiResponse = SpiResponse.<SpiPaymentConfirmationCodeValidationResponse>builder().payload(response).build();
         when(aspspConsentDataProviderFactory.getSpiAspspDataProviderFor(PAYMENT_ID)).thenReturn(aspspConsentDataProvider);
         when(spiContextDataProvider.provideWithPsuIdData(psuIdData)).thenReturn(contextData);
@@ -192,6 +199,8 @@ class PisAuthorisationConfirmationServiceTest {
             .thenReturn(SpiResponse.<SpiCurrencyConversionInfo>builder()
                             .payload(spiCurrencyConversionInfo)
                             .build());
+        when(transactionMapper.mapToTransactionStatus(SpiTransactionStatus.ACSP)).thenReturn(TransactionStatus.ACSP);
+        when(authorizationMapper.mapToScaStatus(SpiScaStatus.FINALISED)).thenReturn(ScaStatus.FINALISED);
 
         // when
         Xs2aUpdatePisCommonPaymentPsuDataResponse actualResult = pisAuthorisationConfirmationService.processAuthorisationConfirmation(request);
@@ -199,7 +208,7 @@ class PisAuthorisationConfirmationServiceTest {
         // then
         assertThat(actualResult).isEqualTo(expectedResult);
 
-        verify(xs2aUpdatePaymentAfterSpiService, times(1)).updatePaymentStatus(PAYMENT_ID, response.getTransactionStatus());
+        verify(xs2aUpdatePaymentAfterSpiService, times(1)).updatePaymentStatus(PAYMENT_ID, TransactionStatus.valueOf(response.getTransactionStatus().name()));
         verify(pisCheckAuthorisationConfirmationService, times(1)).checkConfirmationCodeInternally(AUTHORISATION_ID, CONFIRMATION_CODE, SCA_AUTHENTICATION_DATA, aspspConsentDataProvider);
     }
 
@@ -279,7 +288,7 @@ class PisAuthorisationConfirmationServiceTest {
             .thenReturn(SPI_SINGLE_PAYMENT);
 
         SpiContextData contextData = getSpiContextData();
-        SpiPaymentConfirmationCodeValidationResponse response = new SpiPaymentConfirmationCodeValidationResponse(ScaStatus.FAILED, TransactionStatus.RJCT);
+        SpiPaymentConfirmationCodeValidationResponse response = new SpiPaymentConfirmationCodeValidationResponse(SpiScaStatus.FAILED, SpiTransactionStatus.RJCT);
         SpiResponse<SpiPaymentConfirmationCodeValidationResponse> spiResponse = SpiResponse.<SpiPaymentConfirmationCodeValidationResponse>builder().payload(response).build();
         when(aspspConsentDataProviderFactory.getSpiAspspDataProviderFor(PAYMENT_ID)).thenReturn(aspspConsentDataProvider);
         when(spiContextDataProvider.provideWithPsuIdData(psuIdData)).thenReturn(contextData);
@@ -290,6 +299,7 @@ class PisAuthorisationConfirmationServiceTest {
             .thenReturn(SpiResponse.<SpiCurrencyConversionInfo>builder()
                             .payload(spiCurrencyConversionInfo)
                             .build());
+        when(transactionMapper.mapToTransactionStatus(SpiTransactionStatus.RJCT)).thenReturn(TransactionStatus.RJCT);
 
         // when
         Xs2aUpdatePisCommonPaymentPsuDataResponse actualResult = pisAuthorisationConfirmationService.processAuthorisationConfirmation(request);
@@ -297,7 +307,7 @@ class PisAuthorisationConfirmationServiceTest {
         // then
         assertThat(actualResult.hasError()).isTrue();
         assertThat(actualResult.getErrorHolder()).isEqualToComparingFieldByField(expectedResult.getErrorHolder());
-        verify(xs2aUpdatePaymentAfterSpiService, times(1)).updatePaymentStatus(PAYMENT_ID, response.getTransactionStatus());
+        verify(xs2aUpdatePaymentAfterSpiService, times(1)).updatePaymentStatus(PAYMENT_ID, TransactionStatus.valueOf(response.getTransactionStatus().name()));
     }
 
     @Test
@@ -327,7 +337,7 @@ class PisAuthorisationConfirmationServiceTest {
             .thenReturn(SPI_SINGLE_PAYMENT);
 
         SpiContextData contextData = getSpiContextData();
-        TppMessage spiErrorMessage = new TppMessage(MessageErrorCode.SCA_INVALID);
+        SpiTppMessage spiErrorMessage = new SpiTppMessage(SpiMessageErrorCode.SCA_INVALID);
         SpiResponse<SpiPaymentConfirmationCodeValidationResponse> spiResponse = SpiResponse.<SpiPaymentConfirmationCodeValidationResponse>builder().error(spiErrorMessage).build();
         when(aspspConsentDataProviderFactory.getSpiAspspDataProviderFor(PAYMENT_ID)).thenReturn(aspspConsentDataProvider);
         when(spiContextDataProvider.provideWithPsuIdData(psuIdData)).thenReturn(contextData);
@@ -350,7 +360,7 @@ class PisAuthorisationConfirmationServiceTest {
         PsuIdData psuIdData = buildPsuIdData();
         PaymentAuthorisationParameters request = buildUpdatePisCommonPaymentPsuDataRequest();
         SpiResponse<SpiPaymentConfirmationCodeValidationResponse> spiResponse = SpiResponse.<SpiPaymentConfirmationCodeValidationResponse>builder()
-                                                                                    .error(new TppMessage(PSU_CREDENTIALS_INVALID))
+                                                                                    .error(new SpiTppMessage(SpiMessageErrorCode.PSU_CREDENTIALS_INVALID))
                                                                                     .build();
 
         ErrorHolder errorHolder = ErrorHolder.builder(ErrorType.PIS_400)

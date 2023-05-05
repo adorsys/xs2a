@@ -35,8 +35,7 @@ import de.adorsys.psd2.xs2a.service.RequestProviderService;
 import de.adorsys.psd2.xs2a.service.authorization.AuthorisationMethodDecider;
 import de.adorsys.psd2.xs2a.service.authorization.PaymentCancellationAuthorisationNeededDecider;
 import de.adorsys.psd2.xs2a.service.context.SpiContextDataProvider;
-import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiErrorMapper;
-import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiToXs2aCancelPaymentMapper;
+import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.*;
 import de.adorsys.psd2.xs2a.service.spi.SpiAspspConsentDataProviderFactory;
 import de.adorsys.psd2.xs2a.spi.domain.SpiAspspConsentDataProvider;
 import de.adorsys.psd2.xs2a.spi.domain.SpiContextData;
@@ -66,6 +65,9 @@ public class CancelPaymentService {
     private final PaymentCancellationAuthorisationService paymentCancellationAuthorisationService;
     private final RequestProviderService requestProviderService;
     private final SpiAspspConsentDataProviderFactory aspspConsentDataProviderFactory;
+    private final SpiToXs2aTransactionMapper spiToXs2aTransactionMapper;
+    private final Xs2aToSpiTransactionMapper xs2aToSpiTransactionMapper;
+    private final SpiToXs2aPisMapper spiToXs2aPisMapper;
 
     /**
      * Cancels payment with or without performing strong customer authentication
@@ -101,7 +103,7 @@ public class CancelPaymentService {
         if (resultStatus != null) {
             updatePaymentStatusAfterSpiService.updatePaymentStatus(encryptedPaymentId, resultStatus);
         } else {
-            resultStatus = payment.getPaymentStatus();
+            resultStatus = spiToXs2aTransactionMapper.mapToTransactionStatus(payment.getPaymentStatus());
             cancelPaymentResponse.setTransactionStatus(resultStatus);
         }
 
@@ -126,7 +128,7 @@ public class CancelPaymentService {
 
         if (resultStatus == TransactionStatus.RCVD
                 || cancellationScaNeededDecider.isNoScaRequired(cancelPaymentResponse.isStartAuthorisationRequired())) {
-            payment.setPaymentStatus(resultStatus);
+            payment.setPaymentStatus(xs2aToSpiTransactionMapper.mapToSpiTransactionStatus(resultStatus));
             return proceedNoScaCancellation(payment, spiContextData, aspspConsentDataProvider, encryptedPaymentId);
         }
 
@@ -138,7 +140,7 @@ public class CancelPaymentService {
         updatePaymentStatusAfterSpiService.updatePaymentCancellationInternalRequestId(encryptedPaymentId, internalRequestId.toString());
 
         if (implicitMethod) {
-            Xs2aCreatePisAuthorisationRequest request = new Xs2aCreatePisAuthorisationRequest(encryptedPaymentId, new PsuIdData(null, null, null, null, null), payment.getPaymentProduct(), payment.getPaymentType(), null);
+            Xs2aCreatePisAuthorisationRequest request = new Xs2aCreatePisAuthorisationRequest(encryptedPaymentId, new PsuIdData(null, null, null, null, null), payment.getPaymentProduct(), spiToXs2aPisMapper.mapToPaymentType(payment.getPaymentType()), null);
             ResponseObject<CancellationAuthorisationResponse> authorisationResponse = paymentCancellationAuthorisationService.createPisCancellationAuthorisation(request);
 
             if (authorisationResponse.hasError()) {

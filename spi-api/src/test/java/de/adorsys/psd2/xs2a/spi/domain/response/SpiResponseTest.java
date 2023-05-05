@@ -18,8 +18,8 @@
 
 package de.adorsys.psd2.xs2a.spi.domain.response;
 
-import de.adorsys.psd2.xs2a.core.error.MessageErrorCode;
-import de.adorsys.psd2.xs2a.core.error.TppMessage;
+import de.adorsys.psd2.xs2a.spi.domain.error.SpiMessageErrorCode;
+import de.adorsys.psd2.xs2a.spi.domain.error.SpiTppMessage;
 import org.junit.jupiter.api.Test;
 
 import java.util.Collections;
@@ -28,7 +28,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class SpiResponseTest {
 
-    private final TppMessage FORMAT_ERROR = new TppMessage(MessageErrorCode.FORMAT_ERROR);
+    private final SpiTppMessage FORMAT_ERROR = new SpiTppMessage(SpiMessageErrorCode.FORMAT_ERROR);
 
     @Test
     void builder_should_pass_on_failure_without_payload() {
@@ -71,7 +71,7 @@ class SpiResponseTest {
     @Test
     void builder_build_should_generate_message_on_error() {
         // Given
-        TppMessage errorMessage = new TppMessage(MessageErrorCode.CONSENT_UNKNOWN_400);
+        SpiTppMessage errorMessage = new SpiTppMessage(SpiMessageErrorCode.CONSENT_UNKNOWN_400);
 
         // When
         SpiResponse<String> response = SpiResponse.<String>builder().error(errorMessage).build();
@@ -84,7 +84,7 @@ class SpiResponseTest {
     @Test
     void builder_build_with_null_payload_should_generate_error_message() {
         // Given
-        TppMessage errorMessage = new TppMessage(MessageErrorCode.INTERNAL_SERVER_ERROR);
+        SpiTppMessage errorMessage = new SpiTppMessage(SpiMessageErrorCode.INTERNAL_SERVER_ERROR);
 
         // When
         SpiResponse<String> response = SpiResponse.<String>builder().payload(null).build();
@@ -97,7 +97,7 @@ class SpiResponseTest {
     @Test
     void builder_build_without_payload_should_generate_error_message() {
         // Given
-        TppMessage errorMessage = new TppMessage(MessageErrorCode.INTERNAL_SERVER_ERROR);
+        SpiTppMessage errorMessage = new SpiTppMessage(SpiMessageErrorCode.INTERNAL_SERVER_ERROR);
 
         // When
         SpiResponse<String> response = SpiResponse.<String>builder().build();

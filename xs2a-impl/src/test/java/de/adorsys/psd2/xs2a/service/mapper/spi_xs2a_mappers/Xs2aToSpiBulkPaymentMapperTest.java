@@ -26,6 +26,7 @@ import de.adorsys.psd2.xs2a.domain.pis.BulkPayment;
 import de.adorsys.psd2.xs2a.domain.pis.SinglePayment;
 import de.adorsys.psd2.xs2a.spi.domain.account.SpiAccountReference;
 import de.adorsys.psd2.xs2a.spi.domain.payment.SpiBulkPayment;
+import de.adorsys.psd2.xs2a.spi.domain.payment.SpiTransactionStatus;
 import de.adorsys.psd2.xs2a.spi.domain.psu.SpiPsuData;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.BeforeEach;
@@ -57,6 +58,7 @@ class Xs2aToSpiBulkPaymentMapperTest {
     private static final String PSU_ID_2 = "Second";
     private final Currency EUR_CURRENCY = Currency.getInstance("EUR");
     private static final TransactionStatus TRANSACTION_STATUS = TransactionStatus.RCVD;
+    private static final SpiTransactionStatus SPI_TRANSACTION_STATUS = SpiTransactionStatus.RCVD;
     private static final LocalDate REQUESTED_EXECUTION_DATE = LocalDate.now();
     private static final OffsetDateTime REQUESTED_EXECUTION_TIME = OffsetDateTime.now();
     private static final List<PsuIdData> psuDataList = new ArrayList<>();
@@ -72,6 +74,8 @@ class Xs2aToSpiBulkPaymentMapperTest {
     private Xs2aToSpiSinglePaymentMapper xs2aToSpiSinglePaymentMapper;
     @Mock
     private Xs2aToSpiAccountReferenceMapper xs2aToSpiAccountReferenceMapper;
+    @Mock
+    private Xs2aToSpiTransactionMapper xs2aToSpiTransactionMapper;
 
     @BeforeEach
     void setUp() {
@@ -81,6 +85,7 @@ class Xs2aToSpiBulkPaymentMapperTest {
             .thenReturn(spiPsuDataList);
         when(xs2aToSpiAccountReferenceMapper.mapToSpiAccountReference(buildAccountReference(DEB_ACCOUNT_ID)))
             .thenReturn(buildSpiAccountReference());
+        when(xs2aToSpiTransactionMapper.mapToSpiTransactionStatus(TRANSACTION_STATUS)).thenReturn(SPI_TRANSACTION_STATUS);
     }
 
     @Test
@@ -95,7 +100,7 @@ class Xs2aToSpiBulkPaymentMapperTest {
         assertEquals(buildSpiAccountReference(), spiBulkPayment.getDebtorAccount());
         assertEquals(REQUESTED_EXECUTION_DATE, spiBulkPayment.getRequestedExecutionDate());
         assertEquals(REQUESTED_EXECUTION_TIME, spiBulkPayment.getRequestedExecutionTime());
-        assertEquals(TRANSACTION_STATUS, spiBulkPayment.getPaymentStatus());
+        assertEquals(SPI_TRANSACTION_STATUS, spiBulkPayment.getPaymentStatus());
         assertFalse(spiBulkPayment.getPayments().isEmpty());
         assertEquals(PAYMENT_PRODUCT, spiBulkPayment.getPaymentProduct());
         assertEquals(spiPsuDataList, spiBulkPayment.getPsuDataList());

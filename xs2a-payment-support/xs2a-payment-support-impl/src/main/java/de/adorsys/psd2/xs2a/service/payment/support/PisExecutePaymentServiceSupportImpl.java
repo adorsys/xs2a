@@ -52,7 +52,7 @@ public class PisExecutePaymentServiceSupportImpl implements PisExecutePaymentSer
             return verifyScaAndExecutePaymentWithPaymentResponse(commonPaymentSpi, (SpiPaymentInfo) payment, spiScaConfirmation, contextData, spiAspspConsentDataProvider);
         }
 
-        PaymentType paymentType = payment.getPaymentType();
+        PaymentType paymentType = PaymentType.valueOf(payment.getPaymentType().name());
         if (PaymentType.SINGLE == paymentType) {
             return verifyScaAndExecutePaymentWithPaymentResponse(singlePaymentSpi, spiPaymentMapper.mapToSpiSinglePayment(payment), spiScaConfirmation, contextData, spiAspspConsentDataProvider);
         } else if (PaymentType.PERIODIC == paymentType) {
@@ -68,7 +68,7 @@ public class PisExecutePaymentServiceSupportImpl implements PisExecutePaymentSer
             return executeWithoutSca(commonPaymentSpi, (SpiPaymentInfo) payment, contextData, aspspConsentDataProvider);
         }
 
-        PaymentType paymentType = payment.getPaymentType();
+        PaymentType paymentType = PaymentType.valueOf(payment.getPaymentType().name());
         if (PaymentType.SINGLE == paymentType) {
             return executeWithoutSca(singlePaymentSpi, spiPaymentMapper.mapToSpiSinglePayment(payment), contextData, aspspConsentDataProvider);
         } else if (PaymentType.PERIODIC == paymentType) {

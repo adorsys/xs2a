@@ -23,7 +23,6 @@ import de.adorsys.psd2.xs2a.core.domain.ErrorHolder;
 import de.adorsys.psd2.xs2a.core.domain.TppMessageInformation;
 import de.adorsys.psd2.xs2a.core.error.ErrorType;
 import de.adorsys.psd2.xs2a.core.error.MessageErrorCode;
-import de.adorsys.psd2.xs2a.core.error.TppMessage;
 import de.adorsys.psd2.xs2a.core.mapper.ServiceType;
 import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
 import de.adorsys.psd2.xs2a.domain.ContentType;
@@ -31,13 +30,14 @@ import de.adorsys.psd2.xs2a.domain.pis.CommonPayment;
 import de.adorsys.psd2.xs2a.domain.pis.ReadPaymentStatusResponse;
 import de.adorsys.psd2.xs2a.service.mapper.MediaTypeMapper;
 import de.adorsys.psd2.xs2a.service.mapper.cms_xs2a_mappers.CmsToXs2aPaymentMapper;
-import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiErrorMapper;
-import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiToXs2aLinksMapper;
-import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.Xs2aToSpiPaymentInfoMapper;
+import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.*;
 import de.adorsys.psd2.xs2a.service.spi.SpiAspspConsentDataProviderFactory;
 import de.adorsys.psd2.xs2a.spi.domain.SpiAspspConsentDataProvider;
 import de.adorsys.psd2.xs2a.spi.domain.SpiContextData;
+import de.adorsys.psd2.xs2a.spi.domain.error.SpiMessageErrorCode;
+import de.adorsys.psd2.xs2a.spi.domain.error.SpiTppMessage;
 import de.adorsys.psd2.xs2a.spi.domain.payment.SpiPaymentInfo;
+import de.adorsys.psd2.xs2a.spi.domain.payment.SpiTransactionStatus;
 import de.adorsys.psd2.xs2a.spi.domain.payment.response.SpiGetPaymentStatusResponse;
 import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponse;
 import de.adorsys.psd2.xs2a.spi.service.CommonPaymentSpi;
@@ -62,10 +62,10 @@ class ReadCommonPaymentStatusServiceTest {
     private static final SpiPaymentInfo SPI_PAYMENT_INFO = new SpiPaymentInfo(PRODUCT);
     private static final String JSON_MEDIA_TYPE = ContentType.JSON.getType();
     private static final String PSU_MESSAGE = "PSU message";
-    private static final SpiGetPaymentStatusResponse TRANSACTION_STATUS = new SpiGetPaymentStatusResponse(TransactionStatus.ACSP, null, JSON_MEDIA_TYPE, null, PSU_MESSAGE, null, null);
+    private static final SpiGetPaymentStatusResponse TRANSACTION_STATUS = new SpiGetPaymentStatusResponse(SpiTransactionStatus.ACSP, null, JSON_MEDIA_TYPE, null, PSU_MESSAGE, null, null);
     private static final SpiResponse<SpiGetPaymentStatusResponse> TRANSACTION_RESPONSE = buildSpiResponseTransactionStatus();
     private static final SpiResponse<SpiGetPaymentStatusResponse> TRANSACTION_RESPONSE_FAILURE = buildFailSpiResponseTransactionStatus();
-    private static final ReadPaymentStatusResponse READ_PAYMENT_STATUS_RESPONSE = new ReadPaymentStatusResponse(TRANSACTION_RESPONSE.getPayload().getTransactionStatus(), TRANSACTION_RESPONSE.getPayload().getFundsAvailable(), MediaType.APPLICATION_JSON, null, PSU_MESSAGE, null, null);
+    private static final ReadPaymentStatusResponse READ_PAYMENT_STATUS_RESPONSE = new ReadPaymentStatusResponse(TransactionStatus.valueOf(TRANSACTION_RESPONSE.getPayload().getTransactionStatus().name()), TRANSACTION_RESPONSE.getPayload().getFundsAvailable(), MediaType.APPLICATION_JSON, null, PSU_MESSAGE, null, null);
     private static final PisCommonPaymentResponse PIS_COMMON_PAYMENT_RESPONSE = new PisCommonPaymentResponse();
     private static final String SOME_ENCRYPTED_PAYMENT_ID = "Encrypted Payment Id";
 
@@ -88,6 +88,10 @@ class ReadCommonPaymentStatusServiceTest {
     private MediaTypeMapper mediaTypeMapper;
     @Mock
     private SpiToXs2aLinksMapper spiToXs2aLinksMapper;
+    @Mock
+    private SpiToXs2aTppMessageInformationMapper tppMessageInformationMapper;
+    @Mock
+    private SpiToXs2aTransactionMapper spiToXs2aTransactionMapper;;
 
     @BeforeEach
     void init() {
@@ -106,6 +110,8 @@ class ReadCommonPaymentStatusServiceTest {
             .thenReturn(TRANSACTION_RESPONSE);
         when(mediaTypeMapper.mapToMediaType(JSON_MEDIA_TYPE))
             .thenReturn(MediaType.APPLICATION_JSON);
+        when(tppMessageInformationMapper.toTppMessageInformationSet(null)).thenReturn(null);
+        when(spiToXs2aTransactionMapper.mapToTransactionStatus(SpiTransactionStatus.ACSP)).thenReturn(TransactionStatus.ACSP);
 
         // When
         ReadPaymentStatusResponse actualResponse = readCommonPaymentStatusService.readPaymentStatus(PIS_COMMON_PAYMENT_RESPONSE, SPI_CONTEXT_DATA, SOME_ENCRYPTED_PAYMENT_ID, JSON_MEDIA_TYPE);
@@ -142,7 +148,7 @@ class ReadCommonPaymentStatusServiceTest {
 
     private static SpiResponse<SpiGetPaymentStatusResponse> buildFailSpiResponseTransactionStatus() {
         return SpiResponse.<SpiGetPaymentStatusResponse>builder()
-                   .error(new TppMessage(MessageErrorCode.FORMAT_ERROR))
+                   .error(new SpiTppMessage(SpiMessageErrorCode.FORMAT_ERROR))
                    .build();
     }
 }

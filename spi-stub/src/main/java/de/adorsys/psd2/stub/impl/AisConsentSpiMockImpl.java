@@ -20,9 +20,6 @@ package de.adorsys.psd2.stub.impl;
 
 import de.adorsys.psd2.stub.impl.service.AuthorisationServiceMock;
 import de.adorsys.psd2.stub.impl.service.SpiMockData;
-import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
-import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
-import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import de.adorsys.psd2.xs2a.spi.domain.SpiAspspConsentDataProvider;
 import de.adorsys.psd2.xs2a.spi.domain.SpiContextData;
 import de.adorsys.psd2.xs2a.spi.domain.account.SpiAccountConsent;
@@ -55,7 +52,7 @@ public class AisConsentSpiMockImpl implements AisConsentSpi {
     @Override
     public SpiResponse<SpiStartAuthorisationResponse> startAuthorisation(@NotNull SpiContextData contextData, @NotNull SpiScaApproach scaApproach, @NotNull SpiScaStatus scaStatus, @NotNull String authorisationId, SpiAccountConsent businessObject, @NotNull SpiAspspConsentDataProvider aspspConsentDataProvider) {
         return SpiResponse.<SpiStartAuthorisationResponse>builder()
-                   .payload(new SpiStartAuthorisationResponse(ScaApproach.valueOf(scaApproach.name()), ScaStatus.valueOf(scaStatus.name()), SpiMockData.PSU_MESSAGE_START_AUTHORISATION, SpiMockData.TPP_MESSAGES_START_AUTHORISATION))
+                   .payload(new SpiStartAuthorisationResponse(scaApproach, scaStatus, SpiMockData.PSU_MESSAGE_START_AUTHORISATION, SpiMockData.TPP_MESSAGES_START_AUTHORISATION))
                    .build();
     }
 
@@ -104,7 +101,7 @@ public class AisConsentSpiMockImpl implements AisConsentSpi {
         log.info("AccountSpi#verifyScaAuthorisation: contextData {}, spiScaConfirmation {}, accountConsent-id {}", contextData, spiScaConfirmation, accountConsent.getId());
 
         return SpiResponse.<SpiVerifyScaAuthorisationResponse>builder()
-                   .payload(new SpiVerifyScaAuthorisationResponse(ConsentStatus.VALID))
+                   .payload(new SpiVerifyScaAuthorisationResponse(SpiConsentStatus.VALID))
                    .build();
     }
 
@@ -113,7 +110,7 @@ public class AisConsentSpiMockImpl implements AisConsentSpi {
         log.info("AisConsentSpi#checkConfirmationCode: contextData {}, spiCheckConfirmationCodeRequest{}, authorisation-id {}", contextData, spiCheckConfirmationCodeRequest.getConfirmationCode(), spiCheckConfirmationCodeRequest.getAuthorisationId());
 
         return SpiResponse.<SpiConsentConfirmationCodeValidationResponse>builder()
-                   .payload(new SpiConsentConfirmationCodeValidationResponse(ScaStatus.FINALISED, ConsentStatus.VALID))
+                   .payload(new SpiConsentConfirmationCodeValidationResponse(SpiScaStatus.FINALISED, SpiConsentStatus.VALID))
                    .build();
     }
 
@@ -150,7 +147,7 @@ public class AisConsentSpiMockImpl implements AisConsentSpi {
     public SpiResponse<SpiAuthorisationDecoupledScaResponse> startScaDecoupled(@NotNull SpiContextData contextData, @NotNull String authorisationId, @Nullable String authenticationMethodId, @NotNull SpiAccountConsent businessObject, @NotNull SpiAspspConsentDataProvider aspspConsentDataProvider) {
         log.info("AisConsentSpi#startScaDecoupled: contextData {}, authorisationId {}, authenticationMethodId {}, businessObject-id {}", contextData, authorisationId, authenticationMethodId, businessObject.getId());
         return SpiResponse.<SpiAuthorisationDecoupledScaResponse>builder()
-                   .payload(new SpiAuthorisationDecoupledScaResponse(ScaStatus.SCAMETHODSELECTED, DECOUPLED_PSU_MESSAGE))
+                   .payload(new SpiAuthorisationDecoupledScaResponse(SpiScaStatus.SCAMETHODSELECTED, DECOUPLED_PSU_MESSAGE))
                    .build();
     }
 
@@ -160,7 +157,7 @@ public class AisConsentSpiMockImpl implements AisConsentSpi {
                                                           @NotNull SpiAccountConsent businessObject,
                                                           @NotNull SpiAspspConsentDataProvider aspspConsentDataProvider) {
         return SpiResponse.<SpiScaStatusResponse>builder()
-                   .payload(new SpiScaStatusResponse(ScaStatus.valueOf(scaStatus.name()), true, PSU_MESSAGE,
+                   .payload(new SpiScaStatusResponse(scaStatus, true, PSU_MESSAGE,
                                                      SpiMockData.SPI_LINKS,
                                                      SpiMockData.TPP_MESSAGES))
                    .build();

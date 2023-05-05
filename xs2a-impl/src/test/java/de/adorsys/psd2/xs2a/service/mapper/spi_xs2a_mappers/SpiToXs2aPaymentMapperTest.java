@@ -20,6 +20,7 @@ package de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers;
 
 import de.adorsys.psd2.xs2a.core.pis.Xs2aAmount;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
+import de.adorsys.psd2.xs2a.core.sca.ChallengeData;
 import de.adorsys.psd2.xs2a.domain.pis.BulkPaymentInitiationResponse;
 import de.adorsys.psd2.xs2a.domain.pis.CommonPaymentInitiationResponse;
 import de.adorsys.psd2.xs2a.domain.pis.PeriodicPaymentInitiationResponse;
@@ -29,6 +30,7 @@ import de.adorsys.psd2.xs2a.spi.domain.common.SpiAmount;
 import de.adorsys.psd2.xs2a.spi.domain.payment.response.SpiBulkPaymentInitiationResponse;
 import de.adorsys.psd2.xs2a.spi.domain.payment.response.SpiPeriodicPaymentInitiationResponse;
 import de.adorsys.psd2.xs2a.spi.domain.payment.response.SpiSinglePaymentInitiationResponse;
+import de.adorsys.psd2.xs2a.spi.domain.sca.SpiChallengeData;
 import de.adorsys.psd2.xs2a.web.mapper.ScaMethodsMapperImpl;
 import de.adorsys.xs2a.reader.JsonReader;
 import org.junit.jupiter.api.Test;
@@ -40,12 +42,11 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import java.math.BigDecimal;
 import java.util.Currency;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.mock;
 
 @ExtendWith(SpringExtension.class)
-@ContextConfiguration(classes = {SpiToXs2aPaymentMapperImpl.class, ScaMethodsMapperImpl.class})
+@ContextConfiguration(classes = {SpiToXs2aPaymentMapperImpl.class, ScaMethodsMapperImpl.class, SpiToXs2aTppMessageInformationMapperImpl.class})
 class SpiToXs2aPaymentMapperTest {
 
     @Autowired
@@ -141,6 +142,26 @@ class SpiToXs2aPaymentMapperTest {
         assertNotNull(actual.getCurrency());
         assertEquals("22", actual.getAmount());
         assertEquals("USD", actual.getCurrency().getCurrencyCode());
+    }
+
+    @Test
+    void spiChallengeDataToChallengeData_null() {
+        //When
+        ChallengeData actual = mapper.spiChallengeDataToChallengeData(null);
+        //Then
+        assertNull(actual);
+    }
+
+    @Test
+    void spiChallengeDataToChallengeData_notNull() {
+        //Given
+        SpiChallengeData spiChallengeData = jsonReader.getObjectFromFile("json/service/mapper/challenge-data.json", SpiChallengeData.class);
+        ChallengeData expected = jsonReader.getObjectFromFile("json/service/mapper/challenge-data.json", ChallengeData.class);
+
+        //When
+        ChallengeData actual = mapper.spiChallengeDataToChallengeData(spiChallengeData);
+        //Then
+        assertEquals(expected, actual);
     }
 
     private SpiAmount getTestSpiAmount() {

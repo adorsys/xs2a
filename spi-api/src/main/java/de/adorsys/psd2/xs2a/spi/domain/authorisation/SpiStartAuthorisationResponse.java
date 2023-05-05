@@ -18,9 +18,9 @@
 
 package de.adorsys.psd2.xs2a.spi.domain.authorisation;
 
-import de.adorsys.psd2.xs2a.core.domain.TppMessageInformation;
-import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
-import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
+import de.adorsys.psd2.xs2a.spi.domain.response.SpiTppMessageInformation;
+import de.adorsys.psd2.xs2a.spi.domain.sca.SpiScaApproach;
+import de.adorsys.psd2.xs2a.spi.domain.sca.SpiScaStatus;
 import lombok.EqualsAndHashCode;
 import lombok.Value;
 import org.jetbrains.annotations.NotNull;
@@ -38,14 +38,12 @@ public class SpiStartAuthorisationResponse {
      * SCA approach regarding SCA starting.
      */
     @NotNull
-    @Deprecated // TODO: change with SpiScaApproach in 14.8
-    ScaApproach scaApproach;
+    SpiScaApproach scaApproach;
     /**
      * SCA status regarding SCA starting.
      */
     @NotNull
-    @Deprecated // TODO: change with SpiScaStatus in 14.8
-    ScaStatus scaStatus;
+    SpiScaStatus scaStatus;
     /**
      * Message to PSU regarding SCA starting.
      */
@@ -55,6 +53,5 @@ public class SpiStartAuthorisationResponse {
      * Warnings for TPP regarding SCA starting.
      */
     @Nullable
-    @Deprecated // TODO: change with SpiTppMessageInformation in 14.8
-    Set<TppMessageInformation> tppMessages;
+    Set<SpiTppMessageInformation> tppMessages;
 }

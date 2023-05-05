@@ -18,17 +18,17 @@
 
 package de.adorsys.psd2.xs2a.service.payment.support;
 
-import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
-import de.adorsys.psd2.xs2a.core.profile.PaymentType;
-import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import de.adorsys.psd2.xs2a.service.payment.support.mapper.spi.SpiPaymentMapper;
 import de.adorsys.psd2.xs2a.service.profile.StandardPaymentProductsResolver;
 import de.adorsys.psd2.xs2a.spi.domain.SpiAspspConsentDataProvider;
 import de.adorsys.psd2.xs2a.spi.domain.SpiContextData;
 import de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiCheckConfirmationCodeRequest;
 import de.adorsys.psd2.xs2a.spi.domain.payment.SpiPaymentInfo;
+import de.adorsys.psd2.xs2a.spi.domain.payment.SpiPaymentType;
+import de.adorsys.psd2.xs2a.spi.domain.payment.SpiTransactionStatus;
 import de.adorsys.psd2.xs2a.spi.domain.payment.response.SpiPaymentConfirmationCodeValidationResponse;
 import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponse;
+import de.adorsys.psd2.xs2a.spi.domain.sca.SpiScaStatus;
 import de.adorsys.psd2.xs2a.spi.service.BulkPaymentSpi;
 import de.adorsys.psd2.xs2a.spi.service.CommonPaymentSpi;
 import de.adorsys.psd2.xs2a.spi.service.PeriodicPaymentSpi;
@@ -77,9 +77,9 @@ class PisCheckAuthorisationConfirmationServiceSupportImplTest {
         // Given
         when(standardPaymentProductsResolver.isRawPaymentProduct(RAW_PAYMENT_PRODUCT)).thenReturn(true);
 
-        SpiPaymentInfo rawSpiPayment = buildSpiPaymentInfo(RAW_PAYMENT_PRODUCT, PaymentType.SINGLE);
+        SpiPaymentInfo rawSpiPayment = buildSpiPaymentInfo(RAW_PAYMENT_PRODUCT, SpiPaymentType.SINGLE);
 
-        SpiPaymentConfirmationCodeValidationResponse spiConfirmationCodeCheckingResponse = new SpiPaymentConfirmationCodeValidationResponse(ScaStatus.PSUIDENTIFIED, TransactionStatus.ACSP);
+        SpiPaymentConfirmationCodeValidationResponse spiConfirmationCodeCheckingResponse = new SpiPaymentConfirmationCodeValidationResponse(SpiScaStatus.PSUIDENTIFIED, SpiTransactionStatus.ACSP);
         SpiResponse<SpiPaymentConfirmationCodeValidationResponse> expectedResponse = SpiResponse.<SpiPaymentConfirmationCodeValidationResponse>builder()
                                                                                          .payload(spiConfirmationCodeCheckingResponse)
                                                                                          .build();
@@ -101,9 +101,9 @@ class PisCheckAuthorisationConfirmationServiceSupportImplTest {
     @Test
     void checkConfirmationCode_single() {
         // Given
-        SpiPaymentInfo standardSpiPayment = buildSpiPaymentInfo(STANDARD_PAYMENT_PRODUCT, PaymentType.SINGLE);
+        SpiPaymentInfo standardSpiPayment = buildSpiPaymentInfo(STANDARD_PAYMENT_PRODUCT, SpiPaymentType.SINGLE);
 
-        SpiPaymentConfirmationCodeValidationResponse spiConfirmationCodeCheckingResponse = new SpiPaymentConfirmationCodeValidationResponse(ScaStatus.PSUIDENTIFIED, TransactionStatus.ACSP);
+        SpiPaymentConfirmationCodeValidationResponse spiConfirmationCodeCheckingResponse = new SpiPaymentConfirmationCodeValidationResponse(SpiScaStatus.PSUIDENTIFIED, SpiTransactionStatus.ACSP);
         SpiResponse<SpiPaymentConfirmationCodeValidationResponse> expectedResponse = SpiResponse.<SpiPaymentConfirmationCodeValidationResponse>builder()
                                                                                          .payload(spiConfirmationCodeCheckingResponse)
                                                                                          .build();
@@ -125,9 +125,9 @@ class PisCheckAuthorisationConfirmationServiceSupportImplTest {
     @Test
     void checkConfirmationCode_periodic() {
         // Given
-        SpiPaymentInfo standardSpiPayment = buildSpiPaymentInfo(STANDARD_PAYMENT_PRODUCT, PaymentType.PERIODIC);
+        SpiPaymentInfo standardSpiPayment = buildSpiPaymentInfo(STANDARD_PAYMENT_PRODUCT, SpiPaymentType.PERIODIC);
 
-        SpiPaymentConfirmationCodeValidationResponse spiConfirmationCodeCheckingResponse = new SpiPaymentConfirmationCodeValidationResponse(ScaStatus.PSUIDENTIFIED, TransactionStatus.ACSP);
+        SpiPaymentConfirmationCodeValidationResponse spiConfirmationCodeCheckingResponse = new SpiPaymentConfirmationCodeValidationResponse(SpiScaStatus.PSUIDENTIFIED, SpiTransactionStatus.ACSP);
         SpiResponse<SpiPaymentConfirmationCodeValidationResponse> expectedResponse = SpiResponse.<SpiPaymentConfirmationCodeValidationResponse>builder()
                                                                                          .payload(spiConfirmationCodeCheckingResponse)
                                                                                          .build();
@@ -149,9 +149,9 @@ class PisCheckAuthorisationConfirmationServiceSupportImplTest {
     @Test
     void checkConfirmationCode_bulk() {
         // Given
-        SpiPaymentInfo standardSpiPayment = buildSpiPaymentInfo(STANDARD_PAYMENT_PRODUCT, PaymentType.BULK);
+        SpiPaymentInfo standardSpiPayment = buildSpiPaymentInfo(STANDARD_PAYMENT_PRODUCT, SpiPaymentType.BULK);
 
-        SpiPaymentConfirmationCodeValidationResponse spiConfirmationCodeCheckingResponse = new SpiPaymentConfirmationCodeValidationResponse(ScaStatus.PSUIDENTIFIED, TransactionStatus.ACSP);
+        SpiPaymentConfirmationCodeValidationResponse spiConfirmationCodeCheckingResponse = new SpiPaymentConfirmationCodeValidationResponse(SpiScaStatus.PSUIDENTIFIED, SpiTransactionStatus.ACSP);
         SpiResponse<SpiPaymentConfirmationCodeValidationResponse> expectedResponse = SpiResponse.<SpiPaymentConfirmationCodeValidationResponse>builder()
                                                                                          .payload(spiConfirmationCodeCheckingResponse)
                                                                                          .build();
@@ -177,7 +177,7 @@ class PisCheckAuthorisationConfirmationServiceSupportImplTest {
     }
 
     @NotNull
-    private SpiPaymentInfo buildSpiPaymentInfo(String paymentProduct, PaymentType paymentType) {
+    private SpiPaymentInfo buildSpiPaymentInfo(String paymentProduct, SpiPaymentType paymentType) {
         SpiPaymentInfo spiPaymentInfo = new SpiPaymentInfo(paymentProduct);
         spiPaymentInfo.setPaymentType(paymentType);
         return spiPaymentInfo;

@@ -31,9 +31,7 @@ import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
 import de.adorsys.psd2.xs2a.domain.consent.ConsentAuthorisationsParameters;
 import de.adorsys.psd2.xs2a.domain.consent.CreateConsentReq;
 import de.adorsys.psd2.xs2a.service.RequestProviderService;
-import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.Xs2aToSpiAccountAccessMapper;
-import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.Xs2aToSpiAccountReferenceMapper;
-import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.Xs2aToSpiPsuDataMapper;
+import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.*;
 import de.adorsys.psd2.xs2a.spi.domain.account.SpiAccountConsent;
 import de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiScaConfirmation;
 import de.adorsys.xs2a.reader.JsonReader;
@@ -53,7 +51,7 @@ import static org.mockito.Mockito.when;
 
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = {Xs2aAisConsentMapper.class, Xs2aToSpiPsuDataMapper.class, Xs2aToSpiAccountAccessMapper.class,
-    Xs2aToSpiAccountReferenceMapper.class, ConsentDataMapper.class, Xs2aAccountConsentAuthorizationMapper.class})
+    Xs2aToSpiAccountReferenceMapper.class, ConsentDataMapper.class, Xs2aAccountConsentAuthorizationMapper.class, Xs2aToSpiTppInfoMapperImpl.class, Xs2aToSpiConsentMapperImpl.class})
 class Xs2aAisConsentMapperTest {
     private static final String CONSENT_ID = "c966f143-f6a2-41db-9036-8abaeeef3af7";
     private static final String INTERNAL_REQUEST_ID = "5c2d5564-367f-4e03-a621-6bef76fa4208";

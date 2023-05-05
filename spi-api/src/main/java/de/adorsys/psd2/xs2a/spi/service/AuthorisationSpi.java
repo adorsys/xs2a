@@ -18,13 +18,11 @@
 
 package de.adorsys.psd2.xs2a.spi.service;
 
-import de.adorsys.psd2.xs2a.core.error.MessageErrorCode;
-import de.adorsys.psd2.xs2a.core.error.TppMessage;
-import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
-import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import de.adorsys.psd2.xs2a.spi.domain.SpiAspspConsentDataProvider;
 import de.adorsys.psd2.xs2a.spi.domain.SpiContextData;
 import de.adorsys.psd2.xs2a.spi.domain.authorisation.*;
+import de.adorsys.psd2.xs2a.spi.domain.error.SpiMessageErrorCode;
+import de.adorsys.psd2.xs2a.spi.domain.error.SpiTppMessage;
 import de.adorsys.psd2.xs2a.spi.domain.psu.SpiPsuData;
 import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponse;
 import de.adorsys.psd2.xs2a.spi.domain.sca.SpiScaApproach;
@@ -55,7 +53,7 @@ interface AuthorisationSpi<T> {
                                                                           @NotNull SpiScaStatus scaStatus, @NotNull String authorisationId,
                                                                           T businessObject, @NotNull SpiAspspConsentDataProvider aspspConsentDataProvider) {
         return SpiResponse.<SpiStartAuthorisationResponse>builder()
-                   .payload(new SpiStartAuthorisationResponse(ScaApproach.valueOf(scaApproach.name()), ScaStatus.valueOf(scaStatus.name()), null, null))
+                   .payload(new SpiStartAuthorisationResponse(scaApproach, scaStatus, null, null))
                    .build();
     }
 
@@ -107,7 +105,7 @@ interface AuthorisationSpi<T> {
     @NotNull
     default SpiResponse<SpiAuthorisationDecoupledScaResponse> startScaDecoupled(@NotNull SpiContextData contextData, @NotNull String authorisationId, @Nullable String authenticationMethodId, @NotNull T businessObject, @NotNull SpiAspspConsentDataProvider aspspConsentDataProvider) {
         return SpiResponse.<SpiAuthorisationDecoupledScaResponse>builder()
-                   .error(new TppMessage(MessageErrorCode.SERVICE_NOT_SUPPORTED))
+                   .error(new SpiTppMessage(SpiMessageErrorCode.SERVICE_NOT_SUPPORTED))
                    .build();
     }
 

@@ -18,8 +18,8 @@
 
 package de.adorsys.psd2.xs2a.spi.domain.payment.response;
 
-import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
 import de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiAuthorisationStatus;
+import de.adorsys.psd2.xs2a.spi.domain.payment.SpiTransactionStatus;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 
@@ -29,10 +29,9 @@ import lombok.Getter;
 @EqualsAndHashCode(callSuper = true)
 public final class SpiPaymentExecutionResponse extends SpiPaymentResponse {
     @Getter
-    @Deprecated // TODO: change with SpiTransactionStatus in 14.8
-    private TransactionStatus transactionStatus;
+    private SpiTransactionStatus transactionStatus;
 
-    public SpiPaymentExecutionResponse(TransactionStatus transactionStatus) {
+    public SpiPaymentExecutionResponse(SpiTransactionStatus transactionStatus) {
         this(null, transactionStatus);
     }
 
@@ -41,7 +40,7 @@ public final class SpiPaymentExecutionResponse extends SpiPaymentResponse {
     }
 
     public SpiPaymentExecutionResponse(SpiAuthorisationStatus spiAuthorisationStatus,
-                                       TransactionStatus transactionStatus) {
+                                       SpiTransactionStatus transactionStatus) {
         super(spiAuthorisationStatus);
         this.transactionStatus = transactionStatus;
     }

@@ -19,7 +19,7 @@
 package de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers;
 
 import de.adorsys.psd2.xs2a.core.authorisation.AuthenticationObject;
-import de.adorsys.psd2.xs2a.spi.domain.common.SpiAuthenticationObject;
+import de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiAuthenticationObject;
 import org.mapstruct.Mapper;
 
 import java.util.List;
