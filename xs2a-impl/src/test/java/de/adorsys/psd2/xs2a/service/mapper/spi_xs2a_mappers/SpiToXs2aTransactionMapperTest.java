@@ -18,14 +18,18 @@
 
 package de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers;
 
+import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
 import de.adorsys.psd2.xs2a.domain.EntryDetails;
 import de.adorsys.psd2.xs2a.domain.TransactionInfo;
 import de.adorsys.psd2.xs2a.domain.Transactions;
 import de.adorsys.psd2.xs2a.domain.account.Xs2aAdditionalInformationStructured;
 import de.adorsys.psd2.xs2a.spi.domain.account.SpiTransaction;
+import de.adorsys.psd2.xs2a.spi.domain.payment.SpiTransactionStatus;
 import de.adorsys.xs2a.reader.JsonReader;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.EnumSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
@@ -143,6 +147,24 @@ class SpiToXs2aTransactionMapperTest {
 
         //Then
         assertThat(actual.getAdditionalInformationStructured().getStandingOrderDetails()).isNull();
+    }
+
+    @Test
+    void mapToTransactionStatus_null() {
+        //When
+        TransactionStatus actual = mapper.mapToTransactionStatus(null);
+        //Then
+        assertThat(actual).isNull();
+    }
+
+    @ParameterizedTest
+    @EnumSource(SpiTransactionStatus.class)
+    void mapToTransactionStatus(SpiTransactionStatus spiTransactionStatus) {
+        //When
+        TransactionStatus actual = mapper.mapToTransactionStatus(spiTransactionStatus);
+
+        //Then
+        assertThat(actual.name()).isEqualTo(spiTransactionStatus.name());
     }
 
     private SpiTransaction getTestSpiTransaction_additionalInfo() {

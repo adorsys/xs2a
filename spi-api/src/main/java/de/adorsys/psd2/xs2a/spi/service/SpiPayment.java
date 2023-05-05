@@ -18,8 +18,8 @@
 
 package de.adorsys.psd2.xs2a.spi.service;
 
-import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
-import de.adorsys.psd2.xs2a.core.profile.PaymentType;
+import de.adorsys.psd2.xs2a.spi.domain.payment.SpiPaymentType;
+import de.adorsys.psd2.xs2a.spi.domain.payment.SpiTransactionStatus;
 import de.adorsys.psd2.xs2a.spi.domain.psu.SpiPsuData;
 
 import java.time.OffsetDateTime;
@@ -28,15 +28,13 @@ import java.util.List;
 public interface SpiPayment {
     String getPaymentId();
 
-    @Deprecated // TODO: change with SpiPaymentType in 14.8
-    PaymentType getPaymentType();
+    SpiPaymentType getPaymentType();
 
     String getPaymentProduct();
 
-    @Deprecated // TODO: change with SpiTransactionStatus in 14.8
-    TransactionStatus getPaymentStatus();
+    SpiTransactionStatus getPaymentStatus();
 
-    void setPaymentStatus(TransactionStatus paymentStatus);
+    void setPaymentStatus(SpiTransactionStatus paymentStatus);
 
     OffsetDateTime getStatusChangeTimestamp();
 

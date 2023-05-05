@@ -18,13 +18,13 @@
 
 package de.adorsys.psd2.xs2a.spi.domain.account;
 
-import de.adorsys.psd2.xs2a.core.consent.AisConsentRequestType;
-import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
-import de.adorsys.psd2.xs2a.core.consent.ConsentType;
-import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
 import de.adorsys.psd2.xs2a.spi.domain.SpiConsent;
 import de.adorsys.psd2.xs2a.spi.domain.consent.SpiAccountAccess;
+import de.adorsys.psd2.xs2a.spi.domain.consent.SpiAisConsentRequestType;
+import de.adorsys.psd2.xs2a.spi.domain.consent.SpiConsentStatus;
+import de.adorsys.psd2.xs2a.spi.domain.consent.SpiConsentType;
 import de.adorsys.psd2.xs2a.spi.domain.psu.SpiPsuData;
+import de.adorsys.psd2.xs2a.spi.domain.tpp.SpiTppInfo;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -44,17 +44,14 @@ public class SpiAccountConsent implements SpiConsent {
     private LocalDate expireDate;
     private int frequencyPerDay;
     private LocalDate lastActionDate;
-    @Deprecated // TODO: change with SpiConsentStatus in 14.8
-    private ConsentStatus consentStatus;
+    private SpiConsentStatus consentStatus;
     private boolean withBalance;
     private boolean tppRedirectPreferred;
     private List<SpiPsuData> psuData;
-    @Deprecated // TODO: change with SpiTppInfo in 14.8
-    private TppInfo tppInfo;
-    @Deprecated // TODO: change with SpiAisConsentRequestType in 14.8
-    private AisConsentRequestType aisConsentRequestType;
+    private SpiTppInfo tppInfo;
+    private SpiAisConsentRequestType aisConsentRequestType;
     private OffsetDateTime statusChangeTimestamp;
     private OffsetDateTime creationTimestamp;
     private String instanceId;
-    private ConsentType consentType;
+    private SpiConsentType consentType;
 }

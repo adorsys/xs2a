@@ -1,0 +1,10 @@
+{
+  "data": [
+    "data1",
+    "data2"
+  ],
+  "imageLink": "imageLink",
+  "otpMaxLength": 666,
+  "otpFormat": "INTEGER",
+  "additionalInformation": "additionalInformation"
+}

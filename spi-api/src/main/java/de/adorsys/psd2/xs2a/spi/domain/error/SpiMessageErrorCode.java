@@ -21,7 +21,6 @@ package de.adorsys.psd2.xs2a.spi.domain.error;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonValue;
-import io.swagger.v3.oas.annotations.media.Schema;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -730,7 +729,6 @@ public enum SpiMessageErrorCode {
             .forEach(errorCode -> container.put(errorCode.getName(), errorCode));
     }
 
-    @Schema(description = "code", example = "400")
     private int code;
 
     @JsonCreator

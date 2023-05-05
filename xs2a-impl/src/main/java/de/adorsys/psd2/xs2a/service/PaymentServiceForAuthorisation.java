@@ -28,9 +28,7 @@ import de.adorsys.psd2.xs2a.domain.consent.PaymentScaStatus;
 import de.adorsys.psd2.xs2a.domain.consent.Xs2aScaStatusResponse;
 import de.adorsys.psd2.xs2a.service.authorization.Xs2aAuthorisationService;
 import de.adorsys.psd2.xs2a.service.context.SpiContextDataProvider;
-import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiErrorMapper;
-import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiToXs2aLinksMapper;
-import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.Xs2aToSpiPaymentMapper;
+import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.*;
 import de.adorsys.psd2.xs2a.service.spi.SpiAspspConsentDataProviderFactory;
 import de.adorsys.psd2.xs2a.spi.domain.SpiAspspConsentDataProvider;
 import de.adorsys.psd2.xs2a.spi.domain.SpiContextData;
@@ -51,6 +49,8 @@ public abstract class PaymentServiceForAuthorisation {
     private final Xs2aAuthorisationService xs2aAuthorisationService;
     private final Xs2aToSpiPaymentMapper xs2aToSpiPaymentMapper;
     private final SpiToXs2aLinksMapper spiToXs2aLinksMapper;
+    private final SpiToXs2aTppMessageInformationMapper tppMessageInformationMapper;
+    private final SpiToXs2aAuthorizationMapper spiToXs2aAuthorizationMapper;
 
     /**
      * Gets SCA status response of payment authorisation
@@ -84,9 +84,10 @@ public abstract class PaymentServiceForAuthorisation {
         }
 
         SpiScaStatusResponse spiScaInformationPayload = spiScaStatusResponse.getPayload();
+        ScaStatus spiScaStatus = spiToXs2aAuthorizationMapper.mapToScaStatus(spiScaInformationPayload.getScaStatus());
 
-        if (scaStatus.isNotFinalisedStatus() && scaStatus != spiScaInformationPayload.getScaStatus()) {
-            scaStatus = spiScaInformationPayload.getScaStatus();
+        if (scaStatus.isNotFinalisedStatus() && scaStatus != spiScaStatus) {
+            scaStatus = spiScaStatus;
             xs2aAuthorisationService.updateAuthorisationStatus(authorisationId, scaStatus);
             log.info("Authorisation-ID [{}], Payment-ID [{}]. SCA status was changed to [{}] from SPI.", authorisationId, paymentId, scaStatus);
         }
@@ -96,7 +97,7 @@ public abstract class PaymentServiceForAuthorisation {
                                                                    beneficiaryFlag,
                                                                    spiScaInformationPayload.getPsuMessage(),
                                                                    spiToXs2aLinksMapper.toXs2aLinks(spiScaInformationPayload.getLinks()),
-                                                                   spiScaInformationPayload.getTppMessageInformation()
+                                                                   tppMessageInformationMapper.toTppMessageInformationSet(spiScaInformationPayload.getTppMessageInformation())
         );
 
         return ResponseObject.<Xs2aScaStatusResponse>builder()

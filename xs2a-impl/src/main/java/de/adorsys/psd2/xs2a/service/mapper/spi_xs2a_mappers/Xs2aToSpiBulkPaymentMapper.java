@@ -34,6 +34,7 @@ public class Xs2aToSpiBulkPaymentMapper {
     private final Xs2aToSpiSinglePaymentMapper xs2aToSpiSinglePaymentMapper;
     private final Xs2aToSpiAccountReferenceMapper xs2aToSpiAccountReferenceMapper;
     private final Xs2aToSpiPsuDataMapper xs2aToSpiPsuDataMapper;
+    private final Xs2aToSpiTransactionMapper xs2aToSpiTransactionMapper;
 
     public SpiBulkPayment mapToSpiBulkPayment(BulkPayment payment, String paymentProduct) {
         SpiBulkPayment bulk = new SpiBulkPayment();
@@ -41,9 +42,7 @@ public class Xs2aToSpiBulkPaymentMapper {
         bulk.setBatchBookingPreferred(payment.getBatchBookingPreferred());
         bulk.setDebtorAccount(xs2aToSpiAccountReferenceMapper.mapToSpiAccountReference(payment.getDebtorAccount()));
         bulk.setDebtorName(payment.getDebtorName());
-        if (payment.getTransactionStatus() != null) {
-            bulk.setPaymentStatus(payment.getTransactionStatus());
-        }
+        bulk.setPaymentStatus(xs2aToSpiTransactionMapper.mapToSpiTransactionStatus(payment.getTransactionStatus()));
         bulk.setPaymentProduct(paymentProduct);
         bulk.setRequestedExecutionDate(payment.getRequestedExecutionDate());
         bulk.setRequestedExecutionTime(payment.getRequestedExecutionTime());

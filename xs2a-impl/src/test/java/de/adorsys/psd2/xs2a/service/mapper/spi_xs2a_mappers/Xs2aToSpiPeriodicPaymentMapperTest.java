@@ -21,20 +21,13 @@ package de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers;
 import de.adorsys.psd2.core.payment.model.PurposeCode;
 import de.adorsys.psd2.xs2a.core.domain.address.Xs2aAddress;
 import de.adorsys.psd2.xs2a.core.domain.address.Xs2aCountryCode;
-import de.adorsys.psd2.xs2a.core.pis.FrequencyCode;
-import de.adorsys.psd2.xs2a.core.pis.PisDayOfExecution;
-import de.adorsys.psd2.xs2a.core.pis.PisExecutionRule;
-import de.adorsys.psd2.xs2a.core.pis.Remittance;
-import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
-import de.adorsys.psd2.xs2a.core.pis.Xs2aAmount;
+import de.adorsys.psd2.xs2a.core.pis.*;
 import de.adorsys.psd2.xs2a.core.profile.AccountReference;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.domain.pis.PeriodicPayment;
 import de.adorsys.psd2.xs2a.spi.domain.account.SpiAccountReference;
 import de.adorsys.psd2.xs2a.spi.domain.common.SpiAmount;
-import de.adorsys.psd2.xs2a.spi.domain.payment.SpiAddress;
-import de.adorsys.psd2.xs2a.spi.domain.payment.SpiPeriodicPayment;
-import de.adorsys.psd2.xs2a.spi.domain.payment.SpiRemittance;
+import de.adorsys.psd2.xs2a.spi.domain.payment.*;
 import de.adorsys.psd2.xs2a.spi.domain.psu.SpiPsuData;
 import de.adorsys.psd2.xs2a.web.mapper.RemittanceMapper;
 import org.junit.jupiter.api.BeforeEach;
@@ -52,11 +45,7 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Currency;
-import java.util.List;
+import java.util.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
@@ -86,6 +75,7 @@ class Xs2aToSpiPeriodicPaymentMapperTest {
     private static final LocalDate REQUESTED_EXECUTION_DATE = LocalDate.now();
     private static final OffsetDateTime REQUESTED_EXECUTION_TIME = OffsetDateTime.now();
     private static final TransactionStatus TRANSACTION_STATUS = TransactionStatus.RCVD;
+    private static final SpiTransactionStatus SPI_TRANSACTION_STATUS = SpiTransactionStatus.RCVD;
     private final Currency EUR_CURRENCY = Currency.getInstance("EUR");
     private static final List<PsuIdData> psuDataList = new ArrayList<>();
     private static final List<SpiPsuData> spiPsuDataList = new ArrayList<>();
@@ -95,6 +85,7 @@ class Xs2aToSpiPeriodicPaymentMapperTest {
     private static final String ULTIMATE_DEBTOR = "ultimate debtor";
     private static final String ULTIMATE_CREDITOR = "ultimate creditor";
     private static final PurposeCode PURPOSE_CODE = PurposeCode.fromValue("BKDF");
+    private static final SpiPisPurposeCode SPI_PURPOSE_CODE = SpiPisPurposeCode.fromValue("BKDF");
     private final Remittance REMITTANCE = getRemittance();
     private final SpiRemittance SPI_REMITTANCE = getSpiRemittance();
     private final String REFERENCE = "reference";
@@ -109,6 +100,10 @@ class Xs2aToSpiPeriodicPaymentMapperTest {
     private Xs2aToSpiAddressMapper xs2aToSpiAddressMapper;
     @Mock
     private Xs2aToSpiAccountReferenceMapper xs2aToSpiAccountReferenceMapper;
+    @Mock
+    private Xs2aToSpiPisMapper xs2aToSpiPisMapper;
+    @Mock
+    private Xs2aToSpiTransactionMapper xs2aToSpiTransactionMapper;
     @Spy
     private final RemittanceMapper remittanceMapper = Mappers.getMapper(RemittanceMapper.class);
 
@@ -126,6 +121,12 @@ class Xs2aToSpiPeriodicPaymentMapperTest {
             .thenReturn(buildSpiAmount(EUR_CURRENCY));
         when(xs2aToSpiAddressMapper.mapToSpiAddress(buildXs2aAddress()))
             .thenReturn(buildSpiAddress());
+        when(xs2aToSpiPisMapper.mapToSpiPisExecutionRule(PisExecutionRule.PRECEDING)).thenReturn(SpiPisExecutionRule.PRECEDING);
+        when(xs2aToSpiTransactionMapper.mapToSpiTransactionStatus(TRANSACTION_STATUS)).thenReturn(SPI_TRANSACTION_STATUS);
+        when(xs2aToSpiPisMapper.mapToSpiFrequencyCode(FrequencyCode.MONTHLY)).thenReturn(SpiFrequencyCode.MONTHLY);
+        when(xs2aToSpiPisMapper.mapToSpiPisDayOfExecution(PisDayOfExecution.DAY_13)).thenReturn(SpiPisDayOfExecution.DAY_13);
+        when(xs2aToSpiPisMapper.mapToSpiPisPurposeCode(PURPOSE_CODE)).thenReturn(SPI_PURPOSE_CODE);
+
     }
 
     @Test
@@ -143,9 +144,9 @@ class Xs2aToSpiPeriodicPaymentMapperTest {
         SpiPeriodicPayment spiPeriodicPayment = new SpiPeriodicPayment(PAYMENT_PRODUCT);
         spiPeriodicPayment.setStartDate(START_DATE);
         spiPeriodicPayment.setEndDate(END_DATE);
-        spiPeriodicPayment.setExecutionRule(PisExecutionRule.PRECEDING);
-        spiPeriodicPayment.setFrequency(FrequencyCode.MONTHLY);
-        spiPeriodicPayment.setDayOfExecution(PisDayOfExecution.DAY_13);
+        spiPeriodicPayment.setExecutionRule(SpiPisExecutionRule.PRECEDING);
+        spiPeriodicPayment.setFrequency(SpiFrequencyCode.MONTHLY);
+        spiPeriodicPayment.setDayOfExecution(SpiPisDayOfExecution.DAY_13);
         spiPeriodicPayment.setPaymentId(PAYMENT_ID);
         spiPeriodicPayment.setEndToEndIdentification(END_TO_END_IDENTIFICATION);
         spiPeriodicPayment.setInstructionIdentification(INSTRUCTION_IDENTIFICATION);
@@ -156,7 +157,7 @@ class Xs2aToSpiPeriodicPaymentMapperTest {
         spiPeriodicPayment.setCreditorName(CREDITOR_NAME);
         spiPeriodicPayment.setCreditorAddress(buildSpiAddress());
         spiPeriodicPayment.setRemittanceInformationUnstructuredArray(Collections.singletonList(REMITTANCE_INFORMATION_UNSTRUCTURED));
-        spiPeriodicPayment.setPaymentStatus(TRANSACTION_STATUS);
+        spiPeriodicPayment.setPaymentStatus(SPI_TRANSACTION_STATUS);
         spiPeriodicPayment.setPaymentProduct(PAYMENT_PRODUCT);
         spiPeriodicPayment.setRequestedExecutionDate(REQUESTED_EXECUTION_DATE);
         spiPeriodicPayment.setRequestedExecutionTime(REQUESTED_EXECUTION_TIME);
@@ -164,7 +165,7 @@ class Xs2aToSpiPeriodicPaymentMapperTest {
         spiPeriodicPayment.setStatusChangeTimestamp(STATUS_CHANGE_TIMESTAMP);
         spiPeriodicPayment.setUltimateDebtor(ULTIMATE_DEBTOR);
         spiPeriodicPayment.setUltimateCreditor(ULTIMATE_CREDITOR);
-        spiPeriodicPayment.setPurposeCode(PURPOSE_CODE);
+        spiPeriodicPayment.setPurposeCode(SPI_PURPOSE_CODE);
         spiPeriodicPayment.setRemittanceInformationStructuredArray(Collections.singletonList(SPI_REMITTANCE));
         spiPeriodicPayment.setCreationTimestamp(periodicPayment.getCreationTimestamp());
         spiPeriodicPayment.setContentType(MediaType.APPLICATION_JSON_VALUE);

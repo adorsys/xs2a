@@ -30,6 +30,7 @@ import de.adorsys.psd2.xs2a.core.profile.AccountReference;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import de.adorsys.psd2.xs2a.domain.pis.PeriodicPayment;
 import de.adorsys.psd2.xs2a.service.profile.AspspProfileServiceWrapper;
+import de.adorsys.psd2.xs2a.web.mapper.ChargeBearerMapper;
 import de.adorsys.psd2.xs2a.web.mapper.PurposeCodeMapper;
 import de.adorsys.psd2.xs2a.web.mapper.RemittanceMapper;
 import de.adorsys.psd2.xs2a.web.validator.ErrorBuildingService;
@@ -52,9 +53,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.time.LocalDate;
 import java.util.Collections;
 
-import static org.junit.jupiter.api.Assertions.assertArrayEquals;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 @ExtendWith(MockitoExtension.class)
 class PeriodicPaymentTypeValidatorImplTest {
@@ -87,13 +86,14 @@ class PeriodicPaymentTypeValidatorImplTest {
         Xs2aObjectMapper xs2aObjectMapper = new ObjectMapperConfig().xs2aObjectMapper();
         PurposeCodeMapper purposeCodeMapper = Mappers.getMapper(PurposeCodeMapper.class);
         RemittanceMapper remittanceMapper = Mappers.getMapper(RemittanceMapper.class);
+        ChargeBearerMapper chargeBearerMapper = Mappers.getMapper(ChargeBearerMapper.class);
         ErrorBuildingService errorBuildingServiceMock = new ErrorBuildingServiceMock(ErrorType.AIS_400);
 
         validationConfig = new DefaultPaymentValidationConfigImpl();
 
         validator = new PeriodicPaymentTypeValidatorImpl(errorBuildingServiceMock,
                                                          xs2aObjectMapper,
-                                                         new PaymentMapper(xs2aObjectMapper, purposeCodeMapper, remittanceMapper),
+                                                         new PaymentMapper(xs2aObjectMapper, purposeCodeMapper, remittanceMapper, chargeBearerMapper),
                                                          new AmountValidator(errorBuildingServiceMock),
                                                          new IbanValidator(aspspProfileService, errorBuildingServiceMock),
                                                          new CustomPaymentValidationService(),

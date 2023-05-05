@@ -28,12 +28,14 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class Xs2aToSpiPaymentInfoMapper {
     private final Xs2aToSpiPsuDataMapper xs2aToSpiPsuDataMapper;
+    private final Xs2aToSpiPisMapper xs2aToSpiPisMapper;
+    private final Xs2aToSpiTransactionMapper xs2aToSpiTransactionMapper;
 
     public SpiPaymentInfo mapToSpiPaymentInfo(CommonPayment commonPayment) {
         SpiPaymentInfo info = new SpiPaymentInfo(commonPayment.getPaymentProduct());
         info.setPaymentId(commonPayment.getPaymentId());
-        info.setPaymentType(commonPayment.getPaymentType());
-        info.setStatus(commonPayment.getTransactionStatus());
+        info.setPaymentType(xs2aToSpiPisMapper.mapToSpiPaymentType(commonPayment.getPaymentType()));
+        info.setStatus(xs2aToSpiTransactionMapper.mapToSpiTransactionStatus(commonPayment.getTransactionStatus()));
         info.setPaymentData(commonPayment.getPaymentData());
         info.setPsuDataList(xs2aToSpiPsuDataMapper.mapToSpiPsuDataList(commonPayment.getPsuDataList()));
         info.setStatusChangeTimestamp(commonPayment.getStatusChangeTimestamp());
@@ -46,8 +48,8 @@ public class Xs2aToSpiPaymentInfoMapper {
     public SpiPaymentInfo mapToSpiPaymentInfo(CommonPaymentData commonPaymentData) {
         SpiPaymentInfo info = new SpiPaymentInfo(commonPaymentData.getPaymentProduct());
         info.setPaymentId(commonPaymentData.getExternalId());
-        info.setPaymentType(commonPaymentData.getPaymentType());
-        info.setStatus(commonPaymentData.getTransactionStatus());
+        info.setPaymentType(xs2aToSpiPisMapper.mapToSpiPaymentType(commonPaymentData.getPaymentType()));
+        info.setStatus(xs2aToSpiTransactionMapper.mapToSpiTransactionStatus(commonPaymentData.getTransactionStatus()));
         info.setPaymentData(commonPaymentData.getPaymentData());
         info.setPsuDataList(xs2aToSpiPsuDataMapper.mapToSpiPsuDataList(commonPaymentData.getPsuData()));
         info.setStatusChangeTimestamp(commonPaymentData.getStatusChangeTimestamp());
@@ -55,5 +57,19 @@ public class Xs2aToSpiPaymentInfoMapper {
         info.setContentType(commonPaymentData.getContentType());
         info.setInstanceId(commonPaymentData.getInstanceId());
         return info;
+    }
+
+    public SpiPaymentInfo mapToSpiPaymentInfo(CommonPayment payment, String paymentProduct) {
+        SpiPaymentInfo request = new SpiPaymentInfo(paymentProduct);
+        request.setPaymentId(payment.getPaymentId());
+        request.setPaymentType(xs2aToSpiPisMapper.mapToSpiPaymentType(payment.getPaymentType()));
+        request.setPaymentStatus(xs2aToSpiTransactionMapper.mapToSpiTransactionStatus(payment.getTransactionStatus()));
+        request.setPsuDataList(xs2aToSpiPsuDataMapper.mapToSpiPsuDataList(payment.getPsuDataList()));
+        request.setPaymentData(payment.getPaymentData());
+        request.setStatusChangeTimestamp(payment.getStatusChangeTimestamp());
+        request.setCreationTimestamp(payment.getCreationTimestamp());
+        request.setContentType(payment.getContentType());
+        request.setInstanceId(payment.getInstanceId());
+        return request;
     }
 }

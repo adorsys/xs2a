@@ -18,16 +18,14 @@
 
 package de.adorsys.psd2.xs2a.spi.domain.payment.response;
 
-import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
-import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
+import de.adorsys.psd2.xs2a.spi.domain.consent.SpiConsentStatus;
+import de.adorsys.psd2.xs2a.spi.domain.sca.SpiScaStatus;
 import lombok.Value;
 
 @Value
 public class SpiConfirmationCodeCheckingResponse {
 
-    @Deprecated // TODO: change with SpiScaStatus in 14.8
-    private ScaStatus scaStatus;
-    @Deprecated // TODO: change with SpiConsentStatus in 14.8
-    private ConsentStatus consentStatus;
+    private SpiScaStatus scaStatus;
+    private SpiConsentStatus consentStatus;
 
 }

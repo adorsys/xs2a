@@ -18,9 +18,9 @@
 
 package de.adorsys.psd2.xs2a.spi.domain.authorisation;
 
-import de.adorsys.psd2.xs2a.core.domain.TppMessageInformation;
-import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import de.adorsys.psd2.xs2a.spi.domain.common.SpiLinks;
+import de.adorsys.psd2.xs2a.spi.domain.response.SpiTppMessageInformation;
+import de.adorsys.psd2.xs2a.spi.domain.sca.SpiScaStatus;
 import lombok.Value;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -31,14 +31,12 @@ import java.util.Set;
 public class SpiScaStatusResponse {
 
     @NotNull
-    @Deprecated // TODO: change with SpiScaStatus in 14.8
-    ScaStatus scaStatus;
+    SpiScaStatus scaStatus;
     @Nullable
     Boolean trustedBeneficiaryFlag;
     @Nullable
     String psuMessage;
 
     SpiLinks links;
-    @Deprecated // TODO: change with SpiTppMessageInformation in 14.8
-    Set<TppMessageInformation> tppMessageInformation;
+    Set<SpiTppMessageInformation> tppMessageInformation;
 }

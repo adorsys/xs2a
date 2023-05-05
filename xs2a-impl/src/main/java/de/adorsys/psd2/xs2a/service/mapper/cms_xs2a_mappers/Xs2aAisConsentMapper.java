@@ -34,7 +34,9 @@ import de.adorsys.psd2.xs2a.domain.authorisation.CommonAuthorisationParameters;
 import de.adorsys.psd2.xs2a.domain.consent.CreateConsentReq;
 import de.adorsys.psd2.xs2a.service.RequestProviderService;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.Xs2aToSpiAccountAccessMapper;
+import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.Xs2aToSpiConsentMapper;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.Xs2aToSpiPsuDataMapper;
+import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.Xs2aToSpiTppInfoMapper;
 import de.adorsys.psd2.xs2a.spi.domain.account.SpiAccountConsent;
 import de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiScaConfirmation;
 import lombok.RequiredArgsConstructor;
@@ -48,9 +50,11 @@ import java.util.Optional;
 public class Xs2aAisConsentMapper {
     private final Xs2aToSpiPsuDataMapper xs2aToSpiPsuDataMapper;
     private final Xs2aToSpiAccountAccessMapper xs2aToSpiAccountAccessMapper;
+    private final Xs2aToSpiTppInfoMapper tppInfoMapper;
     private final ConsentDataMapper consentDataMapper;
     private final RequestProviderService requestProviderService;
     private final Xs2aAccountConsentAuthorizationMapper xs2aAccountConsentAuthorizationMapper;
+    private final Xs2aToSpiConsentMapper consentMapper;
 
     public SpiAccountConsent mapToSpiAccountConsent(AisConsent aisConsent) {
         return Optional.ofNullable(aisConsent)
@@ -62,16 +66,16 @@ public class Xs2aAisConsentMapper {
                             ac.getExpireDate(),
                             ac.getFrequencyPerDay(),
                             ac.getLastActionDate(),
-                            ac.getConsentStatus(),
+                            consentMapper.mapToSpiConsentStatus(ac.getConsentStatus()),
                             ac.isWithBalance(),
                             ac.getConsentTppInformation().isTppRedirectPreferred(),
                             xs2aToSpiPsuDataMapper.mapToSpiPsuDataList(ac.getPsuIdDataList()),
-                            ac.getTppInfo(),
-                            ac.getAisConsentRequestType(),
+                            tppInfoMapper.mapToSpiTppInfo(ac.getTppInfo()),
+                            consentMapper.mapToSpiAisConsentRequestType(ac.getAisConsentRequestType()),
                             ac.getStatusChangeTimestamp(),
                             ac.getCreationTimestamp(),
                             ac.getInstanceId(),
-                            ac.getConsentType()
+                            consentMapper.mapToSpiConsentType(ac.getConsentType())
                         )
                    )
                    .orElse(null);

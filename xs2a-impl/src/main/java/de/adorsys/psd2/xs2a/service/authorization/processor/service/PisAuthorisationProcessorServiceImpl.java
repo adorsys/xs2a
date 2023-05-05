@@ -40,10 +40,7 @@ import de.adorsys.psd2.xs2a.service.consent.PisAspspDataService;
 import de.adorsys.psd2.xs2a.service.consent.Xs2aPisCommonPaymentService;
 import de.adorsys.psd2.xs2a.service.context.SpiContextDataProvider;
 import de.adorsys.psd2.xs2a.service.mapper.cms_xs2a_mappers.Xs2aPisCommonPaymentMapper;
-import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiErrorMapper;
-import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiToXs2aCurrencyConversionInfoMapper;
-import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.Xs2aToSpiPaymentMapper;
-import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.Xs2aToSpiPsuDataMapper;
+import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.*;
 import de.adorsys.psd2.xs2a.service.payment.Xs2aUpdatePaymentAfterSpiService;
 import de.adorsys.psd2.xs2a.service.spi.SpiAspspConsentDataProviderFactory;
 import de.adorsys.psd2.xs2a.spi.domain.SpiAspspConsentDataProvider;
@@ -52,8 +49,6 @@ import de.adorsys.psd2.xs2a.spi.domain.authorisation.*;
 import de.adorsys.psd2.xs2a.spi.domain.payment.response.SpiPaymentExecutionResponse;
 import de.adorsys.psd2.xs2a.spi.domain.psu.SpiPsuData;
 import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponse;
-import de.adorsys.psd2.xs2a.spi.domain.sca.SpiScaApproach;
-import de.adorsys.psd2.xs2a.spi.domain.sca.SpiScaStatus;
 import de.adorsys.psd2.xs2a.spi.service.CurrencyConversionInfoSpi;
 import de.adorsys.psd2.xs2a.spi.service.PaymentAuthorisationSpi;
 import de.adorsys.psd2.xs2a.spi.service.SpiPayment;
@@ -76,6 +71,8 @@ public class PisAuthorisationProcessorServiceImpl extends PaymentBaseAuthorisati
     private final SpiContextDataProvider spiContextDataProvider;
     private final CurrencyConversionInfoSpi currencyConversionInfoSpi;
     private final SpiToXs2aCurrencyConversionInfoMapper spiToXs2aCurrencyConversionInfoMapper;
+    private final Xs2aToSpiAuthorizationMapper xs2aToSpiAuthorizationMapper;
+    private final SpiToXs2aTransactionMapper spiToXs2aTransactionMapper;
 
     public PisAuthorisationProcessorServiceImpl(List<PisScaAuthorisationService> services,
                                                 Xs2aToSpiPaymentMapper xs2aToSpiPaymentMapper, PisExecutePaymentService pisExecutePaymentService,
@@ -89,10 +86,18 @@ public class PisAuthorisationProcessorServiceImpl extends PaymentBaseAuthorisati
                                                 PisCommonDecoupledService pisCommonDecoupledService,
                                                 Xs2aToSpiPsuDataMapper xs2aToSpiPsuDataMapper,
                                                 CurrencyConversionInfoSpi currencyConversionInfoSpi,
-                                                SpiToXs2aCurrencyConversionInfoMapper spiToXs2aCurrencyConversionInfoMapper) {
+                                                SpiToXs2aCurrencyConversionInfoMapper spiToXs2aCurrencyConversionInfoMapper,
+                                                SpiToXs2aChallengeDataMapper challengeDataMapper,
+                                                SpiToXs2aTppMessageInformationMapper tppMessageInformationMapper,
+                                                SpiToXs2aAuthenticationObjectMapper authenticationObjectMapper,
+                                                SpiToXs2aAuthorizationMapper spiToXs2aAuthorizationMapper,
+                                                SpiToXs2aPisMapper spiToXs2aPisMapper,
+                                                Xs2aToSpiAuthorizationMapper xs2aToSpiAuthorizationMapper,
+                                                SpiToXs2aTransactionMapper spiToXs2aTransactionMapper) {
         super(services, xs2aAuthorisationService, xs2aPisCommonPaymentService, xs2aToSpiPaymentMapper,
               spiContextDataProvider, aspspConsentDataProviderFactory, spiErrorMapper,
-              pisAspspDataService, xs2aPisCommonPaymentMapper, xs2aToSpiPsuDataMapper);
+              pisAspspDataService, xs2aPisCommonPaymentMapper, xs2aToSpiPsuDataMapper, challengeDataMapper,
+              tppMessageInformationMapper, authenticationObjectMapper, spiToXs2aAuthorizationMapper, spiToXs2aPisMapper);
         this.pisExecutePaymentService = pisExecutePaymentService;
         this.spiErrorMapper = spiErrorMapper;
         this.aspspConsentDataProviderFactory = aspspConsentDataProviderFactory;
@@ -103,6 +108,8 @@ public class PisAuthorisationProcessorServiceImpl extends PaymentBaseAuthorisati
         this.spiContextDataProvider = spiContextDataProvider;
         this.currencyConversionInfoSpi = currencyConversionInfoSpi;
         this.spiToXs2aCurrencyConversionInfoMapper = spiToXs2aCurrencyConversionInfoMapper;
+        this.xs2aToSpiAuthorizationMapper = xs2aToSpiAuthorizationMapper;
+        this.spiToXs2aTransactionMapper = spiToXs2aTransactionMapper;
     }
 
     @Override
@@ -136,13 +143,13 @@ public class PisAuthorisationProcessorServiceImpl extends PaymentBaseAuthorisati
                                                                                           String authorisationId,
                                                                                           SpiPayment spiPayment,
                                                                                           SpiAspspConsentDataProvider spiAspspDataProviderFor) {
-        return paymentAuthorisationSpi.startAuthorisation(spiContextData, SpiScaApproach.valueOf(scaApproach.name()), SpiScaStatus.valueOf(scaStatus.name()), authorisationId, spiPayment, spiAspspDataProviderFor);
+        return paymentAuthorisationSpi.startAuthorisation(spiContextData, xs2aToSpiAuthorizationMapper.mapToSpiScaApproach(scaApproach), xs2aToSpiAuthorizationMapper.mapToSpiScaStatus(scaStatus), authorisationId, spiPayment, spiAspspDataProviderFor);
     }
 
     @Override
     void updatePaymentDataByPaymentResponse(String paymentId, SpiResponse<SpiPaymentExecutionResponse> spiResponse) {
         SpiPaymentExecutionResponse payload = spiResponse.getPayload();
-        TransactionStatus paymentStatus = payload.getTransactionStatus();
+        TransactionStatus paymentStatus = spiToXs2aTransactionMapper.mapToTransactionStatus(payload.getTransactionStatus());
 
         if (paymentStatus == TransactionStatus.PATC) {
             xs2aPisCommonPaymentService.updateMultilevelSca(paymentId, true);
@@ -226,7 +233,7 @@ public class PisAuthorisationProcessorServiceImpl extends PaymentBaseAuthorisati
             return new Xs2aUpdatePisCommonPaymentPsuDataResponse(errorHolder, paymentId, authorisationId, psuData);
         }
 
-        TransactionStatus paymentStatus = spiResponse.getPayload().getTransactionStatus();
+        TransactionStatus paymentStatus = spiToXs2aTransactionMapper.mapToTransactionStatus(spiResponse.getPayload().getTransactionStatus());
 
         if (paymentStatus == TransactionStatus.PATC) {
             xs2aPisCommonPaymentService.updateMultilevelSca(paymentId, true);

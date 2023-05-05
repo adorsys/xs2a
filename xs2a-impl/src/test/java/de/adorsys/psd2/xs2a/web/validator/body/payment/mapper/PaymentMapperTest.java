@@ -25,6 +25,8 @@ import de.adorsys.psd2.model.PeriodicPaymentInitiationJson;
 import de.adorsys.psd2.xs2a.domain.pis.BulkPayment;
 import de.adorsys.psd2.xs2a.domain.pis.PeriodicPayment;
 import de.adorsys.psd2.xs2a.domain.pis.SinglePayment;
+import de.adorsys.psd2.xs2a.web.mapper.ChargeBearerMapper;
+import de.adorsys.psd2.xs2a.web.mapper.ChargeBearerMapperImpl;
 import de.adorsys.psd2.xs2a.web.mapper.PurposeCodeMapperImpl;
 import de.adorsys.psd2.xs2a.web.mapper.RemittanceMapperImpl;
 import de.adorsys.xs2a.reader.JsonReader;
@@ -38,12 +40,14 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @ExtendWith(SpringExtension.class)
-@ContextConfiguration(classes = {PaymentMapper.class, Xs2aObjectMapper.class, PurposeCodeMapperImpl.class, RemittanceMapperImpl.class})
+@ContextConfiguration(classes = {PaymentMapper.class, Xs2aObjectMapper.class, PurposeCodeMapperImpl.class, RemittanceMapperImpl.class, ChargeBearerMapperImpl.class})
 class PaymentMapperTest {
     @Autowired
     private PaymentMapper paymentMapper;
     @Autowired
     private Xs2aObjectMapper xs2aObjectMapper;
+    @Autowired
+    private ChargeBearerMapper chargeBearerMapper;
 
     private JsonReader jsonReader = new JsonReader();
 

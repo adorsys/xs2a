@@ -32,7 +32,6 @@ import de.adorsys.psd2.xs2a.core.domain.TppMessageInformation;
 import de.adorsys.psd2.xs2a.core.error.ErrorType;
 import de.adorsys.psd2.xs2a.core.error.MessageError;
 import de.adorsys.psd2.xs2a.core.error.MessageErrorCode;
-import de.adorsys.psd2.xs2a.core.error.TppMessage;
 import de.adorsys.psd2.xs2a.core.mapper.ServiceType;
 import de.adorsys.psd2.xs2a.core.profile.AccountReference;
 import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
@@ -55,10 +54,7 @@ import de.adorsys.psd2.xs2a.service.consent.Xs2aAisConsentService;
 import de.adorsys.psd2.xs2a.service.context.SpiContextDataProvider;
 import de.adorsys.psd2.xs2a.service.event.Xs2aEventService;
 import de.adorsys.psd2.xs2a.service.mapper.cms_xs2a_mappers.Xs2aAisConsentMapper;
-import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiErrorMapper;
-import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiToXs2aAccountAccessMapper;
-import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiToXs2aAccountReferenceMapperImpl;
-import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiToXs2aLinksMapper;
+import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.*;
 import de.adorsys.psd2.xs2a.service.profile.AspspProfileServiceWrapper;
 import de.adorsys.psd2.xs2a.service.spi.InitialSpiAspspConsentDataProvider;
 import de.adorsys.psd2.xs2a.service.spi.SpiAspspConsentDataProviderFactory;
@@ -68,8 +64,11 @@ import de.adorsys.psd2.xs2a.spi.domain.account.SpiAccountConsent;
 import de.adorsys.psd2.xs2a.spi.domain.account.SpiAccountReference;
 import de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiScaStatusResponse;
 import de.adorsys.psd2.xs2a.spi.domain.consent.SpiAccountAccess;
+import de.adorsys.psd2.xs2a.spi.domain.consent.SpiConsentStatus;
 import de.adorsys.psd2.xs2a.spi.domain.consent.SpiConsentStatusResponse;
 import de.adorsys.psd2.xs2a.spi.domain.consent.SpiInitiateAisConsentResponse;
+import de.adorsys.psd2.xs2a.spi.domain.error.SpiMessageErrorCode;
+import de.adorsys.psd2.xs2a.spi.domain.error.SpiTppMessage;
 import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponse;
 import de.adorsys.psd2.xs2a.spi.domain.sca.SpiScaStatus;
 import de.adorsys.psd2.xs2a.spi.service.AisConsentSpi;
@@ -182,6 +181,14 @@ class ConsentServiceTest {
     private ScaApproachResolver scaApproachResolver;
     @Mock
     private AuthorisationChainResponsibilityService authorisationChainResponsibilityService;
+    @Mock
+    private SpiToXs2aTppMessageInformationMapper tppMessageInformationMapper;
+    @Mock
+    private SpiToXs2aConsentMapper spiToXs2aConsentMapper;
+    @Mock
+    private Xs2aToSpiAuthorizationMapper xs2aToSpiAuthorizationMapper;
+    @Mock
+    private SpiToXs2aAuthorizationMapper spiToXs2aAuthorizationMapper;
 
     private AisConsent aisConsent;
 
@@ -919,7 +926,7 @@ class ConsentServiceTest {
             .thenReturn(ValidationResult.valid());
 
         SpiResponse<SpiInitiateAisConsentResponse> spiErrorResponse = SpiResponse.<SpiInitiateAisConsentResponse>builder()
-                                                                          .error(new TppMessage(MessageErrorCode.SERVICE_BLOCKED))
+                                                                          .error(new SpiTppMessage(SpiMessageErrorCode.SERVICE_BLOCKED))
                                                                           .build();
         when(aisConsentSpi.initiateAisConsent(any(SpiContextData.class), any(SpiAccountConsent.class), any(SpiAspspConsentDataProvider.class)))
             .thenReturn(spiErrorResponse);
@@ -955,11 +962,12 @@ class ConsentServiceTest {
         when(consentValidationService.validateConsentOnGettingStatusById(aisConsent))
             .thenReturn(ValidationResult.valid());
         SpiResponse<SpiConsentStatusResponse> spiResponse = SpiResponse.<SpiConsentStatusResponse>builder()
-                                                                .payload(new SpiConsentStatusResponse(ConsentStatus.VALID, TEST_PSU_MESSAGE))
+                                                                .payload(new SpiConsentStatusResponse(SpiConsentStatus.VALID, TEST_PSU_MESSAGE))
                                                                 .build();
 
         when(aisConsentSpi.getConsentStatus(any(SpiContextData.class), any(SpiAccountConsent.class), any(SpiAspspConsentDataProvider.class)))
             .thenReturn(spiResponse);
+        when(spiToXs2aConsentMapper.mapToConsentStatus(SpiConsentStatus.VALID)).thenReturn(ConsentStatus.VALID);
 
         // When
         ResponseObject response = consentService.getAccountConsentsStatusById(CONSENT_ID);
@@ -1000,7 +1008,7 @@ class ConsentServiceTest {
         when(consentValidationService.validateConsentOnGettingStatusById(aisConsent))
             .thenReturn(ValidationResult.valid());
         SpiResponse<SpiConsentStatusResponse> spiResponse = SpiResponse.<SpiConsentStatusResponse>builder()
-                                                                .error(new TppMessage(MessageErrorCode.FORMAT_ERROR))
+                                                                .error(new SpiTppMessage(SpiMessageErrorCode.FORMAT_ERROR))
                                                                 .build();
 
         when(aisConsentSpi.getConsentStatus(any(SpiContextData.class), any(SpiAccountConsent.class), any(SpiAspspConsentDataProvider.class)))
@@ -1036,12 +1044,14 @@ class ConsentServiceTest {
             .thenReturn(Optional.of(aisConsent));
         when(consentValidationService.validateConsentOnGettingStatusById(aisConsent)).thenReturn(ValidationResult.valid());
         SpiResponse<SpiConsentStatusResponse> spiResponse = SpiResponse.<SpiConsentStatusResponse>builder()
-                                                                .payload(new SpiConsentStatusResponse(ConsentStatus.VALID, TEST_PSU_MESSAGE))
+                                                                .payload(new SpiConsentStatusResponse(SpiConsentStatus.VALID, TEST_PSU_MESSAGE))
                                                                 .build();
 
         ArgumentCaptor<EventType> argumentCaptor = ArgumentCaptor.forClass(EventType.class);
         when(aisConsentSpi.getConsentStatus(any(SpiContextData.class), any(SpiAccountConsent.class), any(SpiAspspConsentDataProvider.class)))
             .thenReturn(spiResponse);
+        when(spiToXs2aConsentMapper.mapToConsentStatus(SpiConsentStatus.VALID)).thenReturn(ConsentStatus.VALID);
+
         // When
         consentService.getAccountConsentsStatusById(CONSENT_ID);
 
@@ -1083,7 +1093,7 @@ class ConsentServiceTest {
     void getAccountConsentsStatusById_shouldRecordIntoLoggingContext() {
         // Given
         SpiResponse<SpiConsentStatusResponse> spiResponse = SpiResponse.<SpiConsentStatusResponse>builder()
-                                                                .payload(new SpiConsentStatusResponse(ConsentStatus.VALID, TEST_PSU_MESSAGE))
+                                                                .payload(new SpiConsentStatusResponse(SpiConsentStatus.VALID, TEST_PSU_MESSAGE))
                                                                 .build();
         ArgumentCaptor<ConsentStatus> consentStatusCaptor = ArgumentCaptor.forClass(ConsentStatus.class);
 
@@ -1101,6 +1111,7 @@ class ConsentServiceTest {
             .thenReturn(ValidationResult.valid());
         when(aisConsentSpi.getConsentStatus(any(SpiContextData.class), any(SpiAccountConsent.class), any(SpiAspspConsentDataProvider.class)))
             .thenReturn(spiResponse);
+        when(spiToXs2aConsentMapper.mapToConsentStatus(SpiConsentStatus.VALID)).thenReturn(ConsentStatus.VALID);
 
         // When
         consentService.getAccountConsentsStatusById(CONSENT_ID);
@@ -1114,7 +1125,7 @@ class ConsentServiceTest {
     void getAccountConsentsById_Success() {
         // Given
         SpiResponse<SpiConsentStatusResponse> spiResponse = SpiResponse.<SpiConsentStatusResponse>builder()
-                                                                .payload(new SpiConsentStatusResponse(ConsentStatus.VALID, TEST_PSU_MESSAGE))
+                                                                .payload(new SpiConsentStatusResponse(SpiConsentStatus.VALID, TEST_PSU_MESSAGE))
                                                                 .build();
         when(aisConsentService.getAccountConsentById(CONSENT_ID))
             .thenReturn(Optional.of(getAisConsent()));
@@ -1144,7 +1155,7 @@ class ConsentServiceTest {
         // Given
         ArgumentCaptor<ConsentStatus> argumentCaptor = ArgumentCaptor.forClass(ConsentStatus.class);
         SpiResponse<SpiConsentStatusResponse> spiResponse = SpiResponse.<SpiConsentStatusResponse>builder()
-                                                                .payload(new SpiConsentStatusResponse(ConsentStatus.VALID, TEST_PSU_MESSAGE))
+                                                                .payload(new SpiConsentStatusResponse(SpiConsentStatus.VALID, TEST_PSU_MESSAGE))
                                                                 .build();
         //GetConsentById
         when(aisConsentService.getAccountConsentById(CONSENT_ID))
@@ -1225,7 +1236,7 @@ class ConsentServiceTest {
         // Given
         ArgumentCaptor<EventType> argumentCaptor = ArgumentCaptor.forClass(EventType.class);
         SpiResponse<SpiConsentStatusResponse> spiResponse = SpiResponse.<SpiConsentStatusResponse>builder()
-                                                                .payload(new SpiConsentStatusResponse(ConsentStatus.VALID, TEST_PSU_MESSAGE))
+                                                                .payload(new SpiConsentStatusResponse(SpiConsentStatus.VALID, TEST_PSU_MESSAGE))
                                                                 .build();
 
         when(aisConsentService.getAccountConsentById(CONSENT_ID))
@@ -1418,8 +1429,11 @@ class ConsentServiceTest {
 
         when(aisConsentSpi.getScaStatus(SpiScaStatus.RECEIVED, SPI_CONTEXT_DATA, WRONG_AUTHORISATION_ID, aisConsentMapper.mapToSpiAccountConsent(aisConsent), spiAspspConsentDataProvider))
             .thenReturn(SpiResponse.<SpiScaStatusResponse>builder()
-                            .payload(new SpiScaStatusResponse(ScaStatus.FINALISED, false, "psu message", null, null))
+                            .payload(new SpiScaStatusResponse(SpiScaStatus.FINALISED, false, "psu message", null, null))
                             .build());
+        when(xs2aToSpiAuthorizationMapper.mapToSpiScaStatus(ScaStatus.RECEIVED)).thenReturn(SpiScaStatus.RECEIVED);
+        when(spiToXs2aAuthorizationMapper.mapToScaStatus(SpiScaStatus.FINALISED)).thenReturn(ScaStatus.FINALISED);
+        when(tppMessageInformationMapper.toTppMessageInformationSet(null)).thenReturn(null);
 
         // When
         ResponseObject<Xs2aScaStatusResponse> actual = consentService.getConsentAuthorisationScaStatus(CONSENT_ID, WRONG_AUTHORISATION_ID);
@@ -1450,10 +1464,13 @@ class ConsentServiceTest {
         when(spiContextDataProvider.provideWithPsuIdData(PSU_ID_DATA)).thenReturn(SPI_CONTEXT_DATA);
         when(aspspConsentDataProviderFactory.getSpiAspspDataProviderFor(CONSENT_ID))
             .thenReturn(spiAspspConsentDataProvider);
+        when(xs2aToSpiAuthorizationMapper.mapToSpiScaStatus(ScaStatus.FINALISED)).thenReturn(SpiScaStatus.FINALISED);
+        when(spiToXs2aAuthorizationMapper.mapToScaStatus(SpiScaStatus.FINALISED)).thenReturn(ScaStatus.FINALISED);
+        when(tppMessageInformationMapper.toTppMessageInformationSet(null)).thenReturn(null);
 
         when(aisConsentSpi.getScaStatus(SpiScaStatus.FINALISED, SPI_CONTEXT_DATA, WRONG_AUTHORISATION_ID, aisConsentMapper.mapToSpiAccountConsent(aisConsent), spiAspspConsentDataProvider))
             .thenReturn(SpiResponse.<SpiScaStatusResponse>builder()
-                            .payload(new SpiScaStatusResponse(ScaStatus.FINALISED, true, "psu message", null, null))
+                            .payload(new SpiScaStatusResponse(SpiScaStatus.FINALISED, true, "psu message", null, null))
                             .build());
 
         // When
@@ -1486,12 +1503,13 @@ class ConsentServiceTest {
         when(aspspConsentDataProviderFactory.getSpiAspspDataProviderFor(CONSENT_ID))
             .thenReturn(spiAspspConsentDataProvider);
 
-        TppMessage tppMessage = new TppMessage(MessageErrorCode.FORMAT_ERROR);
+        SpiTppMessage tppMessage = new SpiTppMessage(SpiMessageErrorCode.FORMAT_ERROR);
         SpiResponse<SpiScaStatusResponse> spiResponse = SpiResponse.<SpiScaStatusResponse>builder()
                                                             .error(tppMessage)
                                                             .build();
         when(aisConsentSpi.getScaStatus(SpiScaStatus.FINALISED, SPI_CONTEXT_DATA, WRONG_AUTHORISATION_ID, aisConsentMapper.mapToSpiAccountConsent(aisConsent), spiAspspConsentDataProvider)).thenReturn(spiResponse);
         when(spiErrorMapper.mapToErrorHolder(spiResponse, ServiceType.AIS)).thenReturn(ErrorHolder.builder(ErrorType.AIS_400).build());
+        when(xs2aToSpiAuthorizationMapper.mapToSpiScaStatus(ScaStatus.FINALISED)).thenReturn(SpiScaStatus.FINALISED);
 
         // When
         ResponseObject<Xs2aScaStatusResponse> actual = consentService.getConsentAuthorisationScaStatus(CONSENT_ID, WRONG_AUTHORISATION_ID);

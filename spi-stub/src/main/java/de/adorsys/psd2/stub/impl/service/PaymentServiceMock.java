@@ -18,10 +18,10 @@
 
 package de.adorsys.psd2.stub.impl.service;
 
-import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
-import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
+import de.adorsys.psd2.xs2a.spi.domain.payment.SpiTransactionStatus;
 import de.adorsys.psd2.xs2a.spi.domain.payment.response.SpiPaymentConfirmationCodeValidationResponse;
 import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponse;
+import de.adorsys.psd2.xs2a.spi.domain.sca.SpiScaStatus;
 import de.adorsys.psd2.xs2a.spi.service.SpiPayment;
 import org.springframework.stereotype.Service;
 
@@ -29,10 +29,12 @@ import org.springframework.stereotype.Service;
 public class PaymentServiceMock {
 
     public SpiResponse<SpiPaymentConfirmationCodeValidationResponse> notifyConfirmationCodeValidation(boolean confirmationCodeValidationResult, SpiPayment payment, boolean isCancellation) {
-        ScaStatus scaStatus = confirmationCodeValidationResult ? ScaStatus.FINALISED : ScaStatus.FAILED;
-        TransactionStatus transactionStatus = isCancellation
-                                                  ? getCancellationTransactionStatus(confirmationCodeValidationResult, payment)
-                                                  : getTransactionStatus(confirmationCodeValidationResult);
+        SpiScaStatus scaStatus = confirmationCodeValidationResult
+                                     ? SpiScaStatus.FINALISED
+                                     : SpiScaStatus.FAILED;
+        SpiTransactionStatus transactionStatus = isCancellation
+                                                     ? getCancellationTransactionStatus(confirmationCodeValidationResult, payment)
+                                                     : getTransactionStatus(confirmationCodeValidationResult);
 
         SpiPaymentConfirmationCodeValidationResponse response = new SpiPaymentConfirmationCodeValidationResponse(scaStatus, transactionStatus);
 
@@ -41,11 +43,15 @@ public class PaymentServiceMock {
                    .build();
     }
 
-    private TransactionStatus getCancellationTransactionStatus(boolean confirmationCodeValidationResult, SpiPayment payment) {
-        return confirmationCodeValidationResult ? TransactionStatus.CANC : payment.getPaymentStatus();
+    private SpiTransactionStatus getCancellationTransactionStatus(boolean confirmationCodeValidationResult, SpiPayment payment) {
+        return confirmationCodeValidationResult
+                   ? SpiTransactionStatus.CANC
+                   : payment.getPaymentStatus();
     }
 
-    private TransactionStatus getTransactionStatus(boolean confirmationCodeValidationResult) {
-        return confirmationCodeValidationResult ? TransactionStatus.ACSP : TransactionStatus.RJCT;
+    private SpiTransactionStatus getTransactionStatus(boolean confirmationCodeValidationResult) {
+        return confirmationCodeValidationResult
+                   ? SpiTransactionStatus.ACSP
+                   : SpiTransactionStatus.RJCT;
     }
 }

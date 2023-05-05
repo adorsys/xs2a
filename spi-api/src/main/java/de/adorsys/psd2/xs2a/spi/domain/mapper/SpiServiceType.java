@@ -16,20 +16,11 @@
  * contact us at psd2@adorsys.com.
  */
 
-package de.adorsys.psd2.xs2a.spi.domain.common;
+package de.adorsys.psd2.xs2a.spi.domain.mapper;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-
-import java.util.List;
-
-@Data
-@AllArgsConstructor
-public class SpiChallengeData {
-    private byte[] image;
-    private List<String> data;
-    private String imageLink;
-    private Integer otpMaxLength;
-    private SpiOtpFormat otpFormat;
-    private String additionalInformation;
+public enum SpiServiceType {
+    AIS,
+    PIS,
+    PIIS,
+    SB
 }

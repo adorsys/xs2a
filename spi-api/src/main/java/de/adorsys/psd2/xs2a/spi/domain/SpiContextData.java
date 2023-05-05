@@ -18,8 +18,8 @@
 
 package de.adorsys.psd2.xs2a.spi.domain;
 
-import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
 import de.adorsys.psd2.xs2a.spi.domain.psu.SpiPsuData;
+import de.adorsys.psd2.xs2a.spi.domain.tpp.SpiTppInfo;
 import lombok.RequiredArgsConstructor;
 import lombok.Value;
 import org.jetbrains.annotations.NotNull;
@@ -35,8 +35,7 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class SpiContextData {
     private SpiPsuData psuData;
-    @Deprecated // TODO: change with SpiTppInfo in 14.8
-    private TppInfo tppInfo;
+    private SpiTppInfo tppInfo;
     private UUID xRequestId;
     private UUID internalRequestId;
     private String oAuth2Token;

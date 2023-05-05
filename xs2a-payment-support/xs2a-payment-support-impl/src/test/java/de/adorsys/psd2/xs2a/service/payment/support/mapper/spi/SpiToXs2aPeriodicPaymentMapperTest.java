@@ -18,20 +18,13 @@
 
 package de.adorsys.psd2.xs2a.service.payment.support.mapper.spi;
 
-import de.adorsys.psd2.core.payment.model.PurposeCode;
-import de.adorsys.psd2.xs2a.core.pis.FrequencyCode;
-import de.adorsys.psd2.xs2a.core.pis.PisDayOfExecution;
-import de.adorsys.psd2.xs2a.core.pis.PisExecutionRule;
-import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
 import de.adorsys.psd2.xs2a.domain.pis.PeriodicPayment;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiToXs2aAccountReferenceMapperImpl;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiToXs2aAddressMapperImpl;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiToXs2aAmountMapperImpl;
 import de.adorsys.psd2.xs2a.spi.domain.account.SpiAccountReference;
 import de.adorsys.psd2.xs2a.spi.domain.common.SpiAmount;
-import de.adorsys.psd2.xs2a.spi.domain.payment.SpiAddress;
-import de.adorsys.psd2.xs2a.spi.domain.payment.SpiPeriodicPayment;
-import de.adorsys.psd2.xs2a.spi.domain.payment.SpiRemittance;
+import de.adorsys.psd2.xs2a.spi.domain.payment.*;
 import de.adorsys.psd2.xs2a.spi.domain.psu.SpiPsuData;
 import de.adorsys.psd2.xs2a.web.mapper.RemittanceMapperImpl;
 import de.adorsys.xs2a.reader.JsonReader;
@@ -85,12 +78,12 @@ class SpiToXs2aPeriodicPaymentMapperTest {
     private SpiPeriodicPayment buildSpiPeriodicPayment() {
         SpiPeriodicPayment payment = new SpiPeriodicPayment(PAYMENT_PRODUCT);
         payment.setPaymentId(PAYMENT_ID);
-        payment.setDayOfExecution(PisDayOfExecution.DAY_14);
+        payment.setDayOfExecution(SpiPisDayOfExecution.DAY_14);
         payment.setStartDate(LocalDate.of(2017, 3, 3));
         payment.setEndDate(LocalDate.of(2020, 12, 2));
-        payment.setExecutionRule(PisExecutionRule.PRECEDING);
-        payment.setFrequency(FrequencyCode.ANNUAL);
-        payment.setPaymentStatus(TransactionStatus.ACCP);
+        payment.setExecutionRule(SpiPisExecutionRule.PRECEDING);
+        payment.setFrequency(SpiFrequencyCode.ANNUAL);
+        payment.setPaymentStatus(SpiTransactionStatus.ACCP);
         SpiAccountReference accountReferenceCreditor = jsonReader.getObjectFromFile("json/support/mapper/spi/spi-account-reference-creditor.json", SpiAccountReference.class);
         payment.setCreditorAccount(accountReferenceCreditor);
         payment.setCreditorAgent("BCENECEQ");
@@ -121,7 +114,7 @@ class SpiToXs2aPeriodicPaymentMapperTest {
                                                              .psuHttpMethod("")
                                                              .psuDeviceId(UUID.randomUUID())
                                                              .build()));
-        payment.setPurposeCode(PurposeCode.CDQC);
+        payment.setPurposeCode(SpiPisPurposeCode.CDQC);
         payment.setStatusChangeTimestamp(OFFSET_DATE_TIME);
         payment.setUltimateCreditor("ultimateCreditor");
         payment.setUltimateDebtor("ultimateDebtor");

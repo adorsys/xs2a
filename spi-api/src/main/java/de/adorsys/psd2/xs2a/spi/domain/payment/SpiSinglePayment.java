@@ -18,9 +18,6 @@
 
 package de.adorsys.psd2.xs2a.spi.domain.payment;
 
-import de.adorsys.psd2.core.payment.model.PurposeCode;
-import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
-import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import de.adorsys.psd2.xs2a.spi.domain.account.SpiAccountReference;
 import de.adorsys.psd2.xs2a.spi.domain.common.SpiAmount;
 import de.adorsys.psd2.xs2a.spi.domain.psu.SpiPsuData;
@@ -45,8 +42,7 @@ public class SpiSinglePayment implements SpiPayment {
     private String creditorId;
     private String creditorName;
     private SpiAddress creditorAddress;
-    @Deprecated // TODO: change with SpiTransactionStatus in 14.8
-    private TransactionStatus paymentStatus;
+    private SpiTransactionStatus paymentStatus;
     protected String paymentProduct;
     private LocalDate requestedExecutionDate;
     private OffsetDateTime requestedExecutionTime;
@@ -54,8 +50,7 @@ public class SpiSinglePayment implements SpiPayment {
     private OffsetDateTime statusChangeTimestamp;
     private String ultimateDebtor;
     private String ultimateCreditor;
-    @Deprecated // TODO: change with SpiPurposeCode in 14.8
-    private PurposeCode purposeCode;
+    private SpiPisPurposeCode purposeCode;
     private String remittanceInformationUnstructured;
     private List<String> remittanceInformationUnstructuredArray;
     private SpiRemittance remittanceInformationStructured;
@@ -71,8 +66,8 @@ public class SpiSinglePayment implements SpiPayment {
     }
 
     @Override
-    public PaymentType getPaymentType() {
-        return PaymentType.SINGLE;
+    public SpiPaymentType getPaymentType() {
+        return SpiPaymentType.SINGLE;
     }
 
     @Override
@@ -81,12 +76,12 @@ public class SpiSinglePayment implements SpiPayment {
     }
 
     @Override
-    public TransactionStatus getPaymentStatus() {
+    public SpiTransactionStatus getPaymentStatus() {
         return paymentStatus;
     }
 
     @Override
-    public void setPaymentStatus(TransactionStatus paymentStatus) {
+    public void setPaymentStatus(SpiTransactionStatus paymentStatus) {
         this.paymentStatus = paymentStatus;
     }
 }

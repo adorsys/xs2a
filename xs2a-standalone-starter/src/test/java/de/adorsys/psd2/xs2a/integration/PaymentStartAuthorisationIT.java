@@ -34,7 +34,6 @@ import de.adorsys.psd2.xs2a.config.CorsConfigurationProperties;
 import de.adorsys.psd2.xs2a.config.WebConfig;
 import de.adorsys.psd2.xs2a.config.Xs2aEndpointPathConstant;
 import de.adorsys.psd2.xs2a.config.Xs2aInterfaceConfig;
-import de.adorsys.psd2.xs2a.core.authorisation.AuthenticationObject;
 import de.adorsys.psd2.xs2a.core.authorisation.Authorisation;
 import de.adorsys.psd2.xs2a.core.authorisation.AuthorisationType;
 import de.adorsys.psd2.xs2a.core.consent.AspspConsentData;
@@ -52,6 +51,7 @@ import de.adorsys.psd2.xs2a.spi.domain.SpiAspspConsentDataProvider;
 import de.adorsys.psd2.xs2a.spi.domain.SpiContextData;
 import de.adorsys.psd2.xs2a.spi.domain.authorisation.*;
 import de.adorsys.psd2.xs2a.spi.domain.payment.SpiPaymentInfo;
+import de.adorsys.psd2.xs2a.spi.domain.payment.SpiTransactionStatus;
 import de.adorsys.psd2.xs2a.spi.domain.payment.response.SpiPaymentExecutionResponse;
 import de.adorsys.psd2.xs2a.spi.domain.psu.SpiPsuData;
 import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponse;
@@ -202,7 +202,7 @@ class PaymentStartAuthorisationIT {
             .willReturn(SpiResponse.<SpiPsuAuthorisationResponse>builder()
                             .payload(new SpiPsuAuthorisationResponse(false, SpiAuthorisationStatus.SUCCESS))
                             .build());
-        AuthenticationObject authenticationObject = new AuthenticationObject();
+        SpiAuthenticationObject authenticationObject = new SpiAuthenticationObject();
         authenticationObject.setAuthenticationMethodId(AUTHORISATION_METHOD_ID);
         given(paymentAuthorisationSpi.requestAvailableScaMethods(any(SpiContextData.class), any(SpiPayment.class), any(SpiAspspConsentDataProvider.class)))
             .willReturn(SpiResponse.<SpiAvailableScaMethodsResponse>builder()
@@ -213,7 +213,7 @@ class PaymentStartAuthorisationIT {
                             .payload(true)
                             .build());
         SpiAuthorizationCodeResult spiAuthorizationCodeResult = new SpiAuthorizationCodeResult();
-        spiAuthorizationCodeResult.setScaStatus(ScaStatus.SCAMETHODSELECTED);
+        spiAuthorizationCodeResult.setScaStatus(SpiScaStatus.SCAMETHODSELECTED);
         given(paymentAuthorisationSpi.requestAuthorisationCode(any(SpiContextData.class), eq(AUTHORISATION_METHOD_ID), any(SpiPayment.class), any(SpiAspspConsentDataProvider.class)))
             .willReturn(SpiResponse.<SpiAuthorizationCodeResult>builder()
                             .payload(spiAuthorizationCodeResult)
@@ -222,7 +222,7 @@ class PaymentStartAuthorisationIT {
 
         given(commonPaymentSpi.executePaymentWithoutSca(any(SpiContextData.class), any(SpiPaymentInfo.class), any(SpiAspspConsentDataProvider.class)))
             .willReturn(SpiResponse.<SpiPaymentExecutionResponse>builder()
-                            .payload(new SpiPaymentExecutionResponse(TransactionStatus.ACCP))
+                            .payload(new SpiPaymentExecutionResponse(SpiTransactionStatus.ACCP))
                             .build());
         given(updatePaymentAfterSpiService.updatePaymentStatus(PAYMENT_ID, TransactionStatus.ACCP))
             .willReturn(CmsResponse.<Boolean>builder()
@@ -230,8 +230,8 @@ class PaymentStartAuthorisationIT {
                             .build());
         given(consentRestTemplate.postForEntity(anyString(), any(EventBO.class), eq(Boolean.class)))
             .willReturn(new ResponseEntity<>(true, HttpStatus.OK));
-        SpiStartAuthorisationResponse startAuthorisationResponse = new SpiStartAuthorisationResponse(ScaApproach.EMBEDDED,
-                                                                                                     ScaStatus.STARTED,
+        SpiStartAuthorisationResponse startAuthorisationResponse = new SpiStartAuthorisationResponse(SpiScaApproach.EMBEDDED,
+                                                                                                     SpiScaStatus.STARTED,
                                                                                                      null,
                                                                                                      null);
         given(paymentAuthorisationSpi.startAuthorisation(any(SpiContextData.class),

@@ -18,7 +18,6 @@
 
 package de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers;
 
-import de.adorsys.psd2.model.ChargeBearer;
 import de.adorsys.psd2.xs2a.domain.pis.SinglePayment;
 import de.adorsys.psd2.xs2a.spi.domain.payment.SpiSinglePayment;
 import de.adorsys.psd2.xs2a.web.mapper.RemittanceMapper;
@@ -35,6 +34,8 @@ public class Xs2aToSpiSinglePaymentMapper {
     private final Xs2aToSpiAccountReferenceMapper xs2aToSpiAccountReferenceMapper;
     private final Xs2aToSpiPsuDataMapper xs2aToSpiPsuDataMapper;
     private final RemittanceMapper remittanceMapper;
+    private final Xs2aToSpiPisMapper xs2aToSpiPisMapper;
+    private final Xs2aToSpiTransactionMapper xs2aToSpiTransactionMapper;
 
     public SpiSinglePayment mapToSpiSinglePayment(SinglePayment payment, String paymentProduct) {
         SpiSinglePayment single = new SpiSinglePayment(paymentProduct);
@@ -44,9 +45,7 @@ public class Xs2aToSpiSinglePaymentMapper {
         single.setDebtorAccount(xs2aToSpiAccountReferenceMapper.mapToSpiAccountReference(payment.getDebtorAccount()));
         single.setInstructedAmount(xs2aToSpiAmountMapper.mapToSpiAmount(payment.getInstructedAmount()));
         single.setCreditorAccount(xs2aToSpiAccountReferenceMapper.mapToSpiAccountReference(payment.getCreditorAccount()));
-        if (payment.getTransactionStatus() != null) {
-            single.setPaymentStatus(payment.getTransactionStatus());
-        }
+        single.setPaymentStatus(xs2aToSpiTransactionMapper.mapToSpiTransactionStatus(payment.getTransactionStatus()));
         single.setCreditorAgent(payment.getCreditorAgent());
         single.setCreditorName(payment.getCreditorName());
         single.setCreditorAddress(xs2aToSpiAddressMapper.mapToSpiAddress(payment.getCreditorAddress()));
@@ -56,7 +55,7 @@ public class Xs2aToSpiSinglePaymentMapper {
         single.setStatusChangeTimestamp(payment.getStatusChangeTimestamp());
         single.setUltimateDebtor(payment.getUltimateDebtor());
         single.setUltimateCreditor(payment.getUltimateCreditor());
-        single.setPurposeCode(payment.getPurposeCode());
+        single.setPurposeCode(xs2aToSpiPisMapper.mapToSpiPisPurposeCode(payment.getPurposeCode()));
         single.setRemittanceInformationUnstructured(payment.getRemittanceInformationUnstructured());
         single.setRemittanceInformationUnstructuredArray(payment.getRemittanceInformationUnstructuredArray());
         single.setRemittanceInformationStructured(remittanceMapper.mapToSpiRemittance(payment.getRemittanceInformationStructured()));
@@ -66,7 +65,7 @@ public class Xs2aToSpiSinglePaymentMapper {
         single.setDebtorName(payment.getDebtorName());
         single.setInstanceId(payment.getInstanceId());
         single.setChargeBearer(Optional.ofNullable(payment.getChargeBearer())
-                                   .map(ChargeBearer::toString)
+                                   .map(Enum::name)
                                    .orElse(null));
 
         return single;

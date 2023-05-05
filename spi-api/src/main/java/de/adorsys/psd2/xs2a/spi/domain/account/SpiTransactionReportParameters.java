@@ -18,7 +18,7 @@
 
 package de.adorsys.psd2.xs2a.spi.domain.account;
 
-import de.adorsys.psd2.xs2a.core.ais.BookingStatus;
+import de.adorsys.psd2.xs2a.spi.domain.consent.SpiBookingStatus;
 import lombok.Value;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -31,8 +31,7 @@ public class SpiTransactionReportParameters {
     boolean withBalance;
     @Nullable LocalDate dateFrom;
     @Nullable LocalDate dateTo;
-    @Deprecated // TODO: change with SpiBookingStatus in 14.8
-    @NotNull BookingStatus bookingStatus;
+    @NotNull SpiBookingStatus bookingStatus;
     private String entryReferenceFrom;
     private Boolean deltaList;
     @Nullable private Integer pageIndex;

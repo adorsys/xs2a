@@ -25,7 +25,6 @@ import de.adorsys.psd2.xs2a.config.CorsConfigurationProperties;
 import de.adorsys.psd2.xs2a.config.WebConfig;
 import de.adorsys.psd2.xs2a.config.Xs2aEndpointPathConstant;
 import de.adorsys.psd2.xs2a.config.Xs2aInterfaceConfig;
-import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
 import de.adorsys.psd2.xs2a.integration.builder.UrlBuilder;
@@ -33,6 +32,7 @@ import de.adorsys.psd2.xs2a.integration.builder.payment.PisCommonPaymentResponse
 import de.adorsys.psd2.xs2a.spi.domain.SpiAspspConsentDataProvider;
 import de.adorsys.psd2.xs2a.spi.domain.SpiContextData;
 import de.adorsys.psd2.xs2a.spi.domain.payment.SpiPaymentInfo;
+import de.adorsys.psd2.xs2a.spi.domain.payment.SpiTransactionStatus;
 import org.apache.commons.io.IOUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -122,7 +122,7 @@ class GetCustomPaymentIT extends CustomPaymentTestParent {
         byte[] data = IOUtils.resourceToByteArray(requestContentPath);
         response.setPaymentData(data);
         spiPaymentInfo.setPaymentData(data);
-        spiPaymentInfo.setStatus(TransactionStatus.ACSP);
+        spiPaymentInfo.setStatus(SpiTransactionStatus.ACSP);
 
         given(aspspProfileService.getScaApproaches(null)).willReturn(Collections.singletonList(ScaApproach.EMBEDDED));
 

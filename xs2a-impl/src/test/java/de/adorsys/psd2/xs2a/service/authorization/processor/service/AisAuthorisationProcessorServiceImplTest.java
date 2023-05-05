@@ -28,7 +28,6 @@ import de.adorsys.psd2.xs2a.core.domain.ErrorHolder;
 import de.adorsys.psd2.xs2a.core.domain.TppMessageInformation;
 import de.adorsys.psd2.xs2a.core.error.ErrorType;
 import de.adorsys.psd2.xs2a.core.error.MessageErrorCode;
-import de.adorsys.psd2.xs2a.core.error.TppMessage;
 import de.adorsys.psd2.xs2a.core.mapper.ServiceType;
 import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
@@ -49,16 +48,20 @@ import de.adorsys.psd2.xs2a.service.authorization.processor.model.AuthorisationP
 import de.adorsys.psd2.xs2a.service.consent.Xs2aAisConsentService;
 import de.adorsys.psd2.xs2a.service.context.SpiContextDataProvider;
 import de.adorsys.psd2.xs2a.service.mapper.cms_xs2a_mappers.Xs2aAisConsentMapper;
-import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiErrorMapper;
-import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.Xs2aToSpiPsuDataMapper;
+import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.*;
 import de.adorsys.psd2.xs2a.service.spi.SpiAspspConsentDataProviderFactory;
 import de.adorsys.psd2.xs2a.spi.domain.SpiAspspConsentDataProvider;
 import de.adorsys.psd2.xs2a.spi.domain.SpiContextData;
 import de.adorsys.psd2.xs2a.spi.domain.account.SpiAccountConsent;
 import de.adorsys.psd2.xs2a.spi.domain.authorisation.*;
+import de.adorsys.psd2.xs2a.spi.domain.consent.SpiConsentStatus;
 import de.adorsys.psd2.xs2a.spi.domain.consent.SpiVerifyScaAuthorisationResponse;
+import de.adorsys.psd2.xs2a.spi.domain.error.SpiMessageErrorCode;
+import de.adorsys.psd2.xs2a.spi.domain.error.SpiTppMessage;
 import de.adorsys.psd2.xs2a.spi.domain.psu.SpiPsuData;
 import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponse;
+import de.adorsys.psd2.xs2a.spi.domain.response.SpiTppMessageInformation;
+import de.adorsys.psd2.xs2a.spi.domain.sca.SpiChallengeData;
 import de.adorsys.psd2.xs2a.spi.domain.sca.SpiScaApproach;
 import de.adorsys.psd2.xs2a.spi.domain.sca.SpiScaStatus;
 import de.adorsys.psd2.xs2a.spi.service.AisConsentSpi;
@@ -96,6 +99,7 @@ class AisAuthorisationProcessorServiceImplTest {
     private static final ScaStatus TEST_SCA_STATUS = ScaStatus.RECEIVED;
     private static final SpiScaStatus TEST_SPI_SCA_STATUS = SpiScaStatus.RECEIVED;
     private static final Set<TppMessageInformation> TEST_TPP_MESSAGES = buildTppMessageInformationSet();
+    private static final Set<SpiTppMessageInformation> TEST_SPI_TPP_MESSAGES = buildSpiTppMessageInformationSet();
     private static final String TEST_PSU_MESSAGE = "psu message";
     private static final ErrorType TEST_ERROR_TYPE_400 = AIS_400;
 
@@ -123,6 +127,18 @@ class AisAuthorisationProcessorServiceImplTest {
     private CommonDecoupledAisService commonDecoupledAisService;
     @Mock
     private SpiAspspConsentDataProvider spiAspspConsentDataProvider;
+    @Mock
+    private SpiToXs2aChallengeDataMapper challengeDataMapper;
+    @Mock
+    private SpiToXs2aTppMessageInformationMapper tppMessageInformationMapper;
+    @Mock
+    private SpiToXs2aAuthenticationObjectMapper authenticationObjectMapper;
+    @Mock
+    private SpiToXs2aAuthorizationMapper spiToXs2aAuthorizationMapper;
+    @Mock
+    private Xs2aToSpiAuthorizationMapper xs2aToSpiAuthorizationMapper;
+    @Mock
+    private SpiToXs2aConsentMapper spiToXs2aConsentMapper;
 
     private AisAuthorisationProcessorServiceImpl aisAuthorisationProcessorService;
     private final JsonReader jsonReader = new JsonReader();
@@ -140,7 +156,9 @@ class AisAuthorisationProcessorServiceImplTest {
         aisAuthorisationProcessorService = new AisAuthorisationProcessorServiceImpl(xs2aAuthorisationService, spiContextDataProvider, spiAspspConsentDataProviderFactory,
                                                                                     spiErrorMapper, xs2aToSpiPsuDataMapper, services,
                                                                                     xs2aAisConsentService, aisConsentSpi, xs2aAisConsentMapper,
-                                                                                    commonDecoupledAisService, aisScaAuthorisationService);
+                                                                                    commonDecoupledAisService, aisScaAuthorisationService,
+                                                                                    challengeDataMapper, tppMessageInformationMapper, authenticationObjectMapper,
+                                                                                    spiToXs2aAuthorizationMapper, xs2aToSpiAuthorizationMapper, spiToXs2aConsentMapper);
     }
 
     @Test
@@ -239,10 +257,10 @@ class AisAuthorisationProcessorServiceImplTest {
                             .payload(spiPsuAuthorisationResponse)
                             .build());
 
-        AuthenticationObject authenticationObject = new AuthenticationObject();
-        authenticationObject.setAuthenticationMethodId(AUTHENTICATION_METHOD_ID);
-        List<AuthenticationObject> availableScaMethods = Collections.singletonList(authenticationObject);
-        SpiAvailableScaMethodsResponse spiAvailableScaMethodsResponse = new SpiAvailableScaMethodsResponse(availableScaMethods);
+        List<AuthenticationObject> availableScaMethods = buildTestAuthenticationObjectSingleValueList(false);
+
+        List<SpiAuthenticationObject> availableSpiScaMethods = buildTestSpiAuthenticationObjectSingleValueList(false);
+        SpiAvailableScaMethodsResponse spiAvailableScaMethodsResponse = new SpiAvailableScaMethodsResponse(availableSpiScaMethods);
         when(aisConsentSpi.requestAvailableScaMethods(SPI_CONTEXT_DATA, spiAccountConsent, spiAspspConsentDataProvider))
             .thenReturn(SpiResponse.<SpiAvailableScaMethodsResponse>builder()
                             .payload(spiAvailableScaMethodsResponse)
@@ -252,6 +270,9 @@ class AisAuthorisationProcessorServiceImplTest {
             .thenReturn(SpiResponse.<SpiAuthorizationCodeResult>builder()
                             .payload(buildSpiAuthorizationCodeResult())
                             .build());
+        when(authenticationObjectMapper.toAuthenticationObjectList(buildTestSpiAuthenticationObjectSingleValueList(false))).thenReturn(buildTestAuthenticationObjectSingleValueList(false));
+        when(authenticationObjectMapper.toAuthenticationObject(buildTestSpiAuthenticationObject(false))).thenReturn(buildTestAuthenticationObject(false));
+        when(challengeDataMapper.toChallengeData(new SpiChallengeData())).thenReturn(new ChallengeData());
 
         AuthenticationObject chosenScaMethod = new AuthenticationObject();
 
@@ -296,11 +317,11 @@ class AisAuthorisationProcessorServiceImplTest {
                             .payload(spiPsuAuthorisationResponse)
                             .build());
 
-        AuthenticationObject authenticationObject = new AuthenticationObject();
-        authenticationObject.setAuthenticationMethodId(AUTHENTICATION_METHOD_ID);
-        authenticationObject.setDecoupled(true);
-        List<AuthenticationObject> availableScaMethods = Collections.singletonList(authenticationObject);
-        SpiAvailableScaMethodsResponse spiAvailableScaMethodsResponse = new SpiAvailableScaMethodsResponse(availableScaMethods);
+        List<AuthenticationObject> availableScaMethods = buildTestAuthenticationObjectSingleValueList(true);
+
+        List<SpiAuthenticationObject> availableSpiScaMethods = buildTestSpiAuthenticationObjectSingleValueList(true);
+
+        SpiAvailableScaMethodsResponse spiAvailableScaMethodsResponse = new SpiAvailableScaMethodsResponse(availableSpiScaMethods);
         when(aisConsentSpi.requestAvailableScaMethods(SPI_CONTEXT_DATA, spiAccountConsent, spiAspspConsentDataProvider))
             .thenReturn(SpiResponse.<SpiAvailableScaMethodsResponse>builder()
                             .payload(spiAvailableScaMethodsResponse)
@@ -311,6 +332,7 @@ class AisAuthorisationProcessorServiceImplTest {
             .thenReturn(decoupledResponse);
 
         AuthorisationProcessorRequest processorRequest = buildAuthorisationProcessorRequest(ScaStatus.RECEIVED, updateAuthorisationRequest, authorisation);
+        when(authenticationObjectMapper.toAuthenticationObjectList(buildTestSpiAuthenticationObjectSingleValueList(true))).thenReturn(buildTestAuthenticationObjectSingleValueList(true));
 
         // When
         AuthorisationProcessorResponse processorResponse = aisAuthorisationProcessorService.doScaReceived(processorRequest);
@@ -357,12 +379,18 @@ class AisAuthorisationProcessorServiceImplTest {
         firstAuthenticationObject.setAuthenticationMethodId(AUTHENTICATION_METHOD_ID);
         AuthenticationObject secondAuthenticationObject = new AuthenticationObject();
 
+        SpiAuthenticationObject firstSpiAuthenticationObject = new SpiAuthenticationObject();
+        firstSpiAuthenticationObject.setAuthenticationMethodId(AUTHENTICATION_METHOD_ID);
+        SpiAuthenticationObject secondSpiAuthenticationObject = new SpiAuthenticationObject();
+
         List<AuthenticationObject> availableScaMethods = Arrays.asList(firstAuthenticationObject, secondAuthenticationObject);
-        SpiAvailableScaMethodsResponse spiAvailableScaMethodsResponse = new SpiAvailableScaMethodsResponse(availableScaMethods);
+        List<SpiAuthenticationObject> availableSpiScaMethods = Arrays.asList(firstSpiAuthenticationObject, secondSpiAuthenticationObject);
+        SpiAvailableScaMethodsResponse spiAvailableScaMethodsResponse = new SpiAvailableScaMethodsResponse(availableSpiScaMethods);
         when(aisConsentSpi.requestAvailableScaMethods(SPI_CONTEXT_DATA, spiAccountConsent, spiAspspConsentDataProvider))
             .thenReturn(SpiResponse.<SpiAvailableScaMethodsResponse>builder()
                             .payload(spiAvailableScaMethodsResponse)
                             .build());
+        when(authenticationObjectMapper.toAuthenticationObjectList(availableSpiScaMethods)).thenReturn(availableScaMethods);
 
         AuthorisationProcessorRequest processorRequest = buildAuthorisationProcessorRequest(ScaStatus.RECEIVED, updateAuthorisationRequest, authorisation);
 
@@ -451,7 +479,11 @@ class AisAuthorisationProcessorServiceImplTest {
         AuthenticationObject authenticationObject = new AuthenticationObject();
         authenticationObject.setDecoupled(true);
         authenticationObject.setAuthenticationMethodId(AUTHENTICATION_METHOD_ID);
-        SpiAvailableScaMethodsResponse spiAvailableScaMethodsResponse = new SpiAvailableScaMethodsResponse(Collections.singletonList(authenticationObject));
+
+        SpiAuthenticationObject spiAuthenticationObject = new SpiAuthenticationObject();
+        spiAuthenticationObject.setDecoupled(true);
+        spiAuthenticationObject.setAuthenticationMethodId(AUTHENTICATION_METHOD_ID);
+        SpiAvailableScaMethodsResponse spiAvailableScaMethodsResponse = new SpiAvailableScaMethodsResponse(Collections.singletonList(spiAuthenticationObject));
         when(aisConsentSpi.requestAvailableScaMethods(SPI_CONTEXT_DATA, spiAccountConsent, spiAspspConsentDataProvider))
             .thenReturn(SpiResponse.<SpiAvailableScaMethodsResponse>builder()
                             .payload(spiAvailableScaMethodsResponse)
@@ -459,6 +491,7 @@ class AisAuthorisationProcessorServiceImplTest {
 
         when(commonDecoupledAisService.proceedDecoupledApproach(ENCRYPTED_CONSENT_ID, AUTHORISATION_ID, spiAccountConsent, AUTHENTICATION_METHOD_ID, PSU_ID_DATA))
             .thenReturn(buildDecoupledUpdateConsentPsuDataResponse());
+        when(authenticationObjectMapper.toAuthenticationObjectList(buildTestSpiAuthenticationObjectSingleValueList(true))).thenReturn(buildTestAuthenticationObjectSingleValueList(true));
 
         authorisation.setChosenScaApproach(ScaApproach.DECOUPLED);
         AuthorisationProcessorRequest processorRequest = buildAuthorisationProcessorRequest(ScaStatus.RECEIVED, updateAuthorisationRequest, authorisation);
@@ -566,16 +599,17 @@ class AisAuthorisationProcessorServiceImplTest {
         SpiAspspConsentDataProvider spiAspspConsentDataProvider = mock(SpiAspspConsentDataProvider.class);
         when(spiAspspConsentDataProviderFactory.getSpiAspspDataProviderFor(ENCRYPTED_CONSENT_ID)).thenReturn(spiAspspConsentDataProvider);
 
-        MessageErrorCode spiErrorCode = MessageErrorCode.SERVICE_BLOCKED;
+        MessageErrorCode errorCode = MessageErrorCode.SERVICE_BLOCKED;
+        SpiMessageErrorCode spiErrorCode = SpiMessageErrorCode.SERVICE_BLOCKED;
         SpiResponse<SpiPsuAuthorisationResponse> errorResponse = SpiResponse.<SpiPsuAuthorisationResponse>builder()
-                                                                     .error(new TppMessage(spiErrorCode))
+                                                                     .error(new SpiTppMessage(spiErrorCode))
                                                                      .build();
         when(aisConsentSpi.authorisePsu(SPI_CONTEXT_DATA, AUTHORISATION_ID, spiPsuData, PSU_PASSWORD, spiAccountConsent, spiAspspConsentDataProvider))
             .thenReturn(errorResponse);
 
         when(spiErrorMapper.mapToErrorHolder(errorResponse, ServiceType.AIS))
-            .thenReturn(ErrorHolder.builder(AIS_403)
-                            .tppMessages(TppMessageInformation.of(spiErrorCode))
+            .thenReturn(ErrorHolder.builder(ErrorType.AIS_403)
+                            .tppMessages(TppMessageInformation.of(errorCode))
                             .build());
 
         AuthorisationProcessorRequest processorRequest = buildAuthorisationProcessorRequest(ScaStatus.RECEIVED, updateAuthorisationRequest, authorisation);
@@ -588,7 +622,7 @@ class AisAuthorisationProcessorServiceImplTest {
 
         ErrorHolder errorHolder = processorResponse.getErrorHolder();
         assertEquals(AIS_403, errorHolder.getErrorType());
-        assertEquals(Collections.singletonList(TppMessageInformation.of(spiErrorCode)), errorHolder.getTppMessageInformationList());
+        assertEquals(Collections.singletonList(TppMessageInformation.of(errorCode)), errorHolder.getTppMessageInformationList());
 
         assertEquals(ScaStatus.FAILED, processorResponse.getScaStatus());
         assertEquals(ENCRYPTED_CONSENT_ID, processorResponse.getConsentId());
@@ -667,9 +701,10 @@ class AisAuthorisationProcessorServiceImplTest {
                             .payload(spiPsuAuthorisationResponse)
                             .build());
 
-        MessageErrorCode spiErrorCode = MessageErrorCode.SERVICE_BLOCKED;
+        MessageErrorCode errorCode = MessageErrorCode.SERVICE_BLOCKED;
+        SpiMessageErrorCode spiErrorCode = SpiMessageErrorCode.SERVICE_BLOCKED;
         SpiResponse<SpiAvailableScaMethodsResponse> errorResponse = SpiResponse.<SpiAvailableScaMethodsResponse>builder()
-                                                                        .error(new TppMessage(spiErrorCode))
+                                                                        .error(new SpiTppMessage(spiErrorCode))
                                                                         .build();
 
         when(aisConsentSpi.requestAvailableScaMethods(SPI_CONTEXT_DATA, spiAccountConsent, spiAspspConsentDataProvider))
@@ -677,7 +712,7 @@ class AisAuthorisationProcessorServiceImplTest {
 
         when(spiErrorMapper.mapToErrorHolder(errorResponse, ServiceType.AIS))
             .thenReturn(ErrorHolder.builder(AIS_403)
-                            .tppMessages(TppMessageInformation.of(spiErrorCode))
+                            .tppMessages(TppMessageInformation.of(errorCode))
                             .build());
 
         AuthorisationProcessorRequest processorRequest = buildAuthorisationProcessorRequest(ScaStatus.RECEIVED, updateAuthorisationRequest, authorisation);
@@ -690,7 +725,7 @@ class AisAuthorisationProcessorServiceImplTest {
 
         ErrorHolder errorHolder = processorResponse.getErrorHolder();
         assertEquals(AIS_403, errorHolder.getErrorType());
-        assertEquals(Collections.singletonList(TppMessageInformation.of(spiErrorCode)), errorHolder.getTppMessageInformationList());
+        assertEquals(Collections.singletonList(TppMessageInformation.of(errorCode)), errorHolder.getTppMessageInformationList());
 
         assertEquals(ScaStatus.FAILED, processorResponse.getScaStatus());
         assertEquals(ENCRYPTED_CONSENT_ID, processorResponse.getConsentId());
@@ -764,10 +799,11 @@ class AisAuthorisationProcessorServiceImplTest {
                             .payload(spiPsuAuthorisationResponse)
                             .build());
 
-        AuthenticationObject authenticationObject = new AuthenticationObject();
-        authenticationObject.setAuthenticationMethodId(AUTHENTICATION_METHOD_ID);
-        List<AuthenticationObject> availableScaMethods = Collections.singletonList(authenticationObject);
-        SpiAvailableScaMethodsResponse spiAvailableScaMethodsResponse = new SpiAvailableScaMethodsResponse(availableScaMethods);
+        List<AuthenticationObject> availableScaMethods = buildTestAuthenticationObjectSingleValueList(false);
+
+        List<SpiAuthenticationObject> availableSpiScaMethods = buildTestSpiAuthenticationObjectSingleValueList(false);
+
+        SpiAvailableScaMethodsResponse spiAvailableScaMethodsResponse = new SpiAvailableScaMethodsResponse(availableSpiScaMethods);
         when(aisConsentSpi.requestAvailableScaMethods(SPI_CONTEXT_DATA, spiAccountConsent, spiAspspConsentDataProvider))
             .thenReturn(SpiResponse.<SpiAvailableScaMethodsResponse>builder()
                             .payload(spiAvailableScaMethodsResponse)
@@ -777,6 +813,9 @@ class AisAuthorisationProcessorServiceImplTest {
             .thenReturn(SpiResponse.<SpiAuthorizationCodeResult>builder()
                             .payload(buildSpiAuthorizationCodeResult())
                             .build());
+        when(authenticationObjectMapper.toAuthenticationObjectList(buildTestSpiAuthenticationObjectSingleValueList(false))).thenReturn(buildTestAuthenticationObjectSingleValueList(false));
+        when(authenticationObjectMapper.toAuthenticationObject(buildTestSpiAuthenticationObject(false))).thenReturn(buildTestAuthenticationObject(false));
+        when(challengeDataMapper.toChallengeData(new SpiChallengeData())).thenReturn(new ChallengeData());
 
         AuthenticationObject chosenScaMethod = new AuthenticationObject();
 
@@ -821,11 +860,11 @@ class AisAuthorisationProcessorServiceImplTest {
                             .payload(spiPsuAuthorisationResponse)
                             .build());
 
-        AuthenticationObject authenticationObject = new AuthenticationObject();
-        authenticationObject.setAuthenticationMethodId(AUTHENTICATION_METHOD_ID);
-        authenticationObject.setDecoupled(true);
-        List<AuthenticationObject> availableScaMethods = Collections.singletonList(authenticationObject);
-        SpiAvailableScaMethodsResponse spiAvailableScaMethodsResponse = new SpiAvailableScaMethodsResponse(availableScaMethods);
+        List<AuthenticationObject> availableScaMethods = buildTestAuthenticationObjectSingleValueList(true);
+
+        List<SpiAuthenticationObject> availableSpiScaMethods = buildTestSpiAuthenticationObjectSingleValueList(true);
+
+        SpiAvailableScaMethodsResponse spiAvailableScaMethodsResponse = new SpiAvailableScaMethodsResponse(availableSpiScaMethods);
         when(aisConsentSpi.requestAvailableScaMethods(SPI_CONTEXT_DATA, spiAccountConsent, spiAspspConsentDataProvider))
             .thenReturn(SpiResponse.<SpiAvailableScaMethodsResponse>builder()
                             .payload(spiAvailableScaMethodsResponse)
@@ -836,6 +875,7 @@ class AisAuthorisationProcessorServiceImplTest {
             .thenReturn(decoupledResponse);
 
         AuthorisationProcessorRequest processorRequest = buildAuthorisationProcessorRequest(ScaStatus.PSUIDENTIFIED, updateAuthorisationRequest, authorisation);
+        when(authenticationObjectMapper.toAuthenticationObjectList(availableSpiScaMethods)).thenReturn(availableScaMethods);
 
         // When
         AuthorisationProcessorResponse processorResponse = aisAuthorisationProcessorService.doScaPsuIdentified(processorRequest);
@@ -881,13 +921,19 @@ class AisAuthorisationProcessorServiceImplTest {
         AuthenticationObject firstAuthenticationObject = new AuthenticationObject();
         firstAuthenticationObject.setAuthenticationMethodId(AUTHENTICATION_METHOD_ID);
         AuthenticationObject secondAuthenticationObject = new AuthenticationObject();
-
         List<AuthenticationObject> availableScaMethods = Arrays.asList(firstAuthenticationObject, secondAuthenticationObject);
-        SpiAvailableScaMethodsResponse spiAvailableScaMethodsResponse = new SpiAvailableScaMethodsResponse(availableScaMethods);
+
+        SpiAuthenticationObject firstSpiAuthenticationObject = new SpiAuthenticationObject();
+        firstSpiAuthenticationObject.setAuthenticationMethodId(AUTHENTICATION_METHOD_ID);
+        SpiAuthenticationObject secondSpiAuthenticationObject = new SpiAuthenticationObject();
+        List<SpiAuthenticationObject> availableSpiScaMethods = Arrays.asList(firstSpiAuthenticationObject, secondSpiAuthenticationObject);
+
+        SpiAvailableScaMethodsResponse spiAvailableScaMethodsResponse = new SpiAvailableScaMethodsResponse(availableSpiScaMethods);
         when(aisConsentSpi.requestAvailableScaMethods(SPI_CONTEXT_DATA, spiAccountConsent, spiAspspConsentDataProvider))
             .thenReturn(SpiResponse.<SpiAvailableScaMethodsResponse>builder()
                             .payload(spiAvailableScaMethodsResponse)
                             .build());
+        when(authenticationObjectMapper.toAuthenticationObjectList(availableSpiScaMethods)).thenReturn(availableScaMethods);
 
         AuthorisationProcessorRequest processorRequest = buildAuthorisationProcessorRequest(ScaStatus.PSUIDENTIFIED, updateAuthorisationRequest, authorisation);
 
@@ -973,10 +1019,11 @@ class AisAuthorisationProcessorServiceImplTest {
                             .payload(spiPsuAuthorisationResponse)
                             .build());
 
-        AuthenticationObject authenticationObject = new AuthenticationObject();
-        authenticationObject.setDecoupled(true);
-        authenticationObject.setAuthenticationMethodId(AUTHENTICATION_METHOD_ID);
-        SpiAvailableScaMethodsResponse spiAvailableScaMethodsResponse = new SpiAvailableScaMethodsResponse(Collections.singletonList(authenticationObject));
+        List<AuthenticationObject> availableScaMethods = buildTestAuthenticationObjectSingleValueList(true);
+
+        List<SpiAuthenticationObject> availableSpiScaMethods = buildTestSpiAuthenticationObjectSingleValueList(true);
+
+        SpiAvailableScaMethodsResponse spiAvailableScaMethodsResponse = new SpiAvailableScaMethodsResponse(availableSpiScaMethods);
         when(aisConsentSpi.requestAvailableScaMethods(SPI_CONTEXT_DATA, spiAccountConsent, spiAspspConsentDataProvider))
             .thenReturn(SpiResponse.<SpiAvailableScaMethodsResponse>builder()
                             .payload(spiAvailableScaMethodsResponse)
@@ -984,6 +1031,8 @@ class AisAuthorisationProcessorServiceImplTest {
 
         when(commonDecoupledAisService.proceedDecoupledApproach(ENCRYPTED_CONSENT_ID, AUTHORISATION_ID, spiAccountConsent, AUTHENTICATION_METHOD_ID, PSU_ID_DATA))
             .thenReturn(buildDecoupledUpdateConsentPsuDataResponse());
+        when(authenticationObjectMapper.toAuthenticationObjectList(availableSpiScaMethods)).thenReturn(availableScaMethods);
+
 
         authorisation.setChosenScaApproach(ScaApproach.DECOUPLED);
         AuthorisationProcessorRequest processorRequest = buildAuthorisationProcessorRequest(ScaStatus.PSUIDENTIFIED, updateAuthorisationRequest, authorisation);
@@ -999,7 +1048,7 @@ class AisAuthorisationProcessorServiceImplTest {
         assertEquals(AUTHORISATION_ID, processorResponse.getAuthorisationId());
 
         verify(commonDecoupledAisService).proceedDecoupledApproach(ENCRYPTED_CONSENT_ID, AUTHORISATION_ID, spiAccountConsent, AUTHENTICATION_METHOD_ID, PSU_ID_DATA);
-        verify(xs2aAuthorisationService, times(1)).saveAuthenticationMethods(AUTHORISATION_ID, Collections.singletonList(authenticationObject));
+        verify(xs2aAuthorisationService, times(1)).saveAuthenticationMethods(AUTHORISATION_ID, availableScaMethods);
         verify(xs2aAuthorisationService, times(1)).updateScaApproach(AUTHORISATION_ID, ScaApproach.DECOUPLED);
     }
 
@@ -1090,16 +1139,17 @@ class AisAuthorisationProcessorServiceImplTest {
         SpiAspspConsentDataProvider spiAspspConsentDataProvider = mock(SpiAspspConsentDataProvider.class);
         when(spiAspspConsentDataProviderFactory.getSpiAspspDataProviderFor(ENCRYPTED_CONSENT_ID)).thenReturn(spiAspspConsentDataProvider);
 
-        MessageErrorCode spiErrorCode = MessageErrorCode.SERVICE_BLOCKED;
+        MessageErrorCode errorCode = MessageErrorCode.SERVICE_BLOCKED;
+        SpiMessageErrorCode spiErrorCode = SpiMessageErrorCode.SERVICE_BLOCKED;
         SpiResponse<SpiPsuAuthorisationResponse> errorResponse = SpiResponse.<SpiPsuAuthorisationResponse>builder()
-                                                                     .error(new TppMessage(spiErrorCode))
+                                                                     .error(new SpiTppMessage(spiErrorCode))
                                                                      .build();
         when(aisConsentSpi.authorisePsu(SPI_CONTEXT_DATA, AUTHORISATION_ID, spiPsuData, PSU_PASSWORD, spiAccountConsent, spiAspspConsentDataProvider))
             .thenReturn(errorResponse);
 
         when(spiErrorMapper.mapToErrorHolder(errorResponse, ServiceType.AIS))
             .thenReturn(ErrorHolder.builder(AIS_403)
-                            .tppMessages(TppMessageInformation.of(spiErrorCode))
+                            .tppMessages(TppMessageInformation.of(errorCode))
                             .build());
 
         AuthorisationProcessorRequest processorRequest = buildAuthorisationProcessorRequest(ScaStatus.PSUIDENTIFIED, updateAuthorisationRequest, authorisation);
@@ -1112,7 +1162,7 @@ class AisAuthorisationProcessorServiceImplTest {
 
         ErrorHolder errorHolder = processorResponse.getErrorHolder();
         assertEquals(AIS_403, errorHolder.getErrorType());
-        assertEquals(Collections.singletonList(TppMessageInformation.of(spiErrorCode)), errorHolder.getTppMessageInformationList());
+        assertEquals(Collections.singletonList(TppMessageInformation.of(errorCode)), errorHolder.getTppMessageInformationList());
 
         assertEquals(ScaStatus.FAILED, processorResponse.getScaStatus());
         assertEquals(ENCRYPTED_CONSENT_ID, processorResponse.getConsentId());
@@ -1187,7 +1237,7 @@ class AisAuthorisationProcessorServiceImplTest {
 
         SpiResponse<SpiPsuAuthorisationResponse> spiResponse = SpiResponse.<SpiPsuAuthorisationResponse>builder()
                                                                    .payload(new SpiPsuAuthorisationResponse(false, SpiAuthorisationStatus.ATTEMPT_FAILURE))
-                                                                   .error(new TppMessage(MessageErrorCode.PSU_CREDENTIALS_INVALID))
+                                                                   .error(new SpiTppMessage(SpiMessageErrorCode.PSU_CREDENTIALS_INVALID))
                                                                    .build();
         when(aisConsentSpi.authorisePsu(SPI_CONTEXT_DATA, AUTHORISATION_ID, spiPsuData, PSU_PASSWORD, spiAccountConsent, spiAspspConsentDataProvider))
             .thenReturn(spiResponse);
@@ -1241,9 +1291,10 @@ class AisAuthorisationProcessorServiceImplTest {
                             .payload(spiPsuAuthorisationResponse)
                             .build());
 
-        MessageErrorCode spiErrorCode = MessageErrorCode.SERVICE_BLOCKED;
+        MessageErrorCode errorCode = MessageErrorCode.SERVICE_BLOCKED;
+        SpiMessageErrorCode spiErrorCode = SpiMessageErrorCode.SERVICE_BLOCKED;
         SpiResponse<SpiAvailableScaMethodsResponse> errorResponse = SpiResponse.<SpiAvailableScaMethodsResponse>builder()
-                                                                        .error(new TppMessage(spiErrorCode))
+                                                                        .error(new SpiTppMessage(spiErrorCode))
                                                                         .build();
 
         when(aisConsentSpi.requestAvailableScaMethods(SPI_CONTEXT_DATA, spiAccountConsent, spiAspspConsentDataProvider))
@@ -1251,7 +1302,7 @@ class AisAuthorisationProcessorServiceImplTest {
 
         when(spiErrorMapper.mapToErrorHolder(errorResponse, ServiceType.AIS))
             .thenReturn(ErrorHolder.builder(AIS_403)
-                            .tppMessages(TppMessageInformation.of(spiErrorCode))
+                            .tppMessages(TppMessageInformation.of(errorCode))
                             .build());
 
         AuthorisationProcessorRequest processorRequest = buildAuthorisationProcessorRequest(ScaStatus.PSUIDENTIFIED, updateAuthorisationRequest, authorisation);
@@ -1264,7 +1315,7 @@ class AisAuthorisationProcessorServiceImplTest {
 
         ErrorHolder errorHolder = processorResponse.getErrorHolder();
         assertEquals(AIS_403, errorHolder.getErrorType());
-        assertEquals(Collections.singletonList(TppMessageInformation.of(spiErrorCode)), errorHolder.getTppMessageInformationList());
+        assertEquals(Collections.singletonList(TppMessageInformation.of(errorCode)), errorHolder.getTppMessageInformationList());
 
         assertEquals(ScaStatus.FAILED, processorResponse.getScaStatus());
         assertEquals(ENCRYPTED_CONSENT_ID, processorResponse.getConsentId());
@@ -1297,6 +1348,7 @@ class AisAuthorisationProcessorServiceImplTest {
         AuthenticationObject chosenScaMethod = new AuthenticationObject();
 
         AuthorisationProcessorRequest processorRequest = buildAuthorisationProcessorRequest(ScaStatus.PSUIDENTIFIED, updateAuthorisationRequest, authorisation);
+        when(authenticationObjectMapper.toAuthenticationObject(new SpiAuthenticationObject())).thenReturn(new AuthenticationObject());
 
         // When
         AuthorisationProcessorResponse processorResponse = aisAuthorisationProcessorService.doScaPsuAuthenticated(processorRequest);
@@ -1389,14 +1441,16 @@ class AisAuthorisationProcessorServiceImplTest {
         when(spiAspspConsentDataProviderFactory.getSpiAspspDataProviderFor(ENCRYPTED_CONSENT_ID)).thenReturn(spiAspspConsentDataProvider);
 
         SpiAuthorizationCodeResult spiAuthorizationCodeResult = new SpiAuthorizationCodeResult();
-        AuthenticationObject spiChosenScaMethod = new AuthenticationObject();
+        SpiAuthenticationObject spiChosenScaMethod = new SpiAuthenticationObject();
         spiAuthorizationCodeResult.setSelectedScaMethod(spiChosenScaMethod);
-        ChallengeData challengeData = new ChallengeData();
+
+        SpiChallengeData challengeData = new SpiChallengeData();
         spiAuthorizationCodeResult.setChallengeData(challengeData);
 
-        MessageErrorCode spiErrorCode = MessageErrorCode.SERVICE_BLOCKED;
+        MessageErrorCode errorCode = MessageErrorCode.SERVICE_BLOCKED;
+        SpiMessageErrorCode spiErrorCode = SpiMessageErrorCode.SERVICE_BLOCKED;
         SpiResponse<SpiAuthorizationCodeResult> errorResponse = SpiResponse.<SpiAuthorizationCodeResult>builder()
-                                                                    .error(new TppMessage(spiErrorCode))
+                                                                    .error(new SpiTppMessage(spiErrorCode))
                                                                     .build();
 
         when(aisConsentSpi.requestAuthorisationCode(SPI_CONTEXT_DATA, AUTHENTICATION_METHOD_ID, spiAccountConsent, spiAspspConsentDataProvider))
@@ -1404,7 +1458,7 @@ class AisAuthorisationProcessorServiceImplTest {
 
         when(spiErrorMapper.mapToErrorHolder(errorResponse, ServiceType.AIS))
             .thenReturn(ErrorHolder.builder(AIS_403)
-                            .tppMessages(TppMessageInformation.of(spiErrorCode))
+                            .tppMessages(TppMessageInformation.of(errorCode))
                             .build());
 
         AuthorisationProcessorRequest processorRequest = buildAuthorisationProcessorRequest(ScaStatus.PSUIDENTIFIED, updateAuthorisationRequest, authorisation);
@@ -1417,7 +1471,7 @@ class AisAuthorisationProcessorServiceImplTest {
 
         ErrorHolder errorHolder = processorResponse.getErrorHolder();
         assertEquals(AIS_403, errorHolder.getErrorType());
-        assertEquals(Collections.singletonList(TppMessageInformation.of(spiErrorCode)), errorHolder.getTppMessageInformationList());
+        assertEquals(Collections.singletonList(TppMessageInformation.of(errorCode)), errorHolder.getTppMessageInformationList());
 
         assertEquals(ScaStatus.FAILED, processorResponse.getScaStatus());
         assertEquals(ENCRYPTED_CONSENT_ID, processorResponse.getConsentId());
@@ -1444,13 +1498,14 @@ class AisAuthorisationProcessorServiceImplTest {
         SpiAspspConsentDataProvider spiAspspConsentDataProvider = mock(SpiAspspConsentDataProvider.class);
         when(spiAspspConsentDataProviderFactory.getSpiAspspDataProviderFor(ENCRYPTED_CONSENT_ID)).thenReturn(spiAspspConsentDataProvider);
 
-        SpiVerifyScaAuthorisationResponse spiVerifyScaAuthorisationResponse = new SpiVerifyScaAuthorisationResponse(ConsentStatus.VALID);
+        SpiVerifyScaAuthorisationResponse spiVerifyScaAuthorisationResponse = new SpiVerifyScaAuthorisationResponse(SpiConsentStatus.VALID);
         when(aisConsentSpi.verifyScaAuthorisation(SPI_CONTEXT_DATA, spiScaConfirmation, spiAccountConsent, spiAspspConsentDataProvider))
             .thenReturn(SpiResponse.<SpiVerifyScaAuthorisationResponse>builder()
                             .payload(spiVerifyScaAuthorisationResponse)
                             .build());
 
         AuthorisationProcessorRequest processorRequest = buildAuthorisationProcessorRequest(ScaStatus.SCAMETHODSELECTED, updateAuthorisationRequest, authorisation);
+        when(spiToXs2aConsentMapper.mapToConsentStatus(SpiConsentStatus.VALID)).thenReturn(ConsentStatus.VALID);
 
         // When
         AuthorisationProcessorResponse processorResponse = aisAuthorisationProcessorService.doScaMethodSelected(processorRequest);
@@ -1491,11 +1546,12 @@ class AisAuthorisationProcessorServiceImplTest {
         SpiAspspConsentDataProvider spiAspspConsentDataProvider = mock(SpiAspspConsentDataProvider.class);
         when(spiAspspConsentDataProviderFactory.getSpiAspspDataProviderFor(ENCRYPTED_CONSENT_ID)).thenReturn(spiAspspConsentDataProvider);
 
-        SpiVerifyScaAuthorisationResponse spiVerifyScaAuthorisationResponse = new SpiVerifyScaAuthorisationResponse(ConsentStatus.PARTIALLY_AUTHORISED);
+        SpiVerifyScaAuthorisationResponse spiVerifyScaAuthorisationResponse = new SpiVerifyScaAuthorisationResponse(SpiConsentStatus.PARTIALLY_AUTHORISED);
         when(aisConsentSpi.verifyScaAuthorisation(SPI_CONTEXT_DATA, spiScaConfirmation, spiAccountConsent, spiAspspConsentDataProvider))
             .thenReturn(SpiResponse.<SpiVerifyScaAuthorisationResponse>builder()
                             .payload(spiVerifyScaAuthorisationResponse)
                             .build());
+        when(spiToXs2aConsentMapper.mapToConsentStatus(SpiConsentStatus.PARTIALLY_AUTHORISED)).thenReturn(ConsentStatus.PARTIALLY_AUTHORISED);
 
         AuthorisationProcessorRequest processorRequest = buildAuthorisationProcessorRequest(ScaStatus.SCAMETHODSELECTED, updateAuthorisationRequest, authorisation);
 
@@ -1513,16 +1569,6 @@ class AisAuthorisationProcessorServiceImplTest {
         verify(xs2aAisConsentService).updateConsentStatus(ENCRYPTED_CONSENT_ID, ConsentStatus.PARTIALLY_AUTHORISED);
         var request = getRequestFromConsent(aisConsent);
         verify(xs2aAisConsentService).findAndTerminateOldConsents(ENCRYPTED_CONSENT_ID, request);
-    }
-
-    private TerminateOldConsentsRequest getRequestFromConsent(AisConsent aisConsent) {
-        return new TerminateOldConsentsRequest(aisConsent.isOneAccessType(),
-                                               aisConsent.isWrongConsentData(),
-                                               aisConsent.getPsuIdDataList(),
-                                               Optional.ofNullable(aisConsent.getTppInfo())
-                                                   .map(TppInfo::getAuthorisationNumber)
-                                                   .orElse(null),
-                                               aisConsent.getInstanceId());
     }
 
     @Test
@@ -1566,9 +1612,10 @@ class AisAuthorisationProcessorServiceImplTest {
         SpiAspspConsentDataProvider spiAspspConsentDataProvider = mock(SpiAspspConsentDataProvider.class);
         when(spiAspspConsentDataProviderFactory.getSpiAspspDataProviderFor(ENCRYPTED_CONSENT_ID)).thenReturn(spiAspspConsentDataProvider);
 
-        MessageErrorCode spiErrorCode = MessageErrorCode.SERVICE_BLOCKED;
+        MessageErrorCode errorCode = MessageErrorCode.SERVICE_BLOCKED;
+        SpiMessageErrorCode spiErrorCode = SpiMessageErrorCode.SERVICE_BLOCKED;
         SpiResponse<SpiVerifyScaAuthorisationResponse> errorResponse = SpiResponse.<SpiVerifyScaAuthorisationResponse>builder()
-                                                                           .error(new TppMessage(spiErrorCode))
+                                                                           .error(new SpiTppMessage(spiErrorCode))
                                                                            .build();
 
         when(aisConsentSpi.verifyScaAuthorisation(SPI_CONTEXT_DATA, spiScaConfirmation, spiAccountConsent, spiAspspConsentDataProvider))
@@ -1576,7 +1623,7 @@ class AisAuthorisationProcessorServiceImplTest {
 
         when(spiErrorMapper.mapToErrorHolder(errorResponse, ServiceType.AIS))
             .thenReturn(ErrorHolder.builder(AIS_403)
-                            .tppMessages(TppMessageInformation.of(spiErrorCode))
+                            .tppMessages(TppMessageInformation.of(errorCode))
                             .build());
 
         AuthorisationProcessorRequest processorRequest = buildAuthorisationProcessorRequest(ScaStatus.SCAMETHODSELECTED, updateAuthorisationRequest, authorisation);
@@ -1589,7 +1636,7 @@ class AisAuthorisationProcessorServiceImplTest {
 
         ErrorHolder errorHolder = processorResponse.getErrorHolder();
         assertEquals(AIS_403, errorHolder.getErrorType());
-        assertEquals(Collections.singletonList(TppMessageInformation.of(spiErrorCode)), errorHolder.getTppMessageInformationList());
+        assertEquals(Collections.singletonList(TppMessageInformation.of(errorCode)), errorHolder.getTppMessageInformationList());
 
         assertEquals(ScaStatus.FAILED, processorResponse.getScaStatus());
         assertEquals(ENCRYPTED_CONSENT_ID, processorResponse.getConsentId());
@@ -1606,10 +1653,15 @@ class AisAuthorisationProcessorServiceImplTest {
         SpiAccountConsent spiAccountConsent = new SpiAccountConsent();
         when(xs2aAisConsentMapper.mapToSpiAccountConsent(aisConsent)).thenReturn(spiAccountConsent);
         SpiResponse<SpiStartAuthorisationResponse> spiResponse = SpiResponse.<SpiStartAuthorisationResponse>builder()
-                                                                     .payload(new SpiStartAuthorisationResponse(TEST_SCA_APPROACH, TEST_SCA_STATUS, TEST_PSU_MESSAGE, TEST_TPP_MESSAGES))
+                                                                     .payload(new SpiStartAuthorisationResponse(TEST_SPI_SCA_APPROACH, TEST_SPI_SCA_STATUS, TEST_PSU_MESSAGE, TEST_SPI_TPP_MESSAGES))
                                                                      .build();
         when(aisConsentSpi.startAuthorisation(SPI_CONTEXT_DATA, TEST_SPI_SCA_APPROACH, TEST_SPI_SCA_STATUS, TEST_AUTHORISATION_ID, spiAccountConsent, spiAspspConsentDataProvider))
             .thenReturn(spiResponse);
+        when(xs2aToSpiAuthorizationMapper.mapToSpiScaApproach(ScaApproach.EMBEDDED)).thenReturn(SpiScaApproach.EMBEDDED);
+        when(xs2aToSpiAuthorizationMapper.mapToSpiScaStatus(ScaStatus.RECEIVED)).thenReturn(SpiScaStatus.RECEIVED);
+        when(spiToXs2aAuthorizationMapper.mapToScaStatus(SpiScaStatus.RECEIVED)).thenReturn(ScaStatus.RECEIVED);
+        when(spiToXs2aAuthorizationMapper.mapToScaApproach(SpiScaApproach.EMBEDDED)).thenReturn(ScaApproach.EMBEDDED);
+        when(tppMessageInformationMapper.toTppMessageInformationSet(TEST_SPI_TPP_MESSAGES)).thenReturn(TEST_TPP_MESSAGES);
 
         // When
         AuthorisationProcessorResponse actual = aisAuthorisationProcessorService.doScaStarted(authorisationProcessorRequest);
@@ -1629,12 +1681,14 @@ class AisAuthorisationProcessorServiceImplTest {
         SpiAccountConsent spiAccountConsent = new SpiAccountConsent();
         when(xs2aAisConsentMapper.mapToSpiAccountConsent(aisConsent)).thenReturn(spiAccountConsent);
         SpiResponse<SpiStartAuthorisationResponse> spiResponse = SpiResponse.<SpiStartAuthorisationResponse>builder()
-                                                                     .error(new TppMessage(MessageErrorCode.FORMAT_ERROR_ABSENT_HEADER))
+                                                                     .error(new SpiTppMessage(SpiMessageErrorCode.FORMAT_ERROR_ABSENT_HEADER))
                                                                      .build();
         when(aisConsentSpi.startAuthorisation(SPI_CONTEXT_DATA, TEST_SPI_SCA_APPROACH, TEST_SPI_SCA_STATUS, TEST_AUTHORISATION_ID, spiAccountConsent, spiAspspConsentDataProvider))
             .thenReturn(spiResponse);
         ErrorHolder errorHolder = ErrorHolder.builder(TEST_ERROR_TYPE_400).build();
         when(spiErrorMapper.mapToErrorHolder(eq(spiResponse), any())).thenReturn(errorHolder);
+        when(xs2aToSpiAuthorizationMapper.mapToSpiScaApproach(ScaApproach.EMBEDDED)).thenReturn(SpiScaApproach.EMBEDDED);
+        when(xs2aToSpiAuthorizationMapper.mapToSpiScaStatus(ScaStatus.RECEIVED)).thenReturn(SpiScaStatus.RECEIVED);
 
         // When
         AuthorisationProcessorResponse actual = aisAuthorisationProcessorService.doScaStarted(authorisationProcessorRequest);
@@ -1703,6 +1757,16 @@ class AisAuthorisationProcessorServiceImplTest {
         assertThrows(UnsupportedOperationException.class, () -> aisAuthorisationProcessorService.doScaExempted(processorRequest));
     }
 
+    private TerminateOldConsentsRequest getRequestFromConsent(AisConsent aisConsent) {
+        return new TerminateOldConsentsRequest(aisConsent.isOneAccessType(),
+                                               aisConsent.isWrongConsentData(),
+                                               aisConsent.getPsuIdDataList(),
+                                               Optional.ofNullable(aisConsent.getTppInfo())
+                                                   .map(TppInfo::getAuthorisationNumber)
+                                                   .orElse(null),
+                                               aisConsent.getInstanceId());
+    }
+
     private ConsentAuthorisationsParameters buildUpdateConsentPsuDataReq() {
         ConsentAuthorisationsParameters updateAuthorisationRequest = new ConsentAuthorisationsParameters();
         updateAuthorisationRequest.setConsentId(ENCRYPTED_CONSENT_ID);
@@ -1737,14 +1801,18 @@ class AisAuthorisationProcessorServiceImplTest {
 
     private SpiAuthorizationCodeResult buildSpiAuthorizationCodeResult() {
         SpiAuthorizationCodeResult spiAuthorizationCodeResult = new SpiAuthorizationCodeResult();
-        AuthenticationObject method = new AuthenticationObject();
+        SpiAuthenticationObject method = new SpiAuthenticationObject();
         spiAuthorizationCodeResult.setSelectedScaMethod(method);
-        spiAuthorizationCodeResult.setChallengeData(new ChallengeData());
+        spiAuthorizationCodeResult.setChallengeData(new SpiChallengeData());
         return spiAuthorizationCodeResult;
     }
 
     private static Set<TppMessageInformation> buildTppMessageInformationSet() {
         return Collections.singleton(TppMessageInformation.of(MessageErrorCode.FORMAT_ERROR));
+    }
+
+    private static Set<SpiTppMessageInformation> buildSpiTppMessageInformationSet() {
+        return Collections.singleton(SpiTppMessageInformation.of(SpiMessageErrorCode.FORMAT_ERROR));
     }
 
     private CreateConsentAuthorisationProcessorResponse buildCreateConsentAuthorisationProcessorResponse() {
@@ -1753,5 +1821,31 @@ class AisAuthorisationProcessorServiceImplTest {
 
     private CreateConsentAuthorisationProcessorResponse buildCreateConsentAuthorisationProcessorResponseWithError(ErrorHolder errorHolder) {
         return new CreateConsentAuthorisationProcessorResponse(errorHolder, TEST_SCA_APPROACH, ENCRYPTED_CONSENT_ID, TEST_PSU_DATA);
+    }
+
+    private List<AuthenticationObject> buildTestAuthenticationObjectSingleValueList(boolean isDecoupled) {
+        AuthenticationObject authenticationObject = new AuthenticationObject();
+        authenticationObject.setAuthenticationMethodId(AUTHENTICATION_METHOD_ID);
+        authenticationObject.setDecoupled(isDecoupled);
+        return Collections.singletonList(authenticationObject);
+    }
+
+    private List<SpiAuthenticationObject> buildTestSpiAuthenticationObjectSingleValueList(boolean isDecoupled) {
+        SpiAuthenticationObject spiAuthenticationObject = new SpiAuthenticationObject();
+        spiAuthenticationObject.setAuthenticationMethodId(AUTHENTICATION_METHOD_ID);
+        spiAuthenticationObject.setDecoupled(isDecoupled);
+        return Collections.singletonList(spiAuthenticationObject);
+    }
+
+    private AuthenticationObject buildTestAuthenticationObject(boolean isDecoupled) {
+        AuthenticationObject authenticationObject = new AuthenticationObject();
+        authenticationObject.setDecoupled(isDecoupled);
+        return authenticationObject;
+    }
+
+    private SpiAuthenticationObject buildTestSpiAuthenticationObject(boolean isDecoupled) {
+        SpiAuthenticationObject authenticationObject = new SpiAuthenticationObject();
+        authenticationObject.setDecoupled(isDecoupled);
+        return authenticationObject;
     }
 }

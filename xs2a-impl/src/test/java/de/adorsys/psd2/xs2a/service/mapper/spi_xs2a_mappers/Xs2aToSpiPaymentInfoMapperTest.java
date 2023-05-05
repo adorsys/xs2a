@@ -20,9 +20,13 @@ package de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers;
 
 import de.adorsys.psd2.consent.api.pis.CommonPaymentData;
 import de.adorsys.psd2.consent.api.pis.PisCommonPaymentResponse;
+import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
+import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.domain.pis.CommonPayment;
 import de.adorsys.psd2.xs2a.spi.domain.payment.SpiPaymentInfo;
+import de.adorsys.psd2.xs2a.spi.domain.payment.SpiPaymentType;
+import de.adorsys.psd2.xs2a.spi.domain.payment.SpiTransactionStatus;
 import de.adorsys.psd2.xs2a.spi.domain.psu.SpiPsuData;
 import de.adorsys.xs2a.reader.JsonReader;
 import org.assertj.core.api.Assertions;
@@ -57,7 +61,10 @@ class Xs2aToSpiPaymentInfoMapperTest {
     private Xs2aToSpiPaymentInfoMapper xs2aToSpiPaymentInfoMapper;
     @Mock
     private Xs2aToSpiPsuDataMapper xs2aToSpiPsuDataMapper;
-    private Xs2aToSpiPaymentInfo xs2aToSpiPaymentInfo = new Xs2aToSpiPaymentInfo(new Xs2aToSpiPsuDataMapper());
+    @Mock
+    private Xs2aToSpiPisMapper xs2aToSpiPisMapper;
+    @Mock
+    private Xs2aToSpiTransactionMapper xs2aToSpiTransactionMapper;
 
     private JsonReader jsonReader = new JsonReader();
 
@@ -66,6 +73,8 @@ class Xs2aToSpiPaymentInfoMapperTest {
         //Given
         CommonPayment commonPayment = buildCommonPayment();
         when(xs2aToSpiPsuDataMapper.mapToSpiPsuDataList(psuDataList)).thenReturn(spiPsuDataList);
+        when(xs2aToSpiPisMapper.mapToSpiPaymentType(PaymentType.SINGLE)).thenReturn(SpiPaymentType.SINGLE);
+        when(xs2aToSpiTransactionMapper.mapToSpiTransactionStatus(TransactionStatus.ACCP)).thenReturn(SpiTransactionStatus.ACCP);
 
         //When
         SpiPaymentInfo spiPaymentInfo = xs2aToSpiPaymentInfoMapper.mapToSpiPaymentInfo(commonPayment);
@@ -79,6 +88,8 @@ class Xs2aToSpiPaymentInfoMapperTest {
         //Given
         CommonPaymentData commonPaymentData = buildCommonPaymentData();
         when(xs2aToSpiPsuDataMapper.mapToSpiPsuDataList(psuDataList)).thenReturn(spiPsuDataList);
+        when(xs2aToSpiPisMapper.mapToSpiPaymentType(PaymentType.SINGLE)).thenReturn(SpiPaymentType.SINGLE);
+        when(xs2aToSpiTransactionMapper.mapToSpiTransactionStatus(TransactionStatus.ACCP)).thenReturn(SpiTransactionStatus.ACCP);
 
         //When
         SpiPaymentInfo spiPaymentInfo = xs2aToSpiPaymentInfoMapper.mapToSpiPaymentInfo(commonPaymentData);
@@ -88,11 +99,14 @@ class Xs2aToSpiPaymentInfoMapperTest {
     }
 
     @Test
-    void xs2aToSpiPaymentInfo_mapToSpiPaymentRequest() {
+    void xs2aToSpiPaymentInfo_mapToSpiPaymentInfo() {
         //Given
         CommonPayment commonPayment = buildCommonPayment();
+        when(xs2aToSpiPisMapper.mapToSpiPaymentType(PaymentType.SINGLE)).thenReturn(SpiPaymentType.SINGLE);
+        when(xs2aToSpiTransactionMapper.mapToSpiTransactionStatus(TransactionStatus.ACCP)).thenReturn(SpiTransactionStatus.ACCP);
+        when(xs2aToSpiPsuDataMapper.mapToSpiPsuDataList(psuDataList)).thenReturn(spiPsuDataList);
         //When
-        SpiPaymentInfo spiPaymentInfo = xs2aToSpiPaymentInfo.mapToSpiPaymentRequest(commonPayment, commonPayment.getPaymentProduct());
+        SpiPaymentInfo spiPaymentInfo = xs2aToSpiPaymentInfoMapper.mapToSpiPaymentInfo(commonPayment, commonPayment.getPaymentProduct());
         SpiPaymentInfo spiPaymentInfoExpected = buildSpiPaymentInfo();
         //Then
         Assertions.assertThat(spiPaymentInfo).isEqualToComparingFieldByFieldRecursively(spiPaymentInfoExpected);

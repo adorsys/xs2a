@@ -21,23 +21,33 @@ package de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers;
 import de.adorsys.psd2.xs2a.core.domain.ErrorHolder;
 import de.adorsys.psd2.xs2a.core.domain.TppMessageInformation;
 import de.adorsys.psd2.xs2a.core.error.ErrorType;
+import de.adorsys.psd2.xs2a.core.error.MessageErrorCode;
 import de.adorsys.psd2.xs2a.core.error.TppMessage;
 import de.adorsys.psd2.xs2a.core.mapper.ServiceType;
+import de.adorsys.psd2.xs2a.spi.domain.error.SpiMessageErrorCode;
+import de.adorsys.psd2.xs2a.spi.domain.error.SpiTppMessage;
 import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponse;
+import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Component
+@RequiredArgsConstructor
 public class SpiErrorMapper {
     public ErrorHolder mapToErrorHolder(SpiResponse<?> spiResponse, ServiceType serviceType) {
-        List<TppMessage> errors = spiResponse.getErrors();
+        List<SpiTppMessage> spiErrors = spiResponse.getErrors();
 
-        if (errors.isEmpty()) {
+        if (spiErrors.isEmpty()) {
             throw new IllegalArgumentException("SPI response must contain errors for mapping");
         }
+
+        List<TppMessage> errors = spiErrors.stream()
+                                      .map(this::mapToTppMessage)
+                                      .collect(Collectors.toList());
 
         TppMessage firstTppMessage = errors.get(0);
 
@@ -49,6 +59,21 @@ public class SpiErrorMapper {
                                   .orElse(null);
 
         return ErrorHolder.builder(errorType).tppMessages(tppMessages).build();
+    }
+
+    private TppMessage mapToTppMessage(SpiTppMessage spiTppMessage) {
+        if (spiTppMessage == null) {
+            return null;
+        }
+
+        MessageErrorCode messageErrorCode = mapToMessageErrorCode(spiTppMessage.getErrorCode());
+        return new TppMessage(messageErrorCode, spiTppMessage.getMessageText(), spiTppMessage.getMessageTextArgs());
+    }
+
+    private MessageErrorCode mapToMessageErrorCode(SpiMessageErrorCode errorCode) {
+        return errorCode == null
+                   ? null
+                   : MessageErrorCode.valueOf(errorCode.name());
     }
 
     private TppMessageInformation mapToMessageError(TppMessage tppMessage) {

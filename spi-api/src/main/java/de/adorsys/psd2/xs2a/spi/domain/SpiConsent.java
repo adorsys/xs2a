@@ -18,9 +18,8 @@
 
 package de.adorsys.psd2.xs2a.spi.domain;
 
-import de.adorsys.psd2.xs2a.core.consent.ConsentType;
+import de.adorsys.psd2.xs2a.spi.domain.consent.SpiConsentType;
 
 public interface SpiConsent {
-    @Deprecated // TODO: change with SpiConsentType in 14.8
-    ConsentType getConsentType();
+    SpiConsentType getConsentType();
 }

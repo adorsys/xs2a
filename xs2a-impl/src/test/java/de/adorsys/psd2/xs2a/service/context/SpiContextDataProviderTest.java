@@ -24,8 +24,11 @@ import de.adorsys.psd2.xs2a.core.tpp.TppRole;
 import de.adorsys.psd2.xs2a.service.RequestProviderService;
 import de.adorsys.psd2.xs2a.service.TppService;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.Xs2aToSpiPsuDataMapper;
+import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.Xs2aToSpiTppInfoMapper;
 import de.adorsys.psd2.xs2a.spi.domain.SpiContextData;
 import de.adorsys.psd2.xs2a.spi.domain.psu.SpiPsuData;
+import de.adorsys.psd2.xs2a.spi.domain.tpp.SpiTppInfo;
+import de.adorsys.psd2.xs2a.spi.domain.tpp.SpiTppRole;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -42,6 +45,7 @@ import static org.mockito.Mockito.when;
 @ExtendWith(MockitoExtension.class)
 class SpiContextDataProviderTest {
     private static final TppInfo TPP_INFO = buildTppInfo();
+    private static final SpiTppInfo SPI_TPP_INFO = buildSpiTppInfo();
     private final static UUID X_REQUEST_ID = UUID.fromString("c818a31f-ccdd-4fff-a404-22ad15ba9754");
     private final static UUID INTERNAL_REQUEST_ID = UUID.fromString("b571c834-4eb1-468f-91b0-f5e83589bc22");
     private final static String PSU_IP_ADDRESS = "IP Address";
@@ -85,6 +89,8 @@ class SpiContextDataProviderTest {
     private Xs2aToSpiPsuDataMapper psuDataMapper;
     @Mock
     private RequestProviderService requestProviderService;
+    @Mock
+    private Xs2aToSpiTppInfoMapper spiTppInfoMapper;
 
     @BeforeEach
     void setUp() {
@@ -93,6 +99,7 @@ class SpiContextDataProviderTest {
         when(requestProviderService.getOAuth2Token()).thenReturn(AUTHORISATION);
         when(requestProviderService.getTppBrandLoggingInformationHeader()).thenReturn(TPP_BRAND_LOGGING_INFORMATION);
         when(requestProviderService.getTppRejectionNoFundsPreferred()).thenReturn(null);
+        when(spiTppInfoMapper.mapToSpiTppInfo(TPP_INFO)).thenReturn(SPI_TPP_INFO);
     }
 
     @Test
@@ -157,7 +164,16 @@ class SpiContextDataProviderTest {
         return tppInfo;
     }
 
+    private static SpiTppInfo buildSpiTppInfo() {
+        SpiTppInfo spiTppInfo = new SpiTppInfo();
+        spiTppInfo.setAuthorisationNumber("registrationNumber");
+        spiTppInfo.setTppName("tppName");
+        spiTppInfo.setTppRoles(Collections.singletonList(SpiTppRole.PISP));
+        spiTppInfo.setAuthorityId("authorityId");
+        return spiTppInfo;
+    }
+
     private static SpiContextData buildSpiContextData(SpiPsuData spiPsuData) {
-        return new SpiContextData(spiPsuData, TPP_INFO, X_REQUEST_ID, INTERNAL_REQUEST_ID, AUTHORISATION, TPP_BRAND_LOGGING_INFORMATION, null, null, null);
+        return new SpiContextData(spiPsuData, SPI_TPP_INFO, X_REQUEST_ID, INTERNAL_REQUEST_ID, AUTHORISATION, TPP_BRAND_LOGGING_INFORMATION, null, null, null);
     }
 }

@@ -57,7 +57,7 @@ public class RequestValidationInterceptor extends HandlerInterceptorAdapter {
 
     private boolean isRequestValid(HttpServletRequest request, HttpServletResponse response, Object handler) throws IOException {
 
-        // This MessageError instance may be enriched in all chains of validation (headers and body) for all methods.
+        // This SpiMessageError instance may be enriched in all chains of validation (headers and body) for all methods.
         MessageError initialMessageError = new MessageError();
 
         if (handler instanceof HandlerMethod) {
