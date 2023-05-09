@@ -9,9 +9,9 @@ toc::[]
 
 There are a few ways to connect XS2A Team if you think that our system behaves in an unexpected way or incorrect:
 
-* Through Github interface https://github.com/adorsys/xs2a/issues - for external users of our open source projects.
+* Through https://github.com/adorsys/xs2a/issues[Github interface] - for external users of our open source projects.
 
-* Through the Service Desk interface  https://servicedesk.adorsys.de/servicedesk/customer/portals - for our customers.
+* Through the https://adorsys.atlassian.net/jira/servicedesk/projects/PASD/issues[Service Desk interface] - for our customers.
 
 Please raise a ticket, following this process:
 

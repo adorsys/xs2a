@@ -96,7 +96,7 @@ To start the XS2A do:
 Open a browser on page http://localhost:8080/swagger-ui.html
 
 Now you may try to put some data using the xs2a-interface.
-See some test scripts [for Postman](../scripts/tests/postman) or [Insomnia](../scripts/tests/insomnia) as a starting point.
+See some test scripts [for Postman](../scripts/tests/postman) as a starting point.
 
 === Recommended Hardware Requirements
 
