@@ -28,7 +28,7 @@ xref:version_policy.adoc[Version Policy] describes the main rules of Versioning,
 xref:roadmap.adoc[Roadmap] contains brief information about upcoming features and bugfixes.
 May be changed without a note.
 
-For the versions available, see the https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/-/tags[tags on this repository]
+For the versions available, see the https://github.com/adorsys/xs2a/tags[tags on this repository]
 and xref:releasenotes.adoc[Release notes for each version].
 
 xref:releasenotes.adoc[Release notes] contain information about changes included into releases.

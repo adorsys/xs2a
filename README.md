@@ -46,8 +46,8 @@ This XS2A Service provides an Open Source implementation of Berlin Group NextGen
 
 ### Getting Started
 
-* If you want to play with the framework in isolated environment, check out [Modelbank](https://git.adorsys.de/adorsys/xs2a/psd2-dynamic-sandbox) Repository.
-* To know how to write a connector to your banking system see our [XS2A Connector Examples](https://git.adorsys.de/adorsys/xs2a/xs2a-connector-examples) repository and [SPI Developer Guide](doc/SPI Developer Guide/SPI_Developer_Guide.adoc)
+* If you want to play with the framework in isolated environment, check out [Modelbank](https://github.com/adorsys/XS2A-Sandbox) Repository.
+* To know how to write a connector to your banking system see our [XS2A Connector Examples](https://github.com/adorsys/xs2a-connector-examples) repository and [SPI Developer Guide](doc/SPI Developer Guide/SPI_Developer_Guide.adoc)
 * [These instructions](doc/GETTING_STARTED.adoc) will help you to get a copy of the project up and running on your local machine for development and testing purposes.
 
 ## Development and contributing
