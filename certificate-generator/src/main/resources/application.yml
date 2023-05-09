@@ -8,7 +8,7 @@ spring:
     serialization:
       write_dates_as_timestamps: false
 
-xs2a.license.url: https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/-/blob/master/LICENSE
+xs2a.license.url: https://github.com/adorsys/xs2a/blob/master/LICENSE
 
 xs2a:
   certificate-generator:
