@@ -27,8 +27,8 @@ This XS2A Service provides an Open Source implementation of Berlin Group NextGen
 
 ### Quick facts about this XS2A Service
 
-* Currently supported version of NextGenPSD2 XS2A Implementation Guidelines **1.3.12_20220701** and OpenAPI .yaml file **1.3.12_20220706**.<br>
-  You can check out our [Swagger API yaml file](xs2a-impl/src/main/resources/static/psd2-api_v1.3.12-2022-07-06.yaml).
+* Currently supported latest version of NextGenPSD2 XS2A Implementation Guidelines **1.3.11** and OpenAPI .yaml file **1.3.11_2021-09-24**.<br>
+  You can check out our [Swagger API yaml file](xs2a-impl/src/main/resources/static/psd2-api_v1.3.11-2021-10-01v1.yaml).
 * All mandatory API endpoints defined in Berlin Group specification are IMPLEMENTED.
 * Comes with pluggable **Consent Management System** to store and manage consents given by PSU to corresponding TPPs.
 * **ASPSP-Profile** module allows you to configure ASPSP-specific configuration for XS2A-features, for example used SCA approaches, payment products, consent types etc.
