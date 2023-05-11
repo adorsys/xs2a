@@ -16,6 +16,7 @@ stages:
   - "Test"    # run tests and code quality checks
   - "Package" # dockerize jar and push to docker registry
   - "Release" # release
+  - "Clone to github"
 
 # ------------------------------------------------------------------
 # variables
@@ -71,6 +72,17 @@ variables:
     key: "Java_${CI_COMMIT_REF_SLUG}"
     paths:
       - /builds/adorsys/xs2a/xs2a-conector-examples/.m2/repository
+
+.sync_changes_github: &sync_changes_github
+  image: alpine/git
+  script:
+    - git config --global user.name "$GITHUB_USERNAME"
+    - git remote add github https://$GITHUB_TOKEN_EVGENIY@github.com/$GITHUB_REPOSITORY.git
+    - for branch in $(git branch -r | grep -E "origin/.*(release-${GITHUB_PROJECT_CLONE_VERSION}.*|support-${GITHUB_PROJECT_CLONE_VERSION}.x).*"); do
+      branch=${branch#origin/};
+      git checkout $branch;
+      git push github $branch;
+      done
 
 # ------------------------------------------------------------------
 # jobs
@@ -303,3 +315,18 @@ Release snapshot artifacts (tags):
     BUILD_JAVA_VERSION: system@1.11
     JAVA_TOOL_OPTIONS: "-Djavax.net.ssl.trustStorePassword=changeit -XX:MaxRAM=3G"
   <<: *release_java_private
+
+Clone to github:
+  stage: "Clone to github"
+  <<: *sync_changes_github
+  image: alpine/git:latest
+  needs: []
+  only:
+    - /^.*release-${GITHUB_PROJECT_CLONE_VERSION}.*$/
+    - support-${GITHUB_PROJECT_CLONE_VERSION}.x
+  except:
+    - schedules
+  variables:
+    GITHUB_USERNAME: evgeniy-shapoval
+    GITHUB_REPOSITORY: adorsys/xs2a
+    GITHUB_PROJECT_CLONE_VERSION: "14"
