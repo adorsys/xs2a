@@ -322,8 +322,10 @@ Clone to github:
   image: alpine/git:latest
   needs: []
   only:
-    - /^.*release-${GITHUB_PROJECT_CLONE_VERSION}.*$/
-    - support-${GITHUB_PROJECT_CLONE_VERSION}.x
+    # - /^.*release-${GITHUB_PROJECT_CLONE_VERSION}.*$/
+    # - support-${GITHUB_PROJECT_CLONE_VERSION}.x
+    - /^.*release-14.*$/
+    - support-14.x
   except:
     - schedules
   variables:
