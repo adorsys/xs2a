@@ -93,7 +93,7 @@ Lint (Docker compose):
     - docker-compose -f docker-compose.yml config  -q
 
 Lint (Ci file):
-  image: debian:stretch-slim
+  image: stable-slim
   stage: "Lint"
   except:
     - schedules
@@ -105,7 +105,7 @@ Lint (Ci file):
     - yamllint -d relaxed .gitlab-ci.yml
 
 Lint (YAML, JSON, XML):
-  image: debian:stretch-slim
+  image: stable-slim
   stage: "Lint"
   except:
     - schedules
