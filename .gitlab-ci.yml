@@ -324,8 +324,8 @@ Clone to github:
   only:
     # - /^.*release-${GITHUB_PROJECT_CLONE_VERSION}.*$/
     # - support-${GITHUB_PROJECT_CLONE_VERSION}.x
-    - /^.*release-14.*$/
     - support-14.x
+    - /^.*release-14.*$/
   except:
     - schedules
   variables:
