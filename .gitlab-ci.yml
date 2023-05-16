@@ -323,7 +323,7 @@ Clone to github:
   dependencies: []
   only:
     - support-14.x
-    - /^release-14.*$/
+    - /^release-14\..*/
   except:
     - schedules
   variables:
