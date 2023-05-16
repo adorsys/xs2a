@@ -322,7 +322,6 @@ Clone to github:
   image: alpine/git:latest
   needs: []
   only:
-    - support-14.x
     - release-14.*
     - support-14.*
   except:
