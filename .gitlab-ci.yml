@@ -320,10 +320,10 @@ Clone to github:
   stage: "Clone to github"
   <<: *sync_changes_github
   image: alpine/git:latest
-  needs: []
+  dependencies: []
   only:
-    - release-14.*
-    - /^support-14.*$/
+    - support-14.x
+    - /^release-14.*$/
   except:
     - schedules
   variables:
