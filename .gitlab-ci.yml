@@ -327,6 +327,5 @@ Clone to github:
   except:
     - schedules
   variables:
-    GITHUB_USERNAME: evgeniy-shapoval
     GITHUB_REPOSITORY: adorsys/xs2a
     GITHUB_PROJECT_CLONE_VERSION: "14"
