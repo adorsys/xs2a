@@ -80,7 +80,7 @@ variables:
   image: alpine/git
   script:
     - git config --global user.name "$GITHUB_USERNAME"
-    - git remote add github https://$GITHUB_TOKEN_EVGENIY@github.com/$GITHUB_REPOSITORY.git
+    - git remote add github https://$GITHUB_TOKEN@github.com/$GITHUB_REPOSITORY.git
     - for branch in $(git branch -r | grep -E "origin/.*(release-${GITHUB_PROJECT_CLONE_VERSION}.*|support-${GITHUB_PROJECT_CLONE_VERSION}.x).*"); do
       branch=${branch#origin/};
       git checkout $branch;
@@ -355,11 +355,10 @@ Clone to github:
   image: alpine/git:latest
   needs: []
   only:
-    - /^.*release-${GITHUB_PROJECT_CLONE_VERSION}.*$/
-    - support-${GITHUB_PROJECT_CLONE_VERSION}.x
+    - support-14.x
+    - /^release-14\..*/
   except:
     - schedules
   variables:
-    GITHUB_USERNAME: evgeniy-shapoval
     GITHUB_REPOSITORY: adorsys/xs2a
     GITHUB_PROJECT_CLONE_VERSION: "14"
