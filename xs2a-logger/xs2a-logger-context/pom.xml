@@ -23,7 +23,7 @@
     <parent>
         <artifactId>xs2a-logger</artifactId>
         <groupId>de.adorsys.psd2</groupId>
-        <version>14.8-SNAPSHOT</version>
+        <version>14.8</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
