@@ -318,7 +318,6 @@ Release snapshot artifacts (tags):
 
 Clone to github:
   stage: "Clone to github"
-  <<: *sync_changes_github
   image: alpine/git:latest
   dependencies: []
   only:
@@ -329,3 +328,4 @@ Clone to github:
   variables:
     GITHUB_REPOSITORY: adorsys/xs2a
     GITHUB_PROJECT_CLONE_VERSION: "14"
+  <<: *sync_changes_github
