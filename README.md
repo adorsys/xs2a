@@ -4,7 +4,7 @@ This is the try-out version of adorsys XS2A Core: an open source (AGPL v.3) solu
 
 We currently focus on collaborative projects with our customers where our frameworks can be used as a basis for building new individual XS2A solutions.
 
-Please note, you can build the sources on your local. To do so, download or checkout the definite branch (branch name is actually a release name) and build it. For any further assistance, please contact us directly.
+For try-out version you can build the sources on your local. To do so, download or checkout the definite branch (branch name is actually a release name) and build it. For any further assistance, please contact us directly.
 
 If you are an organisation that would like to commercially use our solutions beyond AGPL v3 requirements, we are open to discuss alternative individual licensing options. If you are interested in working with us or have any other inquiries, please contact us under [email](psd2@adorsys.com).
 
