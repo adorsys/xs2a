@@ -4,7 +4,9 @@ This is the try-out version of adorsys XS2A Core: an open source (AGPL v.3) solu
 
 We currently focus on collaborative projects with our customers where our frameworks can be used as a basis for building new individual XS2A solutions.
 
-If you are an organisation that would like to commercially use our solutions beyond AGPL v3 requirements, we are open to discuss alternative individual licensing options. If you are interested in working with us or have any other inquiries, please contact us under psd2@adorsys.com.
+Please note, you can build the sources on your local. To do so, download or checkout the definite branch (branch name is actually a release name) and build it. For any further assistance, please contact us directly.
+
+If you are an organisation that would like to commercially use our solutions beyond AGPL v3 requirements, we are open to discuss alternative individual licensing options. If you are interested in working with us or have any other inquiries, please contact us under [email](psd2@adorsys.com).
 
 ## What is it
 
@@ -47,7 +49,7 @@ This XS2A Service provides an Open Source implementation of Berlin Group NextGen
 ### Getting Started
 
 * If you want to play with the framework in isolated environment, check out [Modelbank](https://github.com/adorsys/XS2A-Sandbox) Repository.
-* To know how to write a connector to your banking system see our [XS2A Connector Examples](https://github.com/adorsys/xs2a-connector-examples) repository and [SPI Developer Guide](doc/SPI Developer Guide/SPI_Developer_Guide.adoc)
+* To know how to write a connector to your banking system see our [XS2A Connector Examples](https://github.com/adorsys/xs2a-connector-examples) repository and [SPI Developer Guide](<doc/SPI Developer Guide/SPI_Developer_Guide.adoc>)
 * [These instructions](doc/GETTING_STARTED.adoc) will help you to get a copy of the project up and running on your local machine for development and testing purposes.
 
 ## Development and contributing
