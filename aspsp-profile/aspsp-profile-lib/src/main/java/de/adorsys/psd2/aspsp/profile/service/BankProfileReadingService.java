@@ -122,7 +122,7 @@ public class BankProfileReadingService implements ResourceLoaderAware {
     }
 
     private Representer createRepresenter() {
-        Representer representer = new Representer();
+        Representer representer = new Representer(createDumperOptions());
         representer.getPropertyUtils().setSkipMissingProperties(true);
         return representer;
     }
