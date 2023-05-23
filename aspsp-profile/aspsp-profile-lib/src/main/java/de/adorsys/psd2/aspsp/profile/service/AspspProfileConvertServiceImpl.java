@@ -47,7 +47,7 @@ public class AspspProfileConvertServiceImpl implements AspspProfileConvertServic
 
     @NotNull
     private Representer getYamlRepresenter() {
-        Representer representer = new Representer();
+        Representer representer = new Representer(getYamlDumperOptions());
         representer.addClassTag(BookingStatus.class, Tag.STR);
         representer.addClassTag(ScaApproach.class, Tag.STR);
         representer.addClassTag(SupportedAccountReferenceField.class, Tag.STR);
