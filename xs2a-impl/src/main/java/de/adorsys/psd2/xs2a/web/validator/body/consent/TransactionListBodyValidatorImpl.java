@@ -52,7 +52,7 @@ public class TransactionListBodyValidatorImpl extends AbstractBodyValidatorImpl 
         if (StringUtils.isNotBlank(acceptHeader)) {
             String bookingStatus = request.getParameter(BOOKING_STATUS_PARAM);
             if (BookingStatus.INFORMATION.getValue().equals(bookingStatus) &&
-                    !MediaType.APPLICATION_JSON_VALUE.equals(acceptHeader)) {
+                    !StringUtils.containsIgnoreCase(acceptHeader, MediaType.APPLICATION_JSON_VALUE)) {
                 errorBuildingService.enrichMessageError(messageError, TppMessageInformation.of(MessageErrorCode.REQUESTED_FORMATS_INVALID));
             }
         }
