@@ -26,10 +26,12 @@
     </changeSet>
 
     <changeSet author="hhe@adorsys.com.ua" id="2023-03-16-2">
+        <validCheckSum>8:9cc27d12eebc0cf11b8bbbe09eae45cb</validCheckSum>
         <comment>Rename last_action_date column</comment>
         <renameColumn tableName="consent"
                       newColumnName="last_action_date_time"
-                      oldColumnName="last_action_date"/>
+                      oldColumnName="last_action_date"
+                      columnDataType="DATETIME"/>
     </changeSet>
 
 

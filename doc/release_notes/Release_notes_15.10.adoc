@@ -1,3 +1,9 @@
 = Release notes v.15.10
 
 == Table of Contents
+
+* Fixed migration mechanism in liquibase
+
+== Fixed migration mechanism in liquibase
+
+From now on, liquibase works properly with MariaDB.

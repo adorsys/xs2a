@@ -61,7 +61,7 @@ public interface ConsentJpaRepository extends CrudRepository<ConsentEntity, Long
 
     @Query(
         "UPDATE consent " +
-            "SET consentStatus = 'REJECTED', lastActionDate = CURRENT_TIMESTAMP " +
+            "SET consentStatus = 'REJECTED', lastActionDateTime = CURRENT_TIMESTAMP " +
             "WHERE externalId IN :ids"
     )
     @Modifying
