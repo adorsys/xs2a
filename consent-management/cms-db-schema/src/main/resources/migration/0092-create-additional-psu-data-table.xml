@@ -22,10 +22,9 @@
                    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.4.xsd">
 
     <changeSet author="ske@adorsys.de" id="2019-12-10-1">
+        <validCheckSum>8:15632b21ca91779e129020008570ed18</validCheckSum>
         <comment>Add sequence for additional_psu_data table</comment>
-
         <createSequence sequenceName="additional_psu_data_id_seq"/>
-        <sql dbms="mariadb">CREATE SEQUENCE additional_psu_data_id_seq</sql>
     </changeSet>
 
     <changeSet author="ske@adorsys.de" id="2019-12-10-2">

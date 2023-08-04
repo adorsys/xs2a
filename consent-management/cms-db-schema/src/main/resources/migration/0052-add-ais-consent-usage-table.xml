@@ -21,9 +21,9 @@
                    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.4.xsd">
 
     <changeSet id="2019-02-22-1" author="iku@adorsys.com.ua">
+        <validCheckSum>8:f730d8823cd8ea19ac82e7257ed283ea</validCheckSum>
         <comment>Create sequence for pis address id.</comment>
         <createSequence sequenceName="ais_consent_usage_id_seq"/>
-        <sql dbms="mariadb">CREATE SEQUENCE ais_consent_usage_id_seq</sql>
     </changeSet>
 
     <changeSet id="2019-02-22-2" author="iku@adorsys.com.ua">

@@ -22,13 +22,11 @@
                    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.4.xsd">
 
     <changeSet author="ssh@adorsys.com.ua" id="2018-10-06-1">
+        <validCheckSum>8:5b335594e84109801f04ae5a56024aae</validCheckSum>
         <comment>Rename pis_tpp_info to tpp_info, change its structure and add tpp_info_role table</comment>
 
         <dropSequence sequenceName="pis_tpp_info_id_seq"/>
         <createSequence sequenceName="tpp_info_id_seq"/>
-
-        <sql dbms="mariadb">DROP SEQUENCE IF EXISTS pis_tpp_info_id_seq</sql>
-        <sql dbms="mariadb">CREATE SEQUENCE tpp_info_id_seq</sql>
 
         <renameTable newTableName="tpp_info"
                      oldTableName="pis_tpp_info"/>

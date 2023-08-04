@@ -22,10 +22,9 @@
                    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.4.xsd">
 
     <changeSet id="2020-01-23-1" author="ssh@adorsys.com.ua">
+        <validCheckSum>8:34b56b0bf78ed0a67d4fa11502c7e303</validCheckSum>
         <comment>Create sequence for authorisation ID</comment>
-
         <createSequence sequenceName="authorisation_id_seq"/>
-        <sql dbms="mariadb">CREATE SEQUENCE authorisation_id_seq</sql>
     </changeSet>
 
     <changeSet id="2020-01-23-2" author="ssh@adorsys.com.ua">
