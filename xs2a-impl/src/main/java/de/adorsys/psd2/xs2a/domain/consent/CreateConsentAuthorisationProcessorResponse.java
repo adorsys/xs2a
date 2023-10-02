@@ -52,4 +52,16 @@ public class CreateConsentAuthorisationProcessorResponse extends AuthorisationPr
         this.consentId = consentId;
         this.psuData = psuIdData;
     }
+
+    public CreateConsentAuthorisationProcessorResponse(ScaStatus scaStatus, ScaApproach scaApproach, String psuMessage, Set<TppMessageInformation> tppMessages, String consentId, String authorisationId, String internalRequestId, PsuIdData psuIdData) {
+        this.authorisationId = authorisationId;
+        this.internalRequestId = internalRequestId;
+        this.scaStatus = scaStatus;
+        this.scaApproach = scaApproach;
+        this.psuMessage = psuMessage;
+        this.tppMessages = tppMessages;
+        this.consentId = consentId;
+        this.psuData = psuIdData;
+    }
+
 }

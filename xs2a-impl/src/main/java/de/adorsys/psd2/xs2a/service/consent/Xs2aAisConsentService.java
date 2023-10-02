@@ -102,7 +102,7 @@ public class Xs2aAisConsentService {
         CmsResponse<CmsConsent> consentById = consentService.getConsentById(consentId);
 
         if (consentById.hasError()) {
-            log.info("Get consent by id failed due to CMS problems");
+            log.info("Get consent by ID failed due to CMS problems");
             return Optional.empty();
         }
         CmsConsent payload = consentById.getPayload();
@@ -111,7 +111,7 @@ public class Xs2aAisConsentService {
             return Optional.ofNullable(aisConsentMapper.mapToAisConsent(payload));
         }
 
-        log.info("Requested consent is not of ConsentType.AIS, consentId=" + consentId);
+        log.info("Requested consent is not of ConsentType.AIS, consent ID: " + consentId);
         return Optional.empty();
     }
 

@@ -97,6 +97,7 @@ class CommonPaymentInitiationServiceTest {
 
     @Test
     void createCommonPayment_success() {
+        // Given
         when(xs2aToSpiPaymentInfoMapper.mapToSpiPaymentInfo(COMMON_PAYMENT, PRODUCT))
             .thenReturn(SPI_PAYMENT_INFO);
         when(commonPaymentSpi.initiatePayment(SPI_CONTEXT_DATA, SPI_PAYMENT_INFO, initialSpiAspspConsentDataProvider))
@@ -138,7 +139,7 @@ class CommonPaymentInitiationServiceTest {
     private static CommonPayment buildCommonPayment() {
         CommonPayment request = new CommonPayment();
         request.setPaymentType(PaymentType.SINGLE);
-        request.setPaymentProduct("sepa-credit-transfers");
+        request.setPaymentProduct(PRODUCT);
         request.setPaymentData(new byte[16]);
         return request;
     }

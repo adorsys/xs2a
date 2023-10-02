@@ -38,7 +38,7 @@ public class PisPsuDataService {
         CmsResponse<List<PsuIdData>> cmsResponse = pisCommonPaymentServiceEncrypted.getPsuDataListByPaymentId(paymentId);
 
         if (cmsResponse.hasError()) {
-            log.info("Payment-ID [{}]. Can't get PsuData by payment ID because PsuData list not found by id at cms.",
+            log.info("Payment-ID [{}]. Can't get PsuData by payment ID because PsuData list not found by ID at CMS.",
                      paymentId);
             return Collections.emptyList();
         }

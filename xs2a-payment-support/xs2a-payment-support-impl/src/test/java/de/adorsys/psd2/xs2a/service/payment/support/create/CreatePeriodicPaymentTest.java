@@ -39,7 +39,6 @@ import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
 import de.adorsys.psd2.xs2a.core.tpp.TppRole;
 import de.adorsys.psd2.xs2a.domain.ResponseObject;
 import de.adorsys.psd2.xs2a.domain.consent.CreatePaymentAuthorisationProcessorResponse;
-import de.adorsys.psd2.xs2a.domain.consent.Xs2aCreatePisAuthorisationResponse;
 import de.adorsys.psd2.xs2a.domain.consent.Xs2aPisCommonPayment;
 import de.adorsys.psd2.xs2a.domain.pis.PaymentInitiationParameters;
 import de.adorsys.psd2.xs2a.domain.pis.PaymentInitiationResponse;
@@ -47,10 +46,9 @@ import de.adorsys.psd2.xs2a.domain.pis.PeriodicPayment;
 import de.adorsys.psd2.xs2a.domain.pis.PeriodicPaymentInitiationResponse;
 import de.adorsys.psd2.xs2a.service.RequestProviderService;
 import de.adorsys.psd2.xs2a.service.ScaApproachResolver;
+import de.adorsys.psd2.xs2a.service.UuidGeneratorService;
 import de.adorsys.psd2.xs2a.service.authorization.AuthorisationChainResponsibilityService;
 import de.adorsys.psd2.xs2a.service.authorization.AuthorisationMethodDecider;
-import de.adorsys.psd2.xs2a.service.authorization.pis.PisScaAuthorisationService;
-import de.adorsys.psd2.xs2a.service.authorization.pis.PisScaAuthorisationServiceResolver;
 import de.adorsys.psd2.xs2a.service.consent.Xs2aPisCommonPaymentService;
 import de.adorsys.psd2.xs2a.service.mapper.cms_xs2a_mappers.Xs2aPisCommonPaymentMapper;
 import de.adorsys.psd2.xs2a.service.mapper.cms_xs2a_mappers.Xs2aToCmsPisCommonPaymentRequestMapper;
@@ -69,7 +67,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.time.LocalDate;
 import java.util.Collections;
 import java.util.Currency;
-import java.util.Optional;
 import java.util.Set;
 
 import static de.adorsys.psd2.xs2a.core.pis.TransactionStatus.RCVD;
@@ -83,7 +80,6 @@ class CreatePeriodicPaymentTest {
     private static final Currency EUR_CURRENCY = Currency.getInstance("EUR");
     private static final String PAYMENT_ID = "d6cb50e5-bb88-4bbf-a5c1-42ee1ed1df2c";
     private static final String IBAN = "DE123456789";
-    private static final TppInfo TPP_INFO = buildTppInfo();
     private static final PsuIdData PSU_ID_DATA = new PsuIdData("correct_psu", null, null, null, null);
     private static final PsuIdData WRONG_PSU_DATA = new PsuIdData("wrong_psu", null, null, null, null);
     private static final TppInfo WRONG_TPP_INFO = new TppInfo();
@@ -99,7 +95,6 @@ class CreatePeriodicPaymentTest {
     private static final ScaApproach SCA_APPROACH = ScaApproach.EMBEDDED;
     private static final Set<TppMessageInformation> TEST_TPP_MESSAGES = Collections.singleton(TppMessageInformation.of(MessageErrorCode.FORMAT_ERROR));
     private static final String TEST_PSU_MESSAGE = "This test message is created in ASPSP and directed to PSU";
-    private static final Xs2aCreatePisAuthorisationResponse CREATE_PIS_AUTHORISATION_RESPONSE = new Xs2aCreatePisAuthorisationResponse(null, SCA_STATUS, null, null, null, null, null, null);
 
     @InjectMocks
     private CreatePeriodicPaymentService createPeriodicPaymentService;
@@ -116,13 +111,6 @@ class CreatePeriodicPaymentTest {
     @SuppressWarnings("unused") //mocks boolean value that returns false by default
     @Mock
     private AuthorisationMethodDecider authorisationMethodDecider;
-
-    private PeriodicPaymentInitiationResponse periodicPaymentInitiationResponse;
-
-    @Mock
-    private PisScaAuthorisationServiceResolver pisScaAuthorisationServiceResolver;
-    @Mock
-    private PisScaAuthorisationService pisScaAuthorisationService;
     @Mock
     private RequestProviderService requestProviderService;
     @Mock
@@ -133,6 +121,10 @@ class CreatePeriodicPaymentTest {
     private ScaApproachResolver scaApproachResolver;
     @Mock
     private LoggingContextService loggingContextService;
+    @Mock
+    private UuidGeneratorService uuidGeneratorService;
+
+    private PeriodicPaymentInitiationResponse periodicPaymentInitiationResponse;
 
     @BeforeEach
     void setUp() {
@@ -205,13 +197,8 @@ class CreatePeriodicPaymentTest {
 
         when(authorisationMethodDecider.isImplicitMethod(false, false))
             .thenReturn(true);
-        when(pisScaAuthorisationServiceResolver.getService())
-            .thenReturn(pisScaAuthorisationService);
         CreatePaymentAuthorisationProcessorResponse response = new CreatePaymentAuthorisationProcessorResponse(SCA_STATUS, SCA_APPROACH, TEST_PSU_MESSAGE, TEST_TPP_MESSAGES, PAYMENT_ID, PSU_ID_DATA);
         when(authorisationChainResponsibilityService.apply(any())).thenReturn(response);
-
-        when(pisScaAuthorisationService.createCommonPaymentAuthorisation(any(), eq(PaymentType.PERIODIC)))
-            .thenReturn(Optional.of(CREATE_PIS_AUTHORISATION_RESPONSE));
 
         //When
         ResponseObject<PaymentInitiationResponse> actualResponse = createPeriodicPaymentService.createPayment(PAYMENT_BODY, buildPaymentInitiationParameters(), buildTppInfo());
@@ -220,32 +207,6 @@ class CreatePeriodicPaymentTest {
         assertThat(actualResponse.hasError()).isFalse();
         assertThat(actualResponse.getBody().getPaymentId()).isEqualTo(PAYMENT_ID);
         assertThat(actualResponse.getBody().getTransactionStatus()).isEqualTo(TransactionStatus.RCVD);
-    }
-
-    @Test
-    void createPayment_pisScaAuthorisationService_createCommonPaymentAuthorisation_fail() {
-        // Given
-        when(periodicPaymentInitiationService.initiatePayment(any(PeriodicPayment.class), eq(PAYMENT_PRODUCT), eq(PSU_ID_DATA))).thenReturn(periodicPaymentInitiationResponse);
-        when(pisCommonPaymentService.createCommonPayment(PAYMENT_INFO)).thenReturn(PIS_COMMON_PAYMENT_RESPONSE);
-        when(xs2aPisCommonPaymentMapper.mapToXs2aPisCommonPayment(PIS_COMMON_PAYMENT_RESPONSE, PARAM.getPsuData())).thenReturn(PIS_COMMON_PAYMENT);
-        when(xs2aToCmsPisCommonPaymentRequestMapper.mapToPisPaymentInfo(any(PisPaymentInfoCreationObject.class))).thenReturn(PAYMENT_INFO);
-        when(requestProviderService.getInternalRequestIdString()).thenReturn(INTERNAL_REQUEST_ID);
-
-        when(authorisationMethodDecider.isImplicitMethod(false, false))
-            .thenReturn(true);
-        when(pisScaAuthorisationServiceResolver.getService())
-            .thenReturn(pisScaAuthorisationService);
-        CreatePaymentAuthorisationProcessorResponse response = new CreatePaymentAuthorisationProcessorResponse(SCA_STATUS, SCA_APPROACH, TEST_PSU_MESSAGE, TEST_TPP_MESSAGES, PAYMENT_ID, PSU_ID_DATA);
-        when(authorisationChainResponsibilityService.apply(any())).thenReturn(response);
-        when(pisScaAuthorisationService.createCommonPaymentAuthorisation(any(), eq(PaymentType.PERIODIC)))
-            .thenReturn(Optional.empty());
-
-        //When
-        ResponseObject<PaymentInitiationResponse> actualResponse = createPeriodicPaymentService.createPayment(PAYMENT_BODY, buildPaymentInitiationParameters(), buildTppInfo());
-
-        //Then
-        assertThat(actualResponse.hasError()).isTrue();
-        assertThat(actualResponse.getError().getTppMessage().getMessageErrorCode()).isEqualTo(MessageErrorCode.PAYMENT_FAILED);
     }
 
     private static PeriodicPayment buildPeriodicPayment() {

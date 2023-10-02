@@ -87,7 +87,7 @@ public class AuthorisationController implements AuthorisationApi {
                 return new ResponseEntity<>(HttpStatus.OK);
             }
         } catch (IllegalArgumentException illegalArgumentException) {
-            log.error("Invalid sca status: [{}] for authorisation-ID [{}]", scaStatus, authorisationId);
+            log.error("Invalid SCA status: [{}] for authorisation ID: [{}]", scaStatus, authorisationId);
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);

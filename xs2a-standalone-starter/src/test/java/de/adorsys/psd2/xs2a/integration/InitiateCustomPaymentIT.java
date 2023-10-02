@@ -255,7 +255,8 @@ class InitiateCustomPaymentIT extends CustomPaymentTestParent {
                             .build());
         CreatePaymentAuthorisationProcessorResponse processorResponse =
             new CreatePaymentAuthorisationProcessorResponse(ScaStatus.STARTED, scaApproach, null,
-                                                            Collections.emptySet(), ENCRYPT_PAYMENT_ID, null);
+                                                            Collections.emptySet(), ENCRYPT_PAYMENT_ID,
+                                                            AUTHORISATION_ID, null, null);
         given(authorisationChainResponsibilityService.apply(any(PisAuthorisationProcessorRequest.class)))
             .willReturn(processorResponse);
     }

@@ -25,6 +25,7 @@ import de.adorsys.psd2.xs2a.core.error.MessageErrorCode;
 import de.adorsys.psd2.xs2a.core.mapper.ServiceType;
 import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
+import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import de.adorsys.psd2.xs2a.domain.ResponseObject;
@@ -353,7 +354,7 @@ class CancelPaymentServiceTest {
     @Test
     void initiatePaymentCancellation_authorisationRequired_implicit_shouldReturnResponseFromSpi() {
         SpiPayment spiPayment = getSpiPayment(SpiTransactionStatus.ACTC);
-        Xs2aCreatePisCancellationAuthorisationResponse cancellationResponse = new Xs2aCreatePisCancellationAuthorisationResponse(AUTHORISATION_ID, ScaStatus.RECEIVED, PaymentType.SINGLE, INTERNAL_REQUEST_ID);
+        Xs2aCreatePisCancellationAuthorisationResponse cancellationResponse = new Xs2aCreatePisCancellationAuthorisationResponse(AUTHORISATION_ID, ScaStatus.RECEIVED, ScaApproach.EMBEDDED, PaymentType.SINGLE, INTERNAL_REQUEST_ID);
         CancelPaymentResponse cancelPaymentResponseExpected = getCancelPaymentResponse(true, ACTC);
         cancelPaymentResponseExpected.setAuthorizationId(AUTHORISATION_ID);
         cancelPaymentResponseExpected.setScaStatus(ScaStatus.RECEIVED);

@@ -52,7 +52,6 @@ import org.springframework.stereotype.Service;
 import java.util.EnumSet;
 import java.util.Optional;
 import java.util.Set;
-import java.util.UUID;
 
 import static de.adorsys.psd2.xs2a.core.domain.TppMessageInformation.of;
 import static de.adorsys.psd2.xs2a.core.error.ErrorType.*;
@@ -75,6 +74,7 @@ public class ConsentAuthorisationService {
     private final PsuIdDataAuthorisationService psuIdDataAuthorisationService;
     private final EventTypeService eventTypeService;
     private final ScaApproachResolver scaApproachResolver;
+    private final UuidGeneratorService uuidGeneratorService;
 
     public ResponseObject<AuthorisationResponse> createAisAuthorisation(PsuIdData psuData, String consentId, String password) {
         ResponseObject<CreateConsentAuthorizationResponse> createAisAuthorizationResponse = createConsentAuthorizationWithResponse(psuData, consentId);
@@ -288,7 +288,7 @@ public class ConsentAuthorisationService {
         Optional<AisConsent> aisConsentOptional = aisConsentService.getAccountConsentById(consentId);
 
         if (aisConsentOptional.isEmpty()) {
-            log.info("Consent-ID: [{}]. Create consent authorisation with response failed: consent not found by id",
+            log.info("Consent-ID: [{}]. Create consent authorisation with response failed: consent not found by ID.",
                      consentId);
             return ResponseObject.<CreateConsentAuthorizationResponse>builder()
                        .fail(AIS_403, of(CONSENT_UNKNOWN_403)).build();
@@ -306,7 +306,7 @@ public class ConsentAuthorisationService {
         }
 
         if (aisConsent.isExpired()) {
-            log.info("Consent-ID: [{}]. Create consent authorisation with response failed: consent expired", consentId);
+            log.info("Consent-ID: [{}]. Create consent authorisation with response failed: consent expired.", consentId);
             return ResponseObject.<CreateConsentAuthorizationResponse>builder()
                        .fail(AIS_401, of(CONSENT_EXPIRED))
                        .build();
@@ -315,9 +315,9 @@ public class ConsentAuthorisationService {
         loggingContextService.storeConsentStatus(aisConsent.getConsentStatus());
 
         PsuIdData psuIdData = getActualPsuData(psuDataFromRequest, aisConsent);
-        // TODO https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/-/issues/1629
+
         ScaStatus scaStatus = ScaStatus.STARTED;
-        String authorisationId = UUID.randomUUID().toString();
+        String authorisationId = uuidGeneratorService.generate();
         ScaApproach scaApproach = scaApproachResolver.resolveScaApproach();
         StartAuthorisationsParameters startAuthorisationsParameters = StartAuthorisationsParameters.builder()
                                                                           .psuData(psuIdData)
@@ -331,27 +331,16 @@ public class ConsentAuthorisationService {
         CreateConsentAuthorisationProcessorResponse processorResponse =
             (CreateConsentAuthorisationProcessorResponse) authorisationChainResponsibilityService.apply(processorRequest);
 
-        Xs2aCreateAuthorisationRequest createAuthorisationRequest = Xs2aCreateAuthorisationRequest.builder()
-                                                                        .psuData(psuIdData)
-                                                                        .consentId(consentId)
-                                                                        .authorisationId(authorisationId)
-                                                                        .scaStatus(processorResponse.getScaStatus())
-                                                                        .scaApproach(processorResponse.getScaApproach())
-                                                                        .build();
+        CreateConsentAuthorizationResponse createConsentAuthorizationResponse = new CreateConsentAuthorizationResponse();
 
-        ConsentAuthorizationService service = aisScaAuthorisationServiceResolver.getService();
-        Optional<CreateConsentAuthorizationResponse> consentAuthorizationResponse = service.createConsentAuthorization(createAuthorisationRequest);
+        createConsentAuthorizationResponse.setScaStatus(processorResponse.getScaStatus());
+        createConsentAuthorizationResponse.setScaApproach(processorResponse.getScaApproach());
+        createConsentAuthorizationResponse.setConsentId(processorResponse.getConsentId());
+        createConsentAuthorizationResponse.setAuthorisationId(processorResponse.getAuthorisationId());
+        createConsentAuthorizationResponse.setPsuIdData(processorResponse.getPsuData());
+        createConsentAuthorizationResponse.setInternalRequestId(processorResponse.getInternalRequestId());
 
-        if (consentAuthorizationResponse.isEmpty()) {
-            return ResponseObject.<CreateConsentAuthorizationResponse>builder()
-                       .fail(AIS_403, of(CONSENT_UNKNOWN_403))
-                       .build();
-        }
-        CreateConsentAuthorizationResponse createConsentAuthorizationResponse = consentAuthorizationResponse.get();
-
-        setPsuMessageAndTppMessages(createConsentAuthorizationResponse,
-                                    processorResponse.getPsuMessage(),
-                                    processorResponse.getTppMessages());
+        setPsuMessageAndTppMessages(createConsentAuthorizationResponse, processorResponse.getPsuMessage(), processorResponse.getTppMessages());
 
         return ResponseObject.<CreateConsentAuthorizationResponse>builder()
                    .body(createConsentAuthorizationResponse)

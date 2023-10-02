@@ -41,7 +41,7 @@ import org.springframework.web.client.RestTemplate;
 @Service
 @RequiredArgsConstructor
 public class UpdatePaymentAfterSpiServiceRemote implements UpdatePaymentAfterSpiServiceEncrypted {
-    public static final String PAYMENT_NOT_FOUND_MESSAGE = "Payment not found, id: {}";
+    public static final String PAYMENT_NOT_FOUND_MESSAGE = "Payment not found, ID: {}";
 
     @Qualifier("consentRestTemplate")
     private final RestTemplate consentRestTemplate;

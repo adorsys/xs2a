@@ -53,7 +53,6 @@ import org.springframework.stereotype.Service;
 import java.util.EnumSet;
 import java.util.Optional;
 import java.util.Set;
-import java.util.UUID;
 
 import static de.adorsys.psd2.xs2a.core.domain.TppMessageInformation.of;
 import static de.adorsys.psd2.xs2a.core.error.ErrorType.*;
@@ -78,6 +77,7 @@ public class PiisConsentAuthorisationService {
     private final Xs2aAuthorisationService authorisationService;
     private final EventTypeService eventTypeService;
     private final ScaApproachResolver scaApproachResolver;
+    private final UuidGeneratorService uuidGeneratorService;
 
     public ResponseObject<UpdateConsentPsuDataResponse> updateConsentPsuData(ConsentAuthorisationsParameters updatePsuData) {
         xs2aEventService.recordConsentTppRequest(updatePsuData.getConsentId(), eventTypeService.getEventType(updatePsuData, EventAuthorisationType.PIIS), updatePsuData);
@@ -87,7 +87,7 @@ public class PiisConsentAuthorisationService {
         Optional<PiisConsent> piisConsentOptional = xs2aPiisConsentService.getPiisConsentById(consentId);
 
         if (piisConsentOptional.isEmpty()) {
-            log.info("Consent-ID: [{}]. Update consent PSU data failed: consent not found by id", consentId);
+            log.info("Consent-ID: [{}]. Update consent PSU data failed: consent not found by ID.", consentId);
             return ResponseObject.<UpdateConsentPsuDataResponse>builder()
                        .fail(PIIS_403, of(CONSENT_UNKNOWN_403)).build();
         }
@@ -96,7 +96,7 @@ public class PiisConsentAuthorisationService {
         boolean confirmationCodeReceived = StringUtils.isNotBlank(updatePsuData.getConfirmationCode());
 
         if (!endpointAccessCheckerService.isEndpointAccessible(authorisationId, confirmationCodeReceived)) {
-            log.info("Consent-ID: [{}], Authorisation-ID [{}]. Update consent PSU data failed: update endpoint is blocked for current authorisation",
+            log.info("Consent-ID: [{}], Authorisation-ID [{}]. Update consent PSU data failed: update endpoint is blocked for current authorisation.",
                      consentId, authorisationId);
             return ResponseObject.<UpdateConsentPsuDataResponse>builder()
                        .fail(PIIS_403, of(SERVICE_BLOCKED))
@@ -123,7 +123,7 @@ public class PiisConsentAuthorisationService {
         }
 
         if (piisConsent.isExpired()) {
-            log.info("Consent-ID: [{}]. Update consent PSU data failed: consent expired", consentId);
+            log.info("Consent-ID: [{}]. Update consent PSU data failed: consent expired.", consentId);
             return ResponseObject.<UpdateConsentPsuDataResponse>builder()
                        .fail(PIIS_401, of(CONSENT_EXPIRED))
                        .build();
@@ -138,7 +138,7 @@ public class PiisConsentAuthorisationService {
         Optional<Authorisation> authorizationOptional = service.getConsentAuthorizationById(updatePsuData.getAuthorizationId());
 
         if (authorizationOptional.isEmpty()) {
-            log.info("Authorisation-ID: [{}]. Update consent PSU data failed: authorisation not found by id",
+            log.info("Authorisation-ID: [{}]. Update consent PSU data failed: authorisation not found by ID.",
                      updatePsuData.getAuthorizationId());
             return ResponseObject.<UpdateConsentPsuDataResponse>builder()
                        .fail(PIIS_403, of(CONSENT_UNKNOWN_403)).build();
@@ -211,7 +211,7 @@ public class PiisConsentAuthorisationService {
         Optional<PiisConsent> piisConsentOptional = xs2aPiisConsentService.getPiisConsentById(consentId);
 
         if (piisConsentOptional.isEmpty()) {
-            log.info("Consent-ID: [{}]. Create consent authorisation with response failed: consent not found by id",
+            log.info("Consent-ID: [{}]. Create consent authorisation with response failed: consent not found by ID.",
                      consentId);
             return ResponseObject.<CreateConsentAuthorizationResponse>builder()
                        .fail(PIIS_CONSENT_NOT_FOUND_MESSAGE_ERROR)
@@ -230,9 +230,9 @@ public class PiisConsentAuthorisationService {
         }
 
         PsuIdData psuIdData = getActualPsuData(psuDataFromRequest, piisConsent);
-        // TODO https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/-/issues/1629
+
         ScaStatus scaStatus = ScaStatus.STARTED;
-        String authorisationId = UUID.randomUUID().toString();
+        String authorisationId = uuidGeneratorService.generate();
         ScaApproach scaApproach = scaApproachResolver.resolveScaApproach();
         StartAuthorisationsParameters startAuthorisationsParameters = StartAuthorisationsParameters.builder()
                                                                           .psuData(psuIdData)
@@ -246,29 +246,16 @@ public class PiisConsentAuthorisationService {
         CreateConsentAuthorisationProcessorResponse processorResponse =
             (CreateConsentAuthorisationProcessorResponse) authorisationChainResponsibilityService.apply(processorRequest);
 
-        loggingContextService.storeScaStatus(processorResponse.getScaStatus());
+        CreateConsentAuthorizationResponse createConsentAuthorizationResponse = new CreateConsentAuthorizationResponse();
 
-        Xs2aCreateAuthorisationRequest createAuthorisationRequest = Xs2aCreateAuthorisationRequest.builder()
-                                                                        .psuData(psuIdData)
-                                                                        .consentId(consentId)
-                                                                        .authorisationId(authorisationId)
-                                                                        .scaStatus(processorResponse.getScaStatus())
-                                                                        .scaApproach(processorResponse.getScaApproach())
-                                                                        .build();
+        createConsentAuthorizationResponse.setScaStatus(processorResponse.getScaStatus());
+        createConsentAuthorizationResponse.setScaApproach(processorResponse.getScaApproach());
+        createConsentAuthorizationResponse.setConsentId(processorResponse.getConsentId());
+        createConsentAuthorizationResponse.setAuthorisationId(processorResponse.getAuthorisationId());
+        createConsentAuthorizationResponse.setPsuIdData(processorResponse.getPsuData());
+        createConsentAuthorizationResponse.setInternalRequestId(processorResponse.getInternalRequestId());
 
-        ConsentAuthorizationService service = piisScaAuthorisationServiceResolver.getService();
-        Optional<CreateConsentAuthorizationResponse> consentAuthorizationResponse = service.createConsentAuthorization(createAuthorisationRequest);
-
-        if (consentAuthorizationResponse.isEmpty()) {
-            return ResponseObject.<CreateConsentAuthorizationResponse>builder()
-                       .fail(PIIS_CONSENT_NOT_FOUND_MESSAGE_ERROR)
-                       .build();
-        }
-        CreateConsentAuthorizationResponse createConsentAuthorizationResponse = consentAuthorizationResponse.get();
-
-        setPsuMessageAndTppMessages(createConsentAuthorizationResponse,
-                                    processorResponse.getPsuMessage(),
-                                    processorResponse.getTppMessages());
+        setPsuMessageAndTppMessages(createConsentAuthorizationResponse, processorResponse.getPsuMessage(), processorResponse.getTppMessages());
 
         return ResponseObject.<CreateConsentAuthorizationResponse>builder()
                    .body(createConsentAuthorizationResponse)
@@ -290,7 +277,7 @@ public class PiisConsentAuthorisationService {
 
         Optional<PiisConsent> piisConsentOptional = xs2aPiisConsentService.getPiisConsentById(consentId);
         if (piisConsentOptional.isEmpty()) {
-            log.info("Consent-ID: [{}]. Get consent initiation authorisations failed: consent not found by id",
+            log.info("Consent-ID: [{}]. Get consent initiation authorisations failed: consent not found by ID.",
                      consentId);
             return ResponseObject.<Xs2aAuthorisationSubResources>builder()
                        .fail(PIIS_CONSENT_NOT_FOUND_MESSAGE_ERROR)
@@ -310,7 +297,7 @@ public class PiisConsentAuthorisationService {
         return getAuthorisationSubResources(consentId)
                    .map(resp -> ResponseObject.<Xs2aAuthorisationSubResources>builder().body(resp).build())
                    .orElseGet(() -> {
-                       log.info("Consent-ID: [{}]. Get consent initiation authorisations failed: authorisation not found at CMS by consent id",
+                       log.info("Consent-ID: [{}]. Get consent initiation authorisations failed: authorisation not found at CMS by consent ID.",
                                 consentId);
                        return ResponseObject.<Xs2aAuthorisationSubResources>builder()
                                   .fail(PIIS_404, of(RESOURCE_UNKNOWN_404))
@@ -323,7 +310,7 @@ public class PiisConsentAuthorisationService {
 
         Optional<PiisConsent> piisConsentOptional = xs2aPiisConsentService.getPiisConsentById(consentId);
         if (piisConsentOptional.isEmpty()) {
-            log.info("Consent-ID: [{}]. Get consent authorisation SCA status failed: consent not found by id", consentId);
+            log.info("Consent-ID: [{}]. Get consent authorisation SCA status failed: consent not found by ID.", consentId);
             return ResponseObject.<ConfirmationOfFundsConsentScaStatus>builder()
                        .fail(PIIS_CONSENT_NOT_FOUND_MESSAGE_ERROR).build();
         }
@@ -343,7 +330,7 @@ public class PiisConsentAuthorisationService {
                                                     .getAuthorisationScaStatus(consentId, authorisationId);
 
         if (scaStatusOptional.isEmpty()) {
-            log.info("Consent-ID: [{}]. Get consent authorisation SCA status failed: consent not found at CMS by id",
+            log.info("Consent-ID: [{}]. Get consent authorisation SCA status failed: consent not found at CMS by ID.",
                      consentId);
             return ResponseObject.<ConfirmationOfFundsConsentScaStatus>builder()
                        .fail(PIIS_403, of(RESOURCE_UNKNOWN_403))

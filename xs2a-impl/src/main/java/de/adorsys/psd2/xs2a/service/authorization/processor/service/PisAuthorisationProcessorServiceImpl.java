@@ -20,6 +20,8 @@ package de.adorsys.psd2.xs2a.service.authorization.processor.service;
 
 import de.adorsys.psd2.xs2a.core.authorisation.Authorisation;
 import de.adorsys.psd2.xs2a.core.domain.ErrorHolder;
+import de.adorsys.psd2.xs2a.core.domain.TppMessageInformation;
+import de.adorsys.psd2.xs2a.core.error.MessageErrorCode;
 import de.adorsys.psd2.xs2a.core.mapper.ServiceType;
 import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
 import de.adorsys.psd2.xs2a.core.pis.Xs2aCurrencyConversionInfo;
@@ -28,12 +30,16 @@ import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import de.adorsys.psd2.xs2a.domain.authorisation.CommonAuthorisationParameters;
+import de.adorsys.psd2.xs2a.domain.consent.CreatePaymentAuthorisationProcessorResponse;
+import de.adorsys.psd2.xs2a.domain.consent.Xs2aCreateAuthorisationRequest;
+import de.adorsys.psd2.xs2a.domain.consent.Xs2aCreatePisAuthorisationResponse;
 import de.adorsys.psd2.xs2a.domain.consent.pis.PaymentAuthorisationParameters;
 import de.adorsys.psd2.xs2a.domain.consent.pis.Xs2aUpdatePisCommonPaymentPsuDataResponse;
 import de.adorsys.psd2.xs2a.service.authorization.Xs2aAuthorisationService;
 import de.adorsys.psd2.xs2a.service.authorization.pis.PisCommonDecoupledService;
 import de.adorsys.psd2.xs2a.service.authorization.pis.PisExecutePaymentService;
 import de.adorsys.psd2.xs2a.service.authorization.pis.PisScaAuthorisationService;
+import de.adorsys.psd2.xs2a.service.authorization.pis.PisScaAuthorisationServiceResolver;
 import de.adorsys.psd2.xs2a.service.authorization.processor.model.AuthorisationProcessorRequest;
 import de.adorsys.psd2.xs2a.service.authorization.processor.model.AuthorisationProcessorResponse;
 import de.adorsys.psd2.xs2a.service.consent.PisAspspDataService;
@@ -58,10 +64,15 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
+import java.util.Set;
+
+import static de.adorsys.psd2.xs2a.core.error.ErrorType.PIS_400;
 
 @Service
 @Slf4j
 public class PisAuthorisationProcessorServiceImpl extends PaymentBaseAuthorisationProcessorService {
+    private static final String AUTHORISATION_FOR_PAYMENT_HAS_FAILED = "Start authorisation for payment has failed.";
 
     private final PisExecutePaymentService pisExecutePaymentService;
     private final SpiErrorMapper spiErrorMapper;
@@ -94,12 +105,13 @@ public class PisAuthorisationProcessorServiceImpl extends PaymentBaseAuthorisati
                                                 SpiToXs2aScaApproachMapper spiToXs2aScaApproachMapper,
                                                 SpiToXs2aTppMessageInformationMapper spiToXs2aTppMessageInformationMapper,
                                                 SpiToXs2aPaymentTypeMapper spiToXs2aPaymentTypeMapper,
-                                                SpiToXs2aTransactionStatusMapper spiToXs2aTransactionStatusMapper) {
+                                                SpiToXs2aTransactionStatusMapper spiToXs2aTransactionStatusMapper,
+                                                PisScaAuthorisationServiceResolver pisScaAuthorisationServiceResolver) {
         super(services, xs2aAuthorisationService, xs2aPisCommonPaymentService, xs2aToSpiPaymentMapper,
               spiContextDataProvider, aspspConsentDataProviderFactory, spiErrorMapper,
               pisAspspDataService, xs2aPisCommonPaymentMapper, xs2aToSpiPsuDataMapper,
               spiToXs2aAuthenticationObjectMapper, spiToXs2aChallengeDataMapper, spiToXs2aScaStatusMapper,
-              spiToXs2aScaApproachMapper, spiToXs2aTppMessageInformationMapper, spiToXs2aPaymentTypeMapper);
+              spiToXs2aScaApproachMapper, spiToXs2aTppMessageInformationMapper, spiToXs2aPaymentTypeMapper, pisScaAuthorisationServiceResolver);
         this.pisExecutePaymentService = pisExecutePaymentService;
         this.spiErrorMapper = spiErrorMapper;
         this.aspspConsentDataProviderFactory = aspspConsentDataProviderFactory;
@@ -111,6 +123,39 @@ public class PisAuthorisationProcessorServiceImpl extends PaymentBaseAuthorisati
         this.currencyConversionInfoSpi = currencyConversionInfoSpi;
         this.spiToXs2aCurrencyConversionInfoMapper = spiToXs2aCurrencyConversionInfoMapper;
         this.spiToXs2aTransactionStatusMapper = spiToXs2aTransactionStatusMapper;
+    }
+
+    @Override
+    public AuthorisationProcessorResponse proceedAuthorisation(Xs2aCreateAuthorisationRequest xs2aCreateAuthorisationRequest,
+                                                               PisScaAuthorisationService pisScaAuthorisationService,
+                                                               PaymentType paymentType,
+                                                               SpiStartAuthorisationResponse startAuthorisationResponse) {
+        PsuIdData psuIdData = xs2aCreateAuthorisationRequest.getPsuData();
+        String paymentId = xs2aCreateAuthorisationRequest.getPaymentId();
+        ScaApproach scaApproach = xs2aCreateAuthorisationRequest.getScaApproach();
+
+        Optional<Xs2aCreatePisAuthorisationResponse> commonPaymentAuthorisationResponse =
+            pisScaAuthorisationService.createCommonPaymentAuthorisation(xs2aCreateAuthorisationRequest, paymentType);
+
+        if (commonPaymentAuthorisationResponse.isEmpty()) {
+            ErrorHolder errorHolder = ErrorHolder.builder(PIS_400)
+                                          .tppMessages(TppMessageInformation.of(MessageErrorCode.PAYMENT_FAILED))
+                                          .build();
+            writeErrorLog(xs2aCreateAuthorisationRequest, errorHolder, AUTHORISATION_FOR_PAYMENT_HAS_FAILED);
+            return new CreatePaymentAuthorisationProcessorResponse(errorHolder, scaApproach, paymentId, psuIdData);
+        }
+
+        Xs2aCreatePisAuthorisationResponse createPaymentAuthorisationResponse = commonPaymentAuthorisationResponse.get();
+
+        Set<TppMessageInformation> tppMessages = spiToXs2aTppMessageInformationMapper.toTppMessageInformationSet(startAuthorisationResponse.getTppMessages());
+        String psuMessage = startAuthorisationResponse.getPsuMessage();
+
+        return new CreatePaymentAuthorisationProcessorResponse(createPaymentAuthorisationResponse.getScaStatus(),
+                                                               createPaymentAuthorisationResponse.getScaApproach(),
+                                                               psuMessage, tppMessages,
+                                                               paymentId, xs2aCreateAuthorisationRequest.getAuthorisationId(),
+                                                               createPaymentAuthorisationResponse.getInternalRequestId(),
+                                                               psuIdData);
     }
 
     @Override
@@ -243,15 +288,5 @@ public class PisAuthorisationProcessorServiceImpl extends PaymentBaseAuthorisati
         updatePaymentAfterSpiService.updatePaymentStatus(paymentId, paymentStatus);
 
         return new Xs2aUpdatePisCommonPaymentPsuDataResponse(resultScaStatus, paymentId, authorisationId, psuData, xs2aCurrencyConversionInfo);
-    }
-
-    private void writeErrorLog(AuthorisationProcessorRequest request, PsuIdData psuData, ErrorHolder errorHolder, String message) {
-        String messageToLog = String.format("Payment-ID [{}], Authorisation-ID [{}], PSU-ID [{}], SCA Approach [{}]. %s Error msg: [{}]", message);
-        log.warn(messageToLog,
-                 request.getUpdateAuthorisationRequest().getBusinessObjectId(),
-                 request.getUpdateAuthorisationRequest().getAuthorisationId(),
-                 psuData != null ? psuData.getPsuId() : "-",
-                 request.getScaApproach(),
-                 errorHolder);
     }
 }

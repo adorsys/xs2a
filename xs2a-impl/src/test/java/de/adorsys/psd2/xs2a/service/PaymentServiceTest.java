@@ -547,7 +547,7 @@ class PaymentServiceTest {
         TransactionStatus expectedStatus = singlePayment.getTransactionStatus();
 
         // When
-        ResponseObject response = paymentService.getPaymentById(PaymentType.SINGLE, PAYMENT_PRODUCT, PAYMENT_ID);
+        ResponseObject<CommonPayment> response = paymentService.getPaymentById(PaymentType.SINGLE, PAYMENT_PRODUCT, PAYMENT_ID);
 
         // Then
         assertFalse(response.hasError());
@@ -563,7 +563,7 @@ class PaymentServiceTest {
         PaymentType paymentType = PaymentType.SINGLE;
 
         // When
-        ResponseObject actualResponse = paymentService.getPaymentById(paymentType, PAYMENT_PRODUCT, PAYMENT_ID);
+        ResponseObject<CommonPayment> actualResponse = paymentService.getPaymentById(paymentType, PAYMENT_PRODUCT, PAYMENT_ID);
 
         // Then
         verify(getPaymentByIdValidator).validate(new GetPaymentByIdPO(invalidPisCommonPaymentResponse, paymentType, PAYMENT_PRODUCT));
@@ -577,7 +577,7 @@ class PaymentServiceTest {
             .thenReturn(Optional.empty());
 
         // When
-        ResponseObject actualResult = paymentService.getPaymentById(PaymentType.SINGLE, PAYMENT_PRODUCT, WRONG_PAYMENT_ID);
+        ResponseObject<CommonPayment> actualResult = paymentService.getPaymentById(PaymentType.SINGLE, PAYMENT_PRODUCT, WRONG_PAYMENT_ID);
 
         //Then
         assertThatPaymentHasWrongId403(actualResult);
@@ -640,7 +640,7 @@ class PaymentServiceTest {
         PaymentType paymentType = PaymentType.SINGLE;
 
         // When
-        ResponseObject actualResponse = paymentService.getPaymentStatusById(paymentType, PAYMENT_PRODUCT, PAYMENT_ID);
+        ResponseObject<GetPaymentStatusResponse> actualResponse = paymentService.getPaymentStatusById(paymentType, PAYMENT_PRODUCT, PAYMENT_ID);
 
         // Then
         verify(getPaymentStatusByIdValidator).validate(new GetPaymentStatusByIdPO(invalidPisCommonPaymentResponse, paymentType, PAYMENT_PRODUCT));
@@ -654,7 +654,7 @@ class PaymentServiceTest {
             .thenReturn(Optional.empty());
 
         // When
-        ResponseObject actualResult = paymentService.getPaymentStatusById(PaymentType.SINGLE, PAYMENT_PRODUCT, WRONG_PAYMENT_ID);
+        ResponseObject<GetPaymentStatusResponse> actualResult = paymentService.getPaymentStatusById(PaymentType.SINGLE, PAYMENT_PRODUCT, WRONG_PAYMENT_ID);
 
         // Then
         assertThatPaymentHasWrongId403(actualResult);
@@ -801,7 +801,7 @@ class PaymentServiceTest {
             .thenReturn(Optional.empty());
 
         // When
-        ResponseObject actualResult = paymentService.cancelPayment(
+        ResponseObject<CancelPaymentResponse> actualResult = paymentService.cancelPayment(
             new PisPaymentCancellationRequest(PaymentType.SINGLE, PAYMENT_PRODUCT, WRONG_PAYMENT_ID, false, null));
 
         // Then
@@ -824,7 +824,7 @@ class PaymentServiceTest {
         // Then
         assertThat(actualResult.getError()).isNotNull();
         assertThat(actualResult.getError().getErrorType()).isEqualTo(PIS_400);
-        assertThat(actualResult.getError().getTppMessages().contains(of(RESOURCE_BLOCKED))).isTrue();
+        assertThat(actualResult.getError().getTppMessages()).contains(of(RESOURCE_BLOCKED));
     }
 
     private void assertThatPaymentWasCreated(ResponseObject<PaymentInitiationResponse> actualResponse) {
@@ -842,7 +842,7 @@ class PaymentServiceTest {
     private void assertThatPaymentHasWrongId403(ResponseObject actualResult) {
         assertThat(actualResult.hasError()).isTrue();
         assertThat(actualResult.getError().getErrorType()).isEqualTo(ErrorType.PIS_403);
-        assertThat(actualResult.getError().getTppMessages().contains(of(RESOURCE_UNKNOWN_403))).isTrue();
+        assertThat(actualResult.getError().getTppMessages()).contains(of(RESOURCE_UNKNOWN_403));
     }
 
     private BulkPaymentInitiationResponse getBulkResponses() {

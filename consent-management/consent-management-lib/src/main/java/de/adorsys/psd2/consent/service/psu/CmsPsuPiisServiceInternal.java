@@ -84,7 +84,7 @@ public class CmsPsuPiisServiceInternal implements CmsPsuPiisService {
             return true;
         }
 
-        log.info("Consent ID [{}], Instance ID: [{}]. Revoke consent failed, because given psuData is not equals stored psuData, or consent status is finalised, or consent not found",
+        log.info("Consent ID [{}], Instance ID: [{}]. Revoke consent failed,  given psuData is not equals stored psuData, or consent status is finalised, or consent not found",
                  consentId, instanceId);
         return false;
     }

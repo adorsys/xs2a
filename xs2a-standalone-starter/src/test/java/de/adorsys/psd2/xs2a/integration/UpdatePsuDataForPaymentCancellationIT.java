@@ -114,9 +114,9 @@ class UpdatePsuDataForPaymentCancellationIT {
     @MockBean
     private TppStopListService tppStopListService;
     @MockBean
-    private AspspProfileService aspspProfileService;
-    @MockBean
     private Xs2aEventServiceEncrypted eventServiceEncrypted;
+    @MockBean
+    private AspspProfileService aspspProfileService;
     @MockBean
     private PisCommonPaymentServiceEncrypted pisCommonPaymentServiceEncrypted;
     @MockBean

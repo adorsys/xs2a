@@ -49,6 +49,7 @@ import de.adorsys.psd2.xs2a.integration.builder.TppInfoBuilder;
 import de.adorsys.psd2.xs2a.integration.builder.UrlBuilder;
 import de.adorsys.psd2.xs2a.integration.builder.ais.AisConsentAuthorizationResponseBuilder;
 import de.adorsys.psd2.xs2a.integration.builder.ais.CmsConsentBuilder;
+import de.adorsys.psd2.xs2a.service.UuidGeneratorService;
 import de.adorsys.xs2a.reader.JsonReader;
 import org.apache.commons.io.IOUtils;
 import org.junit.jupiter.api.BeforeEach;
@@ -138,6 +139,8 @@ class ConsentCreationSuccessfulIT {
     private AisConsentServiceEncrypted aisConsentServiceEncrypted;
     @MockBean
     private BuildProperties buildProperties;
+    @MockBean
+    private UuidGeneratorService uuidGeneratorService;
 
     private final JsonReader jsonReader = new JsonReader();
 
@@ -330,6 +333,7 @@ class ConsentCreationSuccessfulIT {
             .thenReturn(CmsResponse.<AuthorisationScaApproachResponse>builder()
                             .payload(new AuthorisationScaApproachResponse(scaApproach))
                             .build());
+        when(uuidGeneratorService.generate()).thenReturn(AUTHORISATION_ID);
 
         MockHttpServletRequestBuilder requestBuilder = post(UrlBuilder.buildConsentCreation());
         requestBuilder.headers(headers);

@@ -76,7 +76,7 @@ public class ConsentServiceInternalEncrypted implements ConsentServiceEncrypted 
         Optional<String> decryptIdOptional = securityDataService.decryptId(encryptedConsentId);
 
         if (decryptIdOptional.isEmpty()) {
-            log.info("Encrypted Consent ID: [{}]. Get consent status by id failed, couldn't decrypt consent id", encryptedConsentId);
+            log.info("Encrypted Consent ID: [{}]. Get consent status by ID failed, couldn't decrypt consent ID", encryptedConsentId);
             return CmsResponse.<ConsentStatus>builder()
                        .error(TECHNICAL_ERROR)
                        .build();
@@ -91,7 +91,7 @@ public class ConsentServiceInternalEncrypted implements ConsentServiceEncrypted 
         Optional<String> decryptIdOptional = securityDataService.decryptId(encryptedConsentId);
 
         if (decryptIdOptional.isEmpty()) {
-            log.info("Encrypted Consent ID: [{}]. Update consent by id failed, couldn't decrypt consent id", encryptedConsentId);
+            log.info("Encrypted Consent ID: [{}]. Update consent by ID failed, couldn't decrypt consent ID", encryptedConsentId);
             return CmsResponse.<Boolean>builder()
                        .error(TECHNICAL_ERROR)
                        .build();
@@ -106,7 +106,7 @@ public class ConsentServiceInternalEncrypted implements ConsentServiceEncrypted 
         Optional<String> decryptIdOptional = securityDataService.decryptId(encryptedConsentId);
 
         if (decryptIdOptional.isEmpty()) {
-            log.info("Encrypted Consent ID: [{}]. Get consent by id failed, couldn't decrypt consent id", encryptedConsentId);
+            log.info("Encrypted Consent ID: [{}]. Get consent by ID failed, couldn't decrypt consent ID", encryptedConsentId);
             return CmsResponse.<CmsConsent>builder()
                        .error(TECHNICAL_ERROR)
                        .build();
@@ -121,7 +121,7 @@ public class ConsentServiceInternalEncrypted implements ConsentServiceEncrypted 
         Optional<String> decryptIdOptional = securityDataService.decryptId(encryptedNewConsentId);
 
         if (decryptIdOptional.isEmpty()) {
-            log.info("Encrypted Consent ID: [{}]. Terminate consent by id failed, couldn't decrypt consent id", encryptedNewConsentId);
+            log.info("Encrypted Consent ID: [{}]. Terminate consent by ID failed, couldn't decrypt consent ID", encryptedNewConsentId);
             return CmsResponse.<Boolean>builder()
                        .error(TECHNICAL_ERROR)
                        .build();
@@ -137,7 +137,7 @@ public class ConsentServiceInternalEncrypted implements ConsentServiceEncrypted 
         Optional<String> decryptIdOptional = securityDataService.decryptId(encryptedNewConsentId);
 
         if (decryptIdOptional.isEmpty()) {
-            log.info("Encrypted Consent ID: [{}]. Terminate consent by id failed, couldn't decrypt consent id", encryptedNewConsentId);
+            log.info("Encrypted Consent ID: [{}]. Terminate consent by ID failed, couldn't decrypt consent ID", encryptedNewConsentId);
             return CmsResponse.<Boolean>builder()
                        .error(TECHNICAL_ERROR)
                        .build();
@@ -151,7 +151,7 @@ public class ConsentServiceInternalEncrypted implements ConsentServiceEncrypted 
         Optional<String> decryptIdOptional = securityDataService.decryptId(encryptedConsentId);
 
         if (decryptIdOptional.isEmpty()) {
-            log.info("Encrypted Consent ID: [{}]. Get psu data by consent id failed, couldn't decrypt consent id",
+            log.info("Encrypted Consent ID: [{}]. Get PSU data by consent ID failed, couldn't decrypt consent ID",
                      encryptedConsentId);
             return CmsResponse.<List<PsuIdData>>builder()
                        .error(TECHNICAL_ERROR)
@@ -167,7 +167,7 @@ public class ConsentServiceInternalEncrypted implements ConsentServiceEncrypted 
         Optional<String> decryptIdOptional = securityDataService.decryptId(encryptedConsentId);
 
         if (decryptIdOptional.isEmpty()) {
-            log.info("Encrypted Consent ID: [{}]. Update MultilevelScaRequired failed, couldn't decrypt consent id",
+            log.info("Encrypted Consent ID: [{}]. Update MultilevelScaRequired failed, couldn't decrypt consent ID",
                      encryptedConsentId);
             return CmsResponse.<Boolean>builder()
                        .error(TECHNICAL_ERROR)

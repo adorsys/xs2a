@@ -45,7 +45,6 @@ import de.adorsys.psd2.xs2a.domain.authorisation.AuthorisationResponse;
 import de.adorsys.psd2.xs2a.domain.consent.*;
 import de.adorsys.psd2.xs2a.service.authorization.AuthorisationChainResponsibilityService;
 import de.adorsys.psd2.xs2a.service.authorization.AuthorisationMethodDecider;
-import de.adorsys.psd2.xs2a.service.authorization.ConsentAuthorizationService;
 import de.adorsys.psd2.xs2a.service.authorization.Xs2aAuthorisationService;
 import de.adorsys.psd2.xs2a.service.authorization.ais.AisScaAuthorisationService;
 import de.adorsys.psd2.xs2a.service.authorization.ais.AisScaAuthorisationServiceResolver;
@@ -113,6 +112,7 @@ public class ConsentService {
     private final PsuDataCleaner psuDataCleaner;
     private final ScaApproachResolver scaApproachResolver;
     private final AuthorisationChainResponsibilityService authorisationChainResponsibilityService;
+    private final UuidGeneratorService uuidGeneratorService;
 
     /**
      * Performs create consent operation either by filling the appropriate AccountAccess fields with corresponding
@@ -478,9 +478,8 @@ public class ConsentService {
     }
 
     private void proceedImplicitCaseForCreateConsent(CreateConsentResponse createConsentResponse, PsuIdData psuIdData, String consentId) {
-        // TODO https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/-/issues/1629
         ScaStatus scaStatus = ScaStatus.STARTED;
-        String authorisationId = UUID.randomUUID().toString();
+        String authorisationId = uuidGeneratorService.generate();
         ScaApproach scaApproach = scaApproachResolver.resolveScaApproach();
 
         StartAuthorisationsParameters startAuthorisationsParameters = StartAuthorisationsParameters.builder()
@@ -495,28 +494,13 @@ public class ConsentService {
         CreateConsentAuthorisationProcessorResponse processorResponse =
             (CreateConsentAuthorisationProcessorResponse) authorisationChainResponsibilityService.apply(processorRequest);
 
-        Xs2aCreateAuthorisationRequest createAuthorisationRequest = Xs2aCreateAuthorisationRequest.builder()
-                                                                        .psuData(psuIdData)
-                                                                        .consentId(consentId)
-                                                                        .authorisationId(authorisationId)
-                                                                        .scaStatus(processorResponse.getScaStatus())
-                                                                        .scaApproach(processorResponse.getScaApproach())
-                                                                        .build();
+        loggingContextService.storeScaStatus(processorResponse.getScaStatus());
 
+        createConsentResponse.setAuthorizationId(processorResponse.getAuthorisationId());
+        createConsentResponse.setScaApproach(processorResponse.getScaApproach());
+        createConsentResponse.setScaStatus(processorResponse.getScaStatus());
 
-        ConsentAuthorizationService service = aisScaAuthorisationServiceResolver.getService();
-
-        Optional<CreateConsentAuthorizationResponse> consentAuthorizationResponse = service.createConsentAuthorization(createAuthorisationRequest);
-        if (consentAuthorizationResponse.isPresent()) {
-            CreateConsentAuthorizationResponse createConsentAuthorizationResponse = consentAuthorizationResponse.get();
-            createConsentResponse.setAuthorizationId(createConsentAuthorizationResponse.getAuthorisationId());
-            createConsentResponse.setScaStatus(createConsentAuthorizationResponse.getScaStatus());
-            createConsentResponse.setScaApproach(createConsentAuthorizationResponse.getScaApproach());
-
-            setPsuMessageAndTppMessages(createConsentResponse, processorResponse.getPsuMessage(), processorResponse.getTppMessages());
-
-            loggingContextService.storeScaStatus(createConsentAuthorizationResponse.getScaStatus());
-        }
+        setPsuMessageAndTppMessages(createConsentResponse, processorResponse.getPsuMessage(), processorResponse.getTppMessages());
     }
 
     private void setPsuMessageAndTppMessages(CreateConsentResponse response,

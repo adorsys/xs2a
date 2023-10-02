@@ -36,7 +36,6 @@ import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
 import de.adorsys.psd2.xs2a.core.tpp.TppRole;
 import de.adorsys.psd2.xs2a.domain.ResponseObject;
 import de.adorsys.psd2.xs2a.domain.consent.CreatePaymentAuthorisationProcessorResponse;
-import de.adorsys.psd2.xs2a.domain.consent.Xs2aCreatePisAuthorisationResponse;
 import de.adorsys.psd2.xs2a.domain.consent.Xs2aPisCommonPayment;
 import de.adorsys.psd2.xs2a.domain.pis.CommonPayment;
 import de.adorsys.psd2.xs2a.domain.pis.CommonPaymentInitiationResponse;
@@ -44,11 +43,9 @@ import de.adorsys.psd2.xs2a.domain.pis.PaymentInitiationParameters;
 import de.adorsys.psd2.xs2a.domain.pis.PaymentInitiationResponse;
 import de.adorsys.psd2.xs2a.service.RequestProviderService;
 import de.adorsys.psd2.xs2a.service.ScaApproachResolver;
+import de.adorsys.psd2.xs2a.service.UuidGeneratorService;
 import de.adorsys.psd2.xs2a.service.authorization.AuthorisationChainResponsibilityService;
 import de.adorsys.psd2.xs2a.service.authorization.AuthorisationMethodDecider;
-import de.adorsys.psd2.xs2a.service.authorization.pis.PisScaAuthorisationService;
-import de.adorsys.psd2.xs2a.service.authorization.pis.PisScaAuthorisationServiceResolver;
-import de.adorsys.psd2.xs2a.service.consent.PisAspspDataService;
 import de.adorsys.psd2.xs2a.service.consent.Xs2aPisCommonPaymentService;
 import de.adorsys.psd2.xs2a.service.mapper.cms_xs2a_mappers.Xs2aPisCommonPaymentMapper;
 import de.adorsys.psd2.xs2a.service.mapper.cms_xs2a_mappers.Xs2aToCmsPisCommonPaymentRequestMapper;
@@ -65,7 +62,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.MediaType;
 
 import java.util.Collections;
-import java.util.Optional;
 import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -81,7 +77,6 @@ class CreateCommonPaymentServiceTest {
     private static final TppInfo TPP_INFO = buildTppInfo();
     private static final String PRODUCT = "sepa-credit-transfers";
     private static final byte[] PAYMENT_DATA_IN_BYTES = "payment_data".getBytes();
-    private static final CommonPayment COMMON_PAYMENT = buildCommonPayment();
     private static final Xs2aPisCommonPayment PIS_COMMON_PAYMENT = new Xs2aPisCommonPayment(PAYMENT_ID, PSU_DATA);
     private static final PaymentInitiationParameters PARAM = buildPaymentInitiationParameters();
     private static final CreatePisCommonPaymentResponse PIS_COMMON_PAYMENT_RESPONSE = new CreatePisCommonPaymentResponse(PAYMENT_ID, null);
@@ -89,7 +84,6 @@ class CreateCommonPaymentServiceTest {
     private static final Xs2aPisCommonPayment PIS_COMMON_PAYMENT_FAIL = new Xs2aPisCommonPayment(null, PSU_DATA);
     private static final PsuIdData WRONG_PSU_DATA = new PsuIdData("wrong_psu", null, null, null, null);
     private static final TppInfo WRONG_TPP_INFO = new TppInfo();
-    private static final Xs2aCreatePisAuthorisationResponse CREATE_PIS_AUTHORISATION_RESPONSE = new Xs2aCreatePisAuthorisationResponse(null, null, null, null, null, null, null, null);
     private CommonPaymentInitiationResponse commonPaymentInitiationResponse;
     private static final String INTERNAL_REQUEST_ID = "5c2d5564-367f-4e03-a621-6bef76fa4208";
     private static final ScaStatus SCA_STATUS = ScaStatus.RECEIVED;
@@ -104,13 +98,7 @@ class CreateCommonPaymentServiceTest {
     @Mock
     private Xs2aPisCommonPaymentService pisCommonPaymentService;
     @Mock
-    private PisAspspDataService pisAspspDataService;
-    @Mock
     private AspspDataService aspspDataService;
-    @Mock
-    private PisScaAuthorisationService pisScaAuthorisationService;
-    @Mock
-    private PisScaAuthorisationServiceResolver pisScaAuthorisationServiceResolver;
     @Mock
     private Xs2aPisCommonPaymentMapper xs2aPisCommonPaymentMapper;
     @Mock
@@ -126,6 +114,8 @@ class CreateCommonPaymentServiceTest {
     private AuthorisationChainResponsibilityService authorisationChainResponsibilityService;
     @Mock
     private ScaApproachResolver scaApproachResolver;
+    @Mock
+    private UuidGeneratorService uuidGeneratorService;
 
     @BeforeEach
     void init() {
@@ -136,6 +126,7 @@ class CreateCommonPaymentServiceTest {
 
     @Test
     void createPayment_success() {
+        // Given
         ArgumentCaptor<PisPaymentInfo> pisPaymentInfoArgumentCaptor = ArgumentCaptor.forClass(PisPaymentInfo.class);
         when(commonPaymentInitiationService.initiatePayment(any(CommonPayment.class), eq(PRODUCT), eq(PSU_DATA))).thenReturn(commonPaymentInitiationResponse);
         when(pisCommonPaymentService.createCommonPayment(PAYMENT_INFO)).thenReturn(PIS_COMMON_PAYMENT_RESPONSE);
@@ -145,10 +136,10 @@ class CreateCommonPaymentServiceTest {
         String contentTypeHeader = MediaType.APPLICATION_JSON_VALUE;
         when(requestProviderService.getContentTypeHeader()).thenReturn(contentTypeHeader);
 
-        //When
+        // When
         ResponseObject<PaymentInitiationResponse> actualResponse = createCommonPaymentService.createPayment(PAYMENT_DATA_IN_BYTES, buildPaymentInitiationParameters(), TPP_INFO);
 
-        //Then
+        // Then
         verify(pisCommonPaymentService).createCommonPayment(pisPaymentInfoArgumentCaptor.capture());
         PisPaymentInfo pisPaymentInfo = pisPaymentInfoArgumentCaptor.getValue();
         assertThat(pisPaymentInfo.getContentType()).isEqualTo(contentTypeHeader);
@@ -169,10 +160,10 @@ class CreateCommonPaymentServiceTest {
         commonPayment.setPsuDataList(Collections.singletonList(WRONG_PSU_DATA));
         when(commonPaymentInitiationService.initiatePayment(any(CommonPayment.class), eq(PRODUCT), eq(WRONG_PSU_DATA))).thenReturn(buildSpiErrorForCommonPayment());
 
-        //When
+        // When
         ResponseObject<PaymentInitiationResponse> actualResponse = createCommonPaymentService.createPayment(PAYMENT_DATA_IN_BYTES, param, WRONG_TPP_INFO);
 
-        //Then
+        // Then
         assertThat(actualResponse.hasError()).isTrue();
         assertThat(actualResponse.getError().getTppMessage().getMessageErrorCode()).isEqualTo(MessageErrorCode.FORMAT_ERROR);
     }
@@ -188,10 +179,10 @@ class CreateCommonPaymentServiceTest {
         when(requestProviderService.getInternalRequestIdString()).thenReturn(INTERNAL_REQUEST_ID);
 
 
-        //When
+        // When
         ResponseObject<PaymentInitiationResponse> actualResponse = createCommonPaymentService.createPayment(PAYMENT_DATA_IN_BYTES, PARAM, TPP_INFO);
 
-        //Then
+        // Then
         assertThat(actualResponse.hasError()).isTrue();
         assertThat(actualResponse.getError().getTppMessage().getMessageErrorCode()).isEqualTo(MessageErrorCode.PAYMENT_FAILED);
     }
@@ -207,49 +198,17 @@ class CreateCommonPaymentServiceTest {
 
         when(authorisationMethodDecider.isImplicitMethod(false, false))
             .thenReturn(true);
-        when(pisScaAuthorisationServiceResolver.getService())
-            .thenReturn(pisScaAuthorisationService);
 
         CreatePaymentAuthorisationProcessorResponse response = new CreatePaymentAuthorisationProcessorResponse(SCA_STATUS, SCA_APPROACH, TEST_PSU_MESSAGE, TEST_TPP_MESSAGES, PAYMENT_ID, PSU_DATA);
         when(authorisationChainResponsibilityService.apply(any())).thenReturn(response);
 
-        when(pisScaAuthorisationService.createCommonPaymentAuthorisation(any(), eq(PaymentType.SINGLE)))
-            .thenReturn(Optional.of(CREATE_PIS_AUTHORISATION_RESPONSE));
-
-        //When
+        // When
         ResponseObject<PaymentInitiationResponse> actualResponse = createCommonPaymentService.createPayment(PAYMENT_DATA_IN_BYTES, PARAM, TPP_INFO);
 
-        //Then
+        // Then
         assertThat(actualResponse.hasError()).isFalse();
         assertThat(actualResponse.getBody()).isEqualTo(commonPaymentInitiationResponse);
     }
-
-    @Test
-    void createPayment_pisScaAuthorisationService_createCommonPaymentAuthorisation_fail() {
-        // Given
-        when(commonPaymentInitiationService.initiatePayment(any(CommonPayment.class), eq(PRODUCT), eq(PSU_DATA))).thenReturn(commonPaymentInitiationResponse);
-        when(pisCommonPaymentService.createCommonPayment(PAYMENT_INFO)).thenReturn(PIS_COMMON_PAYMENT_RESPONSE);
-        when(xs2aPisCommonPaymentMapper.mapToXs2aPisCommonPayment(PIS_COMMON_PAYMENT_RESPONSE, PSU_DATA)).thenReturn(PIS_COMMON_PAYMENT);
-        when(xs2aToCmsPisCommonPaymentRequestMapper.mapToPisPaymentInfo(any(PisPaymentInfoCreationObject.class))).thenReturn(PAYMENT_INFO);
-        when(requestProviderService.getInternalRequestIdString()).thenReturn(INTERNAL_REQUEST_ID);
-
-        when(authorisationMethodDecider.isImplicitMethod(false, false))
-            .thenReturn(true);
-        when(pisScaAuthorisationServiceResolver.getService())
-            .thenReturn(pisScaAuthorisationService);
-        CreatePaymentAuthorisationProcessorResponse response = new CreatePaymentAuthorisationProcessorResponse(SCA_STATUS, SCA_APPROACH, TEST_PSU_MESSAGE, TEST_TPP_MESSAGES, PAYMENT_ID, PSU_DATA);
-        when(authorisationChainResponsibilityService.apply(any())).thenReturn(response);
-        when(pisScaAuthorisationService.createCommonPaymentAuthorisation(any(), eq(PaymentType.SINGLE)))
-            .thenReturn(Optional.empty());
-
-        //When
-        ResponseObject<PaymentInitiationResponse> actualResponse = createCommonPaymentService.createPayment(PAYMENT_DATA_IN_BYTES, PARAM, TPP_INFO);
-
-        //Then
-        assertThat(actualResponse.hasError()).isTrue();
-        assertThat(actualResponse.getError().getTppMessage().getMessageErrorCode()).isEqualTo(MessageErrorCode.PAYMENT_FAILED);
-    }
-
 
     private static CommonPayment buildCommonPayment() {
         CommonPayment request = new CommonPayment();

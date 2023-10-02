@@ -44,12 +44,12 @@ import de.adorsys.psd2.xs2a.core.profile.StartAuthorisationMode;
 import de.adorsys.psd2.xs2a.core.sca.AuthorisationScaApproachResponse;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
-import de.adorsys.psd2.xs2a.core.tpp.TppRedirectUri;
 import de.adorsys.psd2.xs2a.domain.consent.CreatePaymentAuthorisationProcessorResponse;
 import de.adorsys.psd2.xs2a.integration.builder.AspspSettingsBuilder;
 import de.adorsys.psd2.xs2a.integration.builder.TppInfoBuilder;
 import de.adorsys.psd2.xs2a.integration.builder.UrlBuilder;
 import de.adorsys.psd2.xs2a.integration.builder.payment.SpiPaymentInitiationResponseBuilder;
+import de.adorsys.psd2.xs2a.service.UuidGeneratorService;
 import de.adorsys.psd2.xs2a.service.authorization.AuthorisationChainResponsibilityService;
 import de.adorsys.psd2.xs2a.service.authorization.processor.model.PisAuthorisationProcessorRequest;
 import de.adorsys.psd2.xs2a.spi.domain.SpiAspspConsentDataProvider;
@@ -124,7 +124,6 @@ class InitiatePaymentsSuccessfulIT {
 
     private static final String TPP_REDIRECT_URI = "request/redirect_uri";
     private static final String TPP_NOK_REDIRECT_URI = "request/nok_redirect_uri";
-    private static final TppRedirectUri TPP_REDIRECT_URIs = new TppRedirectUri(TPP_REDIRECT_URI, TPP_NOK_REDIRECT_URI);
 
     private static final ScaStatus SCA_STATUS = ScaStatus.RECEIVED;
 
@@ -161,6 +160,8 @@ class InitiatePaymentsSuccessfulIT {
     private AuthorisationChainResponsibilityService authorisationChainResponsibilityService;
     @MockBean
     private BuildProperties buildProperties;
+    @MockBean
+    private UuidGeneratorService uuidGeneratorService;
 
     @MockBean
     @Qualifier("consentRestTemplate")
@@ -439,7 +440,8 @@ class InitiatePaymentsSuccessfulIT {
             .willReturn(getCmsReponse(SCA_STATUS));
         CreatePaymentAuthorisationProcessorResponse processorResponse =
             new CreatePaymentAuthorisationProcessorResponse(ScaStatus.STARTED, scaApproach, null,
-                                                            Collections.emptySet(), ENCRYPT_PAYMENT_ID, null);
+                                                            Collections.emptySet(), ENCRYPT_PAYMENT_ID, AUTHORISATION_ID,
+                                                            null, null);
         given(authorisationChainResponsibilityService.apply(any(PisAuthorisationProcessorRequest.class)))
             .willReturn(processorResponse);
         MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders.post(UrlBuilder.buildInitiatePaymentUrl(SINGLE_PAYMENT_TYPE.getValue(), SEPA_PAYMENT_PRODUCT));
@@ -478,7 +480,8 @@ class InitiatePaymentsSuccessfulIT {
             .willReturn(getCmsReponse(SCA_STATUS));
         CreatePaymentAuthorisationProcessorResponse processorResponse =
             new CreatePaymentAuthorisationProcessorResponse(ScaStatus.STARTED, scaApproach, null,
-                                                            Collections.emptySet(), ENCRYPT_PAYMENT_ID, null);
+                                                            Collections.emptySet(), ENCRYPT_PAYMENT_ID, AUTHORISATION_ID,
+                                                            null, null);
         given(authorisationChainResponsibilityService.apply(any(PisAuthorisationProcessorRequest.class)))
             .willReturn(processorResponse);
         MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders.post(UrlBuilder.buildInitiatePaymentUrl(SINGLE_PAYMENT_TYPE.getValue(), SEPA_PAYMENT_PRODUCT));
@@ -510,7 +513,8 @@ class InitiatePaymentsSuccessfulIT {
             .willReturn(getCmsReponse(SCA_STATUS));
         CreatePaymentAuthorisationProcessorResponse processorResponse =
             new CreatePaymentAuthorisationProcessorResponse(ScaStatus.STARTED, scaApproach, null,
-                                                            Collections.emptySet(), ENCRYPT_PAYMENT_ID, null);
+                                                            Collections.emptySet(), ENCRYPT_PAYMENT_ID, AUTHORISATION_ID,
+                                                            null, null);
         given(authorisationChainResponsibilityService.apply(any(PisAuthorisationProcessorRequest.class)))
             .willReturn(processorResponse);
         MockHttpServletRequestBuilder requestBuilder = post(UrlBuilder.buildInitiatePaymentUrl(PERIODIC_PAYMENT_TYPE.getValue(), SEPA_PAYMENT_PRODUCT));
@@ -546,7 +550,8 @@ class InitiatePaymentsSuccessfulIT {
             .willReturn(getCmsReponse(SCA_STATUS));
         CreatePaymentAuthorisationProcessorResponse processorResponse =
             new CreatePaymentAuthorisationProcessorResponse(ScaStatus.STARTED, scaApproach, null,
-                                                            Collections.emptySet(), ENCRYPT_PAYMENT_ID, null);
+                                                            Collections.emptySet(), ENCRYPT_PAYMENT_ID, AUTHORISATION_ID,
+                                                            null, null);
         given(authorisationChainResponsibilityService.apply(any(PisAuthorisationProcessorRequest.class)))
             .willReturn(processorResponse);
 

@@ -66,7 +66,6 @@ class AccountReferenceInConsentUpdaterTest {
     @InjectMocks
     private AccountReferenceInConsentUpdater accountReferenceInConsentUpdater;
 
-
     @Test
     void updateAccountReferences_withGlobalConsent_shouldSetResourceId() {
         // Given
