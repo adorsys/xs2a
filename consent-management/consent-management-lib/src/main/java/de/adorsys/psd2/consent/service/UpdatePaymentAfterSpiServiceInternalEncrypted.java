@@ -49,7 +49,7 @@ public class UpdatePaymentAfterSpiServiceInternalEncrypted implements UpdatePaym
         Optional<String> decryptIdOptional = securityDataService.decryptId(encryptedPaymentId);
 
         if (decryptIdOptional.isEmpty()) {
-            log.info("Encrypted Payment ID [{}]. Update payment status by id failed, couldn't decrypt payment id",
+            log.info("Encrypted Payment ID [{}]. Update payment status by ID failed, couldn't decrypt payment ID",
                      encryptedPaymentId);
             return CmsResponse.<Boolean>builder()
                        .error(TECHNICAL_ERROR)
@@ -65,7 +65,7 @@ public class UpdatePaymentAfterSpiServiceInternalEncrypted implements UpdatePaym
         Optional<String> decryptIdOptional = securityDataService.decryptId(encryptedPaymentId);
 
         if (decryptIdOptional.isEmpty()) {
-            log.info("Encrypted Payment ID [{}]. Update payment status by id failed, couldn't decrypt payment id",
+            log.info("Encrypted Payment ID [{}]. Update payment status by ID failed, couldn't decrypt payment ID",
                      encryptedPaymentId);
             return CmsResponse.<Boolean>builder()
                        .error(TECHNICAL_ERROR)
@@ -81,7 +81,7 @@ public class UpdatePaymentAfterSpiServiceInternalEncrypted implements UpdatePaym
         Optional<String> decryptIdOptional = securityDataService.decryptId(encryptedPaymentId);
 
         if (decryptIdOptional.isEmpty()) {
-            log.info("Encrypted Payment ID [{}]. Update cancellation payment tpp redirect URIs by id failed, couldn't decrypt payment id",
+            log.info("Encrypted Payment ID [{}]. Update payment cancellation TPP redirect URIs by ID failed, couldn't decrypt payment ID",
                      encryptedPaymentId);
             return CmsResponse.<Boolean>builder()
                        .error(TECHNICAL_ERROR)
@@ -97,7 +97,7 @@ public class UpdatePaymentAfterSpiServiceInternalEncrypted implements UpdatePaym
         Optional<String> decryptIdOptional = securityDataService.decryptId(encryptedPaymentId);
 
         if (decryptIdOptional.isEmpty()) {
-            log.info("Encrypted Payment ID [{}]. Update cancellation payment internal request ID failed, couldn't decrypt payment id",
+            log.info("Encrypted Payment ID [{}]. Update payment cancellation internal request ID failed, couldn't decrypt payment ID",
                      encryptedPaymentId);
             return CmsResponse.<Boolean>builder()
                        .error(TECHNICAL_ERROR)

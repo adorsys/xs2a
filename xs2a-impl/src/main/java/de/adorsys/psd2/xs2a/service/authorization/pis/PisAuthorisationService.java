@@ -163,7 +163,7 @@ public class PisAuthorisationService {
         CmsResponse<CreateAuthorisationResponse> cmsResponse = authorisationServiceEncrypted.createAuthorisation(new PisCancellationAuthorisationParentHolder(xs2aCreateAuthorisationRequest.getPaymentId()), request);
 
         if (cmsResponse.hasError()) {
-            log.info("Payment-ID [{}]. Create PIS Payment Cancellation Authorisation has failed. Can't find Payment Data by id or Payment is Finalised.",
+            log.info("Payment-ID [{}]. Create PIS Payment Cancellation Authorisation has failed. Can't find Payment Data by ID or Payment is Finalised.",
                      xs2aCreateAuthorisationRequest.getPaymentId());
             return null;
         }
@@ -267,7 +267,7 @@ public class PisAuthorisationService {
     public void updateCancellationAuthorisation(CommonAuthorisationParameters request,
                                                 AuthorisationProcessorResponse response) {
         if (response.hasError()) {
-            log.warn("Payment-ID [{}], Authorisation-ID [{}]. Updating PIS Payment Cancellation authorisation PSU Data has failed:. Error msg: [{}]",
+            log.warn("Payment-ID [{}], Authorisation-ID [{}]. Updating PIS Payment Cancellation authorisation PSU Data has failed. Error msg: [{}]",
                      request.getBusinessObjectId(), request.getAuthorisationId(), response.getErrorHolder());
         } else {
             authorisationServiceEncrypted.updateAuthorisation(request.getAuthorisationId(),

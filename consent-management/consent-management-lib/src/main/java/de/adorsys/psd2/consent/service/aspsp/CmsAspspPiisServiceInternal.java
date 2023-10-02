@@ -68,7 +68,7 @@ public class CmsAspspPiisServiceInternal implements CmsAspspPiisService {
     @Transactional
     public Optional<String> createConsent(@NotNull PsuIdData psuIdData, @NotNull CreatePiisConsentRequest request, @NotNull String instanceId) {
         if (isInvalidConsentCreationRequest(psuIdData, request)) {
-            log.info("Consent cannot be created, because request contains no allowed tppInfo or empty psuIdData or empty accounts or validUntil or cardExpiryDate in the past");
+            log.info("Consent cannot be created, request contains no allowed tppInfo or empty psuIdData or empty accounts or validUntil or cardExpiryDate in the past");
             return Optional.empty();
         }
 
@@ -82,7 +82,7 @@ public class CmsAspspPiisServiceInternal implements CmsAspspPiisService {
         if (savedConsent.getId() != null) {
             return Optional.ofNullable(savedConsent.getExternalId());
         } else {
-            log.info("External Consent ID: [{}]. PIIS consent cannot be created, because when saving to DB got null ID",
+            log.info("External Consent ID: [{}]. PIIS consent cannot be created, consent ID is null before saving to DB",
                      consent.getExternalId());
             return Optional.empty();
         }
@@ -108,7 +108,7 @@ public class CmsAspspPiisServiceInternal implements CmsAspspPiisService {
         Optional<ConsentEntity> entityOptional = consentJpaRepository.findOne(piisConsentEntitySpecification.byConsentIdAndInstanceId(consentId, instanceId));
 
         if (entityOptional.isEmpty()) {
-            log.info("Consent ID: [{}], Instance ID: [{}]. PIIS consent cannot be terminated, because it was not found by consentId and instanceId",
+            log.info("Consent ID: [{}], Instance ID: [{}]. PIIS consent cannot be terminated, it was not found by consent ID and instance ID",
                      consentId, instanceId);
             return false;
         }

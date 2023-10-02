@@ -104,9 +104,9 @@ class ConsentUpdateAuthorisationIT {
     @MockBean
     private TppStopListService tppStopListService;
     @MockBean
-    private AspspProfileService aspspProfileService;
-    @MockBean
     private Xs2aEventServiceEncrypted eventServiceEncrypted;
+    @MockBean
+    private AspspProfileService aspspProfileService;
     @MockBean
     private AuthorisationServiceEncrypted authorisationServiceEncrypted;
     @MockBean

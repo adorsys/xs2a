@@ -134,5 +134,4 @@ class NotificationSupportedModeServiceTest {
         // Then
         assertEquals(expected, actual);
     }
-
 }

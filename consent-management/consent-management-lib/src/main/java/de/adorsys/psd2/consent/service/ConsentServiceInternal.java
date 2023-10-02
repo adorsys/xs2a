@@ -81,7 +81,7 @@ public class ConsentServiceInternal implements ConsentService {
     public CmsResponse<CmsCreateConsentResponse> createConsent(CmsConsent cmsConsent) throws WrongChecksumException {
 
         if (cmsConsent.getFrequencyPerDay() == null) {
-            log.info("TPP ID: [{}]. Consent cannot be created, because request contains no allowed frequency per day",
+            log.info("TPP ID: [{}]. Consent cannot be created, request contains no allowed frequency per day",
                      cmsConsent.getTppInformation().getTppInfo().getAuthorisationNumber());
             return CmsResponse.<CmsCreateConsentResponse>builder()
                        .error(LOGICAL_ERROR)
@@ -101,7 +101,7 @@ public class ConsentServiceInternal implements ConsentService {
                        .build();
 
         } else {
-            log.info("TPP ID: [{}], External Consent ID: [{}]. Consent cannot be created, because when saving to DB got null ID",
+            log.info("TPP ID: [{}], External Consent ID: [{}]. Consent cannot be created, got null ID before saving to DB ",
                      cmsConsent.getTppInformation().getTppInfo().getAuthorisationNumber(), savedConsent.getExternalId());
             return CmsResponse.<CmsCreateConsentResponse>builder()
                        .error(TECHNICAL_ERROR)
@@ -127,7 +127,7 @@ public class ConsentServiceInternal implements ConsentService {
                        .payload(consentStatusOptional.get())
                        .build();
         } else {
-            log.info("Consent ID: [{}]. Get consent status failed, because consent not found", consentId);
+            log.info("Consent ID: [{}]. Get consent status failed, consent not found", consentId);
             return CmsResponse.<ConsentStatus>builder()
                        .error(LOGICAL_ERROR)
                        .build();
@@ -155,7 +155,7 @@ public class ConsentServiceInternal implements ConsentService {
                        .build();
         }
 
-        log.info("Consent ID [{}]. Update consent status by ID failed, because consent not found", consentId);
+        log.info("Consent ID [{}]. Update consent status by ID failed, consent not found", consentId);
         return CmsResponse.<Boolean>builder()
                    .error(LOGICAL_ERROR)
                    .build();
@@ -207,14 +207,14 @@ public class ConsentServiceInternal implements ConsentService {
                                        });
 
         if (newConsent.isOneAccessType()) {
-            log.info("Consent ID: [{}]. Cannot find old consents, because consent is OneAccessType", newConsentId);
+            log.info("Consent ID: [{}]. Cannot find old consents, consent is OneAccessType", newConsentId);
             return CmsResponse.<Boolean>builder()
                        .payload(false)
                        .build();
         }
 
         if (newConsent.isWrongConsentData()) {
-            log.info("Consent ID: [{}]. Find old consents failed, because consent PSU data list is empty or TPP Info is null", newConsentId);
+            log.info("Consent ID: [{}]. Find old consents failed, consent PSU data list is empty or TPP Info is null", newConsentId);
             throw new IllegalArgumentException("Wrong consent data");
         }
 
@@ -237,7 +237,7 @@ public class ConsentServiceInternal implements ConsentService {
                                                                    .collect(Collectors.toList());
 
         if (oldConsentsWithExactPsuDataLists.isEmpty()) {
-            log.info("Consent ID: [{}]. Cannot find old consents, because consent hasn't exact PSU data lists as old consents", newConsentId);
+            log.info("Consent ID: [{}]. Cannot find old consents, consent hasn't exact PSU data lists as old consents", newConsentId);
             return CmsResponse.<Boolean>builder()
                        .payload(false)
                        .build();
@@ -261,14 +261,14 @@ public class ConsentServiceInternal implements ConsentService {
     @Transactional
     public CmsResponse<Boolean> findAndTerminateOldConsents(String newConsentId, TerminateOldConsentsRequest request) {
         if (request.isOneAccessType()) {
-            log.info("Consent ID: [{}]. Cannot find old consents, because consent is OneAccessType", newConsentId);
+            log.info("Consent ID: [{}]. Cannot find old consents, consent is OneAccessType", newConsentId);
             return CmsResponse.<Boolean>builder()
                        .payload(false)
                        .build();
         }
 
         if (request.isWrongConsentData()) {
-            log.info("Consent ID: [{}]. Find old consents failed, because consent PSU data list is empty or TPP Info is null", newConsentId);
+            log.info("Consent ID: [{}]. Find old consents failed, consent PSU data list is empty or TPP Info is null", newConsentId);
             throw new IllegalArgumentException("Wrong consent data");
         }
 
@@ -291,7 +291,7 @@ public class ConsentServiceInternal implements ConsentService {
                                                                    .collect(Collectors.toList());
 
         if (oldConsentsWithExactPsuDataLists.isEmpty()) {
-            log.info("Consent ID: [{}]. Cannot find old consents, because consent hasn't exact PSU data lists as old consents", newConsentId);
+            log.info("Consent ID: [{}]. Cannot find old consents, consent hasn't exact PSU data lists as old consents", newConsentId);
             return CmsResponse.<Boolean>builder()
                        .payload(false)
                        .build();
@@ -315,7 +315,7 @@ public class ConsentServiceInternal implements ConsentService {
                        .build();
         }
 
-        log.info("Consent ID [{}]. Get PSU data by consent ID failed, because consent not found",
+        log.info("Consent ID [{}]. Get PSU data by consent ID failed, consent not found",
                  consentId);
         return CmsResponse.<List<PsuIdData>>builder()
                    .error(LOGICAL_ERROR)
@@ -327,7 +327,7 @@ public class ConsentServiceInternal implements ConsentService {
     public CmsResponse<Boolean> updateMultilevelScaRequired(String consentId, boolean multilevelScaRequired) throws WrongChecksumException {
         Optional<ConsentEntity> aisConsentOptional = consentJpaRepository.findByExternalId(consentId);
         if (aisConsentOptional.isEmpty()) {
-            log.info("Consent ID: [{}]. Get update multilevel SCA required status failed, because consent authorisation is not found",
+            log.info("Consent ID: [{}]. Get update multilevel SCA required status failed, consent authorisation is not found",
                      consentId);
             return CmsResponse.<Boolean>builder()
                        .payload(false)

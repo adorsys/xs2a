@@ -30,7 +30,7 @@ import lombok.ToString;
 
 import java.util.Set;
 
-// Class can't be immutable, because it it used in aspect (links setting)
+// Class can't be immutable, because it is used in aspect (links setting)
 @Data
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
@@ -44,6 +44,17 @@ public class CreatePaymentAuthorisationProcessorResponse extends AuthorisationPr
     }
 
     public CreatePaymentAuthorisationProcessorResponse(ScaStatus scaStatus, ScaApproach scaApproach, String psuMessage, Set<TppMessageInformation> tppMessages, String paymentId, PsuIdData psuIdData) {
+        this.scaStatus = scaStatus;
+        this.scaApproach = scaApproach;
+        this.psuMessage = psuMessage;
+        this.tppMessages = tppMessages;
+        this.paymentId = paymentId;
+        this.psuData = psuIdData;
+    }
+
+    public CreatePaymentAuthorisationProcessorResponse(ScaStatus scaStatus, ScaApproach scaApproach, String psuMessage, Set<TppMessageInformation> tppMessages, String paymentId, String authorisationId, String internalRequestId, PsuIdData psuIdData) {
+        this.authorisationId = authorisationId;
+        this.internalRequestId = internalRequestId;
         this.scaStatus = scaStatus;
         this.scaApproach = scaApproach;
         this.psuMessage = psuMessage;

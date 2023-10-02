@@ -49,7 +49,7 @@ import de.adorsys.psd2.xs2a.core.tpp.TppRedirectUri;
 import de.adorsys.psd2.xs2a.integration.builder.AspspSettingsBuilder;
 import de.adorsys.psd2.xs2a.integration.builder.TppInfoBuilder;
 import de.adorsys.psd2.xs2a.integration.builder.UrlBuilder;
-import de.adorsys.xs2a.reader.JsonReader;
+import de.adorsys.psd2.xs2a.service.UuidGeneratorService;
 import org.apache.commons.io.IOUtils;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.BeforeEach;
@@ -114,24 +114,24 @@ class PaymentStartCancellationAuthorisationIT {
     @MockBean
     private TppStopListService tppStopListService;
     @MockBean
-    private AspspProfileService aspspProfileService;
-    @MockBean
     private Xs2aEventServiceEncrypted eventServiceEncrypted;
+    @MockBean
+    private AspspProfileService aspspProfileService;
     @MockBean
     private PisCommonPaymentServiceEncrypted pisCommonPaymentServiceEncrypted;
     @MockBean
     private AuthorisationServiceEncrypted authorisationServiceEncrypted;
     @MockBean
     private BuildProperties buildProperties;
+    @MockBean
+    private UuidGeneratorService uuidGeneratorService;
 
     @Captor
     private ArgumentCaptor<CreateAuthorisationRequest> createAuthorisationRequestCaptor;
     @Captor
     private ArgumentCaptor<PisCancellationAuthorisationParentHolder> pisCancellationAuthorisationParentHolderCaptor;
 
-
     private final HttpHeaders httpHeadersExplicit = new HttpHeaders();
-    private final JsonReader jsonReader = new JsonReader();
 
     @BeforeEach
     void setUp() {
@@ -173,6 +173,8 @@ class PaymentStartCancellationAuthorisationIT {
             .willReturn(CmsResponse.<AuthorisationScaApproachResponse>builder()
                             .payload(new AuthorisationScaApproachResponse(ScaApproach.EMBEDDED))
                             .build());
+        given(uuidGeneratorService.generate())
+            .willReturn(AUTHORISATION_ID);
 
         MockHttpServletRequestBuilder requestBuilder = post(UrlBuilder.buildPaymentStartCancellationAuthorisationUrl(
             SINGLE_PAYMENT_TYPE.getValue(), SEPA_PAYMENT_PRODUCT, PAYMENT_ID));

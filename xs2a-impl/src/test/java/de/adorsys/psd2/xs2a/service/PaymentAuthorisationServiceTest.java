@@ -34,7 +34,10 @@ import de.adorsys.psd2.xs2a.core.service.validator.ValidationResult;
 import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
 import de.adorsys.psd2.xs2a.domain.ResponseObject;
 import de.adorsys.psd2.xs2a.domain.authorisation.AuthorisationResponse;
-import de.adorsys.psd2.xs2a.domain.consent.*;
+import de.adorsys.psd2.xs2a.domain.consent.CreatePaymentAuthorisationProcessorResponse;
+import de.adorsys.psd2.xs2a.domain.consent.PaymentScaStatus;
+import de.adorsys.psd2.xs2a.domain.consent.Xs2aAuthorisationSubResources;
+import de.adorsys.psd2.xs2a.domain.consent.Xs2aCreatePisAuthorisationRequest;
 import de.adorsys.psd2.xs2a.domain.consent.pis.PaymentAuthorisationParameters;
 import de.adorsys.psd2.xs2a.domain.consent.pis.Xs2aUpdatePisCommonPaymentPsuDataResponse;
 import de.adorsys.psd2.xs2a.service.authorization.AuthorisationChainResponsibilityService;
@@ -62,7 +65,8 @@ import java.util.Optional;
 import java.util.Set;
 
 import static de.adorsys.psd2.xs2a.core.domain.TppMessageInformation.of;
-import static de.adorsys.psd2.xs2a.core.error.ErrorType.*;
+import static de.adorsys.psd2.xs2a.core.error.ErrorType.PIS_401;
+import static de.adorsys.psd2.xs2a.core.error.ErrorType.PIS_404;
 import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.*;
 import static de.adorsys.psd2.xs2a.core.profile.PaymentType.SINGLE;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -87,7 +91,6 @@ class PaymentAuthorisationServiceTest {
 
     private static final MessageError VALIDATION_ERROR = new MessageError(PIS_401, TppMessageInformation.of(UNAUTHORIZED));
     private static final MessageError RESOURCE_UNKNOWN_ERROR = new MessageError(PIS_404, of(RESOURCE_UNKNOWN_404_NO_PAYMENT));
-    private static final MessageError PAYMENT_FAILED_ERROR = new MessageError(PIS_400, of(PAYMENT_FAILED));
     private static final MessageError PSU_CREDENTIALS_INVALID_ERROR = new MessageError(PIS_401, of(PSU_CREDENTIALS_INVALID));
     private static final ScaApproach SCA_APPROACH = ScaApproach.EMBEDDED;
     private static final Set<TppMessageInformation> TEST_TPP_MESSAGES = Collections.singleton(TppMessageInformation.of(MessageErrorCode.FORMAT_ERROR));
@@ -126,17 +129,14 @@ class PaymentAuthorisationServiceTest {
     private ScaApproachResolver scaApproachResolver;
     @Mock
     private AuthorisationChainResponsibilityService authorisationChainResponsibilityService;
-
+    @Mock
+    private UuidGeneratorService uuidGeneratorService;
 
     @Test
     void createPisAuthorization_Success_ShouldRecordEvent() {
         // Given
-        when(pisScaAuthorisationServiceResolver.getService())
-            .thenReturn(pisScaAuthorisationService);
         when(createPisAuthorisationValidator.validate(new CreatePisAuthorisationObject(buildPisCommonPaymentResponse(), SINGLE, PAYMENT_PRODUCT, PSU_ID_DATA)))
             .thenReturn(ValidationResult.valid());
-        when(pisScaAuthorisationService.createCommonPaymentAuthorisation(any(), eq(SINGLE)))
-            .thenReturn(Optional.of(new Xs2aCreatePisAuthorisationResponse(null, null, null, null, null, PSU_ID_DATA, null, SCA_APPROACH)));
 
         PisCommonPaymentResponse commonPaymentResponse = buildPisCommonPaymentResponse();
 
@@ -157,12 +157,6 @@ class PaymentAuthorisationServiceTest {
     @Test
     void createPisAuthorization_Success_WithNoPsuId() {
         // Given
-        when(pisScaAuthorisationServiceResolver.getService())
-            .thenReturn(pisScaAuthorisationService);
-
-        when(pisScaAuthorisationService.createCommonPaymentAuthorisation(any(), eq(SINGLE)))
-            .thenReturn(Optional.of(new Xs2aCreatePisAuthorisationResponse(null, null, null, null, null, PSU_ID_DATA, null, SCA_APPROACH)));
-
         when(createPisAuthorisationValidator.validate(new CreatePisAuthorisationObject(buildPisCommonPaymentResponse(), SINGLE, PAYMENT_PRODUCT, PSU_ID_DATA_EMPTY)))
             .thenReturn(ValidationResult.valid());
 
@@ -193,7 +187,7 @@ class PaymentAuthorisationServiceTest {
         ArgumentCaptor<EventType> argumentCaptor = ArgumentCaptor.forClass(EventType.class);
 
         // When
-        ResponseObject actual = paymentAuthorisationService.createPisAuthorisation(CREATE_AUTHORISATION_REQUEST_NO_PSU_ID);
+        ResponseObject<AuthorisationResponse> actual = paymentAuthorisationService.createPisAuthorisation(CREATE_AUTHORISATION_REQUEST_NO_PSU_ID);
 
         // Then
         verify(xs2aEventService, times(1)).recordPisTppRequest(eq(PAYMENT_ID), argumentCaptor.capture());
@@ -202,41 +196,10 @@ class PaymentAuthorisationServiceTest {
     }
 
     @Test
-    void createPisAuthorization_PaymentFailedError() {
-        // Given
-        when(pisScaAuthorisationServiceResolver.getService())
-            .thenReturn(pisScaAuthorisationService);
-
-        when(pisCommonPaymentService.getPisCommonPaymentById(PAYMENT_ID))
-            .thenReturn(Optional.of(buildPisCommonPaymentResponse()));
-
-        when(pisPsuDataService.getPsuDataByPaymentId(PAYMENT_ID)).thenReturn(Collections.emptyList());
-        when(createPisAuthorisationValidator.validate(new CreatePisAuthorisationObject(buildPisCommonPaymentResponse(), SINGLE, PAYMENT_PRODUCT, PSU_ID_DATA_EMPTY)))
-            .thenReturn(ValidationResult.valid());
-        CreatePaymentAuthorisationProcessorResponse response = new CreatePaymentAuthorisationProcessorResponse(SCA_STATUS, SCA_APPROACH, TEST_PSU_MESSAGE, TEST_TPP_MESSAGES, PAYMENT_ID, PSU_ID_DATA);
-        when(authorisationChainResponsibilityService.apply(any())).thenReturn(response);
-        ArgumentCaptor<EventType> argumentCaptor = ArgumentCaptor.forClass(EventType.class);
-
-        // When
-        ResponseObject actual = paymentAuthorisationService.createPisAuthorisation(CREATE_AUTHORISATION_REQUEST_NO_PSU_ID);
-
-        // Then
-        verify(xs2aEventService, times(1)).recordPisTppRequest(eq(PAYMENT_ID), argumentCaptor.capture());
-        assertThat(argumentCaptor.getValue()).isEqualTo(EventType.START_PAYMENT_AUTHORISATION_REQUEST_RECEIVED);
-        assertThat(actual.getError()).isEqualTo(PAYMENT_FAILED_ERROR);
-    }
-
-
-    @Test
     void createPisAuthorization_UpdatePsuDataError() {
         // Given
-        when(pisScaAuthorisationServiceResolver.getService())
-            .thenReturn(pisScaAuthorisationService);
         when(createPisAuthorisationValidator.validate(new CreatePisAuthorisationObject(buildPisCommonPaymentResponse(), SINGLE, PAYMENT_PRODUCT, PSU_ID_DATA)))
             .thenReturn(ValidationResult.valid());
-
-        when(pisScaAuthorisationService.createCommonPaymentAuthorisation(any(), eq(SINGLE)))
-            .thenReturn(Optional.of(new Xs2aCreatePisAuthorisationResponse(null, null, null, null, null, PSU_ID_DATA, null, SCA_APPROACH)));
 
         when(pisCommonPaymentService.getPisCommonPaymentById(PAYMENT_ID))
             .thenReturn(Optional.of(buildPisCommonPaymentResponse()));
@@ -248,7 +211,7 @@ class PaymentAuthorisationServiceTest {
             .thenReturn(ValidationResult.invalid(PSU_CREDENTIALS_INVALID_ERROR));
 
         // When
-        ResponseObject actual = paymentAuthorisationService.createPisAuthorisation(CREATE_AUTHORISATION_REQUEST_WITH_PASSWORD);
+        ResponseObject<AuthorisationResponse> actual = paymentAuthorisationService.createPisAuthorisation(CREATE_AUTHORISATION_REQUEST_WITH_PASSWORD);
 
         // Then
         verify(xs2aEventService, times(1)).recordPisTppRequest(eq(PAYMENT_ID), argumentCaptor.capture());
@@ -259,34 +222,25 @@ class PaymentAuthorisationServiceTest {
     @Test
     void createPisAuthorization_Success() {
         // Given
-        when(pisScaAuthorisationServiceResolver.getService())
-            .thenReturn(pisScaAuthorisationService);
-        when(pisScaAuthorisationServiceResolver.getService(AUTHORISATION_ID))
-            .thenReturn(pisScaAuthorisationService);
+        when(pisCommonPaymentService.getPisCommonPaymentById(PAYMENT_ID))
+            .thenReturn(Optional.of(buildPisCommonPaymentResponse()));
         when(createPisAuthorisationValidator.validate(new CreatePisAuthorisationObject(buildPisCommonPaymentResponse(), SINGLE, PAYMENT_PRODUCT, PSU_ID_DATA)))
             .thenReturn(ValidationResult.valid());
-
-        when(pisScaAuthorisationServiceResolver.getService(AUTHORISATION_ID)).thenReturn(pisScaAuthorisationService);
-
+        when(scaApproachResolver.resolveScaApproach()).thenReturn(SCA_APPROACH);
+        CreatePaymentAuthorisationProcessorResponse response = new CreatePaymentAuthorisationProcessorResponse(SCA_STATUS, SCA_APPROACH, TEST_PSU_MESSAGE, TEST_TPP_MESSAGES, PAYMENT_ID, AUTHORISATION_ID, null, PSU_ID_DATA);
+        when(authorisationChainResponsibilityService.apply(any())).thenReturn(response);
+        when(updatePisCommonPaymentPsuDataValidator.validate(any(UpdatePaymentPsuDataPO.class)))
+            .thenReturn(ValidationResult.valid());
+        when(pisScaAuthorisationServiceResolver.getService(AUTHORISATION_ID))
+            .thenReturn(pisScaAuthorisationService);
         Xs2aUpdatePisCommonPaymentPsuDataResponse expected = new Xs2aUpdatePisCommonPaymentPsuDataResponse();
-
-        when(pisScaAuthorisationService.createCommonPaymentAuthorisation(any(), eq(SINGLE)))
-            .thenReturn(Optional.of(new Xs2aCreatePisAuthorisationResponse(AUTHORISATION_ID, null, null, null, null, PSU_ID_DATA, null, SCA_APPROACH)));
-
         when(pisScaAuthorisationService.updateCommonPaymentPsuData(buildXs2aUpdatePisPsuDataRequestWithFullData()))
             .thenReturn(expected);
 
-        when(pisCommonPaymentService.getPisCommonPaymentById(PAYMENT_ID))
-            .thenReturn(Optional.of(buildPisCommonPaymentResponse()));
-        CreatePaymentAuthorisationProcessorResponse response = new CreatePaymentAuthorisationProcessorResponse(SCA_STATUS, SCA_APPROACH, TEST_PSU_MESSAGE, TEST_TPP_MESSAGES, PAYMENT_ID, PSU_ID_DATA);
-        when(authorisationChainResponsibilityService.apply(any())).thenReturn(response);
         ArgumentCaptor<EventType> argumentCaptor = ArgumentCaptor.forClass(EventType.class);
 
-        when(updatePisCommonPaymentPsuDataValidator.validate(any(UpdatePaymentPsuDataPO.class)))
-            .thenReturn(ValidationResult.valid());
-
         // When
-        ResponseObject actual = paymentAuthorisationService.createPisAuthorisation(CREATE_AUTHORISATION_REQUEST_WITH_PASSWORD);
+        ResponseObject<AuthorisationResponse> actual = paymentAuthorisationService.createPisAuthorisation(CREATE_AUTHORISATION_REQUEST_WITH_PASSWORD);
 
         // Then
         verify(xs2aEventService, times(1)).recordPisTppRequest(eq(PAYMENT_ID), argumentCaptor.capture());
@@ -299,14 +253,10 @@ class PaymentAuthorisationServiceTest {
         // Given
         ScaStatus authorisationStatus = ScaStatus.PSUIDENTIFIED;
 
-        when(pisScaAuthorisationServiceResolver.getService())
-            .thenReturn(pisScaAuthorisationService);
         when(createPisAuthorisationValidator.validate(new CreatePisAuthorisationObject(buildPisCommonPaymentResponse(), SINGLE, PAYMENT_PRODUCT, PSU_ID_DATA)))
             .thenReturn(ValidationResult.valid());
-        CreatePaymentAuthorisationProcessorResponse response = new CreatePaymentAuthorisationProcessorResponse(SCA_STATUS, SCA_APPROACH, TEST_PSU_MESSAGE, TEST_TPP_MESSAGES, PAYMENT_ID, PSU_ID_DATA);
+        CreatePaymentAuthorisationProcessorResponse response = new CreatePaymentAuthorisationProcessorResponse(ScaStatus.PSUIDENTIFIED, SCA_APPROACH, TEST_PSU_MESSAGE, TEST_TPP_MESSAGES, PAYMENT_ID, PSU_ID_DATA);
         when(authorisationChainResponsibilityService.apply(any())).thenReturn(response);
-        when(pisScaAuthorisationService.createCommonPaymentAuthorisation(any(), eq(SINGLE)))
-            .thenReturn(Optional.of(new Xs2aCreatePisAuthorisationResponse(null, authorisationStatus, null, null, null, PSU_ID_DATA, null, SCA_APPROACH)));
 
         PisCommonPaymentResponse commonPaymentResponse = buildPisCommonPaymentResponse();
 
@@ -318,6 +268,7 @@ class PaymentAuthorisationServiceTest {
 
         // Then
         assertFalse(actual.hasError());
+        verify(loggingContextService).storeScaStatus(ScaStatus.STARTED);
         verify(loggingContextService).storeTransactionAndScaStatus(TRANSACTION_STATUS, authorisationStatus);
     }
 

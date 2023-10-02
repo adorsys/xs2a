@@ -56,10 +56,10 @@ import org.springframework.stereotype.Service;
 import java.util.EnumSet;
 import java.util.Optional;
 import java.util.Set;
-import java.util.UUID;
 
 import static de.adorsys.psd2.xs2a.core.domain.TppMessageInformation.of;
-import static de.adorsys.psd2.xs2a.core.error.ErrorType.*;
+import static de.adorsys.psd2.xs2a.core.error.ErrorType.PIS_403;
+import static de.adorsys.psd2.xs2a.core.error.ErrorType.PIS_404;
 import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.*;
 
 @Slf4j
@@ -80,6 +80,7 @@ public class PaymentCancellationAuthorisationServiceImpl implements PaymentCance
     private final EventTypeService eventTypeService;
     private final ScaApproachResolver scaApproachResolver;
     private final AuthorisationChainResponsibilityService authorisationChainResponsibilityService;
+    private final UuidGeneratorService uuidGeneratorService;
 
     /**
      * Creates authorisation for payment cancellation request if given psu data is valid
@@ -128,7 +129,7 @@ public class PaymentCancellationAuthorisationServiceImpl implements PaymentCance
 
         Optional<PisCommonPaymentResponse> pisCommonPaymentResponseOptional = xs2aPisCommonPaymentService.getPisCommonPaymentById(paymentId);
         if (pisCommonPaymentResponseOptional.isEmpty()) {
-            log.info("Payment-ID [{}]. Update PIS Cancellation PSU Data has failed. Payment not found by id.", paymentId);
+            log.info("Payment-ID [{}]. Update PIS Cancellation PSU Data has failed. Payment not found by ID.", paymentId);
             return ResponseObject.<Xs2aUpdatePisCommonPaymentPsuDataResponse>builder()
                        .fail(PIS_404, of(RESOURCE_UNKNOWN_404_NO_PAYMENT))
                        .build();
@@ -179,7 +180,7 @@ public class PaymentCancellationAuthorisationServiceImpl implements PaymentCance
 
         Optional<PisCommonPaymentResponse> pisCommonPaymentResponse = xs2aPisCommonPaymentService.getPisCommonPaymentById(paymentId);
         if (pisCommonPaymentResponse.isEmpty()) {
-            log.info("Payment-ID [{}]. Get information PIS Cancellation Authorisation has failed. Payment not found by id.",
+            log.info("Payment-ID [{}]. Get information PIS Cancellation Authorisation has failed. Payment not found by ID.",
                      paymentId);
             return ResponseObject.<Xs2aPaymentCancellationAuthorisationSubResource>builder()
                        .fail(PIS_404, of(RESOURCE_UNKNOWN_404_NO_PAYMENT))
@@ -201,7 +202,7 @@ public class PaymentCancellationAuthorisationServiceImpl implements PaymentCance
         return pisScaAuthorisationService.getCancellationAuthorisationSubResources(paymentId)
                    .map(resp -> ResponseObject.<Xs2aPaymentCancellationAuthorisationSubResource>builder().body(resp).build())
                    .orElseGet(() -> {
-                       log.info("Payment-ID [{}]. Get information PIS Cancellation Authorisation has failed. Authorisation not found by payment id.",
+                       log.info("Payment-ID [{}]. Get information PIS Cancellation Authorisation has failed. Authorisation not found by payment ID.",
                                 paymentId);
                        return ResponseObject.<Xs2aPaymentCancellationAuthorisationSubResource>builder()
                                   .fail(PIS_404, of(RESOURCE_UNKNOWN_404))
@@ -225,7 +226,7 @@ public class PaymentCancellationAuthorisationServiceImpl implements PaymentCance
 
         Optional<PisCommonPaymentResponse> pisCommonPaymentResponseOptional = xs2aPisCommonPaymentService.getPisCommonPaymentById(paymentId);
         if (pisCommonPaymentResponseOptional.isEmpty()) {
-            log.info("Payment-ID [{}]. Get SCA status PIS Cancellation Authorisation has failed. Payment not found by id.",
+            log.info("Payment-ID [{}]. Get SCA status for PIS Cancellation Authorisation has failed. Payment not found by ID.",
                      paymentId);
             return ResponseObject.<PaymentScaStatus>builder()
                        .fail(PIS_404, of(RESOURCE_UNKNOWN_404_NO_PAYMENT))
@@ -239,7 +240,7 @@ public class PaymentCancellationAuthorisationServiceImpl implements PaymentCance
                                                                                                                   paymentType,
                                                                                                                   paymentProduct));
         if (validationResult.isNotValid()) {
-            log.info("Payment-ID [{}]. Get SCA status PIS cancellation authorisation - validation failed: {}",
+            log.info("Payment-ID [{}]. Get SCA status for PIS cancellation authorisation - validation failed: {}",
                      paymentId, validationResult.getMessageError());
             return ResponseObject.<PaymentScaStatus>builder()
                        .fail(validationResult.getMessageError())
@@ -273,7 +274,7 @@ public class PaymentCancellationAuthorisationServiceImpl implements PaymentCance
 
         Optional<PisCommonPaymentResponse> pisCommonPaymentResponseOptional = xs2aPisCommonPaymentService.getPisCommonPaymentById(paymentId);
         if (pisCommonPaymentResponseOptional.isEmpty()) {
-            log.info("Payment-ID [{}]. Create PIS Cancellation Authorization has failed. Payment not found by id.",
+            log.info("Payment-ID [{}]. Create PIS Cancellation Authorisation has failed. Payment not found by ID.",
                      paymentId);
             return ResponseObject.<Xs2aCreatePisCancellationAuthorisationResponse>builder()
                        .fail(PIS_404, of(RESOURCE_UNKNOWN_404_NO_PAYMENT))
@@ -282,7 +283,7 @@ public class PaymentCancellationAuthorisationServiceImpl implements PaymentCance
 
         PisCommonPaymentResponse pisCommonPaymentResponse = pisCommonPaymentResponseOptional.get();
         if (pisCommonPaymentResponse.getInternalPaymentStatus() != InternalPaymentStatus.CANCELLED_INITIATED) {
-            log.info("Payment-ID [{}]. Create PIS Cancellation Authorization has failed. Invalid flow: payment wasn't cancelled.",
+            log.info("Payment-ID [{}]. Create PIS Cancellation Authorisation has failed. Invalid flow: payment wasn't cancelled.",
                      paymentId);
             return ResponseObject.<Xs2aCreatePisCancellationAuthorisationResponse>builder()
                        .fail(PIS_403, of(FORBIDDEN_INCORRECT_FLOW))
@@ -301,9 +302,9 @@ public class PaymentCancellationAuthorisationServiceImpl implements PaymentCance
                        .fail(validationResult.getMessageError())
                        .build();
         }
-        // TODO https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/-/issues/1629
+
         ScaStatus scaStatus = ScaStatus.STARTED;
-        String authorisationId = UUID.randomUUID().toString();
+        String authorisationId = uuidGeneratorService.generate();
         ScaApproach scaApproach = scaApproachResolver.resolveScaApproach();
         StartAuthorisationsParameters startAuthorisationsParameters = StartAuthorisationsParameters.builder()
                                                                           .psuData(psuIdData)
@@ -311,37 +312,26 @@ public class PaymentCancellationAuthorisationServiceImpl implements PaymentCance
                                                                           .scaStatus(scaStatus)
                                                                           .authorisationId(authorisationId)
                                                                           .build();
+
         Authorisation authorisation = new Authorisation(authorisationId, psuIdData, paymentId, AuthorisationType.PIS_CANCELLATION, scaStatus);
         PisCancellationAuthorisationProcessorRequest processorRequest = new PisCancellationAuthorisationProcessorRequest(scaApproach, scaStatus, startAuthorisationsParameters, authorisation);
+        loggingContextService.storeScaStatus(scaStatus);
+
         CreatePaymentAuthorisationProcessorResponse processorResponse =
             (CreatePaymentAuthorisationProcessorResponse) authorisationChainResponsibilityService.apply(processorRequest);
 
-        loggingContextService.storeScaStatus(processorResponse.getScaStatus());
+        Xs2aCreatePisCancellationAuthorisationResponse xs2aCreatePisCancellationAuthorisationResponse = new Xs2aCreatePisCancellationAuthorisationResponse(processorResponse.getAuthorisationId(),
+                                                                                                                                                           processorResponse.getScaStatus(),
+                                                                                                                                                           processorResponse.getScaApproach(),
+                                                                                                                                                           paymentType,
+                                                                                                                                                           processorResponse.getInternalRequestId());
 
-        Xs2aCreateAuthorisationRequest createAuthorisationRequest = Xs2aCreateAuthorisationRequest.builder()
-                                                                        .psuData(psuIdData)
-                                                                        .paymentId(paymentId)
-                                                                        .authorisationId(authorisationId)
-                                                                        .scaStatus(processorResponse.getScaStatus())
-                                                                        .scaApproach(processorResponse.getScaApproach())
-                                                                        .build();
+        setPsuMessageAndTppMessages(xs2aCreatePisCancellationAuthorisationResponse, processorResponse.getPsuMessage(), processorResponse.getTppMessages());
 
-        PisScaAuthorisationService pisScaAuthorisationService = pisScaAuthorisationServiceResolver.getService();
-        Optional<Xs2aCreatePisCancellationAuthorisationResponse> createAuthorisationResponseOptional =
-            pisScaAuthorisationService.createCommonPaymentCancellationAuthorisation(createAuthorisationRequest, paymentType);
-
-        if (createAuthorisationResponseOptional.isEmpty()) {
-            return ResponseObject.<Xs2aCreatePisCancellationAuthorisationResponse>builder()
-                       .fail(PIS_400, of(FORMAT_ERROR))
-                       .build();
-        }
-
-        Xs2aCreatePisCancellationAuthorisationResponse createAuthorisationResponse = createAuthorisationResponseOptional.get();
-        setPsuMessageAndTppMessages(createAuthorisationResponse, processorResponse.getPsuMessage(), processorResponse.getTppMessages());
-        loggingContextService.storeTransactionAndScaStatus(pisCommonPaymentResponseOptional.get().getTransactionStatus(), createAuthorisationResponse.getScaStatus());
+        loggingContextService.storeTransactionAndScaStatus(pisCommonPaymentResponseOptional.get().getTransactionStatus(), xs2aCreatePisCancellationAuthorisationResponse.getScaStatus());
 
         return ResponseObject.<Xs2aCreatePisCancellationAuthorisationResponse>builder()
-                   .body(createAuthorisationResponse)
+                   .body(xs2aCreatePisCancellationAuthorisationResponse)
                    .build();
     }
 

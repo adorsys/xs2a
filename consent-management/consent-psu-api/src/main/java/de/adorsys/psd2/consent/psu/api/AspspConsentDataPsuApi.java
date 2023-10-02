@@ -61,7 +61,7 @@ public interface AspspConsentDataPsuApi {
         @RequestBody CmsAspspConsentDataBase64 request);
 
     @DeleteMapping
-    @Operation(description = "Delete aspsp consent data identified by given consent id / payment id.")
+    @Operation(description = "Delete aspsp consent data identified by given consent ID / payment ID.")
     @ApiResponses(value = {
         @ApiResponse(responseCode = "204", description = "No Content"),
         @ApiResponse(responseCode = "404", description = "Not Found")})

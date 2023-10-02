@@ -79,7 +79,7 @@ public class Xs2aPiisConsentService {
         CmsResponse<CmsConsent> consentById = consentService.getConsentById(consentId);
 
         if (consentById.hasError()) {
-            log.info("Get consent by id failed due to CMS problems");
+            log.info("Get consent by ID failed due to CMS problems");
             return Optional.empty();
         }
         CmsConsent payload = consentById.getPayload();
@@ -87,7 +87,7 @@ public class Xs2aPiisConsentService {
         if (payload.getConsentType() == ConsentType.PIIS_TPP) {
             return Optional.ofNullable(xs2aPiisConsentMapper.mapToPiisConsent(payload));
         }
-        log.info("Requested consent is not of ConsentType.PIIS_TPP, consentId=" + consentId);
+        log.info("Requested consent is not of ConsentType.PIIS_TPP, consent ID: " + consentId);
         return Optional.empty();
     }
 

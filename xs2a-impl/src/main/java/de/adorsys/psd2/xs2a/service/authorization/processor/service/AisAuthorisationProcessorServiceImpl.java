@@ -21,18 +21,25 @@ package de.adorsys.psd2.xs2a.service.authorization.processor.service;
 import de.adorsys.psd2.core.data.ais.AisConsent;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
 import de.adorsys.psd2.xs2a.core.consent.TerminateOldConsentsRequest;
+import de.adorsys.psd2.xs2a.core.domain.ErrorHolder;
+import de.adorsys.psd2.xs2a.core.domain.TppMessageInformation;
 import de.adorsys.psd2.xs2a.core.error.ErrorType;
+import de.adorsys.psd2.xs2a.core.error.MessageErrorCode;
 import de.adorsys.psd2.xs2a.core.mapper.ServiceType;
 import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
 import de.adorsys.psd2.xs2a.domain.authorisation.CommonAuthorisationParameters;
+import de.adorsys.psd2.xs2a.domain.consent.CreateConsentAuthorisationProcessorResponse;
+import de.adorsys.psd2.xs2a.domain.consent.CreateConsentAuthorizationResponse;
 import de.adorsys.psd2.xs2a.domain.consent.UpdateConsentPsuDataResponse;
+import de.adorsys.psd2.xs2a.domain.consent.Xs2aCreateAuthorisationRequest;
 import de.adorsys.psd2.xs2a.service.authorization.ConsentAuthorizationService;
 import de.adorsys.psd2.xs2a.service.authorization.Xs2aAuthorisationService;
 import de.adorsys.psd2.xs2a.service.authorization.ais.AbstractAisAuthorizationService;
 import de.adorsys.psd2.xs2a.service.authorization.ais.AisScaAuthorisationService;
+import de.adorsys.psd2.xs2a.service.authorization.ais.AisScaAuthorisationServiceResolver;
 import de.adorsys.psd2.xs2a.service.authorization.ais.CommonDecoupledAisService;
 import de.adorsys.psd2.xs2a.service.authorization.processor.model.AuthorisationProcessorRequest;
 import de.adorsys.psd2.xs2a.service.authorization.processor.model.AuthorisationProcessorResponse;
@@ -57,6 +64,9 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
+
+import static de.adorsys.psd2.xs2a.core.error.ErrorType.AIS_403;
 
 @Service
 public class AisAuthorisationProcessorServiceImpl extends ConsentAuthorisationProcessorService<AisConsent> {
@@ -66,6 +76,7 @@ public class AisAuthorisationProcessorServiceImpl extends ConsentAuthorisationPr
     private final Xs2aAisConsentMapper aisConsentMapper;
     private final CommonDecoupledAisService commonDecoupledAisService;
     private final AisScaAuthorisationService aisScaAuthorisationService;
+    private final AisScaAuthorisationServiceResolver aisScaAuthorisationServiceResolver;
 
     public AisAuthorisationProcessorServiceImpl(Xs2aAuthorisationService authorisationService,
                                                 SpiContextDataProvider spiContextDataProvider,
@@ -83,7 +94,8 @@ public class AisAuthorisationProcessorServiceImpl extends ConsentAuthorisationPr
                                                 SpiToXs2aTppMessageInformationMapper spiToXs2aTppMessageInformationMapper,
                                                 SpiToXs2aConsentStatusMapper spiToXs2aConsentStatusMapper,
                                                 SpiToXs2aAuthenticationObjectMapper spiToXs2aAuthenticationObjectMapper,
-                                                SpiToXs2aChallengeDataMapper spiToXs2aChallengeDataMapper) {
+                                                SpiToXs2aChallengeDataMapper spiToXs2aChallengeDataMapper,
+                                                AisScaAuthorisationServiceResolver aisScaAuthorisationServiceResolver) {
         super(authorisationService, spiContextDataProvider, aspspConsentDataProviderFactory, spiErrorMapper, spiToXs2aScaStatusMapper, spiToXs2aScaApproachMapper, spiToXs2aTppMessageInformationMapper, spiToXs2aConsentStatusMapper, spiToXs2aAuthenticationObjectMapper, spiToXs2aChallengeDataMapper, psuDataMapper);
         this.services = services;
         this.aisConsentService = aisConsentService;
@@ -91,6 +103,50 @@ public class AisAuthorisationProcessorServiceImpl extends ConsentAuthorisationPr
         this.aisConsentMapper = aisConsentMapper;
         this.commonDecoupledAisService = commonDecoupledAisService;
         this.aisScaAuthorisationService = aisScaAuthorisationService;
+        this.aisScaAuthorisationServiceResolver = aisScaAuthorisationServiceResolver;
+    }
+
+    @Override
+    protected AuthorisationProcessorResponse processAuthorisation(AuthorisationProcessorRequest authorisationProcessorRequest,
+                                                               SpiStartAuthorisationResponse startAuthorisationResponse,
+                                                               ScaStatus scaStatus,
+                                                               ScaApproach scaApproach) {
+        CommonAuthorisationParameters authParameters = authorisationProcessorRequest.getUpdateAuthorisationRequest();
+        PsuIdData psuIdData = authParameters.getPsuData();
+        String consentId = authParameters.getBusinessObjectId();
+        String authorisationId = authParameters.getAuthorisationId();
+
+        ConsentAuthorizationService service = aisScaAuthorisationServiceResolver.getService();
+
+        Xs2aCreateAuthorisationRequest createAuthorisationRequest = Xs2aCreateAuthorisationRequest.builder()
+                                                                        .psuData(psuIdData)
+                                                                        .consentId(consentId)
+                                                                        .authorisationId(authorisationId)
+                                                                        .scaStatus(scaStatus)
+                                                                        .scaApproach(scaApproach)
+                                                                        .build();
+
+        Optional<CreateConsentAuthorizationResponse> consentAuthorizationResponse = service.createConsentAuthorization(createAuthorisationRequest);
+
+        if (consentAuthorizationResponse.isEmpty()) {
+            ErrorHolder errorHolder = ErrorHolder.builder(AIS_403)
+                                          .tppMessages(TppMessageInformation.of(MessageErrorCode.CONSENT_UNKNOWN_403))
+                                          .build();
+            writeErrorLog(authorisationProcessorRequest, psuIdData, errorHolder, AUTHORISATION_FOR_CONSENT_HAS_FAILED);
+            return new CreateConsentAuthorisationProcessorResponse(errorHolder, scaApproach, consentId, psuIdData);
+        }
+
+        CreateConsentAuthorizationResponse createConsentAuthorizationResponse = consentAuthorizationResponse.get();
+
+        Set<TppMessageInformation> tppMessages = spiToXs2aTppMessageInformationMapper.toTppMessageInformationSet(startAuthorisationResponse.getTppMessages());
+        String psuMessage = startAuthorisationResponse.getPsuMessage();
+
+        return new CreateConsentAuthorisationProcessorResponse(createConsentAuthorizationResponse.getScaStatus(),
+                                                               createConsentAuthorizationResponse.getScaApproach(),
+                                                               psuMessage, tppMessages,
+                                                               consentId, authorisationId,
+                                                               createConsentAuthorizationResponse.getInternalRequestId(),
+                                                               psuIdData);
     }
 
     @Override
@@ -101,7 +157,7 @@ public class AisAuthorisationProcessorServiceImpl extends ConsentAuthorisationPr
 
     private ConsentAuthorizationService getService(ScaApproach scaApproach) {
         return services.stream().filter(s -> s.getScaApproachServiceType() == scaApproach).findFirst()
-                   .orElseThrow(() -> new IllegalArgumentException("Ais authorisation service was not found for approach " + scaApproach));
+                   .orElseThrow(() -> new IllegalArgumentException("AIS authorisation service was not found for approach: " + scaApproach));
     }
 
     @Override

@@ -38,6 +38,7 @@ public class AuthorisationProcessorResponse implements AuthorisationResponse {
     protected String basketId;
     protected String authorisationId;
     protected PsuIdData psuData;
+    protected String internalRequestId;
 
     protected ScaStatus scaStatus;
 

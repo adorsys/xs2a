@@ -47,11 +47,14 @@ class ReceivedAuthorisationProcessorTest {
 
     @Test
     void execute() {
+        // Given
         AisAuthorisationProcessorRequest request = new AisAuthorisationProcessorRequest(null, null, null, null);
         when(processorService.doScaReceived(request)).thenReturn(new AuthorisationProcessorResponse());
 
+        // When
         processor.execute(request, processorService);
 
+        // Then
         verify(processorService, times(1)).doScaReceived(request);
     }
 }

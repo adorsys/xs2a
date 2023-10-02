@@ -36,10 +36,12 @@ import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
 import de.adorsys.psd2.xs2a.domain.authorisation.CommonAuthorisationParameters;
 import de.adorsys.psd2.xs2a.domain.consent.ConsentAuthorisationsParameters;
 import de.adorsys.psd2.xs2a.domain.consent.CreateConsentAuthorisationProcessorResponse;
+import de.adorsys.psd2.xs2a.domain.consent.CreateConsentAuthorizationResponse;
 import de.adorsys.psd2.xs2a.domain.consent.UpdateConsentPsuDataResponse;
 import de.adorsys.psd2.xs2a.service.authorization.Xs2aAuthorisationService;
 import de.adorsys.psd2.xs2a.service.authorization.ais.AbstractAisAuthorizationService;
 import de.adorsys.psd2.xs2a.service.authorization.ais.AisScaAuthorisationService;
+import de.adorsys.psd2.xs2a.service.authorization.ais.AisScaAuthorisationServiceResolver;
 import de.adorsys.psd2.xs2a.service.authorization.ais.CommonDecoupledAisService;
 import de.adorsys.psd2.xs2a.service.authorization.processor.model.AisAuthorisationProcessorRequest;
 import de.adorsys.psd2.xs2a.service.authorization.processor.model.AuthorisationProcessorRequest;
@@ -139,6 +141,8 @@ class AisAuthorisationProcessorServiceImplTest {
     private SpiToXs2aAuthenticationObjectMapper spiToXs2aAuthenticationObjectMapper;
     @Mock
     private SpiToXs2aChallengeDataMapper spiToXs2aChallengeDataMapper;
+    @Mock
+    private AisScaAuthorisationServiceResolver aisScaAuthorisationServiceResolver;
 
     private AisAuthorisationProcessorServiceImpl aisAuthorisationProcessorService;
     private final JsonReader jsonReader = new JsonReader();
@@ -159,7 +163,8 @@ class AisAuthorisationProcessorServiceImplTest {
                                                                                     commonDecoupledAisService, aisScaAuthorisationService,
                                                                                     spiToXs2aScaStatusMapper, spiToXs2aScaApproachMapper,
                                                                                     spiToXs2aTppMessageInformationMapper, spiToXs2aConsentStatusMapper,
-                                                                                    spiToXs2aAuthenticationObjectMapper, spiToXs2aChallengeDataMapper);
+                                                                                    spiToXs2aAuthenticationObjectMapper, spiToXs2aChallengeDataMapper,
+                                                                                    aisScaAuthorisationServiceResolver);
     }
 
     @Test
@@ -272,7 +277,7 @@ class AisAuthorisationProcessorServiceImplTest {
                             .payload(buildSpiAuthorizationCodeResult())
                             .build());
         when(spiToXs2aAuthenticationObjectMapper.toAuthenticationObjectList(buildTestSpiAuthenticationObjectSingleValueList(false))).thenReturn(buildTestAuthenticationObjectSingleValueList(false));
-        when(spiToXs2aAuthenticationObjectMapper.toAuthenticationObject(buildTestSpiAuthenticationObject(false))).thenReturn(buildTestAuthenticationObject(false));
+        when(spiToXs2aAuthenticationObjectMapper.toAuthenticationObject(buildTestSpiAuthenticationObject())).thenReturn(buildTestAuthenticationObject());
 
         AuthenticationObject chosenScaMethod = new AuthenticationObject();
 
@@ -814,7 +819,7 @@ class AisAuthorisationProcessorServiceImplTest {
                             .payload(buildSpiAuthorizationCodeResult())
                             .build());
         when(spiToXs2aAuthenticationObjectMapper.toAuthenticationObjectList(buildTestSpiAuthenticationObjectSingleValueList(false))).thenReturn(buildTestAuthenticationObjectSingleValueList(false));
-        when(spiToXs2aAuthenticationObjectMapper.toAuthenticationObject(buildTestSpiAuthenticationObject(false))).thenReturn(buildTestAuthenticationObject(false));
+        when(spiToXs2aAuthenticationObjectMapper.toAuthenticationObject(buildTestSpiAuthenticationObject())).thenReturn(buildTestAuthenticationObject());
 
         AuthenticationObject chosenScaMethod = new AuthenticationObject();
 
@@ -1659,10 +1664,43 @@ class AisAuthorisationProcessorServiceImplTest {
         when(spiToXs2aScaStatusMapper.mapToXs2aScaStatus(SpiScaStatus.RECEIVED)).thenReturn(ScaStatus.RECEIVED);
         when(spiToXs2aScaApproachMapper.mapToXs2aScaApproach(SpiScaApproach.EMBEDDED)).thenReturn(ScaApproach.EMBEDDED);
         when(spiToXs2aTppMessageInformationMapper.toTppMessageInformationSet(TEST_SPI_TPP_MESSAGES)).thenReturn(TEST_TPP_MESSAGES);
+        when(aisScaAuthorisationServiceResolver.getService()).thenReturn(consentAuthorizationService);
+        when(consentAuthorizationService.createConsentAuthorization(any())).thenReturn(Optional.of(getCreateConsentAuthorizationResponse()));
 
         // When
         AuthorisationProcessorResponse actual = aisAuthorisationProcessorService.doScaStarted(authorisationProcessorRequest);
         CreateConsentAuthorisationProcessorResponse expected = buildCreateConsentAuthorisationProcessorResponse();
+
+        // Then
+        assertThat(actual).isEqualTo(expected);
+    }
+
+    @Test
+    void doScaStarted_authorisationEmpty() {
+        // Given
+        AuthorisationProcessorRequest authorisationProcessorRequest = buildAuthorisationProcessorRequest();
+        when(spiContextDataProvider.provideWithPsuIdData(TEST_PSU_DATA)).thenReturn(SPI_CONTEXT_DATA);
+        when(spiAspspConsentDataProviderFactory.getSpiAspspDataProviderFor(ENCRYPTED_CONSENT_ID)).thenReturn(spiAspspConsentDataProvider);
+        when(xs2aAisConsentService.getAccountConsentById(ENCRYPTED_CONSENT_ID)).thenReturn(Optional.of(aisConsent));
+        SpiAccountConsent spiAccountConsent = new SpiAccountConsent();
+        when(xs2aAisConsentMapper.mapToSpiAccountConsent(aisConsent)).thenReturn(spiAccountConsent);
+        SpiResponse<SpiStartAuthorisationResponse> spiResponse = SpiResponse.<SpiStartAuthorisationResponse>builder()
+                                                                     .payload(new SpiStartAuthorisationResponse(TEST_SPI_SCA_APPROACH, TEST_SPI_SCA_STATUS, TEST_PSU_MESSAGE, TEST_SPI_TPP_MESSAGES))
+                                                                     .build();
+        when(aisConsentSpi.startAuthorisation(SPI_CONTEXT_DATA, TEST_SPI_SCA_APPROACH, TEST_SPI_SCA_STATUS, TEST_AUTHORISATION_ID, spiAccountConsent, spiAspspConsentDataProvider))
+            .thenReturn(spiResponse);
+        when(spiToXs2aScaStatusMapper.mapToXs2aScaStatus(SpiScaStatus.RECEIVED)).thenReturn(ScaStatus.RECEIVED);
+        when(spiToXs2aScaApproachMapper.mapToXs2aScaApproach(SpiScaApproach.EMBEDDED)).thenReturn(ScaApproach.EMBEDDED);
+        when(aisScaAuthorisationServiceResolver.getService()).thenReturn(consentAuthorizationService);
+        when(consentAuthorizationService.createConsentAuthorization(any())).thenReturn(Optional.empty());
+
+        // When
+        AuthorisationProcessorResponse actual = aisAuthorisationProcessorService.doScaStarted(authorisationProcessorRequest);
+
+        ErrorHolder errorHolder = ErrorHolder.builder(AIS_403)
+                                      .tppMessages(TppMessageInformation.of(MessageErrorCode.CONSENT_UNKNOWN_403))
+                                      .build();
+        CreateConsentAuthorisationProcessorResponse expected = buildCreateConsentAuthorisationProcessorResponseWithError(errorHolder);
 
         // Then
         assertThat(actual).isEqualTo(expected);
@@ -1699,9 +1737,6 @@ class AisAuthorisationProcessorServiceImplTest {
         // Given
         AuthorisationProcessorRequest authorisationProcessorRequest = buildAuthorisationProcessorRequest();
         when(xs2aAisConsentService.getAccountConsentById(ENCRYPTED_CONSENT_ID)).thenReturn(Optional.empty());
-        ErrorHolder errorHolder = ErrorHolder.builder(TEST_ERROR_TYPE_400)
-                                      .tppMessages(TppMessageInformation.of(MessageErrorCode.CONSENT_UNKNOWN_400))
-                                      .build();
 
         // When
         AuthorisationProcessorResponse actual = aisAuthorisationProcessorService.doScaStarted(authorisationProcessorRequest);
@@ -1811,7 +1846,7 @@ class AisAuthorisationProcessorServiceImplTest {
     }
 
     private CreateConsentAuthorisationProcessorResponse buildCreateConsentAuthorisationProcessorResponse() {
-        return new CreateConsentAuthorisationProcessorResponse(TEST_SCA_STATUS, TEST_SCA_APPROACH, TEST_PSU_MESSAGE, TEST_TPP_MESSAGES, ENCRYPTED_CONSENT_ID, TEST_PSU_DATA);
+        return new CreateConsentAuthorisationProcessorResponse(TEST_SCA_STATUS, TEST_SCA_APPROACH, TEST_PSU_MESSAGE, TEST_TPP_MESSAGES, ENCRYPTED_CONSENT_ID, TEST_AUTHORISATION_ID, null, TEST_PSU_DATA);
     }
 
     private CreateConsentAuthorisationProcessorResponse buildCreateConsentAuthorisationProcessorResponseWithError(ErrorHolder errorHolder) {
@@ -1832,15 +1867,22 @@ class AisAuthorisationProcessorServiceImplTest {
         return Collections.singletonList(spiAuthenticationObject);
     }
 
-    private AuthenticationObject buildTestAuthenticationObject(boolean isDecoupled) {
+    private AuthenticationObject buildTestAuthenticationObject() {
         AuthenticationObject authenticationObject = new AuthenticationObject();
-        authenticationObject.setDecoupled(isDecoupled);
+        authenticationObject.setDecoupled(false);
         return authenticationObject;
     }
 
-    private SpiAuthenticationObject buildTestSpiAuthenticationObject(boolean isDecoupled) {
+    private SpiAuthenticationObject buildTestSpiAuthenticationObject() {
         SpiAuthenticationObject authenticationObject = new SpiAuthenticationObject();
-        authenticationObject.setDecoupled(isDecoupled);
+        authenticationObject.setDecoupled(false);
         return authenticationObject;
+    }
+
+    private CreateConsentAuthorizationResponse getCreateConsentAuthorizationResponse() {
+        CreateConsentAuthorizationResponse createConsentAuthResponse = new CreateConsentAuthorizationResponse();
+        createConsentAuthResponse.setScaApproach(TEST_SCA_APPROACH);
+        createConsentAuthResponse.setScaStatus(TEST_SCA_STATUS);
+        return createConsentAuthResponse;
     }
 }

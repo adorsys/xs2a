@@ -32,9 +32,9 @@ import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
-import de.adorsys.psd2.xs2a.core.tpp.TppRedirectUri;
 import de.adorsys.psd2.xs2a.integration.builder.AspspSettingsBuilder;
 import de.adorsys.psd2.xs2a.integration.builder.TppInfoBuilder;
+import de.adorsys.psd2.xs2a.service.UuidGeneratorService;
 import de.adorsys.psd2.xs2a.service.authorization.AuthorisationChainResponsibilityService;
 import de.adorsys.psd2.xs2a.spi.service.CommonPaymentSpi;
 import org.apache.commons.collections.map.MultiKeyMap;
@@ -66,7 +66,6 @@ public abstract class CustomPaymentTestParent {
     static final String ENCRYPT_PAYMENT_ID = "DfLtDOgo1tTK6WQlHlb-TMPL2pkxRlhZ4feMa5F4tOWwNN45XLNAVfWwoZUKlQwb_=_bS6p6XvTWI";
     static final String CUSTOM_PAYMENT_PRODUCT = "custom-payment";
     static final ScaStatus SCA_STATUS = ScaStatus.RECEIVED;
-    static final TppRedirectUri TPP_REDIRECT_URIs = new TppRedirectUri(TPP_REDIRECT_URI, TPP_NOK_REDIRECT_URI);
     static final String SINGLE_PAYMENT_CUSTOM_REQUEST_JSON_PATH = "/json/payment/req/SinglePaymentCustomInitiate_request.json";
     static final String SINGLE_PAYMENT_CUSTOM_REQUEST_XML_PATH = "/xml/payment/spi/res/SinglePaymentCustomInitiate_request.xml";
     static final String PERIODIC_PAYMENT_CUSTOM_REQUEST_XML_PATH = "/xml/payment/spi/res/PeriodicPaymentCustomInitiate_request.xml";
@@ -104,6 +103,8 @@ public abstract class CustomPaymentTestParent {
     protected AuthorisationChainResponsibilityService authorisationChainResponsibilityService;
     @MockBean
     private BuildProperties buildProperties;
+    @MockBean
+    private UuidGeneratorService uuidGeneratorService;
 
     protected void init() {
         HashMap<String, String> headerMap = new HashMap<>();
@@ -133,7 +134,6 @@ public abstract class CustomPaymentTestParent {
         httpHeadersXml.setAll(headerMap);
         httpHeadersXml.add(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_XML_VALUE);
 
-
         responseMap.put(PaymentType.SINGLE, ScaApproach.EMBEDDED, "/json/payment/res/explicit/SinglePaymentCustomInitiate_embedded_explicit_response.json");
         responseMap.put(PaymentType.SINGLE, ScaApproach.REDIRECT, "/json/payment/res/explicit/SinglePaymentCustomInitiate_redirect_explicit_response.json");
         responseMap.put(PaymentType.BULK, ScaApproach.EMBEDDED, "/json/payment/res/explicit/BulkPaymentCustomInitiate_embedded_explicit_response.json");
@@ -158,6 +158,8 @@ public abstract class CustomPaymentTestParent {
             .willReturn(CmsResponse.<Boolean>builder()
                             .payload(true)
                             .build());
+        given(uuidGeneratorService.generate())
+            .willReturn(AUTHORISATION_ID);
     }
 
     protected HttpHeaders updateHeadersWithAcceptTypeXml(HttpHeaders httpHeaders) {

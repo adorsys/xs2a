@@ -24,12 +24,16 @@ import de.adorsys.psd2.xs2a.core.domain.ErrorHolder;
 import de.adorsys.psd2.xs2a.core.domain.TppMessageInformation;
 import de.adorsys.psd2.xs2a.core.error.ErrorType;
 import de.adorsys.psd2.xs2a.core.error.MessageErrorCode;
+import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import de.adorsys.psd2.xs2a.domain.consent.CreatePaymentAuthorisationProcessorResponse;
+import de.adorsys.psd2.xs2a.domain.consent.Xs2aCreatePisCancellationAuthorisationResponse;
 import de.adorsys.psd2.xs2a.domain.consent.pis.PaymentAuthorisationParameters;
 import de.adorsys.psd2.xs2a.domain.consent.pis.Xs2aUpdatePisCommonPaymentPsuDataResponse;
+import de.adorsys.psd2.xs2a.service.authorization.pis.EmbeddedPisScaAuthorisationService;
+import de.adorsys.psd2.xs2a.service.authorization.pis.PisScaAuthorisationServiceResolver;
 import de.adorsys.psd2.xs2a.service.authorization.processor.model.AuthorisationProcessorRequest;
 import de.adorsys.psd2.xs2a.service.authorization.processor.model.AuthorisationProcessorResponse;
 import de.adorsys.psd2.xs2a.service.authorization.processor.model.PisAuthorisationProcessorRequest;
@@ -43,6 +47,7 @@ import de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiStartAuthorisationRespon
 import de.adorsys.psd2.xs2a.spi.domain.common.SpiAmount;
 import de.adorsys.psd2.xs2a.spi.domain.error.SpiMessageErrorCode;
 import de.adorsys.psd2.xs2a.spi.domain.error.SpiTppMessage;
+import de.adorsys.psd2.xs2a.spi.domain.payment.SpiPaymentType;
 import de.adorsys.psd2.xs2a.spi.domain.payment.SpiSinglePayment;
 import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponse;
 import de.adorsys.psd2.xs2a.spi.domain.response.SpiTppMessageInformation;
@@ -109,6 +114,12 @@ class PisCancellationAuthorisationProcessorServiceImplTest {
     private SpiToXs2aScaApproachMapper spiToXs2aScaApproachMapper;
     @Mock
     private SpiToXs2aTppMessageInformationMapper tppMessageInformationMapper;
+    @Mock
+    private PisScaAuthorisationServiceResolver pisScaAuthorisationServiceResolver;
+    @Mock
+    private EmbeddedPisScaAuthorisationService embeddedPisScaAuthorisationService;
+    @Mock
+    private SpiToXs2aPaymentTypeMapper spiToXs2aPaymentTypeMapper;
 
     private PisCommonPaymentResponse commonPaymentResponse;
 
@@ -123,7 +134,6 @@ class PisCancellationAuthorisationProcessorServiceImplTest {
         AuthorisationProcessorRequest authorisationProcessorRequest = buildAuthorisationProcessorRequest();
         assertThrows(UnsupportedOperationException.class, () -> pisCancellationAuthorisationProcessorService.doScaExempted(authorisationProcessorRequest));
     }
-
 
     @Test
     void doScaStarted_success() {
@@ -141,9 +151,51 @@ class PisCancellationAuthorisationProcessorServiceImplTest {
         when(spiToXs2aScaApproachMapper.mapToXs2aScaApproach(SpiScaApproach.EMBEDDED)).thenReturn(ScaApproach.EMBEDDED);
         when(tppMessageInformationMapper.toTppMessageInformationSet(TEST_SPI_TPP_MESSAGES)).thenReturn(TEST_TPP_MESSAGES);
         when(spiToXs2aScaStatusMapper.mapToXs2aScaStatus(SpiScaStatus.RECEIVED)).thenReturn(ScaStatus.RECEIVED);
+        when(spiToXs2aPaymentTypeMapper.mapToXs2aPaymentType(SpiPaymentType.SINGLE)).thenReturn(PaymentType.SINGLE);
+        when(pisScaAuthorisationServiceResolver.getService()).thenReturn(embeddedPisScaAuthorisationService);
+        Xs2aCreatePisCancellationAuthorisationResponse paymentCancellationAuthorisationResponse = new Xs2aCreatePisCancellationAuthorisationResponse(TEST_AUTHORISATION_ID,
+                                                                                                                                                     TEST_SCA_STATUS,
+                                                                                                                                                     TEST_SCA_APPROACH,
+                                                                                                                                                     PaymentType.SINGLE,
+                                                                                                                                                     null);
+        paymentCancellationAuthorisationResponse.setAuthorisationId(TEST_AUTHORISATION_ID);
+        paymentCancellationAuthorisationResponse.setScaStatus(TEST_SCA_STATUS);
+        paymentCancellationAuthorisationResponse.setScaApproach(TEST_SCA_APPROACH);
+        when(embeddedPisScaAuthorisationService.createCommonPaymentCancellationAuthorisation(any(), eq(PaymentType.SINGLE))).thenReturn(Optional.of(paymentCancellationAuthorisationResponse));
+        CreatePaymentAuthorisationProcessorResponse expected = buildCreatePaymentAuthorisationProcessorResponse();
+
         // When
         AuthorisationProcessorResponse actual = pisCancellationAuthorisationProcessorService.doScaStarted(authorisationProcessorRequest);
-        CreatePaymentAuthorisationProcessorResponse expected = buildCreatePaymentAuthorisationProcessorResponse();
+
+        // Then
+        assertThat(actual).isEqualTo(expected);
+    }
+
+    @Test
+    void doScaStarted_paymentFailed() {
+        // Given
+        AuthorisationProcessorRequest authorisationProcessorRequest = buildAuthorisationProcessorRequest();
+        when(spiContextDataProvider.provideWithPsuIdData(TEST_PSU_DATA)).thenReturn(SPI_CONTEXT_DATA);
+        when(aspspConsentDataProviderFactory.getSpiAspspDataProviderFor(TEST_PAYMENT_ID)).thenReturn(spiAspspConsentDataProvider);
+        when(xs2aPisCommonPaymentService.getPisCommonPaymentById(TEST_PAYMENT_ID)).thenReturn(Optional.of(commonPaymentResponse));
+        when(xs2aToSpiPaymentMapper.mapToSpiPayment(any(PisCommonPaymentResponse.class))).thenReturn(TEST_SPI_SINGLE_PAYMENT);
+        SpiResponse<SpiStartAuthorisationResponse> spiResponse = SpiResponse.<SpiStartAuthorisationResponse>builder()
+                                                                     .payload(new SpiStartAuthorisationResponse(TEST_SPI_SCA_APPROACH, TEST_SPI_SCA_STATUS, TEST_PSU_MESSAGE, TEST_SPI_TPP_MESSAGES))
+                                                                     .build();
+        when(paymentCancellationSpi.startAuthorisation(SPI_CONTEXT_DATA, TEST_SPI_SCA_APPROACH, TEST_SPI_SCA_STATUS, TEST_AUTHORISATION_ID, TEST_SPI_SINGLE_PAYMENT, spiAspspConsentDataProvider))
+            .thenReturn(spiResponse);
+        when(spiToXs2aScaApproachMapper.mapToXs2aScaApproach(SpiScaApproach.EMBEDDED)).thenReturn(ScaApproach.EMBEDDED);
+        when(spiToXs2aScaStatusMapper.mapToXs2aScaStatus(SpiScaStatus.RECEIVED)).thenReturn(ScaStatus.RECEIVED);
+        when(spiToXs2aPaymentTypeMapper.mapToXs2aPaymentType(SpiPaymentType.SINGLE)).thenReturn(PaymentType.SINGLE);
+        when(pisScaAuthorisationServiceResolver.getService()).thenReturn(embeddedPisScaAuthorisationService);
+        when(embeddedPisScaAuthorisationService.createCommonPaymentCancellationAuthorisation(any(), eq(PaymentType.SINGLE))).thenReturn(Optional.empty());
+        ErrorHolder errorHolder = ErrorHolder.builder(PIS_400)
+                                      .tppMessages(TppMessageInformation.of(MessageErrorCode.PAYMENT_FAILED))
+                                      .build();
+        CreatePaymentAuthorisationProcessorResponse expected = buildCreatePaymentAuthorisationProcessorResponseWithError(errorHolder);
+
+        // When
+        AuthorisationProcessorResponse actual = pisCancellationAuthorisationProcessorService.doScaStarted(authorisationProcessorRequest);
 
         // Then
         assertThat(actual).isEqualTo(expected);
@@ -181,7 +233,6 @@ class PisCancellationAuthorisationProcessorServiceImplTest {
         when(xs2aPisCommonPaymentService.getPisCommonPaymentById(TEST_PAYMENT_ID)).thenReturn(Optional.of(pisCommonPaymentResponse));
         when(xs2aToSpiPaymentMapper.mapToSpiPayment(pisCommonPaymentResponse)).thenReturn(new SpiSinglePayment("sepa-credit-transfers"));
 
-        SpiAmount spiAmount = new SpiAmount(Currency.getInstance("EUR"), BigDecimal.valueOf(34));
         // When
         AuthorisationProcessorResponse actual = pisCancellationAuthorisationProcessorService.doScaFinalised(buildAuthorisationProcessorRequest());
 
@@ -229,7 +280,7 @@ class PisCancellationAuthorisationProcessorServiceImplTest {
     }
 
     private CreatePaymentAuthorisationProcessorResponse buildCreatePaymentAuthorisationProcessorResponse() {
-        return new CreatePaymentAuthorisationProcessorResponse(TEST_SCA_STATUS, TEST_SCA_APPROACH, TEST_PSU_MESSAGE, TEST_TPP_MESSAGES, TEST_PAYMENT_ID, TEST_PSU_DATA);
+        return new CreatePaymentAuthorisationProcessorResponse(TEST_SCA_STATUS, TEST_SCA_APPROACH, TEST_PSU_MESSAGE, TEST_TPP_MESSAGES, TEST_PAYMENT_ID, TEST_AUTHORISATION_ID, null, TEST_PSU_DATA);
     }
 
     private CreatePaymentAuthorisationProcessorResponse buildCreatePaymentAuthorisationProcessorResponseWithError(ErrorHolder errorHolder) {

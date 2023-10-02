@@ -97,7 +97,7 @@ public class AisConsentServiceInternal implements AisConsentService {
         Optional<ConsentEntity> consentOptional = aisConsentRepository.getActualAisConsent(consentId);
 
         if (consentOptional.isEmpty()) {
-            log.info("Consent ID [{}]. Update aspsp account access with response failed, because consent not found",
+            log.info("Consent ID [{}]. Update ASPSP account access with response has failed, consent not found",
                      consentId);
             return CmsResponse.<CmsConsent>builder()
                        .error(LOGICAL_ERROR)

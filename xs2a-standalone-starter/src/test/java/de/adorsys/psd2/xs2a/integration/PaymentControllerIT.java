@@ -54,6 +54,7 @@ import de.adorsys.psd2.xs2a.integration.builder.TppInfoBuilder;
 import de.adorsys.psd2.xs2a.integration.builder.UrlBuilder;
 import de.adorsys.psd2.xs2a.integration.builder.payment.PisCommonPaymentResponseBuilder;
 import de.adorsys.psd2.xs2a.service.PaymentServiceForAuthorisationImpl;
+import de.adorsys.psd2.xs2a.service.UuidGeneratorService;
 import de.adorsys.psd2.xs2a.spi.service.SinglePaymentSpi;
 import org.apache.commons.io.IOUtils;
 import org.junit.jupiter.api.BeforeEach;
@@ -148,6 +149,8 @@ class PaymentControllerIT {
     private PaymentServiceForAuthorisationImpl paymentServiceForAuthorisation;
     @MockBean
     private BuildProperties buildProperties;
+    @MockBean
+    private UuidGeneratorService uuidGeneratorService;
 
     @BeforeEach
     void init() {
@@ -174,6 +177,8 @@ class PaymentControllerIT {
             .willReturn(CmsResponse.<Boolean>builder()
                             .payload(true)
                             .build());
+        given(uuidGeneratorService.generate())
+            .willReturn(CANCELLATION_ID);
 
         httpHeadersExplicit.add("Content-Type", "application/json");
         httpHeadersExplicit.add("X-Request-ID", "2f77a125-aa7a-45c0-b414-cea25a116035");
