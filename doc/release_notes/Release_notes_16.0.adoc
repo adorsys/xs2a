@@ -1,0 +1,15 @@
+= Release notes v.16.0
+
+== Table of Contents
+
+* Started new support branch
+
+* Refactored authorisation flow
+
+== Started new support branch
+
+All changes and functionality from 15.9.1 were moved into new support branch.
+
+== Refactored authorisation flow
+
+Authorisation flow was refactored.
