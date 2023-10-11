@@ -45,7 +45,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import javax.validation.Validation;
+import jakarta.validation.Validation;
 import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;

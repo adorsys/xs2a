@@ -37,7 +37,7 @@ class PisCommonPaymentRemoteUrlsTest {
 
     @Test
     void createPisCommonPayment() {
-        assertEquals("http://base.url/pis/common-payments/",
+        assertEquals("http://base.url/pis/common-payments",
                      pisCommonPaymentRemoteUrls.createPisCommonPayment());
     }
 

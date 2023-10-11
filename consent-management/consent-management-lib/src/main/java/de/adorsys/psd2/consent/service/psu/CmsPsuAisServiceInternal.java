@@ -83,6 +83,7 @@ import static de.adorsys.psd2.xs2a.core.consent.ConsentStatus.*;
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
+@SuppressWarnings("PMD.GodClass")
 public class CmsPsuAisServiceInternal implements CmsPsuAisService {
     private final ConsentJpaRepository consentJpaRepository;
     private final AisConsentVerifyingRepository aisConsentRepository;

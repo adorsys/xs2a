@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "2a6e1c0a-5f5d-40a8-a518-79686420f7a2",
+		"_postman_id": "0fe68b29-e7c2-40db-82e7-6f2f20561b43",
 		"name": "XS2A requests 15x",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
 		"_exporter_id": "6572081"
@@ -19687,7 +19687,7 @@
 															"raw": ""
 														},
 														"url": {
-															"raw": "{{protocol}}://{{url_cms}}/psu-api/v1/ais/consent/authorisation/{{authorisation_id}}/",
+															"raw": "{{protocol}}://{{url_cms}}/psu-api/v1/ais/consent/authorisation/{{authorisation_id}}",
 															"protocol": "{{protocol}}",
 															"host": [
 																"{{url_cms}}"
@@ -19698,8 +19698,7 @@
 																"ais",
 																"consent",
 																"authorisation",
-																"{{authorisation_id}}",
-																""
+																"{{authorisation_id}}"
 															]
 														}
 													},
@@ -20098,7 +20097,7 @@
 															"raw": ""
 														},
 														"url": {
-															"raw": "{{protocol}}://{{url_cms}}/psu-api/v1/ais/consent/authorisation/{{authorisation_id}}/",
+															"raw": "{{protocol}}://{{url_cms}}/psu-api/v1/ais/consent/authorisation/{{authorisation_id}}",
 															"protocol": "{{protocol}}",
 															"host": [
 																"{{url_cms}}"
@@ -20109,8 +20108,7 @@
 																"ais",
 																"consent",
 																"authorisation",
-																"{{authorisation_id}}",
-																""
+																"{{authorisation_id}}"
 															]
 														}
 													},
@@ -20573,7 +20571,7 @@
 															"raw": ""
 														},
 														"url": {
-															"raw": "{{protocol}}://{{url_cms}}/psu-api/v1/ais/consent/authorisation/{{authorisation_id}}/",
+															"raw": "{{protocol}}://{{url_cms}}/psu-api/v1/ais/consent/authorisation/{{authorisation_id}}",
 															"protocol": "{{protocol}}",
 															"host": [
 																"{{url_cms}}"
@@ -20584,8 +20582,7 @@
 																"ais",
 																"consent",
 																"authorisation",
-																"{{authorisation_id}}",
-																""
+																"{{authorisation_id}}"
 															]
 														}
 													},
@@ -20923,7 +20920,7 @@
 															"raw": ""
 														},
 														"url": {
-															"raw": "{{protocol}}://{{url_cms}}/psu-api/v1/ais/consent/authorisation/{{authorisation_id}}/",
+															"raw": "{{protocol}}://{{url_cms}}/psu-api/v1/ais/consent/authorisation/{{authorisation_id}}",
 															"protocol": "{{protocol}}",
 															"host": [
 																"{{url_cms}}"
@@ -20934,8 +20931,7 @@
 																"ais",
 																"consent",
 																"authorisation",
-																"{{authorisation_id}}",
-																""
+																"{{authorisation_id}}"
 															]
 														}
 													},
@@ -21269,7 +21265,7 @@
 															"raw": ""
 														},
 														"url": {
-															"raw": "{{protocol}}://{{url_cms}}/psu-api/v1/ais/consent/authorisation/{{authorisation_id}}/",
+															"raw": "{{protocol}}://{{url_cms}}/psu-api/v1/ais/consent/authorisation/{{authorisation_id}}",
 															"protocol": "{{protocol}}",
 															"host": [
 																"{{url_cms}}"
@@ -21280,8 +21276,7 @@
 																"ais",
 																"consent",
 																"authorisation",
-																"{{authorisation_id}}",
-																""
+																"{{authorisation_id}}"
 															]
 														}
 													},
@@ -22413,7 +22408,7 @@
 															"raw": ""
 														},
 														"url": {
-															"raw": "{{protocol}}://{{url_cms}}/psu-api/v1/ais/consent/authorisation/{{authorisation_id}}/",
+															"raw": "{{protocol}}://{{url_cms}}/psu-api/v1/ais/consent/authorisation/{{authorisation_id}}",
 															"protocol": "{{protocol}}",
 															"host": [
 																"{{url_cms}}"
@@ -22424,8 +22419,7 @@
 																"ais",
 																"consent",
 																"authorisation",
-																"{{authorisation_id}}",
-																""
+																"{{authorisation_id}}"
 															]
 														}
 													},
@@ -79762,7 +79756,7 @@
 															"raw": ""
 														},
 														"url": {
-															"raw": "{{protocol}}://{{url_cms}}/psu-api/v1/payment/authorisation/{{authorisation_id}}/",
+															"raw": "{{protocol}}://{{url_cms}}/psu-api/v1/payment/authorisation/{{authorisation_id}}",
 															"protocol": "{{protocol}}",
 															"host": [
 																"{{url_cms}}"
@@ -79772,8 +79766,7 @@
 																"v1",
 																"payment",
 																"authorisation",
-																"{{authorisation_id}}",
-																""
+																"{{authorisation_id}}"
 															]
 														}
 													},
@@ -80190,7 +80183,7 @@
 															"raw": ""
 														},
 														"url": {
-															"raw": "{{protocol}}://{{url_cms}}/psu-api/v1/payment/authorisation/{{authorisation_id}}/",
+															"raw": "{{protocol}}://{{url_cms}}/psu-api/v1/payment/authorisation/{{authorisation_id}}",
 															"protocol": "{{protocol}}",
 															"host": [
 																"{{url_cms}}"
@@ -80200,8 +80193,7 @@
 																"v1",
 																"payment",
 																"authorisation",
-																"{{authorisation_id}}",
-																""
+																"{{authorisation_id}}"
 															]
 														}
 													},
@@ -80683,7 +80675,7 @@
 															"raw": ""
 														},
 														"url": {
-															"raw": "{{protocol}}://{{url_cms}}/psu-api/v1/payment/authorisation/{{authorisation_id}}/",
+															"raw": "{{protocol}}://{{url_cms}}/psu-api/v1/payment/authorisation/{{authorisation_id}}",
 															"protocol": "{{protocol}}",
 															"host": [
 																"{{url_cms}}"
@@ -80693,8 +80685,7 @@
 																"v1",
 																"payment",
 																"authorisation",
-																"{{authorisation_id}}",
-																""
+																"{{authorisation_id}}"
 															]
 														}
 													},
@@ -85324,7 +85315,7 @@
 															"raw": ""
 														},
 														"url": {
-															"raw": "{{protocol}}://{{url_cms}}/psu-api/v1/payment/authorisation/{{authorisation_id}}/",
+															"raw": "{{protocol}}://{{url_cms}}/psu-api/v1/payment/authorisation/{{authorisation_id}}",
 															"protocol": "{{protocol}}",
 															"host": [
 																"{{url_cms}}"
@@ -85334,8 +85325,7 @@
 																"v1",
 																"payment",
 																"authorisation",
-																"{{authorisation_id}}",
-																""
+																"{{authorisation_id}}"
 															]
 														}
 													},
@@ -85662,7 +85652,7 @@
 															"raw": ""
 														},
 														"url": {
-															"raw": "{{protocol}}://{{url_cms}}/psu-api/v1/payment/authorisation/{{authorisation_id}}/",
+															"raw": "{{protocol}}://{{url_cms}}/psu-api/v1/payment/authorisation/{{authorisation_id}}",
 															"protocol": "{{protocol}}",
 															"host": [
 																"{{url_cms}}"
@@ -85672,8 +85662,7 @@
 																"v1",
 																"payment",
 																"authorisation",
-																"{{authorisation_id}}",
-																""
+																"{{authorisation_id}}"
 															]
 														}
 													},
@@ -86718,7 +86707,7 @@
 															"raw": ""
 														},
 														"url": {
-															"raw": "{{protocol}}://{{url_cms}}/psu-api/v1/payment/authorisation/{{authorisation_id}}/",
+															"raw": "{{protocol}}://{{url_cms}}/psu-api/v1/payment/authorisation/{{authorisation_id}}",
 															"protocol": "{{protocol}}",
 															"host": [
 																"{{url_cms}}"
@@ -86728,8 +86717,7 @@
 																"v1",
 																"payment",
 																"authorisation",
-																"{{authorisation_id}}",
-																""
+																"{{authorisation_id}}"
 															]
 														}
 													},
@@ -99843,7 +99831,7 @@
 													"raw": "{\n  \"account\": {\n    \"aspspAccountId\": \"125-DEDE89370400440532013000-EUR\",\n    \"currency\": \"EUR\",\n    \"iban\": \"{{iban_multiple}}\"\n  },\n  \"cardExpiryDate\": \"2025-12-31\",\n  \"cardInformation\": \"MyMerchant Loyalty Card\",\n  \"cardNumber\": 1234567891234,\n  \"registrationInformation\": \"Your contract Number 1234 with MyMerchant is completed with the registration with your bank.\",\n  \"tppAuthorisationNumber\": \"PSDDE-FAKENCA-87B2AC\",\n  \"validUntil\": \"2025-10-10\"\n}"
 												},
 												"url": {
-													"raw": "{{protocol}}://{{url_cms}}/aspsp-api/v1/piis/consents/",
+													"raw": "{{protocol}}://{{url_cms}}/aspsp-api/v1/piis/consents",
 													"protocol": "{{protocol}}",
 													"host": [
 														"{{url_cms}}"
@@ -99852,8 +99840,7 @@
 														"aspsp-api",
 														"v1",
 														"piis",
-														"consents",
-														""
+														"consents"
 													]
 												},
 												"description": "This method is used to initiate a payment at the ASPSP.  ## Variants of Payment Initiation Requests  This method to initiate a payment initiation at the ASPSP can be sent with either a JSON body or an pain.001 body depending on the payment product in the path.  There are the following **payment products**:    - Payment products with payment information in *JSON* format:     - ***sepa-credit-transfers***     - ***instant-sepa-credit-transfers***     - ***target-2-payments***     - ***cross-border-credit-transfers***   - Payment products with payment information in *pain.001* XML format:     - ***pain.001-sepa-credit-transfers***     - ***pain.001-instant-sepa-credit-transfers***     - ***pain.001-target-2-payments***     - ***pain.001-cross-border-credit-transfers***  Furthermore the request body depends on the **payment-service**   * ***payments***: A single payment initiation request.   * ***bulk-payments***: A collection of several payment iniatiation requests.        In case of a *pain.001* message there are more than one payments contained in the *pain.001 message.          In case of a *JSON* there are several JSON payment blocks contained in a joining list.   * ***periodic-payments***:      Create a standing order initiation resource for recurrent i.e. periodic payments addressable under {paymentId}       with all data relevant for the corresponding payment product and the execution of the standing order contained in a JSON body.   This is the first step in the API to initiate the related recurring/periodic payment.    ## Single and mulitilevel SCA Processes  The Payment Initiation Requests are independent from the need of one ore multilevel  SCA processing, i.e. independent from the number of authorisations needed for the execution of payments.   But the response messages are specific to either one SCA processing or multilevel SCA processing.   For payment initiation with multilevel SCA, this specification requires an explicit start of the authorisation,  i.e. links directly associated with SCA processing like 'scaRedirect' or 'scaOAuth' cannot be contained in the  response message of a Payment Initation Request for a payment, where multiple authorisations are needed.  Also if any data is needed for the next action, like selecting an SCA method is not supported in the response,  since all starts of the multiple authorisations are fully equal.  In these cases, first an authorisation sub-resource has to be generated following the 'startAuthorisation' link. "
@@ -100198,7 +100185,7 @@
 													"raw": "{\n  \"account\": {\n    \"iban\": \"{{iban_none}}\",\n    \"currency\": \"EUR\"\n  },\n  \"tppAuthorisationNumber\": \"PSDDE-FAKENCA-87B2AC\",\n  \"validUntil\": \"2025-10-10\"\n}"
 												},
 												"url": {
-													"raw": "{{protocol}}://{{url_cms}}/aspsp-api/v1/piis/consents/",
+													"raw": "{{protocol}}://{{url_cms}}/aspsp-api/v1/piis/consents",
 													"protocol": "{{protocol}}",
 													"host": [
 														"{{url_cms}}"
@@ -100207,8 +100194,7 @@
 														"aspsp-api",
 														"v1",
 														"piis",
-														"consents",
-														""
+														"consents"
 													]
 												}
 											},
@@ -100444,7 +100430,7 @@
 													"raw": "{\n  \"account\": {\n    \"iban\": \"{{iban_none}}\",\n    \"currency\": \"EUR\"\n  },\n  \"tppAuthorisationNumber\": \"PSDDE-FAKENCA-87B2AD\",\n  \"validUntil\": \"2025-10-10\"\n}"
 												},
 												"url": {
-													"raw": "{{protocol}}://{{url_cms}}/aspsp-api/v1/piis/consents/",
+													"raw": "{{protocol}}://{{url_cms}}/aspsp-api/v1/piis/consents",
 													"protocol": "{{protocol}}",
 													"host": [
 														"{{url_cms}}"
@@ -100453,8 +100439,7 @@
 														"aspsp-api",
 														"v1",
 														"piis",
-														"consents",
-														""
+														"consents"
 													]
 												}
 											},
@@ -100749,7 +100734,7 @@
 											"raw": "{\n  \"account\": {\n    \"iban\": \"{{iban_none}}\",\n    \"currency\": \"EUR\"\n  },\n  \"tppAuthorisationNumber\": \"PSDDE-FAKENCA-87B2AC\",\n  \"validUntil\": \"2025-10-10\"\n}"
 										},
 										"url": {
-											"raw": "{{protocol}}://{{url_cms}}/aspsp-api/v1/piis/consents/",
+											"raw": "{{protocol}}://{{url_cms}}/aspsp-api/v1/piis/consents",
 											"protocol": "{{protocol}}",
 											"host": [
 												"{{url_cms}}"
@@ -100758,8 +100743,7 @@
 												"aspsp-api",
 												"v1",
 												"piis",
-												"consents",
-												""
+												"consents"
 											]
 										}
 									},
@@ -101317,7 +101301,7 @@
 											"raw": "{\n  \"account\": {\n    \"iban\": \"{{iban_none}}\",\n    \"currency\": \"EUR\"\n  },\n  \"tppAuthorisationNumber\": \"PSDDE-FAKENCA-87B2AC\",\n  \"validUntil\": \"2025-10-10\"\n}"
 										},
 										"url": {
-											"raw": "{{protocol}}://{{url_cms}}/aspsp-api/v1/piis/consents/",
+											"raw": "{{protocol}}://{{url_cms}}/aspsp-api/v1/piis/consents",
 											"protocol": "{{protocol}}",
 											"host": [
 												"{{url_cms}}"
@@ -101326,8 +101310,7 @@
 												"aspsp-api",
 												"v1",
 												"piis",
-												"consents",
-												""
+												"consents"
 											]
 										}
 									},
@@ -114141,7 +114124,7 @@
 													"raw": "{\n  \"account\": \n    {\n      \"currency\": \"EUR\",\n      \"iban\": \"LU280019400644750000\",\n      \"aspspAccountId\": \"{{aspsp_account_id}}\"\n    },\n  \"tppAuthorisationNumber\": \"{{tpp_id}}\",\n  \"validUntil\": \"2025-10-10\"\n}"
 												},
 												"url": {
-													"raw": "{{protocol}}://{{url_cms}}/aspsp-api/v1/piis/consents/",
+													"raw": "{{protocol}}://{{url_cms}}/aspsp-api/v1/piis/consents",
 													"protocol": "{{protocol}}",
 													"host": [
 														"{{url_cms}}"
@@ -114150,8 +114133,7 @@
 														"aspsp-api",
 														"v1",
 														"piis",
-														"consents",
-														""
+														"consents"
 													]
 												}
 											},
@@ -114832,7 +114814,7 @@
 													"raw": "{\n    \"account\": {\n        \"currency\": \"EUR\",\n        \"iban\": \"{{iban_none}}\",\n        \"aspspAccountId\": \"{{aspsp_account_id}}\"\n    },\n    \"tppAuthorisationNumber\": \"{{tpp_id}}\",\n    \"validUntil\": \"2025-10-10\"\n}"
 												},
 												"url": {
-													"raw": "{{protocol}}://{{url_cms}}/aspsp-api/v1/piis/consents/",
+													"raw": "{{protocol}}://{{url_cms}}/aspsp-api/v1/piis/consents",
 													"protocol": "{{protocol}}",
 													"host": [
 														"{{url_cms}}"
@@ -114841,8 +114823,7 @@
 														"aspsp-api",
 														"v1",
 														"piis",
-														"consents",
-														""
+														"consents"
 													]
 												}
 											},
@@ -114948,7 +114929,7 @@
 													"raw": "{\n    \"account\": {\n        \"currency\": \"EUR\",\n        \"iban\": \"{{iban_none}}\",\n        \"aspspAccountId\": \"{{aspsp_account_id}}\"\n    },\n    \"tppAuthorisationNumber\": \"{{tpp_id}}\",\n    \"validUntil\": \"2025-10-10\"\n}"
 												},
 												"url": {
-													"raw": "{{protocol}}://{{url_cms}}/aspsp-api/v1/piis/consents/",
+													"raw": "{{protocol}}://{{url_cms}}/aspsp-api/v1/piis/consents",
 													"protocol": "{{protocol}}",
 													"host": [
 														"{{url_cms}}"
@@ -114957,8 +114938,7 @@
 														"aspsp-api",
 														"v1",
 														"piis",
-														"consents",
-														""
+														"consents"
 													]
 												}
 											},
@@ -115091,7 +115071,7 @@
 													"raw": "{\n    \"account\": {\n        \"currency\": \"EUR\",\n        \"iban\": \"{{iban_none}}\",\n        \"aspspAccountId\": \"{{aspsp_account_id}}\"\n    },\n    \"tppAuthorisationNumber\": \"{{tpp_id}}\",\n    \"validUntil\": \"2025-10-10\"\n}"
 												},
 												"url": {
-													"raw": "{{protocol}}://{{url_cms}}/aspsp-api/v1/piis/consents/",
+													"raw": "{{protocol}}://{{url_cms}}/aspsp-api/v1/piis/consents",
 													"protocol": "{{protocol}}",
 													"host": [
 														"{{url_cms}}"
@@ -115100,8 +115080,7 @@
 														"aspsp-api",
 														"v1",
 														"piis",
-														"consents",
-														""
+														"consents"
 													]
 												}
 											},
@@ -115443,7 +115422,7 @@
 													"raw": "{\n    \"account\": {\n        \"currency\": \"EUR\",\n        \"iban\": \"{{iban_none}}\",\n        \"aspspAccountId\": \"{{aspsp_account_id}}\"\n    },\n    \"tppAuthorisationNumber\": \"{{tpp_id}}\",\n    \"validUntil\": \"2025-10-10\"\n}"
 												},
 												"url": {
-													"raw": "{{protocol}}://{{url_cms}}/aspsp-api/v1/piis/consents/",
+													"raw": "{{protocol}}://{{url_cms}}/aspsp-api/v1/piis/consents",
 													"protocol": "{{protocol}}",
 													"host": [
 														"{{url_cms}}"
@@ -115452,8 +115431,7 @@
 														"aspsp-api",
 														"v1",
 														"piis",
-														"consents",
-														""
+														"consents"
 													]
 												}
 											},
@@ -124023,7 +124001,7 @@
 															"raw": "{\n  \"account\": \n    {\n      \"currency\": \"EUR\",\n      \"iban\": \"LU280019400644750000\",\n      \"aspspAccountId\": \"{{aspsp_account_id}}\"\n    },\n  \"tppAuthorisationNumber\": \"{{tpp_id}}\",\n  \"validUntil\": \"2025-10-10\"\n}"
 														},
 														"url": {
-															"raw": "{{protocol}}://{{url_cms}}/aspsp-api/v1/piis/consents/",
+															"raw": "{{protocol}}://{{url_cms}}/aspsp-api/v1/piis/consents",
 															"protocol": "{{protocol}}",
 															"host": [
 																"{{url_cms}}"
@@ -124032,8 +124010,7 @@
 																"aspsp-api",
 																"v1",
 																"piis",
-																"consents",
-																""
+																"consents"
 															]
 														}
 													},
@@ -124138,7 +124115,7 @@
 															"raw": "{\n    \"account\": {\n        \"currency\": \"EUR\",\n        \"iban\": \"{{iban_none}}\",\n        \"aspspAccountId\": \"{{aspsp_account_id}}\"\n    },\n    \"tppAuthorisationNumber\": \"{{tpp_id}}\",\n    \"validUntil\": \"2025-10-10\"\n}"
 														},
 														"url": {
-															"raw": "{{protocol}}://{{url_cms}}/aspsp-api/v1/piis/consents/",
+															"raw": "{{protocol}}://{{url_cms}}/aspsp-api/v1/piis/consents",
 															"protocol": "{{protocol}}",
 															"host": [
 																"{{url_cms}}"
@@ -124147,8 +124124,7 @@
 																"aspsp-api",
 																"v1",
 																"piis",
-																"consents",
-																""
+																"consents"
 															]
 														}
 													},
@@ -125312,7 +125288,7 @@
 									}
 								],
 								"url": {
-									"raw": "{{protocol}}://{{url_aspsp_profile}}/api/v1/aspsp-profile/",
+									"raw": "{{protocol}}://{{url_aspsp_profile}}/api/v1/aspsp-profile",
 									"protocol": "{{protocol}}",
 									"host": [
 										"{{url_aspsp_profile}}"
@@ -125320,8 +125296,7 @@
 									"path": [
 										"api",
 										"v1",
-										"aspsp-profile",
-										""
+										"aspsp-profile"
 									]
 								}
 							},

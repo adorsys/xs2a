@@ -9,7 +9,7 @@ volumes:
 services:
   # xs2a standalone starter
   xs2a-standalone-starter:
-    image: adorsys/xs2a-standalone-starter
+    image: gitlab-registry.adorsys.de/adorsys/xs2a/aspsp-xs2a/xs2a-standalone-starter:${XS2A_VERSION}
     build:
       context: xs2a-standalone-starter
       dockerfile: Dockerfile
@@ -29,7 +29,7 @@ services:
 
   # ASPSP-PROFILE
   aspsp-profile:
-    image: adorsys/xs2a-aspsp-profile
+    image: gitlab-registry.adorsys.de/adorsys/xs2a/aspsp-xs2a/xs2a-aspsp-profile:${XS2A_VERSION}
     build:
       context: aspsp-profile/aspsp-profile-server
       dockerfile: Dockerfile
@@ -44,7 +44,7 @@ services:
 
   # CONSENT-MANAGEMENT-SYSTEM
   consent-management:
-    image: adorsys/xs2a-consent-management
+    image: gitlab-registry.adorsys.de/adorsys/xs2a/aspsp-xs2a/xs2a-consent-management:${XS2A_VERSION}
     build:
       context: consent-management/cms-standalone-service
       dockerfile: Dockerfile

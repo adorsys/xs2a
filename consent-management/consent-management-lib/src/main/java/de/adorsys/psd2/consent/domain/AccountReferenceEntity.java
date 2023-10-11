@@ -21,7 +21,7 @@ package de.adorsys.psd2.consent.domain;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 import java.util.Currency;
 
 @Data

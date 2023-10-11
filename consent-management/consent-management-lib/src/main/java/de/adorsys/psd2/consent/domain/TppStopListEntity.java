@@ -22,7 +22,7 @@ import de.adorsys.psd2.xs2a.core.tpp.TppStatus;
 import lombok.*;
 import org.jetbrains.annotations.Nullable;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 import java.time.Duration;
 import java.time.OffsetDateTime;
 import java.util.Optional;

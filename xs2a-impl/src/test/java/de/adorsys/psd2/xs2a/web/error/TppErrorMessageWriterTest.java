@@ -36,7 +36,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpStatus;
 
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.Writer;
@@ -94,7 +94,7 @@ class TppErrorMessageWriterTest {
         tppErrorMessageWriter.writeError(response, tppErrorMessage);
 
         ArgumentCaptor<Writer> writerArgumentCaptor = ArgumentCaptor.forClass(Writer.class);
-        ArgumentCaptor<ErrorMapperContainer.ErrorBody> errorBodyArgumentCaptor = ArgumentCaptor.forClass(ErrorMapperContainer.ErrorBody.class);
+        ArgumentCaptor<Object> errorBodyArgumentCaptor = ArgumentCaptor.forClass(Object.class);
 
         verify(serviceTypeDiscoveryService).getServiceType();
         verify(errorMapperContainer).getErrorBody(messageError);
@@ -116,7 +116,7 @@ class TppErrorMessageWriterTest {
         tppErrorMessageWriter.writeError(response, messageError);
         //Then
         ArgumentCaptor<Writer> writerArgumentCaptor = ArgumentCaptor.forClass(Writer.class);
-        ArgumentCaptor<ErrorMapperContainer.ErrorBody> errorBodyArgumentCaptor = ArgumentCaptor.forClass(ErrorMapperContainer.ErrorBody.class);
+        ArgumentCaptor<Object> errorBodyArgumentCaptor = ArgumentCaptor.forClass(Object.class);
 
         verify(errorMapperContainer).getErrorBody(messageError);
         verify(xs2aObjectMapper).writeValue(writerArgumentCaptor.capture(), errorBodyArgumentCaptor.capture());

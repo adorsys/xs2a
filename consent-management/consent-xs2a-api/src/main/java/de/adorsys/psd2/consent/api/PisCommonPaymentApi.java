@@ -37,7 +37,7 @@ import org.springframework.web.bind.annotation.*;
 @Tag(name = InternalCmsXs2aApiTagName.PIS_COMMON_PAYMENT, description = "Provides access to common payment system for PIS")
 public interface PisCommonPaymentApi {
 
-    @PostMapping(path = "/")
+    @PostMapping
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "OK", content = @Content(schema = @Schema(implementation = CreatePisCommonPaymentResponse.class))),
         @ApiResponse(responseCode = "400", description = "Bad request")})

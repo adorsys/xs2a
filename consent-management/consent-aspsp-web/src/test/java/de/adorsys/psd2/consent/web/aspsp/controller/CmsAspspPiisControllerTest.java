@@ -50,7 +50,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @ExtendWith(MockitoExtension.class)
 class CmsAspspPiisControllerTest {
     private final String CONSENT_ID = "03f0fccb-8462-43e8-9f7e-fce2887bcf38";
-    private final String CREATE_PIIS_CONSENT_URL = "/aspsp-api/v1/piis/consents/";
+    private final String CREATE_PIIS_CONSENT_URL = "/aspsp-api/v1/piis/consents";
     private final String DELETE_PIIS_CONSENT_URL = "/aspsp-api/v1/piis/consents/03f0fccb-8462-43e8-9f7e-fce2887bcf38";
     private final String PSU_ID = "marion.mueller";
     private final String CREATE_PIIS_CONSENT_REQUEST_PATH = "json/piis/create-piis-consent-request.json";

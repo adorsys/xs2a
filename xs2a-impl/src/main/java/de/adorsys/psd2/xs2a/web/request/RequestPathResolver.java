@@ -21,7 +21,7 @@ package de.adorsys.psd2.xs2a.web.request;
 import org.springframework.stereotype.Component;
 import org.springframework.web.util.UrlPathHelper;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 
 @Component
 public class RequestPathResolver {

@@ -24,7 +24,7 @@ import de.adorsys.psd2.xs2a.core.profile.NotificationSupportedMode;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 import java.util.List;
 import java.util.Objects;
 

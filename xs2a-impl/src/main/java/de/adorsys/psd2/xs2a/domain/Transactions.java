@@ -23,7 +23,7 @@ import de.adorsys.psd2.xs2a.domain.account.Xs2aAdditionalInformationStructured;
 import de.adorsys.psd2.xs2a.domain.code.BankTransactionCode;
 import lombok.Data;
 
-import javax.validation.constraints.Size;
+import jakarta.validation.constraints.Size;
 import java.time.LocalDate;
 import java.util.List;
 

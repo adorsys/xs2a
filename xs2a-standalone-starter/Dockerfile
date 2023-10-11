@@ -1,4 +1,4 @@
-FROM adorsys/java:11
+FROM adorsys/java:17
 
 LABEL maintainer="https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a"
 

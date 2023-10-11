@@ -34,7 +34,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
-@SuppressWarnings("PMD.ExcessivePublicCount")
+@SuppressWarnings({"PMD.ExcessivePublicCount", "PMD.GodClass"})
 @RequiredArgsConstructor
 public class AspspProfileServiceWrapper {
     private final AspspProfileService aspspProfileService;

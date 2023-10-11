@@ -22,7 +22,7 @@ import de.adorsys.psd2.consent.domain.consent.ConsentEntity;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 import java.time.LocalDate;
 
 @Data

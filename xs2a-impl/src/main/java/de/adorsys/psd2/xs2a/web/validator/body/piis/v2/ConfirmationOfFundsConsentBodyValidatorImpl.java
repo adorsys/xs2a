@@ -30,7 +30,7 @@ import de.adorsys.psd2.xs2a.web.validator.body.FieldLengthValidator;
 import de.adorsys.psd2.xs2a.web.validator.body.raw.FieldExtractor;
 import org.springframework.stereotype.Component;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 import java.util.Optional;
 
 import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.FORMAT_ERROR_NULL_VALUE;

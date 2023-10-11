@@ -76,7 +76,7 @@ customers know and can handle.
 Right now we use:
 
 * Base technologies:
-- Java 11
+- Java 17
 - Spring Boot, Spring Data, Spring WebMVC
 - Hibernate
 - Mapstruct

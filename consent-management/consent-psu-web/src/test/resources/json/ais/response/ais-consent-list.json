@@ -25,7 +25,7 @@
     "recurringIndicator": true,
     "validUntil": "2020-06-01",
     "frequencyPerDay": 6,
-    "lastActionDate": "2020-03-05",
+    "lastActionDateTime": "2020-03-05T23:40:40.324",
     "consentStatus": "REJECTED",
     "withBalance": true,
     "tppRedirectPreferred": false,

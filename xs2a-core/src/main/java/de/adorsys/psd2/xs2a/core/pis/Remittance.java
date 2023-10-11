@@ -21,7 +21,7 @@ package de.adorsys.psd2.xs2a.core.pis;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
-import javax.validation.constraints.Size;
+import jakarta.validation.constraints.Size;
 
 @Data
 @Schema(description = "Remittance")
