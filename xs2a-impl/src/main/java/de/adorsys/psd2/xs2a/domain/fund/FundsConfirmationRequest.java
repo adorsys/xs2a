@@ -23,7 +23,7 @@ import de.adorsys.psd2.xs2a.core.profile.AccountReference;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import javax.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotNull;
 
 @Data
 @NoArgsConstructor

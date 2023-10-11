@@ -36,7 +36,7 @@ class ConsentRemoteUrlsTest {
 
     @Test
     void createConsent() {
-        String expected = "http://base.url/consent/";
+        String expected = "http://base.url/consent";
         assertEquals(expected, consentRemoteUrls.createConsent());
     }
 

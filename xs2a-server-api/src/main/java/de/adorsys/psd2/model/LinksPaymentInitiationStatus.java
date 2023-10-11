@@ -29,7 +29,7 @@ import java.util.Objects;
  */
 @Schema(description = "Should refer to next steps if the problem can be resolved via the interface e.g. for re-submission of credentials. ")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-05-06T13:00:42.214155+03:00[Europe/Kiev]")
+@jakarta.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-05-06T13:00:42.214155+03:00[Europe/Kiev]")
 
 
 public class LinksPaymentInitiationStatus extends HashMap<String, HrefType>  {

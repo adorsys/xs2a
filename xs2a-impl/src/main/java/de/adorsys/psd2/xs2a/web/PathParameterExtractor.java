@@ -18,10 +18,10 @@
 
 package de.adorsys.psd2.xs2a.web;
 
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerMapping;
 
-import javax.servlet.http.HttpServletRequest;
 import java.util.Map;
 
 @Component

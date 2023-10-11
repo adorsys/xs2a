@@ -19,6 +19,7 @@
 package de.adorsys.psd2.consent.service.authorisation;
 
 import de.adorsys.psd2.consent.domain.PsuData;
+import de.adorsys.psd2.consent.repository.PsuDataRepository;
 import de.adorsys.psd2.consent.service.mapper.PsuDataMapper;
 import de.adorsys.psd2.consent.service.psu.CmsPsuService;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
@@ -33,6 +34,7 @@ import java.util.Optional;
 public class PsuService {
     protected final CmsPsuService cmsPsuService;
     protected final PsuDataMapper psuDataMapper;
+    protected final PsuDataRepository psuDataRepository;
 
     public PsuData mapToPsuData(PsuIdData psuData, String instanceId) {
         return psuDataMapper.mapToPsuData(psuData, instanceId);
@@ -48,5 +50,9 @@ public class PsuService {
 
     public boolean isPsuDataRequestCorrect(PsuData psuRequest, PsuData psuData) {
         return cmsPsuService.isPsuDataRequestCorrect(psuRequest, psuData);
+    }
+
+    public void savePsuData(PsuData psuData) {
+        psuDataRepository.save(psuData);
     }
 }

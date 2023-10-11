@@ -27,7 +27,7 @@ public class ConsentRemoteUrls {
     private String consentServiceBaseUrl;
 
     public String createConsent() {
-        return consentServiceBaseUrl + "/consent/";
+        return consentServiceBaseUrl + "/consent";
     }
 
     public String getConsentStatusById() {

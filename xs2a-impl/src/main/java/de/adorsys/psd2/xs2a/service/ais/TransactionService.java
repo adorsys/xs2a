@@ -71,6 +71,7 @@ import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.*;
 @Slf4j
 @Service
 @AllArgsConstructor
+@SuppressWarnings("PMD.TooManyMethods")
 public class TransactionService {
 
     private final AccountSpi accountSpi;
