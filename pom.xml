@@ -213,6 +213,7 @@
         <maven-gpg-plugin.version>3.0.1</maven-gpg-plugin.version>
         <jacoco-maven-plugin.version>0.8.5</jacoco-maven-plugin.version>
         <sonar-maven-plugin.version>3.7.0.1746</sonar-maven-plugin.version>
+        <maven-javadoc-plugin.version>3.6.0</maven-javadoc-plugin.version>
 
         <spring.version>5.3.28</spring.version>
         <spring-test.version>${spring.version}</spring-test.version>
@@ -289,6 +290,7 @@
 				<enabled>false</enabled>
 			</snapshots>
 		</repository>
+
 		<repository>
 			<id>gitlab-maven</id>
 			<url>https://git.adorsys.de/api/v4/groups/49/-/packages/maven</url>
@@ -693,6 +695,24 @@
                     <artifactId>sonar-maven-plugin</artifactId>
                     <version>${sonar-maven-plugin.version}</version>
                 </plugin>
+
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-source-plugin</artifactId>
+                    <version>${maven-source-plugin.version}</version>
+                </plugin>
+
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-javadoc-plugin</artifactId>
+                    <version>${maven-javadoc-plugin.version}</version>
+                </plugin>
+
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-gpg-plugin</artifactId>
+                    <version>${maven-gpg-plugin.version}</version>
+                </plugin>
             </plugins>
         </pluginManagement>
 <!--
@@ -751,6 +771,7 @@ Use it manually to generate javadocs. Don't commit it
                     </annotationProcessorPaths>
                 </configuration>
             </plugin>
+
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
@@ -759,6 +780,7 @@ Use it manually to generate javadocs. Don't commit it
                     <useSystemClassLoader>false</useSystemClassLoader>
                 </configuration>
             </plugin>
+
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-enforcer-plugin</artifactId>
@@ -803,6 +825,7 @@ Use it manually to generate javadocs. Don't commit it
                     </excludeRoots>
                 </configuration>
             </plugin>
+
             <plugin>
                 <groupId>org.jacoco</groupId>
                 <artifactId>jacoco-maven-plugin</artifactId>
@@ -871,7 +894,6 @@ Use it manually to generate javadocs. Don't commit it
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-source-plugin</artifactId>
-                        <version>${maven-source-plugin.version}</version>
                         <executions>
                             <execution>
                                 <id>attach-sources</id>
@@ -881,10 +903,10 @@ Use it manually to generate javadocs. Don't commit it
                             </execution>
                         </executions>
                     </plugin>
+
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-gpg-plugin</artifactId>
-                        <version>${maven-gpg-plugin.version}</version>
                         <configuration>
                         </configuration>
                         <executions>
@@ -903,6 +925,7 @@ Use it manually to generate javadocs. Don't commit it
                             </execution>
                         </executions>
                     </plugin>
+
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-javadoc-plugin</artifactId>
@@ -933,7 +956,6 @@ Use it manually to generate javadocs. Don't commit it
 								<plugin>
 										<groupId>org.apache.maven.plugins</groupId>
 										<artifactId>maven-source-plugin</artifactId>
-										<version>${maven-source-plugin.version}</version>
 										<executions>
 												<execution>
 														<id>attach-sources</id>
@@ -974,5 +996,4 @@ Use it manually to generate javadocs. Don't commit it
 				</distributionManagement>
 		</profile>
     </profiles>
-
 </project>
