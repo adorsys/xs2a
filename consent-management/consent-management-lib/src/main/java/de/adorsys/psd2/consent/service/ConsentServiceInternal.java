@@ -42,6 +42,8 @@ import de.adorsys.psd2.xs2a.core.consent.TerminateOldConsentsRequest;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.ListUtils;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -59,6 +61,9 @@ import static de.adorsys.psd2.xs2a.core.consent.ConsentStatus.*;
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 public class ConsentServiceInternal implements ConsentService {
+    @Value("${xs2a.cms.db.max-chunk-size:1000}")
+    private int maxChunkSize;
+
     private final AuthorisationRepository authorisationRepository;
     private final ConsentJpaRepository consentJpaRepository;
     private final AisConsentVerifyingRepository aisConsentRepository;
@@ -84,28 +89,28 @@ public class ConsentServiceInternal implements ConsentService {
             log.info("TPP ID: [{}]. Consent cannot be created, request contains no allowed frequency per day",
                      cmsConsent.getTppInformation().getTppInfo().getAuthorisationNumber());
             return CmsResponse.<CmsCreateConsentResponse>builder()
-                       .error(LOGICAL_ERROR)
-                       .build();
+                           .error(LOGICAL_ERROR)
+                           .build();
         }
         ConsentEntity consentEntityFromMapper = cmsConsentMapper.mapToNewConsentEntity(cmsConsent);
         ConsentEntity consent = adjustConsentEntity(consentEntityFromMapper, cmsConsent.getConsentType());
         tppInfoRepository.findByAuthorisationNumber(cmsConsent.getTppInformation().getTppInfo().getAuthorisationNumber())
-            .ifPresent(tppInfo -> consent.getTppInformation().setTppInfo(tppInfo));
+                .ifPresent(tppInfo -> consent.getTppInformation().setTppInfo(tppInfo));
 
         ConsentEntity savedConsent = aisConsentRepository.verifyAndSave(consent);
 
         if (savedConsent.getId() != null) {
             return CmsResponse.<CmsCreateConsentResponse>builder()
-                       .payload(new CmsCreateConsentResponse(savedConsent.getExternalId(),
-                                                             cmsConsentMapper.mapToCmsConsent(savedConsent, Collections.emptyList(), Collections.emptyMap())))
-                       .build();
+                           .payload(new CmsCreateConsentResponse(savedConsent.getExternalId(),
+                                                                 cmsConsentMapper.mapToCmsConsent(savedConsent, Collections.emptyList(), Collections.emptyMap())))
+                           .build();
 
         } else {
             log.info("TPP ID: [{}], External Consent ID: [{}]. Consent cannot be created, got null ID before saving to DB ",
                      cmsConsent.getTppInformation().getTppInfo().getAuthorisationNumber(), savedConsent.getExternalId());
             return CmsResponse.<CmsCreateConsentResponse>builder()
-                       .error(TECHNICAL_ERROR)
-                       .build();
+                           .error(TECHNICAL_ERROR)
+                           .build();
         }
     }
 
@@ -119,18 +124,18 @@ public class ConsentServiceInternal implements ConsentService {
     @Transactional
     public CmsResponse<ConsentStatus> getConsentStatusById(String consentId) {
         Optional<ConsentStatus> consentStatusOptional = consentJpaRepository.findByExternalId(consentId)
-                                                            .map(aisConsentConfirmationExpirationService::checkAndUpdateOnConfirmationExpiration)
-                                                            .map(this::checkAndUpdateOnExpiration)
-                                                            .map(ConsentEntity::getConsentStatus);
+                                                                .map(aisConsentConfirmationExpirationService::checkAndUpdateOnConfirmationExpiration)
+                                                                .map(this::checkAndUpdateOnExpiration)
+                                                                .map(ConsentEntity::getConsentStatus);
         if (consentStatusOptional.isPresent()) {
             return CmsResponse.<ConsentStatus>builder()
-                       .payload(consentStatusOptional.get())
-                       .build();
+                           .payload(consentStatusOptional.get())
+                           .build();
         } else {
             log.info("Consent ID: [{}]. Get consent status failed, consent not found", consentId);
             return CmsResponse.<ConsentStatus>builder()
-                       .error(LOGICAL_ERROR)
-                       .build();
+                           .error(LOGICAL_ERROR)
+                           .build();
         }
     }
 
@@ -151,14 +156,14 @@ public class ConsentServiceInternal implements ConsentService {
             boolean result = setStatusAndSaveConsent(consent, status);
 
             return CmsResponse.<Boolean>builder()
-                       .payload(result)
-                       .build();
+                           .payload(result)
+                           .build();
         }
 
         log.info("Consent ID [{}]. Update consent status by ID failed, consent not found", consentId);
         return CmsResponse.<Boolean>builder()
-                   .error(LOGICAL_ERROR)
-                   .build();
+                       .error(LOGICAL_ERROR)
+                       .build();
     }
 
     /**
@@ -171,14 +176,14 @@ public class ConsentServiceInternal implements ConsentService {
     @Transactional
     public CmsResponse<CmsConsent> getConsentById(String consentId) {
         Optional<ConsentEntity> consentEntityOptional = consentJpaRepository.findByExternalId(consentId)
-                                                            .map(aisConsentConfirmationExpirationService::checkAndUpdateOnConfirmationExpiration)
-                                                            .map(this::checkAndUpdateOnExpiration);
+                                                                .map(aisConsentConfirmationExpirationService::checkAndUpdateOnConfirmationExpiration)
+                                                                .map(this::checkAndUpdateOnExpiration);
 
         if (consentEntityOptional.isEmpty()) {
             log.info("Consent ID [{}]. Get consent by ID failed, couldn't find consent by its ID", consentId);
             return CmsResponse.<CmsConsent>builder()
-                       .error(LOGICAL_ERROR)
-                       .build();
+                           .error(LOGICAL_ERROR)
+                           .build();
         }
 
         ConsentEntity consentEntity = consentEntityOptional.get();
@@ -187,8 +192,8 @@ public class ConsentServiceInternal implements ConsentService {
         CmsConsent cmsConsent = cmsConsentMapper.mapToCmsConsent(consentEntity, authorisations, aisConsentUsageService.getUsageCounterMap(consentEntity));
 
         return CmsResponse.<CmsConsent>builder()
-                   .payload(cmsConsent)
-                   .build();
+                       .payload(cmsConsent)
+                       .build();
     }
 
     /**
@@ -201,16 +206,16 @@ public class ConsentServiceInternal implements ConsentService {
     @Transactional
     public CmsResponse<Boolean> findAndTerminateOldConsentsByNewConsentId(String newConsentId) {
         ConsentEntity newConsent = consentJpaRepository.findByExternalId(newConsentId)
-                                       .orElseThrow(() -> {
-                                           log.info("Consent ID: [{}]. Cannot find consent by ID", newConsentId);
-                                           return new IllegalArgumentException("Wrong consent ID: " + newConsentId);
-                                       });
+                                           .orElseThrow(() -> {
+                                               log.info("Consent ID: [{}]. Cannot find consent by ID", newConsentId);
+                                               return new IllegalArgumentException("Wrong consent ID: " + newConsentId);
+                                           });
 
         if (newConsent.isOneAccessType()) {
             log.info("Consent ID: [{}]. Cannot find old consents, consent is OneAccessType", newConsentId);
             return CmsResponse.<Boolean>builder()
-                       .payload(false)
-                       .build();
+                           .payload(false)
+                           .build();
         }
 
         if (newConsent.isWrongConsentData()) {
@@ -219,35 +224,38 @@ public class ConsentServiceInternal implements ConsentService {
         }
 
         List<PsuData> psuDataList = newConsent.getPsuDataList();
-        Set<String> psuIds = psuDataList.stream()
-                                 .filter(Objects::nonNull)
-                                 .map(PsuData::getPsuId)
-                                 .collect(Collectors.toSet());
+        List<String> psuIds = psuDataList.stream()
+                                      .filter(Objects::nonNull)
+                                      .map(PsuData::getPsuId)
+                                      .distinct()
+                                      .collect(Collectors.toList());
         TppInfoEntity tppInfo = newConsent.getTppInformation().getTppInfo();
 
-        List<ConsentEntity> oldConsents = consentJpaRepository.findOldConsentsByNewConsentParams(psuIds,
-                                                                                                 tppInfo.getAuthorisationNumber(),
-                                                                                                 newConsent.getInstanceId(),
-                                                                                                 newConsent.getExternalId(),
-                                                                                                 EnumSet.of(RECEIVED, PARTIALLY_AUTHORISED, VALID));
+        List<ConsentEntity> oldConsents = new ArrayList<>();
+        List<List<String>> partitionList = ListUtils.partition(psuIds, maxChunkSize);
+        partitionList.forEach(sl -> oldConsents.addAll(consentJpaRepository.findOldConsentsByNewConsentParams(sl,
+                                                                                                              tppInfo.getAuthorisationNumber(),
+                                                                                                              newConsent.getInstanceId(),
+                                                                                                              newConsent.getExternalId(),
+                                                                                                              EnumSet.of(RECEIVED, PARTIALLY_AUTHORISED, VALID))));
 
         List<ConsentEntity> oldConsentsWithExactPsuDataLists = oldConsents.stream()
-                                                                   .distinct()
-                                                                   .filter(c -> cmsPsuService.isPsuDataListEqual(c.getPsuDataList(), psuDataList))
-                                                                   .collect(Collectors.toList());
+                                                                       .distinct()
+                                                                       .filter(c -> cmsPsuService.isPsuDataListEqual(c.getPsuDataList(), psuDataList))
+                                                                       .collect(Collectors.toList());
 
         if (oldConsentsWithExactPsuDataLists.isEmpty()) {
             log.info("Consent ID: [{}]. Cannot find old consents, consent hasn't exact PSU data lists as old consents", newConsentId);
             return CmsResponse.<Boolean>builder()
-                       .payload(false)
-                       .build();
+                           .payload(false)
+                           .build();
         }
 
         oldConsentsWithExactPsuDataLists.forEach(this::updateStatus);
         consentJpaRepository.saveAll(oldConsentsWithExactPsuDataLists);
         return CmsResponse.<Boolean>builder()
-                   .payload(true)
-                   .build();
+                       .payload(true)
+                       .build();
     }
 
     /**
@@ -263,8 +271,8 @@ public class ConsentServiceInternal implements ConsentService {
         if (request.isOneAccessType()) {
             log.info("Consent ID: [{}]. Cannot find old consents, consent is OneAccessType", newConsentId);
             return CmsResponse.<Boolean>builder()
-                       .payload(false)
-                       .build();
+                           .payload(false)
+                           .build();
         }
 
         if (request.isWrongConsentData()) {
@@ -274,52 +282,55 @@ public class ConsentServiceInternal implements ConsentService {
 
         List<PsuData> psuDataList = psuDataMapper.mapToPsuDataList(request.getPsuIdDataList(), request.getInstanceId());
 
-        Set<String> psuIds = psuDataList.stream()
-                                 .filter(Objects::nonNull)
-                                 .map(PsuData::getPsuId)
-                                 .collect(Collectors.toSet());
+        List<String> psuIds = psuDataList.stream()
+                                      .filter(Objects::nonNull)
+                                      .map(PsuData::getPsuId)
+                                      .distinct()
+                                      .collect(Collectors.toList());
 
-        List<ConsentEntity> oldConsents = consentJpaRepository.findOldConsentsByNewConsentParams(psuIds,
-                                                                                                 request.getAuthorisationNumber(),
-                                                                                                 request.getInstanceId(),
-                                                                                                 newConsentId,
-                                                                                                 EnumSet.of(RECEIVED, PARTIALLY_AUTHORISED, VALID));
+        List<ConsentEntity> oldConsents = new ArrayList<>();
+        List<List<String>> partitionList = ListUtils.partition(psuIds, maxChunkSize);
+        partitionList.forEach(sl -> oldConsents.addAll(consentJpaRepository.findOldConsentsByNewConsentParams(psuIds,
+                                                                                                              request.getAuthorisationNumber(),
+                                                                                                              request.getInstanceId(),
+                                                                                                              newConsentId,
+                                                                                                              EnumSet.of(RECEIVED, PARTIALLY_AUTHORISED, VALID))));
 
         List<ConsentEntity> oldConsentsWithExactPsuDataLists = oldConsents.stream()
-                                                                   .distinct()
-                                                                   .filter(c -> cmsPsuService.isPsuDataListEqual(c.getPsuDataList(), psuDataList))
-                                                                   .collect(Collectors.toList());
+                                                                       .distinct()
+                                                                       .filter(c -> cmsPsuService.isPsuDataListEqual(c.getPsuDataList(), psuDataList))
+                                                                       .collect(Collectors.toList());
 
         if (oldConsentsWithExactPsuDataLists.isEmpty()) {
             log.info("Consent ID: [{}]. Cannot find old consents, consent hasn't exact PSU data lists as old consents", newConsentId);
             return CmsResponse.<Boolean>builder()
-                       .payload(false)
-                       .build();
+                           .payload(false)
+                           .build();
         }
 
         oldConsentsWithExactPsuDataLists.forEach(this::updateStatus);
         consentJpaRepository.saveAll(oldConsentsWithExactPsuDataLists);
         return CmsResponse.<Boolean>builder()
-                   .payload(true)
-                   .build();
+                       .payload(true)
+                       .build();
     }
 
     @Override
     public CmsResponse<List<PsuIdData>> getPsuDataByConsentId(String consentId) {
         Optional<List<PsuIdData>> psuIdDataOptional = getActualAisConsent(consentId)
-                                                          .map(ac -> psuDataMapper.mapToPsuIdDataList(ac.getPsuDataList()));
+                                                              .map(ac -> psuDataMapper.mapToPsuIdDataList(ac.getPsuDataList()));
 
         if (psuIdDataOptional.isPresent()) {
             return CmsResponse.<List<PsuIdData>>builder()
-                       .payload(psuIdDataOptional.get())
-                       .build();
+                           .payload(psuIdDataOptional.get())
+                           .build();
         }
 
         log.info("Consent ID [{}]. Get PSU data by consent ID failed, consent not found",
                  consentId);
         return CmsResponse.<List<PsuIdData>>builder()
-                   .error(LOGICAL_ERROR)
-                   .build();
+                       .error(LOGICAL_ERROR)
+                       .build();
     }
 
     @Override
@@ -330,8 +341,8 @@ public class ConsentServiceInternal implements ConsentService {
             log.info("Consent ID: [{}]. Get update multilevel SCA required status failed, consent authorisation is not found",
                      consentId);
             return CmsResponse.<Boolean>builder()
-                       .payload(false)
-                       .build();
+                           .payload(false)
+                           .build();
         }
         ConsentEntity consent = aisConsentOptional.get();
         consent.setMultilevelScaRequired(multilevelScaRequired);
@@ -339,8 +350,8 @@ public class ConsentServiceInternal implements ConsentService {
         aisConsentRepository.verifyAndSave(consent);
 
         return CmsResponse.<Boolean>builder()
-                   .payload(true)
-                   .build();
+                       .payload(true)
+                       .build();
     }
 
     private ConsentEntity checkAndUpdateOnExpiration(ConsentEntity consent) {
@@ -353,7 +364,7 @@ public class ConsentServiceInternal implements ConsentService {
 
     private Optional<ConsentEntity> getActualAisConsent(String consentId) {
         return consentJpaRepository.findByExternalId(consentId)
-                   .filter(c -> !c.getConsentStatus().isFinalisedStatus());
+                       .filter(c -> !c.getConsentStatus().isFinalisedStatus());
     }
 
     private boolean setStatusAndSaveConsent(ConsentEntity consent, ConsentStatus status) throws WrongChecksumException {
@@ -363,13 +374,13 @@ public class ConsentServiceInternal implements ConsentService {
         ConsentEntity aisConsent = aisConsentRepository.verifyAndSave(consent);
 
         return Optional.ofNullable(aisConsent)
-                   .isPresent();
+                       .isPresent();
     }
 
     private void updateStatus(ConsentEntity aisConsent) {
         aisConsent.setConsentStatus(aisConsent.getConsentStatus() == RECEIVED || aisConsent.getConsentStatus() == PARTIALLY_AUTHORISED
-                                        ? REJECTED
-                                        : TERMINATED_BY_TPP);
+                                            ? REJECTED
+                                            : TERMINATED_BY_TPP);
     }
 
     private ConsentEntity adjustConsentEntity(ConsentEntity consentEntity, ConsentType consentType) {

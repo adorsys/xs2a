@@ -29,6 +29,8 @@ import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.IterableUtils;
+import org.apache.commons.collections4.ListUtils;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -41,6 +43,9 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 public class AisConsentConfirmationExpirationServiceImpl implements AisConsentConfirmationExpirationService {
+    @Value("${xs2a.cms.db.max-chunk-size:1000}")
+    private int maxChunkSize;
+
     private final ConsentJpaRepository consentJpaRepository;
     private final AuthorisationRepository authorisationRepository;
     private final AspspProfileService aspspProfileService;
@@ -83,8 +88,11 @@ public class AisConsentConfirmationExpirationServiceImpl implements AisConsentCo
     @Transactional
     @Override
     public void updateConsentListOnConfirmationExpirationByExternalIds(List<String> externalIds) {
-        consentJpaRepository.expireConsentsByIds(externalIds);
-        authorisationRepository.updateAuthorisationByConsentIds(externalIds);
+        List<List<String>> partitionList = ListUtils.partition(externalIds, maxChunkSize);
+        partitionList.forEach(sl -> {
+            consentJpaRepository.expireConsentsByIds(sl);
+            authorisationRepository.updateAuthorisationByConsentIds(sl);
+        });
     }
 
     @Transactional
