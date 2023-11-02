@@ -101,6 +101,7 @@
             <artifactId>consent-xs2a-web</artifactId>
             <version>${project.version}</version>
         </dependency>
+
         <dependency>
             <groupId>de.adorsys.psd2</groupId>
             <artifactId>consent-psu-web</artifactId>
@@ -163,6 +164,13 @@
         <dependency>
             <groupId>org.mariadb.jdbc</groupId>
             <artifactId>mariadb-java-client</artifactId>
+            <scope>runtime</scope>
+            <optional>true</optional>
+        </dependency>
+
+        <dependency>
+            <groupId>com.oracle.database.jdbc</groupId>
+            <artifactId>ojdbc11</artifactId>
             <scope>runtime</scope>
             <optional>true</optional>
         </dependency>

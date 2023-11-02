@@ -76,7 +76,7 @@ public interface ConsentJpaRepository extends CrudRepository<ConsentEntity, Long
             "and c.consentStatus in :consentStatuses " +
             "and c.externalId <> :newConsentId"
     )
-    List<ConsentEntity> findOldConsentsByNewConsentParams(@Param("psuIds") Set<String> psuIds,
+    List<ConsentEntity> findOldConsentsByNewConsentParams(@Param("psuIds") List<String> psuIds,
                                                           @Param("authorisationNumber") String tppAuthorisationNumber,
                                                           @Param("instanceId") String instanceId,
                                                           @Param("newConsentId") String newConsentId,
