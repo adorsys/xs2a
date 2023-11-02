@@ -44,16 +44,19 @@
 			<artifactId>consent-management-lib</artifactId>
 			<version>${project.version}</version>
 		</dependency>
+
 		<dependency>
 			<groupId>de.adorsys.psd2</groupId>
 			<artifactId>consent-xs2a-web</artifactId>
 			<version>${project.version}</version>
 		</dependency>
+
 		<dependency>
 			<groupId>de.adorsys.psd2</groupId>
 			<artifactId>consent-psu-web</artifactId>
 			<version>${project.version}</version>
 		</dependency>
+
 		<dependency>
 			<groupId>de.adorsys.psd2</groupId>
 			<artifactId>consent-aspsp-web</artifactId>
@@ -144,7 +147,7 @@
         <dependency>
             <groupId>jakarta.persistence</groupId>
             <artifactId>jakarta.persistence-api</artifactId>
-            <version>3.1.0</version>
+            <version>${jakarta.persistence-api.version}</version>
         </dependency>
 
         <dependency>
@@ -152,12 +155,20 @@
 			<artifactId>liquibase-core</artifactId>
 		</dependency>
 
+        <dependency>
+            <groupId>com.oracle.database.jdbc</groupId>
+            <artifactId>ojdbc11</artifactId>
+            <scope>runtime</scope>
+            <optional>true</optional>
+        </dependency>
+
 		<dependency>
 			<groupId>org.postgresql</groupId>
 			<artifactId>postgresql</artifactId>
 			<scope>runtime</scope>
 			<optional>true</optional>
 		</dependency>
+
 		<dependency>
 			<groupId>org.mariadb.jdbc</groupId>
 			<artifactId>mariadb-java-client</artifactId>
