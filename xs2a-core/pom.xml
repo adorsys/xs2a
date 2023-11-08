@@ -90,7 +90,7 @@
                     <plugin>
                         <groupId>org.projectlombok</groupId>
                         <artifactId>lombok-maven-plugin</artifactId>
-                        <version>1.18.4.0</version>
+                        <version>${lombok-maven-plugin.version}</version>
                         <executions>
                             <execution>
                                 <phase>generate-sources</phase>
@@ -111,8 +111,8 @@
                     </plugin>
 
                     <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-source-plugin</artifactId>
-                        <version>${maven-source-plugin.version}</version>
                         <executions>
                             <execution>
                                 <id>bundle-sources</id>
