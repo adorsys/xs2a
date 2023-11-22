@@ -23,6 +23,7 @@ import de.adorsys.psd2.event.core.model.EventType;
 import de.adorsys.psd2.logger.context.LoggingContextService;
 import de.adorsys.psd2.xs2a.core.authorisation.Authorisation;
 import de.adorsys.psd2.xs2a.core.authorisation.AuthorisationType;
+import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
 import de.adorsys.psd2.xs2a.core.domain.TppMessageInformation;
 import de.adorsys.psd2.xs2a.core.error.ErrorType;
 import de.adorsys.psd2.xs2a.core.error.MessageError;
@@ -57,8 +58,7 @@ import java.util.Optional;
 import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
@@ -73,8 +73,17 @@ class PiisConsentAuthorisationServiceTest {
 
     private static final MessageError CONSENT_INVALID_401_ERROR =
         new MessageError(ErrorType.PIIS_401, TppMessageInformation.of(MessageErrorCode.CONSENT_INVALID));
+    private static final MessageError CONSENT_EXPIRED_401_ERROR =
+        new MessageError(ErrorType.PIIS_401, TppMessageInformation.of(MessageErrorCode.CONSENT_EXPIRED));
     private static final MessageError CONSENT_UNKNOWN_403_ERROR =
         new MessageError(ErrorType.PIIS_403, TppMessageInformation.of(MessageErrorCode.CONSENT_UNKNOWN_403));
+    private static final MessageError RESOURCE_UNKNOWN_403_ERROR =
+        new MessageError(ErrorType.PIIS_403, TppMessageInformation.of(MessageErrorCode.RESOURCE_UNKNOWN_403));
+    private static final MessageError SERVICE_BLOCKED_403_ERROR =
+        new MessageError(ErrorType.PIIS_403, TppMessageInformation.of(MessageErrorCode.SERVICE_BLOCKED));
+    private static final MessageError PSU_CREDS_INVALID_401_ERROR =
+        new MessageError(ErrorType.PIIS_400, TppMessageInformation.of(MessageErrorCode.PSU_CREDENTIALS_INVALID));
+
     private static final MessageError GET_AUTHORISATIONS_MESSAGE_ERROR = new MessageError(ErrorType.PIIS_403, TppMessageInformation.of(MessageErrorCode.FORBIDDEN));
     private static final MessageError RESOURCE_UNKNOWN_MESSAGE_ERROR = new MessageError(ErrorType.PIIS_404, TppMessageInformation.of(MessageErrorCode.RESOURCE_UNKNOWN_404));
 
@@ -133,6 +142,57 @@ class PiisConsentAuthorisationServiceTest {
         ResponseObject<AuthorisationResponse> response = service.createPiisAuthorisation(PSU_ID_DATA, WRONG_CONSENT_ID, "");
         // Then
         assertThat(response.getError()).isEqualTo(CONSENT_UNKNOWN_403_ERROR);
+    }
+
+    @Test
+    void updatePiisAuthorisation_withUnknownConsent_noConsentError() {
+        // Given
+        when(xs2aPiisConsentService.getPiisConsentById(CONSENT_ID)).thenReturn(Optional.empty());
+        // When
+        ResponseObject<UpdateConsentPsuDataResponse> response = service.updateConsentPsuData(buildUpdateConsentPsuDataReq());
+        // Then
+        assertThat(response.getError()).isEqualTo(CONSENT_UNKNOWN_403_ERROR);
+    }
+
+    @Test
+    void updatePiisAuthorisation_withValidConsent_endpointNotAccessibleError() {
+        // Given
+        when(xs2aPiisConsentService.getPiisConsentById(CONSENT_ID)).thenReturn(Optional.of(piisConsent));
+        when(endpointAccessCheckerService.isEndpointAccessible(AUTHORISATION_ID, false)).thenReturn(false);
+
+        // When
+        ResponseObject<UpdateConsentPsuDataResponse> response = service.updateConsentPsuData(buildUpdateConsentPsuDataReq());
+        // Then
+        assertThat(response.getError()).isEqualTo(SERVICE_BLOCKED_403_ERROR);
+    }
+
+    @Test
+    void updatePiisAuthorisation_withInvalidConsent_validationError() {
+        // Given
+        when(xs2aPiisConsentService.getPiisConsentById(CONSENT_ID)).thenReturn(Optional.of(piisConsent));
+        when(endpointAccessCheckerService.isEndpointAccessible(AUTHORISATION_ID, false)).thenReturn(true);
+        when(confirmationOfFundsConsentValidationService.validateConsentPsuDataOnUpdate(any(), any())).thenReturn(ValidationResult.invalid(new MessageError(ErrorType.PIIS_400, TppMessageInformation.of(MessageErrorCode.PSU_CREDENTIALS_INVALID))));
+
+        // When
+        ResponseObject<UpdateConsentPsuDataResponse> response = service.updateConsentPsuData(buildUpdateConsentPsuDataReq());
+        // Then
+        verify(xs2aAuthorisationService, times(1)).updateAuthorisationStatus(AUTHORISATION_ID, ScaStatus.FAILED);
+        assertThat(response.getError()).isEqualTo(PSU_CREDS_INVALID_401_ERROR);
+    }
+
+    @Test
+    void updatePiisAuthorisation_withExpiredConsent_expirationError() {
+        // Given
+        piisConsent.setConsentStatus(ConsentStatus.EXPIRED);
+        when(xs2aPiisConsentService.getPiisConsentById(CONSENT_ID)).thenReturn(Optional.of(piisConsent));
+        when(endpointAccessCheckerService.isEndpointAccessible(AUTHORISATION_ID, false)).thenReturn(true);
+        when(confirmationOfFundsConsentValidationService.validateConsentPsuDataOnUpdate(any(), any())).thenReturn(ValidationResult.valid());
+
+        // When
+        ResponseObject<UpdateConsentPsuDataResponse> response = service.updateConsentPsuData(buildUpdateConsentPsuDataReq());
+        // Then
+        verify(loggingContextService, times(1)).storeConsentStatus(piisConsent.getConsentStatus());
+        assertThat(response.getError()).isEqualTo(CONSENT_EXPIRED_401_ERROR);
     }
 
     @Test
@@ -281,6 +341,26 @@ class PiisConsentAuthorisationServiceTest {
         verify(xs2aPiisConsentService, atLeastOnce()).getPiisConsentById(CONSENT_ID);
         verify(confirmationOfFundsConsentValidationService, atLeastOnce()).validateConsentAuthorisationScaStatus(piisConsent, AUTHORISATION_ID);
         assertValidationError(confirmationOfFundsConsentScaStatusResponseObject, GET_AUTHORISATIONS_MESSAGE_ERROR);
+    }
+
+    @Test
+    void getConsentAuthorisationScaStatus_scaStatusError_shouldReturnResourceUnknownError() {
+        // Given
+        ConfirmationOfFundsConsentScaStatus consentScaStatus = new ConfirmationOfFundsConsentScaStatus(PSU_ID_DATA, piisConsent, ScaStatus.RECEIVED);
+        when(xs2aPiisConsentService.getPiisConsentById(CONSENT_ID)).thenReturn(Optional.of(piisConsent));
+        when(confirmationOfFundsConsentValidationService.validateConsentAuthorisationScaStatus(piisConsent, AUTHORISATION_ID))
+            .thenReturn(ValidationResult.valid());
+        when(piisScaAuthorisationServiceResolver.getService(AUTHORISATION_ID)).thenReturn(redirectPiisAuthorizationService);
+        when(redirectPiisAuthorizationService.getAuthorisationScaStatus(CONSENT_ID, AUTHORISATION_ID))
+            .thenReturn(Optional.empty());
+        // When
+        ResponseObject<ConfirmationOfFundsConsentScaStatus> confirmationOfFundsConsentScaStatusResponseObject = service.getConsentAuthorisationScaStatus(CONSENT_ID, AUTHORISATION_ID);
+        // Then
+        verify(xs2aEventService, atLeastOnce()).recordConsentTppRequest(CONSENT_ID, EventType.GET_PIIS_CONSENT_SCA_STATUS_REQUEST_RECEIVED);
+        verify(xs2aPiisConsentService, atLeastOnce()).getPiisConsentById(CONSENT_ID);
+        verify(confirmationOfFundsConsentValidationService, atLeastOnce()).validateConsentAuthorisationScaStatus(piisConsent, AUTHORISATION_ID);
+        assertTrue(confirmationOfFundsConsentScaStatusResponseObject.hasError());
+        assertEquals(RESOURCE_UNKNOWN_403_ERROR, confirmationOfFundsConsentScaStatusResponseObject.getError());
     }
 
     @Test

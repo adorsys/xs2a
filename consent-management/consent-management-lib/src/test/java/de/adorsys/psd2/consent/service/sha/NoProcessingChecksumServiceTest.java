@@ -16,24 +16,31 @@
  * contact us at psd2@adorsys.com.
  */
 
-package de.adorsys.psd2.model;
+package de.adorsys.psd2.consent.service.sha;
 
+import de.adorsys.psd2.core.data.ais.AisConsent;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-class PeriodicPaymentInitiationWithStatusResponseTest {
-    private final Class clazz = PeriodicPaymentInitiationWithStatusResponse.class;
+class NoProcessingChecksumServiceTest {
+
+    private NoProcessingChecksumService service = new NoProcessingChecksumService();
 
     @Test
-    void checkFieldsForExistence() {
-        try {
-            CommonModelHelper.checkUltimateDebtorField(clazz);
-            CommonModelHelper.checkUltimateCreditorField(clazz);
-            CommonModelHelper.checkPurposeCodeField(clazz);
-            CommonModelHelper.checkRemittanceInformationStructuredField(clazz);
-        } catch (NoSuchFieldException e) {
-            fail();
-        }
+    void calculateChecksumForConsent() {
+        assertEquals(0, service.calculateChecksumForConsent(new AisConsent()).length);
+
+    }
+
+    @Test
+    void verifyConsentWithChecksum() {
+        assertTrue(service.verifyConsentWithChecksum(new AisConsent(), new byte[0]));
+    }
+
+    @Test
+    void getVersion() {
+        assertEquals("000", service.getVersion());
     }
 }

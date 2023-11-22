@@ -264,6 +264,8 @@
             **/*Application.java,
             **/*Exception.java,
             **/*Config.java,
+            **/*Configuration.java,
+            **/*Properties.java,
             **/*.xml,
             **/xs2a-server-api/**/*,
             **/xs2a-core-payments/**/*,

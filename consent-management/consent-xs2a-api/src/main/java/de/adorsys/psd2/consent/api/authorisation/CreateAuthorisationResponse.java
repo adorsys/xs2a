@@ -32,7 +32,7 @@ import org.jetbrains.annotations.NotNull;
 public class CreateAuthorisationResponse {
 
     @NotNull
-    @Schema(description = "ID of the Authorisation", required = true, example = "6dc3d5b3-5023-7848-3853-f7200a64e80d")
+    @Schema(description = "ID of the Authorisation", requiredMode = Schema.RequiredMode.AUTO, example = "6dc3d5b3-5023-7848-3853-f7200a64e80d")
     private String authorizationId;
 
     private ScaStatus scaStatus;

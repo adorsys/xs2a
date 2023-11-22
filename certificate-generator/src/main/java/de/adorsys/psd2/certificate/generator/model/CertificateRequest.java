@@ -38,18 +38,18 @@ import java.util.List;
 @Schema(description = "Certificate Data", name = "CertificateRequest")
 public class CertificateRequest {
 
-    @Schema(required = true, example = "87B2AC",
+    @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "87B2AC",
         description = "Available in the Public Register of the appropriate National Competent Authority; ")
     @NotNull
     private String authorizationNumber;
 
-    @Schema(required = true, description = "Roles of the PSP")
+    @Schema(requiredMode = Schema.RequiredMode.REQUIRED, description = "Roles of the PSP")
     @Size(min = 1, max = 3)
     @NotNull
     @Builder.Default
     private List<PspRole> roles = new ArrayList<>();
 
-    @Schema(required = true, example = "Fictional Corporation AG",
+    @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "Fictional Corporation AG",
         description = "Registered name of your corporation")
     @NotNull
     private String organizationName;

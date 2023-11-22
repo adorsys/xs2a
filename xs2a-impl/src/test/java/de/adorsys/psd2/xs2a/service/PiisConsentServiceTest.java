@@ -233,6 +233,18 @@ class PiisConsentServiceTest {
     }
 
     @Test
+    void createPiisConsentWithResponse_validationFailed() {
+        // Given
+        CreatePiisConsentRequest request = new CreatePiisConsentRequest(null, null, null, null, null);
+        when(createPiisConsentValidator.validate(new CreatePiisConsentRequestObject(request, PSU_ID_DATA))).thenReturn(ValidationResult.invalid(new MessageError(ErrorType.PIIS_400)));
+        // When
+        ResponseObject<Xs2aConfirmationOfFundsResponse> xs2aConfirmationOfFundsResponseResponseObject = piisConsentService.createPiisConsentWithResponse(request, PSU_ID_DATA, false);
+        // Then
+        verify(xs2aEventService, atLeastOnce()).recordTppRequest(EventType.CREATE_PIIS_CONSENT_REQUEST_RECEIVED, request);
+        assertEquals(ErrorType.PIIS_400, xs2aConfirmationOfFundsResponseResponseObject.getError().getErrorType());
+    }
+
+    @Test
     void createPiisConsentWithResponse_initiatePiisConsentInSpiFailed() {
         // Given
         CreatePiisConsentRequest request = new CreatePiisConsentRequest(null, null, null, null, null);

@@ -63,7 +63,7 @@ public class CertificateService {
 
     /**
      * Create a new base64 encoded X509 certificate for authentication at the XS2A API with the
-     * corresponding private key and meta data.
+     * corresponding private key and metadata.
      *
      * @param certificateRequest data needed for certificate generation
      * @return CertificateResponse base64 encoded cert + private key

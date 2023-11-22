@@ -27,6 +27,6 @@ import lombok.Data;
 @Schema(description = "Country code")
 public class Xs2aCountryCode {
 
-    @Schema(description = "Country code", required = true, example = "49")
+    @Schema(description = "Country code", requiredMode = Schema.RequiredMode.REQUIRED, example = "49")
     private String code;
 }
