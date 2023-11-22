@@ -20,6 +20,7 @@ package de.adorsys.psd2.consent.service;
 
 import de.adorsys.psd2.consent.api.CmsResponse;
 import de.adorsys.psd2.consent.domain.payment.PisCommonPaymentData;
+import de.adorsys.psd2.xs2a.core.pis.InternalPaymentStatus;
 import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
 import de.adorsys.psd2.xs2a.core.tpp.TppRedirectUri;
 import org.junit.jupiter.api.BeforeEach;
@@ -73,6 +74,38 @@ class UpdatePaymentAfterSpiServiceInternalTest {
         assertTrue(actual.getPayload());
         verify(commonPaymentDataService, times(1)).getPisCommonPaymentData(anyString(), isNull());
         verify(commonPaymentDataService, times(1)).updateStatusInPaymentData(any(PisCommonPaymentData.class), eq(TransactionStatus.ACSP));
+    }
+
+    @Test
+    void updateInternalPaymentStatus_success() {
+        // Given
+        pisCommonPaymentData.setInternalPaymentStatus(InternalPaymentStatus.FINALISED);
+
+        when(commonPaymentDataService.getPisCommonPaymentData(PAYMENT_ID, null)).thenReturn(Optional.of(pisCommonPaymentData));
+        when(commonPaymentDataService.updateInternalStatusInPaymentData(pisCommonPaymentData, InternalPaymentStatus.FINALISED)).thenReturn(true);
+
+        // When
+        CmsResponse<Boolean> actual = updatePaymentAfterSpiServiceInternal.updateInternalPaymentStatus(PAYMENT_ID, InternalPaymentStatus.FINALISED);
+
+        // Then
+        assertTrue(actual.isSuccessful());
+
+        assertTrue(actual.getPayload());
+        verify(commonPaymentDataService, times(1)).getPisCommonPaymentData(anyString(), isNull());
+    }
+
+    @Test
+    void updateInternalPaymentStatus_noPayment_fail() {
+        // Given
+        pisCommonPaymentData.setInternalPaymentStatus(InternalPaymentStatus.FINALISED);
+
+        when(commonPaymentDataService.getPisCommonPaymentData(PAYMENT_ID, null)).thenReturn(Optional.empty());
+
+        // When
+        CmsResponse<Boolean> actual = updatePaymentAfterSpiServiceInternal.updateInternalPaymentStatus(PAYMENT_ID, InternalPaymentStatus.FINALISED);
+
+        // Then
+        assertFalse(actual.getPayload());
     }
 
     @Test

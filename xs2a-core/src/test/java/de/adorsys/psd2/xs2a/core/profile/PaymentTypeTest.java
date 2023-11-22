@@ -16,24 +16,26 @@
  * contact us at psd2@adorsys.com.
  */
 
-package de.adorsys.psd2.model;
+package de.adorsys.psd2.xs2a.core.profile;
 
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.fail;
+import java.util.Optional;
 
-class PaymentInitiationBulkElementJsonTest {
-    private final Class clazz = PaymentInitiationBulkElementJson.class;
+import static org.junit.jupiter.api.Assertions.*;
+
+class PaymentTypeTest {
 
     @Test
-    void checkFieldsForExistence() {
-        try {
-            CommonModelHelper.checkUltimateDebtorField(clazz);
-            CommonModelHelper.checkUltimateCreditorField(clazz);
-            CommonModelHelper.checkPurposeCodeField(clazz);
-            CommonModelHelper.checkRemittanceInformationStructuredField(clazz);
-        } catch (NoSuchFieldException e) {
-            fail();
-        }
+    void getByValue_withValidValue_shouldReturnEnum() {
+        Optional<PaymentType> actualValue = PaymentType.getByValue("payments");
+        assertNotNull(actualValue);
+        assertEquals(PaymentType.SINGLE, actualValue.get());
+    }
+
+    @Test
+    void getByValue_withInvalidValue_shouldReturnEnum() {
+        Optional<PaymentType> actualValue = PaymentType.getByValue("StepanBandera");
+        assertTrue(actualValue.isEmpty());
     }
 }

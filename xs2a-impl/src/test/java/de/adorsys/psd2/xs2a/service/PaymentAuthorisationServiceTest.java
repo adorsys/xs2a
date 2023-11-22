@@ -65,8 +65,7 @@ import java.util.Optional;
 import java.util.Set;
 
 import static de.adorsys.psd2.xs2a.core.domain.TppMessageInformation.of;
-import static de.adorsys.psd2.xs2a.core.error.ErrorType.PIS_401;
-import static de.adorsys.psd2.xs2a.core.error.ErrorType.PIS_404;
+import static de.adorsys.psd2.xs2a.core.error.ErrorType.*;
 import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.*;
 import static de.adorsys.psd2.xs2a.core.profile.PaymentType.SINGLE;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -91,6 +90,8 @@ class PaymentAuthorisationServiceTest {
 
     private static final MessageError VALIDATION_ERROR = new MessageError(PIS_401, TppMessageInformation.of(UNAUTHORIZED));
     private static final MessageError RESOURCE_UNKNOWN_ERROR = new MessageError(PIS_404, of(RESOURCE_UNKNOWN_404_NO_PAYMENT));
+    private static final MessageError RESOURCE_UNKNOWN_403_ERROR = new MessageError(PIS_403, of(RESOURCE_UNKNOWN_403));
+    private static final MessageError RESOURCE_UNKNOWN_404_ERROR = new MessageError(PIS_404, of(RESOURCE_UNKNOWN_404));
     private static final MessageError PSU_CREDENTIALS_INVALID_ERROR = new MessageError(PIS_401, of(PSU_CREDENTIALS_INVALID));
     private static final ScaApproach SCA_APPROACH = ScaApproach.EMBEDDED;
     private static final Set<TppMessageInformation> TEST_TPP_MESSAGES = Collections.singleton(TppMessageInformation.of(MessageErrorCode.FORMAT_ERROR));
@@ -428,6 +429,24 @@ class PaymentAuthorisationServiceTest {
     }
 
     @Test
+    void updatePisPsuData_withEmptyPayment_shouldReturnNotFoundError() {
+        // Given
+        when(pisCommonPaymentService.getPisCommonPaymentById(PAYMENT_ID))
+            .thenReturn(Optional.empty());
+
+        PaymentAuthorisationParameters request = buildXs2aUpdatePisPsuDataRequest();
+
+        // When:
+        ResponseObject<Xs2aUpdatePisCommonPaymentPsuDataResponse> actualResponse = paymentAuthorisationService.updatePisCommonPaymentPsuData(request);
+
+        // Then
+        verifyNoInteractions(updatePisCommonPaymentPsuDataValidator);
+        assertThat(actualResponse).isNotNull();
+        assertThat(actualResponse.hasError()).isTrue();
+        assertThat(actualResponse.getError()).isEqualTo(RESOURCE_UNKNOWN_ERROR);
+    }
+
+    @Test
     void getPaymentInitiationAuthorisation() {
         // Given
         when(pisScaAuthorisationServiceResolver.getService())
@@ -483,6 +502,36 @@ class PaymentAuthorisationServiceTest {
     }
 
     @Test
+    void getPaymentInitiationAuthorisation_shouldReturnResourceUnknown() {
+        // Given
+        when(pisScaAuthorisationServiceResolver.getService())
+            .thenReturn(pisScaAuthorisationService);
+        when(getPaymentInitiationAuthorisationsValidator.validate(new CommonPaymentObject(buildPisCommonPaymentResponse(), SINGLE, PAYMENT_PRODUCT)))
+            .thenReturn(ValidationResult.valid());
+
+        when(pisScaAuthorisationService.getAuthorisationSubResources(anyString()))
+            .thenReturn(Optional.empty());
+
+        PisCommonPaymentResponse commonPaymentResponse = buildPisCommonPaymentResponse();
+
+        when(pisCommonPaymentService.getPisCommonPaymentById(PAYMENT_ID))
+            .thenReturn(Optional.of(commonPaymentResponse));
+
+        ArgumentCaptor<EventType> argumentCaptor = ArgumentCaptor.forClass(EventType.class);
+
+        // When
+        ResponseObject<Xs2aAuthorisationSubResources> paymentInitiationAuthorisation = paymentAuthorisationService.getPaymentInitiationAuthorisations(PAYMENT_ID, PAYMENT_PRODUCT, SINGLE);
+
+        // Then
+        verify(xs2aEventService, times(1)).recordPisTppRequest(eq(PAYMENT_ID), argumentCaptor.capture());
+        assertThat(argumentCaptor.getValue()).isEqualTo(EventType.GET_PAYMENT_AUTHORISATION_REQUEST_RECEIVED);
+
+        assertThat(paymentInitiationAuthorisation).isNotNull();
+        assertThat(paymentInitiationAuthorisation.hasError()).isTrue();
+        assertThat(paymentInitiationAuthorisation.getError()).isEqualTo(RESOURCE_UNKNOWN_404_ERROR);
+    }
+
+    @Test
     void getPaymentInitiationAuthorisation_withInvalidPayment_shouldReturnValidationError() {
         // Given
         PisCommonPaymentResponse invalidPisCommonPaymentResponse = buildInvalidPisCommonPaymentResponse();
@@ -501,6 +550,23 @@ class PaymentAuthorisationServiceTest {
         assertThat(actualResponse).isNotNull();
         assertThat(actualResponse.hasError()).isTrue();
         assertThat(actualResponse.getError()).isEqualTo(VALIDATION_ERROR);
+    }
+
+    @Test
+    void getPaymentInitiationAuthorisation_withEmptyPayment_shouldReturnResourceUnknownError() {
+        // Given
+
+        when(pisCommonPaymentService.getPisCommonPaymentById(PAYMENT_ID))
+            .thenReturn(Optional.empty());
+
+        // When
+        ResponseObject<Xs2aAuthorisationSubResources> actualResponse = paymentAuthorisationService.getPaymentInitiationAuthorisations(PAYMENT_ID, PAYMENT_PRODUCT, SINGLE);
+
+        // Then
+        verifyNoInteractions(getPaymentInitiationAuthorisationsValidator);
+        assertThat(actualResponse).isNotNull();
+        assertThat(actualResponse.hasError()).isTrue();
+        assertThat(actualResponse.getError()).isEqualTo(RESOURCE_UNKNOWN_ERROR);
     }
 
     @Test
@@ -578,6 +644,33 @@ class PaymentAuthorisationServiceTest {
         assertFalse(response.hasError());
         assertEquals(paymentScaStatus, response.getBody());
         verify(loggingContextService).storeTransactionAndScaStatus(TRANSACTION_STATUS, SCA_STATUS);
+    }
+
+    @Test
+    void getPaymentInitiationAuthorisationScaStatus_resourceUnknownError() {
+        // Given
+        PisCommonPaymentResponse commonPaymentResponse = buildPisCommonPaymentResponse();
+        PaymentScaStatus paymentScaStatus = new PaymentScaStatus(PSU_ID_DATA, commonPaymentResponse, ScaStatus.RECEIVED);
+
+        when(pisScaAuthorisationService.getAuthorisationScaStatus(PAYMENT_ID, AUTHORISATION_ID))
+            .thenReturn(Optional.empty());
+        when(pisScaAuthorisationServiceResolver.getService(AUTHORISATION_ID))
+            .thenReturn(pisScaAuthorisationService);
+        when(getPaymentInitiationAuthorisationScaStatusValidator.validate(new GetPaymentInitiationAuthorisationScaStatusPO(buildPisCommonPaymentResponse(), AUTHORISATION_ID, SINGLE, PAYMENT_PRODUCT)))
+            .thenReturn(ValidationResult.valid());
+
+        when(pisCommonPaymentService.getPisCommonPaymentById(PAYMENT_ID))
+            .thenReturn(Optional.of(commonPaymentResponse));
+
+
+        // When
+        ResponseObject<PaymentScaStatus> actual = paymentAuthorisationService.getPaymentInitiationAuthorisationScaStatus(PAYMENT_ID,
+                                                                                                                         AUTHORISATION_ID, SINGLE, PAYMENT_PRODUCT);
+        // Then
+        verifyNoInteractions(psuIdDataAuthorisationService);
+        assertThat(actual).isNotNull();
+        assertTrue(actual.hasError());
+        assertThat(actual.getError()).isEqualTo(RESOURCE_UNKNOWN_403_ERROR);
     }
 
     @Test

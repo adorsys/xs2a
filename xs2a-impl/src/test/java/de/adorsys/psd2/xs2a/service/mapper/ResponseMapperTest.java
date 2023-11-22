@@ -154,6 +154,17 @@ class ResponseMapperTest {
     }
 
     @Test
+    void responseAccepted_withHeaders() {
+        ResponseObject<CustomContentTypeProvider> responseObject = ResponseObject.<CustomContentTypeProvider>builder()
+                                                                       .body(getCustomContentTypeProvider())
+                                                                       .build();
+
+        ResponseEntity responseEntity = responseMapper.accepted(responseObject, getResponseHeaders());
+
+        assertThat(responseEntity.getHeaders().getContentType()).isEqualTo(MediaType.APPLICATION_PDF);
+    }
+
+    @Test
     void responseDeleted() {
         ResponseObject<CustomContentTypeProvider> responseObject = ResponseObject.<CustomContentTypeProvider>builder()
                                                                        .body(getCustomContentTypeProvider())

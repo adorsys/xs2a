@@ -16,30 +16,25 @@
  * contact us at psd2@adorsys.com.
  */
 
-package de.adorsys.psd2.model;
+package de.adorsys.psd2.xs2a.web.validator;
 
+import de.adorsys.psd2.xs2a.web.validator.header.CreateAuthorisationHeaderValidator;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.fail;
+import java.util.ArrayList;
+import java.util.List;
 
-class UpdatePsuAuthenticationResponseTest {
+import static org.junit.jupiter.api.Assertions.*;
 
-    private static final String AUTHORISATION_ID = "11111111111111";
-
-    @Test
-    void authorisationIdFieldIsPresent() {
-        try {
-            UpdatePsuAuthenticationResponse.class.getDeclaredField("authorisationId");
-        } catch (NoSuchFieldException e) {
-            fail();
-        }
-    }
+class CreateConsentAuthorisationMethodValidatorImplTest {
 
     @Test
-    void authorisationIdFieldIsAccessible() {
-        UpdatePsuAuthenticationResponse response = new UpdatePsuAuthenticationResponse();
-        response.setAuthorisationId(AUTHORISATION_ID);
-        assertEquals(AUTHORISATION_ID, response.getAuthorisationId());
+    void init() {
+        List<CreateAuthorisationHeaderValidator> headerValidators = new ArrayList<>();
+        CreateConsentAuthorisationMethodValidatorImpl methodValidator = new CreateConsentAuthorisationMethodValidatorImpl(headerValidators);
+
+        assertEquals("_startConsentAuthorisation", methodValidator.getMethodName());
+        assertSame(headerValidators, methodValidator.getValidatorWrapper().getHeaderValidators());
+        assertTrue(methodValidator.getValidatorWrapper().getQueryParameterValidators().isEmpty());
     }
 }

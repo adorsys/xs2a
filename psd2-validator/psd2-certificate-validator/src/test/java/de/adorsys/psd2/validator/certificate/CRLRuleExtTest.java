@@ -16,24 +16,24 @@
  * contact us at psd2@adorsys.com.
  */
 
-package de.adorsys.psd2.model;
+package de.adorsys.psd2.validator.certificate;
 
+import de.adorsys.psd2.validator.certificate.util.CertificateUtils;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.fail;
+import java.security.cert.X509Certificate;
 
-class PeriodicPaymentInitiationJsonTest {
-    private final Class clazz = PeriodicPaymentInitiationJson.class;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+
+class CRLRuleExtTest {
+    private final CRLRuleExt crlRuleExt = new CRLRuleExt();
 
     @Test
-    void checkFieldsForExistence() {
-        try {
-            CommonModelHelper.checkUltimateDebtorField(clazz);
-            CommonModelHelper.checkUltimateCreditorField(clazz);
-            CommonModelHelper.checkPurposeCodeField(clazz);
-            CommonModelHelper.checkRemittanceInformationStructuredField(clazz);
-        } catch (NoSuchFieldException e) {
-            fail();
-        }
+    void validate_valid() {
+        //Given
+        X509Certificate[] certificates = CertificateUtils.getCertificates("certificates", "certificateValid.crt");
+
+        //Then
+        assertDoesNotThrow(() -> crlRuleExt.validate(certificates[0]));
     }
 }

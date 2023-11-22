@@ -1,0 +1,50 @@
+/*
+ * Copyright 2018-2023 adorsys GmbH & Co KG
+ *
+ * This program is free software: you can redistribute it and/or modify it
+ * under the terms of the GNU Affero General Public License as published
+ * by the Free Software Foundation, either version 3 of the License, or (at
+ * your option) any later version. This program is distributed in the hope that
+ * it will be useful, but WITHOUT ANY WARRANTY; without even the implied
+ * warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program. If not, see https://www.gnu.org/licenses/.
+ *
+ * This project is also available under a separate commercial license. You can
+ * contact us at psd2@adorsys.com.
+ */
+
+package de.adorsys.psd2.validator.certificate;
+
+import de.adorsys.psd2.validator.certificate.util.CertificateUtils;
+import org.junit.jupiter.api.Test;
+
+import java.security.cert.X509Certificate;
+
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+
+class ExpirationRuleExtTest {
+
+    private final ExpirationRuleExt expirationRuleExt = new ExpirationRuleExt();
+
+    @Test
+    void validate_throwsException() {
+        //Given
+        X509Certificate[] certificates = CertificateUtils.getCertificates("certificates", "certificateExpired.crt");
+
+        //Then
+        assertThrows(FailedCertValidationException.class, () -> expirationRuleExt.validate(certificates[0]));
+    }
+
+    @Test
+    void validate_valid() {
+        //Given
+        X509Certificate[] certificates = CertificateUtils.getCertificates("certificates", "certificateValid.crt");
+
+        //Then
+        assertDoesNotThrow(() -> expirationRuleExt.validate(certificates[0]));
+    }
+}

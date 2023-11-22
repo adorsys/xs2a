@@ -16,27 +16,26 @@
  * contact us at psd2@adorsys.com.
  */
 
-package de.adorsys.psd2.model;
+package de.adorsys.psd2.xs2a.core.sca;
 
-public class CommonModelHelper {
+import org.junit.jupiter.api.Test;
 
-    static void checkUltimateDebtorField(Class clazz) throws NoSuchFieldException {
-        clazz.getDeclaredField("ultimateDebtor");
+import java.util.Optional;
+
+import static org.junit.jupiter.api.Assertions.*;
+
+class OtpFormatTest {
+
+    @Test
+    void getByValue_withValidValue_shouldReturnEnum() {
+        Optional<OtpFormat> actualValue = OtpFormat.getByValue("characters");
+        assertNotNull(actualValue);
+        assertEquals(OtpFormat.CHARACTERS, actualValue.get());
     }
 
-    static void checkUltimateCreditorField(Class clazz) throws NoSuchFieldException {
-        clazz.getDeclaredField("ultimateCreditor");
-    }
-
-    static void checkPurposeCodeField(Class clazz) throws NoSuchFieldException {
-        clazz.getDeclaredField("purposeCode");
-    }
-
-    static void checkRemittanceInformationStructuredField(Class clazz) throws NoSuchFieldException {
-        clazz.getDeclaredField("remittanceInformationStructured");
-    }
-
-    static void checkRequestedExecutionDate(Class clazz) throws NoSuchFieldException {
-        clazz.getDeclaredField("requestedExecutionDate");
+    @Test
+    void getByValue_withInvalidValue_shouldReturnEnum() {
+        Optional<OtpFormat> actualValue = OtpFormat.getByValue("StepanBandera");
+        assertTrue(actualValue.isEmpty());
     }
 }

@@ -35,7 +35,7 @@ import java.util.Currency;
 @MappedSuperclass
 public abstract class AccountAccess {
     @Column(name = "account_identifier", length = 34, nullable = false)
-    @Schema(description = "Account-Identifier: This data element can be used in the body of the CreateConsentReq Request Message for retrieving account access consent from this payment account", example = "DE2310010010123456789", required = true)
+    @Schema(description = "Account-Identifier: This data element can be used in the body of the CreateConsentReq Request Message for retrieving account access consent from this payment account", example = "DE2310010010123456789", requiredMode = Schema.RequiredMode.REQUIRED)
     private String accountIdentifier;
 
     @Column(name = "currency", length = 3)
@@ -49,7 +49,7 @@ public abstract class AccountAccess {
 
     @Column(name = "account_reference_type", nullable = false, length = 30)
     @Enumerated(value = EnumType.STRING)
-    @Schema(description = "Type of the account: IBAN, BBAN, IBAN, BBAN, PAN, MASKED_PAN, MSISDN", required = true, example = "IBAN")
+    @Schema(description = "Type of the account: IBAN, BBAN, IBAN, BBAN, PAN, MASKED_PAN, MSISDN", requiredMode = Schema.RequiredMode.REQUIRED, example = "IBAN")
     private AccountReferenceType accountReferenceType;
 
     protected AccountAccess(String accountIdentifier, TypeAccess typeAccess, AccountReferenceType accountReferenceType, Currency currency) {

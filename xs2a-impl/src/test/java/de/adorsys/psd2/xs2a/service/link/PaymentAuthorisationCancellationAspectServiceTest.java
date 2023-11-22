@@ -45,8 +45,7 @@ import static de.adorsys.psd2.xs2a.core.domain.TppMessageInformation.of;
 import static de.adorsys.psd2.xs2a.core.error.ErrorType.AIS_400;
 import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.CONSENT_UNKNOWN_400;
 import static de.adorsys.psd2.xs2a.core.profile.PaymentType.SINGLE;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -99,6 +98,19 @@ class PaymentAuthorisationCancellationAspectServiceTest {
     }
 
     @Test
+    void createPisAuthorisationAspect_withNoResponseType_shouldThrowException() {
+        // Given
+        when(createResponse.getAuthorisationResponseType()).thenReturn(null);
+        responseObject = ResponseObject.<CancellationAuthorisationResponse>builder()
+                             .body(createResponse)
+                             .build();
+
+        // When
+        assertThrows(IllegalArgumentException.class, () -> service.createPisAuthorisationAspect(responseObject, REQUEST));
+    }
+
+
+    @Test
     void createPisAuthorisationAspect_withUpdateResponseType_shouldSetUpdatePsuDataLinks() {
         AspspSettings aspspSettings = new JsonReader().getObjectFromFile("json/aspect/aspsp-settings.json", AspspSettings.class);
         when(aspspProfileServiceWrapper.isForceXs2aBaseLinksUrl()).thenReturn(aspspSettings.getCommon().isForceXs2aBaseLinksUrl());
@@ -141,7 +153,7 @@ class PaymentAuthorisationCancellationAspectServiceTest {
         ResponseObject<Xs2aUpdatePisCommonPaymentPsuDataResponse> responseObject = ResponseObject.<Xs2aUpdatePisCommonPaymentPsuDataResponse>builder()
                                                                                        .body(updateResponse)
                                                                                        .build();
-        ResponseObject actualResponse = service.updatePisCancellationAuthorizationAspect(responseObject, updateRequest);
+        ResponseObject<Xs2aUpdatePisCommonPaymentPsuDataResponse> actualResponse = service.updatePisCancellationAuthorizationAspect(responseObject, updateRequest);
         verify(updateResponse, times(1)).setLinks(any(UpdatePisCancellationPsuDataLinks.class));
 
         assertFalse(actualResponse.hasError());
@@ -153,7 +165,7 @@ class PaymentAuthorisationCancellationAspectServiceTest {
         ResponseObject<Xs2aUpdatePisCommonPaymentPsuDataResponse> responseObject = ResponseObject.<Xs2aUpdatePisCommonPaymentPsuDataResponse>builder()
                                                                                        .fail(AIS_400, of(CONSENT_UNKNOWN_400))
                                                                                        .build();
-        ResponseObject actualResponse = service.updatePisCancellationAuthorizationAspect(responseObject, updateRequest);
+        ResponseObject<Xs2aUpdatePisCommonPaymentPsuDataResponse> actualResponse = service.updatePisCancellationAuthorizationAspect(responseObject, updateRequest);
 
         // Then
         assertTrue(actualResponse.hasError());

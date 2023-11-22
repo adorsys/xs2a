@@ -19,6 +19,7 @@
 package de.adorsys.psd2.xs2a.service.payment.support.mapper;
 
 import de.adorsys.psd2.model.BulkPaymentInitiationJson;
+import de.adorsys.psd2.model.OtherType;
 import de.adorsys.psd2.model.PaymentInitiationJson;
 import de.adorsys.psd2.model.PeriodicPaymentInitiationJson;
 import de.adorsys.psd2.xs2a.domain.pis.BulkPayment;
@@ -33,8 +34,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.util.Collections;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.*;
 
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = Xs2aToPsd2PaymentSupportMapperImpl.class)
@@ -161,6 +161,25 @@ class Xs2AToPsd2PaymentSupportMapperTest {
         BulkPaymentInitiationJson actual = xs2AToPsd2PaymentSupportMapper.mapToBulkPaymentInitiationJson(null);
 
         // Then
+        assertNull(actual);
+    }
+
+    @Test
+    void mapToOtherType() {
+        //When
+        OtherType actual = xs2AToPsd2PaymentSupportMapper.mapToOtherType("identification");
+
+        //Then
+        assertNotNull(actual);
+        assertEquals("identification", actual.getIdentification());
+    }
+
+    @Test
+    void mapToCurrency_null() {
+        //When
+        String actual = xs2AToPsd2PaymentSupportMapper.mapToCurrency(null);
+
+        //Then
         assertNull(actual);
     }
 }

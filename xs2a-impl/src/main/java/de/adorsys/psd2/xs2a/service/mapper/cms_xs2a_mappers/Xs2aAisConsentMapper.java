@@ -64,10 +64,6 @@ public class Xs2aAisConsentMapper {
                             ac.getValidUntil(),
                             ac.getExpireDate(),
                             ac.getFrequencyPerDay(),
-                            // TODO: remove in 15.10
-                            ac.getLastActionDateTime() == null
-                                ? null
-                                : ac.getLastActionDateTime().toLocalDate(),
                             ac.getLastActionDateTime(),
                             xs2aToSpiConsentStatusMapper.mapToSpiConsentStatus(ac.getConsentStatus()),
                             ac.isWithBalance(),
