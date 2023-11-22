@@ -185,7 +185,7 @@
         <freemarker.version>2.3.28</freemarker.version>
         <liquibase-core.version>4.17.0</liquibase-core.version>
         <commons-validator.version>1.7</commons-validator.version>
-        <swagger.annotations.version>2.2.0</swagger.annotations.version>
+        <swagger.annotations.version>2.2.15</swagger.annotations.version>
         <jetbrains.annotations.version>15.0</jetbrains.annotations.version>
         <archunit-junit4.version>0.13.1</archunit-junit4.version>
         <jsonassert.version>1.5.0</jsonassert.version>
@@ -262,6 +262,8 @@
             **/*Application.java,
             **/*Exception.java,
             **/*Config.java,
+            **/*Configuration.java,
+            **/*Properties.java,
             **/*.xml,
             **/xs2a-server-api/**/*,
             **/xs2a-core-payments/**/*,

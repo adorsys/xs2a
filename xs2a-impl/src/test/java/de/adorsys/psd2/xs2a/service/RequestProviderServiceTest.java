@@ -162,6 +162,40 @@ class RequestProviderServiceTest {
     }
 
     @Test
+    void getRequestId() {
+        //Given
+        when(internalRequestIdService.getInternalRequestId()).thenReturn(INTERNAL_REQUEST_ID);
+        when(httpServletRequest.getHeaderNames()).thenReturn(Collections.enumeration(HEADERS.keySet()));
+        HEADERS.forEach((key, value) -> when(httpServletRequest.getHeader(key)).thenReturn(value));
+        //When
+        UUID actual = requestProviderService.getRequestId();
+        //Then
+        assertEquals(UUID.fromString(HEADERS.get(Xs2aHeaderConstant.X_REQUEST_ID)), actual);
+        assertTrue(requestProviderService.isRequestFromPsu());
+        assertFalse(requestProviderService.isRequestFromTPP());
+    }
+
+    @Test
+    void getTppRedirectUri() {
+        //Given
+        when(httpServletRequest.getHeader(Xs2aHeaderConstant.TPP_REDIRECT_URI)).thenReturn(Xs2aHeaderConstant.TPP_REDIRECT_URI);
+        //When
+        String actual = requestProviderService.getTppRedirectURI();
+        //Then
+        assertEquals(Xs2aHeaderConstant.TPP_REDIRECT_URI, actual);
+    }
+
+    @Test
+    void getTppNokRedirectUri() {
+        //Given
+        when(httpServletRequest.getHeader(Xs2aHeaderConstant.TPP_NOK_REDIRECT_URI)).thenReturn(Xs2aHeaderConstant.TPP_NOK_REDIRECT_URI);
+        //When
+        String actual = requestProviderService.getTppNokRedirectURI();
+        //Then
+        assertEquals(Xs2aHeaderConstant.TPP_NOK_REDIRECT_URI, actual);
+    }
+
+    @Test
     void getInternalRequestId() {
         when(internalRequestIdService.getInternalRequestId()).thenReturn(INTERNAL_REQUEST_ID);
         // When
@@ -170,6 +204,17 @@ class RequestProviderServiceTest {
         // Then
         verify(internalRequestIdService).getInternalRequestId();
         assertEquals(INTERNAL_REQUEST_ID, actualInternalRequestId);
+    }
+
+    @Test
+    void getInternalRequestIdString() {
+        when(internalRequestIdService.getInternalRequestId()).thenReturn(INTERNAL_REQUEST_ID);
+        // When
+        String actualInternalRequestId = requestProviderService.getInternalRequestIdString();
+
+        // Then
+        verify(internalRequestIdService).getInternalRequestId();
+        assertEquals(INTERNAL_REQUEST_ID.toString(), actualInternalRequestId);
     }
 
     @Test

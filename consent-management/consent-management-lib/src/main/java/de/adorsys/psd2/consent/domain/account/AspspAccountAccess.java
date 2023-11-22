@@ -21,7 +21,6 @@ package de.adorsys.psd2.consent.domain.account;
 import de.adorsys.psd2.consent.api.TypeAccess;
 import de.adorsys.psd2.consent.domain.consent.ConsentEntity;
 import de.adorsys.psd2.xs2a.core.profile.AccountReferenceType;
-import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -35,7 +34,6 @@ import java.util.Currency;
 @NoArgsConstructor
 @Entity(name = "aspsp_account_access")
 @EqualsAndHashCode
-@Schema(description = "Aspsp Account access", name = "AspspAccountAccess")
 public class AspspAccountAccess {
 
     @Id
@@ -50,29 +48,23 @@ public class AspspAccountAccess {
     private ConsentEntity consent;
 
     @Column(name = "resource_id", length = 100)
-    @Schema(description = "RESOURCE-ID: This identification is denoting the addressed account.")
     private String resourceId;
 
     @Column(name = "aspsp_account_id", length = 100)
-    @Schema(description = "Aspsp-Account-ID: Bank specific account ID", example = "26bb59a3-2f63-4027-ad38-67d87e59611a")
     private String aspspAccountId;
 
     @Column(name = "account_identifier", length = 34, nullable = false)
-    @Schema(description = "Account-Identifier: This data element can be used in the body of the CreateConsentReq Request Message for retrieving account access consent from this payment account", example = "DE2310010010123456789", required = true)
     private String accountIdentifier;
 
     @Column(name = "currency", length = 3)
-    @Schema(description = "Currency Type", example = "EUR")
     private Currency currency;
 
     @Column(name = "type_access", length = 30, nullable = false)
     @Enumerated(value = EnumType.STRING)
-    @Schema(description = "Types of given accesses: account, balance, transaction, payment", example = "ACCOUNT")
     private TypeAccess typeAccess;
 
     @Column(name = "account_reference_type", nullable = true, length = 30)
     @Enumerated(value = EnumType.STRING)
-    @Schema(description = "Type of the account: IBAN, BBAN, IBAN, BBAN, PAN, MASKED_PAN, MSISDN", required = true, example = "IBAN")
     private AccountReferenceType accountReferenceType;
 
     public AspspAccountAccess(ConsentEntity consent, String accountIdentifier, TypeAccess typeAccess, AccountReferenceType accountReferenceType, Currency currency, String resourceId, String aspspAccountId) {

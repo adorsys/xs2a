@@ -32,11 +32,11 @@ import java.util.Currency;
 @AllArgsConstructor
 public class Xs2aAmount {
 
-	@Schema(description = "ISO 4217 currency code", required = true, example = "EUR")
+	@Schema(description = "ISO 4217 currency code", requiredMode = Schema.RequiredMode.REQUIRED, example = "EUR")
     @NotNull
     private Currency currency;
 
-	@Schema(description = "The amount given with fractional digits, where fractions must be compliant to the currency definition. The decimal separator is a dot", required = true, example = "1000.00")
+	@Schema(description = "The amount given with fractional digits, where fractions must be compliant to the currency definition. The decimal separator is a dot", requiredMode = Schema.RequiredMode.REQUIRED, example = "1000.00")
     @NotNull
     private String amount;
 }

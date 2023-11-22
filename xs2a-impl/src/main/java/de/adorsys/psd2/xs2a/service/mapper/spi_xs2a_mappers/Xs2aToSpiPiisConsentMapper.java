@@ -43,7 +43,6 @@ public interface Xs2aToSpiPiisConsentMapper {
     @Mapping(target = "registrationInformation", source = "consentData.registrationInformation")
     @Mapping(target = "requestDateTime", source = "creationTimestamp")
     @Mapping(target = "tppAuthorisationNumber", source = "consentTppInformation.tppInfo.authorisationNumber")
-    @Mapping(target = "lastActionDate", expression = "java(convertToLocalDate(piisConsent.getLastActionDateTime()))")
     @Mapping(target = "lastActionDateTime", source = "lastActionDateTime")
     SpiPiisConsent mapToSpiPiisConsent(PiisConsent piisConsent);
 

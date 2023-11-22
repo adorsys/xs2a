@@ -44,12 +44,7 @@ public class SpiAccountConsent implements SpiConsent {
     private LocalDate validUntil;
     private LocalDate expireDate;
     private int frequencyPerDay;
-
-    @Deprecated // TODO: remove in 15.10
-    private LocalDate lastActionDate;
-
     private LocalDateTime lastActionDateTime;
-
     private SpiConsentStatus consentStatus;
     private boolean withBalance;
     private boolean tppRedirectPreferred;

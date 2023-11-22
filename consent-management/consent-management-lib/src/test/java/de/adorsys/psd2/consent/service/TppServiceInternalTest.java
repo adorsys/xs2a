@@ -90,6 +90,20 @@ class TppServiceInternalTest {
     }
 
     @Test
+    void updateTppInfo_differentTppInfoFound() {
+        //Given
+        ArgumentCaptor<TppInfoEntity> argument = ArgumentCaptor.forClass(TppInfoEntity.class);
+        when(tppInfoMapper.mapToTppInfoEntity(tppInfo)).thenReturn(tppInfoEntity);
+        when(tppInfoRepository.findByAuthorisationNumber(tppInfo.getAuthorisationNumber())).thenReturn(Optional.of(new TppInfoEntity()));
+        //When
+        CmsResponse<Boolean> updateTppInfo = tppServiceInternal.updateTppInfo(tppInfo);
+        //Then
+        assertTrue(updateTppInfo.isSuccessful());
+
+        assertTrue(updateTppInfo.getPayload());
+    }
+
+    @Test
     void updateTppInfo_tppFoundAndRolesNotChangedAndUpdated() {
         //Given
         when(tppInfoRepository.findByAuthorisationNumber(tppInfo.getAuthorisationNumber())).thenReturn(Optional.of(tppInfoEntity));

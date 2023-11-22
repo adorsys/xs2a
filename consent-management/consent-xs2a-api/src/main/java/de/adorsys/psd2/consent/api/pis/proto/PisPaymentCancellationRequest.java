@@ -28,14 +28,14 @@ import lombok.Data;
 @AllArgsConstructor
 @Schema(description = "Pis payment cancellation request", name = "PisPaymentCancellationRequest")
 public class PisPaymentCancellationRequest {
-    @Schema(description = "Payment type: BULK, SINGLE or PERIODIC.", required = true, example = "SINGLE")
+    @Schema(description = "Payment type: BULK, SINGLE or PERIODIC.", requiredMode = Schema.RequiredMode.REQUIRED, example = "SINGLE")
     private PaymentType paymentType;
-    @Schema(description = "Payment product", required = true, example = "sepa-credit-transfers")
+    @Schema(description = "Payment product", requiredMode = Schema.RequiredMode.REQUIRED, example = "sepa-credit-transfers")
     private String paymentProduct;
-    @Schema(description = "ASPSP identifier of the payment", required = true, example = "bf489af6-a2cb-4b75-b71d-d66d58b934d7")
+    @Schema(description = "ASPSP identifier of the payment", requiredMode = Schema.RequiredMode.REQUIRED, example = "bf489af6-a2cb-4b75-b71d-d66d58b934d7")
     private String encryptedPaymentId;
-    @Schema(description = "TPP's choice of authorisation method", required = true, example = "TRUE | FALSE")
+    @Schema(description = "TPP's choice of authorisation method", requiredMode = Schema.RequiredMode.REQUIRED, example = "TRUE | FALSE")
     private Boolean tppExplicitAuthorisationPreferred;
-    @Schema(description = "Tpp redirect URIs", required = true)
+    @Schema(description = "TPP redirect URIs", requiredMode = Schema.RequiredMode.REQUIRED)
     private TppRedirectUri tppRedirectUri;
 }

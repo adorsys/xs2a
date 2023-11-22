@@ -73,7 +73,7 @@ class CertificateExtractorUtilTest {
         assertNotNull(extractedNotAfter);
 
         Calendar calendar = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
-        calendar.set(2018, Calendar.JUNE, 19, 16, 6, 24);
+        calendar.set(2030, Calendar.MARCH, 3, 0, 0, 0);
         calendar.set(Calendar.MILLISECOND, 0);
         Date expectedDate = calendar.getTime();
 

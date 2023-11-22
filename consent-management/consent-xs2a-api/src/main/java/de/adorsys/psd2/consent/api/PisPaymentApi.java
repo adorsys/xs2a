@@ -56,7 +56,7 @@ public interface PisPaymentApi {
         @PathVariable("payment-id") String paymentId,
         @Schema(description = "The following code values are permitted 'ACCC', 'ACCP', 'ACSC', 'ACSP', 'ACTC', 'ACWC', 'ACWP', 'PDNG', 'RJCT', 'RCVD', 'CANC', 'ACFC', 'PATC'. These values might be extended by ASPSP by more values.",
             allowableValues = "ACCC, ACCP, ACSC, ACSP, ACTC, ACWC, ACWP, RCVD, PDNG, RJCT, CANC, ACFC, PATC",
-            required = true)
+            requiredMode = Schema.RequiredMode.REQUIRED)
         @PathVariable("status") String status);
 
     @PutMapping(path = "/payment/{payment-id}/internal-status/{status}")
@@ -71,7 +71,7 @@ public interface PisPaymentApi {
         @PathVariable("payment-id") String paymentId,
         @Schema(description = "The following code values are permitted 'INITIATED', 'CANCELLED_INITIATED', 'CANCELLED_FINALISED', 'FINALISED', 'REJECTED'. These values might be extended by ASPSP by more values.",
             allowableValues = "INITIATED, CANCELLED_INITIATED, CANCELLED_FINALISED, FINALISED, REJECTED",
-            required = true)
+            requiredMode = Schema.RequiredMode.REQUIRED)
         @PathVariable("status") String status);
 
     @PutMapping(path = "/payment/{payment-id}/cancellation/redirects")

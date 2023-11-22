@@ -16,24 +16,35 @@
  * contact us at psd2@adorsys.com.
  */
 
-package de.adorsys.psd2.model;
+package de.adorsys.psd2.xs2a.core.pis;
 
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.*;
 
-class PaymentInitiationWithStatusResponseTest {
-    private final Class clazz = PaymentInitiationWithStatusResponse.class;
+class TransactionStatusTest {
 
     @Test
-    void checkFieldsForExistence() {
-        try {
-            CommonModelHelper.checkUltimateDebtorField(clazz);
-            CommonModelHelper.checkUltimateCreditorField(clazz);
-            CommonModelHelper.checkPurposeCodeField(clazz);
-            CommonModelHelper.checkRemittanceInformationStructuredField(clazz);
-        } catch (NoSuchFieldException e) {
-            fail();
-        }
+    void getByValue_withValidValue_shouldReturnEnum() {
+        TransactionStatus actualValue = TransactionStatus.getByValue("AcceptedSettlementCompleted");
+        assertEquals(TransactionStatus.ACSC, actualValue);
+    }
+
+    @Test
+    void getByValue_withInvalidValue_shouldReturnEnum() {
+        TransactionStatus actualValue = TransactionStatus.getByValue("StepanBandera");
+        assertNull(actualValue);
+    }
+
+    @Test
+    void isFinalised_withValidValue_shouldReturnTrue() {
+        boolean actual = TransactionStatus.ACCC.isFinalisedStatus();
+        assertTrue(actual);
+    }
+
+    @Test
+    void isNotFinalised_withValidValue_shouldReturnFalse() {
+        boolean actual = TransactionStatus.ACCC.isNotFinalisedStatus();
+        assertFalse(actual);
     }
 }

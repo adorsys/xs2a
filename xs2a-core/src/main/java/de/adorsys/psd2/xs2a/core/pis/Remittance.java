@@ -27,7 +27,7 @@ import javax.validation.constraints.Size;
 @Schema(description = "Remittance")
 public class Remittance {
 
-    @Schema(description = "the actual reference", required = true, example = "Ref Number Merchant")
+    @Schema(description = "the actual reference", requiredMode = Schema.RequiredMode.REQUIRED, example = "Ref Number Merchant")
     @Size(max = 35)
     private String reference;
 

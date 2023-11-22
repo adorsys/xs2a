@@ -39,9 +39,6 @@ public class SpiPiisConsent implements SpiConsent {
     private String id;
     private boolean recurringIndicator;
     private OffsetDateTime requestDateTime;
-
-    @Deprecated // TODO: remove in 15.10
-    private LocalDate lastActionDate;
     private LocalDateTime lastActionDateTime;
     private LocalDate expireDate;
     private List<SpiPsuData> psuData;
