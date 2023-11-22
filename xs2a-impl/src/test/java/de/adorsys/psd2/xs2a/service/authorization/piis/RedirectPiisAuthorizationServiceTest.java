@@ -127,6 +127,11 @@ class RedirectPiisAuthorizationServiceTest {
     }
 
     @Test
+    void updateConsentPsuData() {
+        assertThat(authorizationService.updateConsentPsuData(null, null)).isNull();
+    }
+
+    @Test
     void getAuthorisationScaStatus() {
         //Given
         ScaStatus scaStatus = ScaStatus.RECEIVED;

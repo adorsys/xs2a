@@ -19,7 +19,6 @@
 package de.adorsys.psd2.consent.domain.account;
 
 import de.adorsys.psd2.consent.api.ActionStatus;
-import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
 import jakarta.persistence.*;
@@ -27,7 +26,6 @@ import java.time.LocalDate;
 
 @Data
 @Entity(name = "ais_consent_action")
-@Schema(description = "Ais consent action entity", name = "AisConsentAction")
 public class AisConsentAction {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "ais_consent_action_generator")
@@ -35,19 +33,15 @@ public class AisConsentAction {
     private Long id;
 
     @Column(name = "request_date", nullable = false)
-    @Schema(description = "Date of the last request for this consent. The content is the local ASPSP date in ISODate Format", required = true, example = "2018-05-04T15:30:35.035Z")
     private LocalDate requestDate;
 
     @Column(name = "tpp_id", nullable = false)
-    @Schema(description = "TPP id", required = true, example = "af006545-d713-46d7-b6cf-09c9628f9a5d")
     private String tppId;
 
     @Column(name = "action_status", nullable = false, length = 50)
     @Enumerated(value = EnumType.STRING)
-    @Schema(description = "The following code values are permitted 'SUCCESS', 'BAD_PAYLOAD', 'FAILURE_ACCOUNT', 'FAILURE_BALANCE', 'FAILURE_TRANSACTION', 'FAILURE_PAYMENT'.", required = true, example = "SUCCESS")
     private ActionStatus actionStatus;
 
     @Column(name = "requested_consent_id", nullable = false)
-    @Schema(description = "Requested consent ID", required = true, example = "af006545-d713-46d7-b6cf-09c9628f9a5d")
     private String requestedConsentId;
 }

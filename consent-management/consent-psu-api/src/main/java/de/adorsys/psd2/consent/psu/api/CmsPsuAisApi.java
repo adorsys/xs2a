@@ -75,7 +75,7 @@ public interface CmsPsuAisApi {
         @PathVariable(CmsConstant.PATH.CONSENT_ID) String consentId,
         @Schema(description = "The following code values are permitted 'received', 'psuIdentified', 'psuAuthenticated', 'scaMethodSelected', 'started', 'finalised', 'failed', 'exempted', 'unconfirmed'. These values might be extended by ASPSP by more values.",
             allowableValues = "RECEIVED, PSUIDENTIFIED, PSUAUTHENTICATED, SCAMETHODSELECTED,  STARTED,  FINALISED, FAILED, EXEMPTED, UNCONFIRMED",
-            required = true)
+            requiredMode = Schema.RequiredMode.REQUIRED)
         @PathVariable(CmsConstant.PATH.STATUS) String status,
         @Parameter(name = CmsConstant.PATH.AUTHORISATION_ID,
             description = "The consent authorisation identification assigned to the created authorisation.",

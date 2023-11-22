@@ -16,25 +16,25 @@
  * contact us at psd2@adorsys.com.
  */
 
-package de.adorsys.psd2.model;
+package de.adorsys.psd2.xs2a.web.validator;
 
+import de.adorsys.psd2.xs2a.web.validator.header.CreateAuthorisationHeaderValidator;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.fail;
+import java.util.ArrayList;
+import java.util.List;
 
-class PaymentInitiationJsonTest {
-    private final Class clazz = PaymentInitiationJson.class;
+import static org.junit.jupiter.api.Assertions.*;
+
+class CreatePaymentAuthorisationMethodValidatorImplTest {
 
     @Test
-    void checkFieldsForExistence() {
-        try {
-            CommonModelHelper.checkUltimateDebtorField(clazz);
-            CommonModelHelper.checkUltimateCreditorField(clazz);
-            CommonModelHelper.checkPurposeCodeField(clazz);
-            CommonModelHelper.checkRemittanceInformationStructuredField(clazz);
-            CommonModelHelper.checkRequestedExecutionDate(clazz);
-        } catch (NoSuchFieldException e) {
-            fail();
-        }
+    void init() {
+        List<CreateAuthorisationHeaderValidator> headerValidators = new ArrayList<>();
+        CreatePaymentAuthorisationMethodValidatorImpl methodValidator = new CreatePaymentAuthorisationMethodValidatorImpl(headerValidators);
+
+        assertEquals("_startPaymentAuthorisation", methodValidator.getMethodName());
+        assertSame(headerValidators, methodValidator.getValidatorWrapper().getHeaderValidators());
+        assertTrue(methodValidator.getValidatorWrapper().getQueryParameterValidators().isEmpty());
     }
 }

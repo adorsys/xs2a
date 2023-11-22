@@ -27,6 +27,7 @@ import de.adorsys.psd2.xs2a.core.authorisation.Authorisation;
 import de.adorsys.psd2.xs2a.core.authorisation.AuthorisationType;
 import de.adorsys.psd2.xs2a.core.domain.ErrorHolder;
 import de.adorsys.psd2.xs2a.core.error.ErrorType;
+import de.adorsys.psd2.xs2a.core.error.MessageErrorCode;
 import de.adorsys.psd2.xs2a.core.mapper.ServiceType;
 import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
@@ -54,6 +55,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
+import static de.adorsys.psd2.consent.api.CmsError.LOGICAL_ERROR;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
@@ -165,6 +167,22 @@ class PisAuthorisationServiceTest {
     }
 
     @Test
+    void updatePisAuthorisation_failed() {
+        ArgumentCaptor<AuthorisationProcessorRequest> authorisationProcessorRequestCaptor = ArgumentCaptor.forClass(AuthorisationProcessorRequest.class);
+        // Given
+        when(authorisationServiceEncrypted.getAuthorisationById(AUTHORISATION_ID))
+            .thenReturn(CmsResponse.<Authorisation>builder().error(LOGICAL_ERROR).build());
+
+        // When
+        Xs2aUpdatePisCommonPaymentPsuDataResponse actualResponse = pisAuthorisationService.updatePisAuthorisation(XS2A_UPDATE_PIS_COMMON_PAYMENT_PSU_DATA_REQUEST, SCA_APPROACH);
+
+        // Then
+        assertThat(actualResponse.hasError()).isTrue();
+        assertThat(actualResponse.getErrorHolder().getErrorType()).isEqualTo(ErrorType.PIS_404);
+        assertThat(actualResponse.getErrorHolder().getFirstErrorCode()).isEqualTo(Optional.of(MessageErrorCode.RESOURCE_UNKNOWN_404_NO_AUTHORISATION));
+    }
+
+    @Test
     void updatePisCancellationAuthorisation_success() {
         ArgumentCaptor<AuthorisationProcessorRequest> authorisationProcessorRequestCaptor = ArgumentCaptor.forClass(AuthorisationProcessorRequest.class);
 
@@ -182,6 +200,23 @@ class PisAuthorisationServiceTest {
         assertThat(authorisationProcessorRequestCaptor.getValue().getServiceType()).isEqualTo(ServiceType.PIS);
         assertThat(authorisationProcessorRequestCaptor.getValue().getUpdateAuthorisationRequest()).isEqualTo(XS2A_UPDATE_PIS_COMMON_PAYMENT_PSU_DATA_REQUEST);
         assertThat(authorisationProcessorRequestCaptor.getValue().getAuthorisation()).isEqualTo(GET_PIS_AUTHORISATION_RESPONSE);
+    }
+
+    @Test
+    void updatePisCancellationAuthorisation_failed() {
+        ArgumentCaptor<AuthorisationProcessorRequest> authorisationProcessorRequestCaptor = ArgumentCaptor.forClass(AuthorisationProcessorRequest.class);
+
+        // Given
+        when(authorisationServiceEncrypted.getAuthorisationById(AUTHORISATION_ID))
+            .thenReturn(CmsResponse.<Authorisation>builder().error(LOGICAL_ERROR).build());
+
+        // When
+        Xs2aUpdatePisCommonPaymentPsuDataResponse actualResponse = pisAuthorisationService.updatePisCancellationAuthorisation(XS2A_UPDATE_PIS_COMMON_PAYMENT_PSU_DATA_REQUEST, SCA_APPROACH);
+
+        // Then
+        assertThat(actualResponse.hasError()).isTrue();
+        assertThat(actualResponse.getErrorHolder().getErrorType()).isEqualTo(ErrorType.PIS_404);
+        assertThat(actualResponse.getErrorHolder().getFirstErrorCode()).isEqualTo(Optional.of(MessageErrorCode.RESOURCE_UNKNOWN_404_NO_CANC_AUTHORISATION));
     }
 
     @Test

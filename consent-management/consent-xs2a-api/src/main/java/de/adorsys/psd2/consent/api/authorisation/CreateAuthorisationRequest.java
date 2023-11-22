@@ -36,7 +36,7 @@ public class CreateAuthorisationRequest {
     @Schema(description = "Authorisation id")
     private String authorisationId;
 
-    @Schema(description = "Corresponding PSU", required = true)
+    @Schema(description = "Corresponding PSU", requiredMode = Schema.RequiredMode.AUTO)
     private PsuIdData psuData;
 
     @Schema(description = "SCA approach")

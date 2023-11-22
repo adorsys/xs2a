@@ -80,7 +80,7 @@ public interface PisCommonPaymentApi {
         @PathVariable("payment-id") String paymentId,
         @Schema(description = "The following code values are permitted 'ACCC', 'ACCP', 'ACSC', 'ACSP', 'ACTC', 'ACWC', 'ACWP', 'PDNG', 'RJCT', 'RCVD', 'CANC', 'ACFC', 'PATC'. These values might be extended by ASPSP by more values.",
             allowableValues = "AcceptedSettlementCompletedCreditor, AcceptedCustomerProfile, AcceptedSettlementCompleted, AcceptedSettlementInProcess, AcceptedTechnicalValidation, AcceptedWithChange, AcceptedWithoutPosting, Received, Pending, Rejected, Canceled, AcceptedFundsChecked, PartiallyAcceptedTechnicalCorrect",
-            required = true)
+            requiredMode = Schema.RequiredMode.REQUIRED)
         @PathVariable("status") String status);
 
     @PutMapping(path = "/{payment-id}/multilevel-sca")

@@ -18,7 +18,6 @@
 
 package de.adorsys.psd2.consent.domain;
 
-import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
 import jakarta.persistence.*;
@@ -26,7 +25,6 @@ import java.util.Currency;
 
 @Data
 @Entity(name = "account_reference")
-@Schema(description = "Account reference", name = "Account reference")
 public class AccountReferenceEntity {
     @Id
     @Column(name = "account_reference_id")
@@ -34,26 +32,19 @@ public class AccountReferenceEntity {
     @SequenceGenerator(name = "account_reference_generator", sequenceName = "account_reference_id_seq", allocationSize = 1)
     private Long id;
 
-    @Schema(description = "IBAN: This data element can be used in the body of the CreateConsentReq Request Message for retrieving account access consent from this payment account", example = "DE89370400440532013000")
     private String iban;
 
-    @Schema(description = "BBAN: This data elements is used for payment accounts which have no IBAN", example = "89370400440532013000")
     private String bban;
 
-    @Schema(description = "PAN: Primary Account Number (PAN) of a card, can be tokenized by the ASPSP due to PCI DSS requirements.", example = "2356 5746 3217 1234")
     private String pan;
 
     @Column(name = "masked_pan")
-    @Schema(description = "MASKED_PAN: Primary Account Number (PAN) of a card in a masked form.", example = "2356xxxxxxxx1234")
     private String maskedPan;
 
-    @Schema(description = "MSISDN: An alias to access a payment account via a registered mobile phone number. This alias might be needed e.g. in the payment initiation service, cp. Section 5.3.1. The support of this alias must be explicitly documented by the ASPSP for the corresponding API calls.", example = "+49(0)911 360698-0")
     private String msisdn;
 
-    @Schema(description = "Codes following ISO 4217", example = "EUR")
     private Currency currency;
 
     @Column(name = "aspsp_account_id", length = 100)
-    @Schema(description = "Aspsp-Account-ID: Bank specific account ID", example = "26bb59a3-2f63-4027-ad38-67d87e59611a")
     private String aspspAccountId;
 }

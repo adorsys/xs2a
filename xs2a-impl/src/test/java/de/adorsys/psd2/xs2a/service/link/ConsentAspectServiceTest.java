@@ -89,7 +89,7 @@ class ConsentAspectServiceTest {
                                                                    .body(createConsentResponse)
                                                                    .build();
         // When
-        ResponseObject actualResponse = service.invokeCreateAccountConsentAspect(responseObject,true);
+        ResponseObject<CreateConsentResponse> actualResponse = service.invokeCreateAccountConsentAspect(responseObject, true);
 
         // Then
         verify(createConsentResponse, times(1)).setLinks(any(CreateConsentLinks.class));
@@ -104,7 +104,7 @@ class ConsentAspectServiceTest {
                                                                    .fail(AIS_400, of(CONSENT_UNKNOWN_400))
                                                                    .build();
         // When
-        ResponseObject actualResponse = service.invokeCreateAccountConsentAspect(responseObject, true);
+        ResponseObject<CreateConsentResponse> actualResponse = service.invokeCreateAccountConsentAspect(responseObject, true);
 
         // Then
         assertTrue(actualResponse.hasError());
@@ -126,7 +126,7 @@ class ConsentAspectServiceTest {
                                                                    .body(updateConsentPsuDataResponse)
                                                                    .build();
         // When
-        ResponseObject actualResponse = service.invokeCreateConsentPsuDataAspect(responseObject);
+        ResponseObject<AuthorisationResponse> actualResponse = service.invokeCreateConsentPsuDataAspect(responseObject);
 
         // Then
         verify(updateConsentPsuDataResponse, times(1)).setLinks(any(UpdateConsentLinks.class));
@@ -141,7 +141,7 @@ class ConsentAspectServiceTest {
                                                                    .body(updateConsentPsuDataResponse)
                                                                    .build();
         // When
-        ResponseObject actualResponse = service.invokeCreateConsentPsuDataAspect(responseObject);
+        ResponseObject<AuthorisationResponse> actualResponse = service.invokeCreateConsentPsuDataAspect(responseObject);
 
         // Then
         verify(updateConsentPsuDataResponse, times(1)).setLinks(null);
@@ -162,7 +162,7 @@ class ConsentAspectServiceTest {
                                                                    .body(createConsentAuthorisationResponse)
                                                                    .build();
         // When
-        ResponseObject actualResponse = service.invokeCreateConsentPsuDataAspect(responseObject);
+        ResponseObject<AuthorisationResponse> actualResponse = service.invokeCreateConsentPsuDataAspect(responseObject);
 
         // Then
         assertFalse(actualResponse.hasError());
@@ -176,7 +176,7 @@ class ConsentAspectServiceTest {
                                                                    .fail(AIS_400, of(CONSENT_UNKNOWN_400))
                                                                    .build();
         // When
-        ResponseObject actualResponse = service.invokeCreateConsentPsuDataAspect(responseObject);
+        ResponseObject<AuthorisationResponse> actualResponse = service.invokeCreateConsentPsuDataAspect(responseObject);
 
         // Then
         assertTrue(actualResponse.hasError());
@@ -198,7 +198,30 @@ class ConsentAspectServiceTest {
                                                                           .body(updateConsentPsuDataResponse)
                                                                           .build();
         // When
-        ResponseObject actualResponse = service.invokeUpdateConsentPsuDataAspect(responseObject);
+        ResponseObject<UpdateConsentPsuDataResponse> actualResponse = service.invokeUpdateConsentPsuDataAspect(responseObject);
+
+        // Then
+        verify(updateConsentPsuDataResponse, times(1)).setLinks(any(UpdateConsentLinks.class));
+
+        assertFalse(actualResponse.hasError());
+    }
+
+    @Test
+    void invokeUpdatePiisConsentPsuDataAspect_success() {
+        // Given
+        AspspSettings aspspSettings = new JsonReader().getObjectFromFile("json/aspect/aspsp-settings.json", AspspSettings.class);
+        when(aspspProfileServiceWrapper.isForceXs2aBaseLinksUrl())
+            .thenReturn(aspspSettings.getCommon().isForceXs2aBaseLinksUrl());
+        when(aspspProfileServiceWrapper.getXs2aBaseLinksUrl())
+            .thenReturn(aspspSettings.getCommon().getXs2aBaseLinksUrl());
+
+        when(updateConsentPsuDataResponse.getScaStatus()).thenReturn(ScaStatus.RECEIVED);
+
+        ResponseObject<UpdateConsentPsuDataResponse> responseObject = ResponseObject.<UpdateConsentPsuDataResponse>builder()
+                                                                          .body(updateConsentPsuDataResponse)
+                                                                          .build();
+        // When
+        ResponseObject<UpdateConsentPsuDataResponse> actualResponse = service.invokeUpdatePiisConsentPsuDataAspect(responseObject);
 
         // Then
         verify(updateConsentPsuDataResponse, times(1)).setLinks(any(UpdateConsentLinks.class));
@@ -211,7 +234,7 @@ class ConsentAspectServiceTest {
         ResponseObject<UpdateConsentPsuDataResponse> responseObject = ResponseObject.<UpdateConsentPsuDataResponse>builder()
                                                                           .body(updateConsentPsuDataResponse)
                                                                           .build();
-        ResponseObject actualResponse = service.invokeUpdateConsentPsuDataAspect(responseObject);
+        ResponseObject<UpdateConsentPsuDataResponse> actualResponse = service.invokeUpdateConsentPsuDataAspect(responseObject);
 
         verify(updateConsentPsuDataResponse, times(1)).setLinks(null);
 
@@ -225,7 +248,7 @@ class ConsentAspectServiceTest {
                                                                           .fail(AIS_400, of(CONSENT_UNKNOWN_400))
                                                                           .build();
         // When
-        ResponseObject actualResponse = service.invokeUpdateConsentPsuDataAspect(responseObject);
+        ResponseObject<UpdateConsentPsuDataResponse> actualResponse = service.invokeUpdateConsentPsuDataAspect(responseObject);
 
         // Then
         assertTrue(actualResponse.hasError());
@@ -242,10 +265,10 @@ class ConsentAspectServiceTest {
             .thenReturn(aspspSettings.getCommon().getXs2aBaseLinksUrl());
 
         ResponseObject<Xs2aConfirmationOfFundsResponse> responseObject = ResponseObject.<Xs2aConfirmationOfFundsResponse>builder()
-                                                                   .body(xs2aConfirmationOfFundsResponse)
-                                                                   .build();
+                                                                             .body(xs2aConfirmationOfFundsResponse)
+                                                                             .build();
         // When
-        ResponseObject actualResponse = service.createPiisConsentWithResponse(responseObject,true);
+        ResponseObject<Xs2aConfirmationOfFundsResponse> actualResponse = service.createPiisConsentWithResponse(responseObject, true);
 
         // Then
         verify(xs2aConfirmationOfFundsResponse, times(1)).setLinks(any(CreatePiisConsentLinks.class));
