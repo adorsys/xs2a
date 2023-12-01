@@ -1,4 +1,4 @@
-# <center><img src="xs2a_core.png" height="200"></center>
+<p align=center><img src="xs2a_core.png" height="200"></p>
 
 # Reference Java implementation of NextGenPSD2 XS2A Interface of Berlin Group
 
