@@ -1,3 +1,5 @@
+<div align="center"><img src="xs2a_core.png" height="200" alt=""></div>
+
 # Reference Java implementation of NextGenPSD2 XS2A Interface of Berlin Group
 
 This is the try-out version of adorsys XS2A Core: an open source (AGPL v.3) solution to get acquainted with adorsys’ implementation of the NextGenPSD2 specification. This software is delivered as-is and we're happy about any contributions done by the community to improve it.
