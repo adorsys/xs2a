@@ -76,7 +76,7 @@
           <stringProp name="HTTPSampler.response_timeout"></stringProp>
         </HTTPSamplerProxy>
         <hashTree>
-          <JSONPostProcessor guiclass="JSONPostProcessorGui" testclass="JSONPostProcessor" testname="Get Payment ID" enabled="true">
+          <JSONPostProcessor guiclass="JSONPostProcessorGui" testclass="JSONPostProcessor" testname="Get Payment ID " enabled="true">
             <stringProp name="JSONPostProcessor.referenceNames">payment_Id_${random-Para}</stringProp>
             <stringProp name="JSONPostProcessor.jsonPathExprs">$.paymentId</stringProp>
             <stringProp name="JSONPostProcessor.match_numbers">0</stringProp>
