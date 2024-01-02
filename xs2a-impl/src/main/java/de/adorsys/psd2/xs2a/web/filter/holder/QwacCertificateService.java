@@ -31,14 +31,14 @@ import de.adorsys.psd2.xs2a.service.validator.tpp.TppRoleValidationService;
 import de.adorsys.psd2.xs2a.web.error.TppErrorMessageWriter;
 import de.adorsys.psd2.xs2a.web.filter.TppErrorMessage;
 import de.adorsys.psd2.xs2a.web.mapper.Xs2aTppInfoMapper;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import no.difi.certvalidator.api.CertificateValidationException;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -65,18 +65,21 @@ public class QwacCertificateService {
 
     /**
      * Checks if certificate is applicable
-     * @param request is incoming HttpServletRequest
-     * @param response is outcoming HttpServletResponse
+     *
+     * @param request            is incoming HttpServletRequest
+     * @param response           is outcoming HttpServletResponse
      * @param encodedTppQwacCert is a certificate obtained from request header 'tpp-qwac-certificate'
-     * @return  true, if certificate is not expired, can be parsed, contains appropriate roles to access resource;
-     *          false otherwise
+     * @return true, if certificate is not expired, can be parsed, contains appropriate roles to access resource;
+     * false otherwise
      * @throws IOException if certificate is expired
      */
     public boolean isApplicable(HttpServletRequest request, HttpServletResponse response,
                                 String encodedTppQwacCert) throws IOException {
         try {
             TppCertificateData tppCertificateData = CertificateExtractorUtil.extract(encodedTppQwacCert);
-            if (isCertificateExpired(tppCertificateData.getNotAfter())) {
+            Date certificateExpiresAt = tppCertificateData.getNotAfter();
+
+            if (isCertificateExpired(certificateExpiresAt)) {
                 buildCertificateExpiredErrorResponse(response);
                 return false;
             }
@@ -96,6 +99,7 @@ public class QwacCertificateService {
             }
             tppService.updateTppInfo(tppInfo);
             tppInfoHolder.setTppInfo(tppInfo);
+            tppInfoHolder.setCertificateExpiresAt(certificateExpiresAt);
             return true;
         } catch (CertificateValidationException e) {
             buildCertificateInvalidNoAccessErrorResponse(response, e);
@@ -116,9 +120,9 @@ public class QwacCertificateService {
 
     private boolean isCertificateExpired(Date date) {
         return Optional.ofNullable(date)
-            .map(d -> d.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime())
-            .map(d -> d.isBefore(LocalDateTime.now()))
-            .orElse(true);
+                   .map(d -> d.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime())
+                   .map(d -> d.isBefore(LocalDateTime.now()))
+                   .orElse(true);
     }
 
     private void buildRoleInvalidErrorResponse(HttpServletResponse response,
@@ -129,8 +133,8 @@ public class QwacCertificateService {
 
     private void processTppRolesFromCertificate(TppInfo tppInfo, TppCertificateData tppCertificateData) {
         List<TppRole> xs2aTppRoles = tppCertificateData.getPspRoles().stream()
-            .map(TppRole::valueOf)
-            .collect(Collectors.toList());
+                                         .map(TppRole::valueOf)
+                                         .collect(Collectors.toList());
         setTppRoles(tppInfo, xs2aTppRoles);
     }
 
