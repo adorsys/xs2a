@@ -4,6 +4,12 @@
 
 * Increased test coverage
 
+* Extended `TppInfoHolder` class with QWAC certificate expiration date.
+
 == Increased test coverage
 
 Increased test coverage for some classes.
+
+== Extended `TppInfoHolder` class with QWAC certificate expiration date.
+
+From now on, this model has `certificateExpiresAt` field with the date of certificate expiration.
