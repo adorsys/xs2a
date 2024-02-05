@@ -6,7 +6,7 @@ This is the try-out version of adorsys XS2A Core: an open source (AGPL v.3) solu
 
 We currently focus on collaborative projects with our customers where our frameworks can be used as a basis for building new individual XS2A solutions.
 
-If you are an organisation that would like to commercially use our solutions beyond AGPL v3 requirements, we are open to discuss alternative individual licensing options. If you are interested in working with us or have any other inquiries, please contact us under psd2@adorsys.com.
+If you are an organisation that would like to commercially use our solutions beyond AGPL v3 requirements, we are open to discuss alternative individual licensing options. If you are interested in working with us or have any other inquiries, please contact us under sales@adorsys.com.
 
 ## What is it
 
@@ -63,5 +63,5 @@ For commercial support please contact **[adorsys team](https://adorsys.com/en/pr
 
 ## License
 
-This project is licensed under Affero GNU General Public License v.3 (AGPL v.3). See the [LICENSE](LICENSE) file for details. For alternative individual licensing options please contact us at psd2@adorsys.com.
+This project is licensed under Affero GNU General Public License v.3 (AGPL v.3). See the [LICENSE](LICENSE) file for details. For alternative individual licensing options please contact us at sales@adorsys.com.
 
