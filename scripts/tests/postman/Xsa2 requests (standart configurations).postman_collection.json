@@ -125312,7 +125312,7 @@
 									}
 								],
 								"url": {
-									"raw": "{{protocol}}://{{url_aspsp_profile}}/api/v1/aspsp-profile/",
+									"raw": "{{protocol}}://{{url_aspsp_profile}}/api/v1/aspsp-profile",
 									"protocol": "{{protocol}}",
 									"host": [
 										"{{url_aspsp_profile}}"

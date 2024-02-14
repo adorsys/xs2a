@@ -183,7 +183,7 @@
         <bcpkix-jdk15on.version>1.70</bcpkix-jdk15on.version>
         <slf4j-api.version>1.7.36</slf4j-api.version>
         <freemarker.version>2.3.28</freemarker.version>
-        <liquibase-core.version>4.17.0</liquibase-core.version>
+        <liquibase-core.version>4.22.0</liquibase-core.version>
         <commons-validator.version>1.7</commons-validator.version>
         <swagger.annotations.version>2.2.15</swagger.annotations.version>
         <jetbrains.annotations.version>15.0</jetbrains.annotations.version>
@@ -194,7 +194,7 @@
         <hamcrest.version>1.3</hamcrest.version>
         <postgresql.version>42.3.8</postgresql.version>
         <mariadb.version>2.3.0</mariadb.version>
-        <h2.version>2.1.210</h2.version>
+        <h2.version>2.2.220</h2.version>
         <ojdbc11.version>23.2.0.0</ojdbc11.version>
         <snakeyaml.version>2.0</snakeyaml.version>
         <byte-buddy.version>1.12.10</byte-buddy.version>
@@ -204,7 +204,7 @@
         <javax.el-api.version>3.0.0</javax.el-api.version>
         <jaxb-api.version>2.3.0</jaxb-api.version>
         <classmate.version>1.4.0</classmate.version>
-        <jackson.version>2.13.2</jackson.version>
+        <jackson.version>2.15.3</jackson.version>
 
         <!--Maven plugins-->
         <maven-pmd-plugin.version>3.12.0</maven-pmd-plugin.version>
@@ -219,7 +219,7 @@
         <maven-javadoc-plugin.version>3.6.0</maven-javadoc-plugin.version>
         <lombok-maven-plugin.version>1.18.4.0</lombok-maven-plugin.version>
 
-        <spring.version>5.3.28</spring.version>
+        <spring.version>5.3.31</spring.version>
         <spring-test.version>${spring.version}</spring-test.version>
         <spring-web.version>${spring.version}</spring-web.version>
         <spring-context.version>${spring.version}</spring-context.version>
@@ -228,16 +228,16 @@
         <spring-aop.version>${spring.version}</spring-aop.version>
         <spring-webmvc.version>${spring.version}</spring-webmvc.version>
         <spring-core.version>${spring.version}</spring-core.version>
-        <spring-data-jpa.version>2.7.13</spring-data-jpa.version>
-        <spring-boot.version>2.7.13</spring-boot.version>
-        <spring-boot-starter-web.version>2.7.13</spring-boot-starter-web.version>
+        <spring-data-jpa.version>2.7.18</spring-data-jpa.version>
+        <spring-boot.version>2.7.18</spring-boot.version>
+        <spring-boot-starter-web.version>2.7.18</spring-boot-starter-web.version>
 
         <dependency.locations.enabled>false</dependency.locations.enabled>
         <ruleset.basedir>${project.basedir}</ruleset.basedir>
         <archunit.version>0.13.1</archunit.version>
 
         <org.mapstruct.version>1.4.1.Final</org.mapstruct.version>
-        <logback-classic.version>1.2.3</logback-classic.version>
+        <logback-classic.version>1.2.13</logback-classic.version>
 
         <junit-jupiter.version>5.5.2</junit-jupiter.version>
         <mockito.version>3.11.2</mockito.version>
