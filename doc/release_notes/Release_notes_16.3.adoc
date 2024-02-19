@@ -1,3 +1,15 @@
 = Release notes v.16.3
 
 == Table of Contents
+
+* Updated dependencies
+
+== Updated dependencies
+
+Libraries were updated:
+
+- spring-core updated to 5.3.31;
+- spring-boot updated to 2.7.18;
+- jackson updated to 2.15.3;
+- h2 updated to 2.2.220;
+- liquibase-core updated to 4.22.0.
