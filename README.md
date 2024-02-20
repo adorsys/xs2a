@@ -14,7 +14,7 @@ The software in this repository is for try-out only. It is delivered as-is and c
 
 **Upcoming Regulation:** If you are interested in this project's further developments in the context of Berlin Group, Open Banking UK, PSD3, PSR, DORA and FIDA, please get in contact.
 
-For any inquiries please write to [sales@adorsys.com](mailto://sales@adorsys.com).
+For any inquiries please write to [sales@adorsys.com](mailto:sales@adorsys.com).
 
 ## Some Background
 
@@ -57,9 +57,9 @@ The list of contributors can be found [here](doc/contributors.md).
 
 ## Contact
 
-For commercial support please contact [sales@adorsys.com](mailto://sales@adorsys.com).
+For commercial support please contact [sales@adorsys.com](mailto:sales@adorsys.com).
 
 ## License
 
-This project is licensed under Affero GNU General Public License v.3 (AGPL v.3). See the [LICENSE](LICENSE) file for details. For alternative individual licensing options please contact us at [sales@adorsys.com](mailto://sales@adorsys.com).
+This project is licensed under Affero GNU General Public License v.3 (AGPL v.3). See the [LICENSE](LICENSE) file for details. For alternative individual licensing options please contact us at [sales@adorsys.com](mailto:sales@adorsys.com).
 
