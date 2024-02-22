@@ -1,4 +1,5 @@
 #!/bin/bash
+
 set -e
 
 export PATH=$PATH:${JMETER_BIN}

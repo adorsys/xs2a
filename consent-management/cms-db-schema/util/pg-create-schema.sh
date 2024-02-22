@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 
+
 # create consent schema and give permissions to cms user. Needed for
 # docker-compose so  that we can start the DB with the schema already being
 # present (rat)

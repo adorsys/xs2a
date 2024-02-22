@@ -1,5 +1,5 @@
 <!--
-  ~ Copyright 2018-2023 adorsys GmbH & Co KG
+  ~ Copyright 2018-2024 adorsys GmbH & Co KG
   ~
   ~ This program is free software: you can redistribute it and/or modify it
   ~ under the terms of the GNU Affero General Public License as published
@@ -13,7 +13,7 @@
   ~ along with this program. If not, see https://www.gnu.org/licenses/.
   ~
   ~ This project is also available under a separate commercial license. You can
-  ~ contact us at psd2@adorsys.com.
+  ~ contact us at sales@adorsys.com.
   -->
 
 <Document xmlns="urn:iso:std:iso:20022:tech:xsd:pain.002.001.03"><CstmrPmtStsRpt><GrpHdr><MsgId>4572457256725689726906</MsgId><CreDtTm>2017-02-14T20: 24: 56.021Z</CreDtTm><DbtrAgt><FinInstnId><BIC>ABCDDEFF</BIC></FinInstnId></DbtrAgt><CdtrAgt><FinInstnId><BIC>DCBADEFF</BIC></FinInstnId></CdtrAgt></GrpHdr><OrgnlGrpInfAndSts><OrgnlMsgId>MIPI-123456789RI-123456789</OrgnlMsgId><OrgnlMsgNmId>pain.001.001.03</OrgnlMsgNmId><OrgnlCreDtTm>2017-02-14T20: 23: 34.000Z</OrgnlCreDtTm><OrgnlNbOfTxs>1</OrgnlNbOfTxs><OrgnlCtrlSum>123</OrgnlCtrlSum><GrpSts>ACCT</GrpSts></OrgnlGrpInfAndSts><OrgnlPmtInfAndSts><OrgnlPmtInfId>BIPI-123456789RI-123456789</OrgnlPmtInfId><OrgnlNbOfTxs>1</OrgnlNbOfTxs><OrgnlCtrlSum>123</OrgnlCtrlSum><PmtInfSts>ACCT</PmtInfSts></OrgnlPmtInfAndSts></CstmrPmtStsRpt></Document>
