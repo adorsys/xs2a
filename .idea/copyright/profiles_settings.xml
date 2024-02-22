@@ -3,5 +3,8 @@
     <module2copyright>
       <element module="All" copyright="adorsys - GNU AGPL" />
     </module2copyright>
+    <LanguageOptions name="SQL">
+      <option name="fileTypeOverride" value="1" />
+    </LanguageOptions>
   </settings>
 </component>
