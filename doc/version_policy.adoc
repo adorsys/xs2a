@@ -17,7 +17,7 @@ To keep it simple:
 * We use *even* major version to mark *support* mainlines (`2.x`, `4.x`, `6.x` etc)
 * We use *odd* major version to mark *development* mainlines (`1.x`, `3.x`, `5.x` etc)
 
-https://adorsys.de/kontakt/[adorsys Team] guarantees general support of this XS2A library at least till 31.12.2022.
+https://adorsys.de/kontakt/[adorsys Team] guarantees general support of this XS2A library at least till 24.08.2024.
 
 [discrete]
 === Backward compatibility
