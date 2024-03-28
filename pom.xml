@@ -188,7 +188,7 @@
         <commons-validator.version>1.7</commons-validator.version>
         <jetbrains.annotations.version>15.0</jetbrains.annotations.version>
         <aspectj.version>1.9.2</aspectj.version>
-        <postgresql.version>42.3.8</postgresql.version>
+        <postgresql.version>42.3.10</postgresql.version>
         <mariadb.version>2.3.0</mariadb.version>
         <h2.version>2.2.220</h2.version>
         <ojdbc11.version>23.2.0.0</ojdbc11.version>
