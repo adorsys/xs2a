@@ -1,3 +1,11 @@
 = Release notes v.16.4
 
 == Table of Contents
+
+* Updated dependencies
+
+== Updated dependencies
+
+Libraries were updated:
+
+- postgresql - to 42.3.10.

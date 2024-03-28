@@ -192,7 +192,7 @@
         <assertj.version>3.13.2</assertj.version>
         <aspectj.version>1.9.2</aspectj.version>
         <hamcrest.version>1.3</hamcrest.version>
-        <postgresql.version>42.3.8</postgresql.version>
+        <postgresql.version>42.3.10</postgresql.version>
         <mariadb.version>2.3.0</mariadb.version>
         <h2.version>2.2.220</h2.version>
         <ojdbc11.version>23.2.0.0</ojdbc11.version>
