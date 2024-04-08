@@ -35,7 +35,6 @@ import java.util.Set;
 @Data
 @AllArgsConstructor
 public class Xs2aCreatePisCancellationAuthorisationResponse implements CancellationAuthorisationResponse {
-    @NotNull
     private String authorisationId;
     private ScaStatus scaStatus;
     private PaymentType paymentType;
@@ -45,11 +44,12 @@ public class Xs2aCreatePisCancellationAuthorisationResponse implements Cancellat
     private ScaApproach scaApproach;
     private final Set<TppMessageInformation> tppMessageInformation = new HashSet<>();
 
-    public Xs2aCreatePisCancellationAuthorisationResponse(@NotNull String authorisationId, ScaStatus scaStatus, PaymentType paymentType, String internalRequestId) {
+    public Xs2aCreatePisCancellationAuthorisationResponse(@NotNull String authorisationId, ScaStatus scaStatus, ScaApproach scaApproach, PaymentType paymentType, String internalRequestId) {
         this.authorisationId = authorisationId;
         this.scaStatus = scaStatus;
         this.paymentType = paymentType;
         this.internalRequestId = internalRequestId;
+        this.scaApproach = scaApproach;
     }
 
     @NotNull

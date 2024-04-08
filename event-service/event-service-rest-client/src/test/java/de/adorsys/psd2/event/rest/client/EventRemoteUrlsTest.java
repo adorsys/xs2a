@@ -35,6 +35,6 @@ class EventRemoteUrlsTest {
 
     @Test
     void createEvent() {
-        assertEquals("base.url/events/", eventRemoteUrls.createEvent());
+        assertEquals("base.url/events", eventRemoteUrls.createEvent());
     }
 }

@@ -20,6 +20,7 @@ package de.adorsys.psd2.xs2a.core.domain;
 
 import de.adorsys.psd2.xs2a.core.error.ErrorType;
 import de.adorsys.psd2.xs2a.core.error.MessageErrorCode;
+import lombok.EqualsAndHashCode;
 import org.apache.commons.collections4.CollectionUtils;
 
 import java.util.ArrayList;
@@ -28,6 +29,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+@EqualsAndHashCode
 public class ErrorHolder {
     private final List<TppMessageInformation> tppMessageInformationList;
     private final ErrorType errorType;

@@ -33,6 +33,8 @@ import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.sca.ChallengeData;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import de.adorsys.psd2.xs2a.domain.consent.CreatePaymentAuthorisationProcessorResponse;
+import de.adorsys.psd2.xs2a.domain.consent.Xs2aCreateAuthorisationRequest;
+import de.adorsys.psd2.xs2a.domain.consent.Xs2aCreatePisAuthorisationResponse;
 import de.adorsys.psd2.xs2a.domain.consent.pis.PaymentAuthorisationParameters;
 import de.adorsys.psd2.xs2a.domain.consent.pis.Xs2aUpdatePisCommonPaymentPsuDataResponse;
 import de.adorsys.psd2.xs2a.service.authorization.Xs2aAuthorisationService;
@@ -51,6 +53,8 @@ import de.adorsys.psd2.xs2a.spi.domain.SpiAspspConsentDataProvider;
 import de.adorsys.psd2.xs2a.spi.domain.SpiContextData;
 import de.adorsys.psd2.xs2a.spi.domain.authorisation.*;
 import de.adorsys.psd2.xs2a.spi.domain.common.SpiAmount;
+import de.adorsys.psd2.xs2a.spi.domain.common.SpiAuthenticationObject;
+import de.adorsys.psd2.xs2a.spi.domain.common.SpiChallengeData;
 import de.adorsys.psd2.xs2a.spi.domain.error.SpiMessageErrorCode;
 import de.adorsys.psd2.xs2a.spi.domain.error.SpiTppMessage;
 import de.adorsys.psd2.xs2a.spi.domain.payment.SpiPaymentType;
@@ -59,7 +63,6 @@ import de.adorsys.psd2.xs2a.spi.domain.payment.SpiTransactionStatus;
 import de.adorsys.psd2.xs2a.spi.domain.payment.response.SpiPaymentExecutionResponse;
 import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponse;
 import de.adorsys.psd2.xs2a.spi.domain.response.SpiTppMessageInformation;
-import de.adorsys.psd2.xs2a.spi.domain.sca.SpiChallengeData;
 import de.adorsys.psd2.xs2a.spi.domain.sca.SpiScaApproach;
 import de.adorsys.psd2.xs2a.spi.domain.sca.SpiScaStatus;
 import de.adorsys.psd2.xs2a.spi.service.CurrencyConversionInfoSpi;
@@ -144,19 +147,23 @@ class PisAuthorisationProcessorServiceImplTest {
     @Mock
     private SpiAspspConsentDataProvider spiAspspConsentDataProvider;
     @Mock
-    SpiToXs2aChallengeDataMapper challengeDataMapper;
+    private SpiToXs2aChallengeDataMapper challengeDataMapper;
     @Mock
-    SpiToXs2aTppMessageInformationMapper tppMessageInformationMapper;
+    private SpiToXs2aTppMessageInformationMapper tppMessageInformationMapper;
     @Mock
-    SpiToXs2aAuthenticationObjectMapper authenticationObjectMapper;
+    private SpiToXs2aAuthenticationObjectMapper authenticationObjectMapper;
     @Mock
-    SpiToXs2aAuthorizationMapper spiToXs2aAuthorizationMapper;
+    private SpiToXs2aPaymentTypeMapper spiToXs2aPaymentTypeMapper;
     @Mock
-    SpiToXs2aPisMapper spiToXs2aPisMapper;
+    private SpiToXs2aTransactionStatusMapper spiToXs2aTransactionMapper;
     @Mock
-    Xs2aToSpiAuthorizationMapper xs2aToSpiAuthorizationMapper;
+    private SpiToXs2aScaStatusMapper spiToXs2aScaStatusMapper;
     @Mock
-    SpiToXs2aTransactionMapper spiToXs2aTransactionMapper;
+    private SpiToXs2aScaApproachMapper spiToXs2aScaApproachMapper;
+    @Mock
+    private PisScaAuthorisationServiceResolver pisScaAuthorisationServiceResolver;
+    @Mock
+    private PisScaAuthorisationService pisScaAuthorisationService;
 
     private PisCommonPaymentResponse commonPaymentResponse;
 
@@ -184,7 +191,8 @@ class PisAuthorisationProcessorServiceImplTest {
                                                                                                                          null, null,
                                                                                                                          null, null,
                                                                                                                          null, null,
-                                                                                                                         null, null);
+                                                                                                                         null, null,
+                                                                                                                         null);
 
         //When
         pisAuthorisationProcessorService.updateAuthorisation(buildAuthorisationProcessorRequest(), buildAuthorisationProcessorResponse());
@@ -211,7 +219,7 @@ class PisAuthorisationProcessorServiceImplTest {
             .thenReturn(SpiResponse.<SpiCurrencyConversionInfo>builder()
                             .payload(spiCurrencyConversionInfo)
                             .build());
-        when(spiToXs2aTransactionMapper.mapToTransactionStatus(TEST_SPI_TRANSACTION_STATUS_SUCCESS)).thenReturn(TEST_TRANSACTION_STATUS_SUCCESS);
+        when(spiToXs2aTransactionMapper.mapToXs2aTransactionStatus(TEST_SPI_TRANSACTION_STATUS_SUCCESS)).thenReturn(TEST_TRANSACTION_STATUS_SUCCESS);
 
 
         // When
@@ -254,8 +262,8 @@ class PisAuthorisationProcessorServiceImplTest {
                             .payload(spiCurrencyConversionInfo)
                             .build());
         when(authenticationObjectMapper.toAuthenticationObjectList(buildSpiAuthenticationObjectSingleValueList(false))).thenReturn(buildAuthenticationObjectSingleValueList(false));
-        when(spiToXs2aPisMapper.mapToPaymentType(SpiPaymentType.SINGLE)).thenReturn(PaymentType.SINGLE);
-        when(authenticationObjectMapper.toAuthenticationObject(buildSpiAuthenticationObject(false))).thenReturn(buildAuthenticationObject(false));
+        when(spiToXs2aPaymentTypeMapper.mapToXs2aPaymentType(SpiPaymentType.SINGLE)).thenReturn(PaymentType.SINGLE);
+        when(authenticationObjectMapper.toAuthenticationObject(buildSpiAuthenticationObject())).thenReturn(buildAuthenticationObject(false));
         when(challengeDataMapper.toChallengeData(buildSpiChallengeData())).thenReturn(buildChallengeData());
 
         // When
@@ -361,7 +369,7 @@ class PisAuthorisationProcessorServiceImplTest {
             .thenReturn(SpiResponse.<SpiCurrencyConversionInfo>builder()
                             .payload(spiCurrencyConversionInfo)
                             .build());
-        when(spiToXs2aTransactionMapper.mapToTransactionStatus(SpiTransactionStatus.ACSC)).thenReturn(TransactionStatus.ACSC);
+        when(spiToXs2aTransactionMapper.mapToXs2aTransactionStatus(SpiTransactionStatus.ACSC)).thenReturn(TransactionStatus.ACSC);
 
         // When
         AuthorisationProcessorResponse actual = pisAuthorisationProcessorService.doScaReceived(buildAuthorisationProcessorRequest());
@@ -468,7 +476,7 @@ class PisAuthorisationProcessorServiceImplTest {
             .thenReturn(SpiResponse.<SpiCurrencyConversionInfo>builder()
                             .payload(spiCurrencyConversionInfo)
                             .build());
-        when(spiToXs2aTransactionMapper.mapToTransactionStatus(SpiTransactionStatus.ACSC)).thenReturn(TransactionStatus.ACSC);
+        when(spiToXs2aTransactionMapper.mapToXs2aTransactionStatus(SpiTransactionStatus.ACSC)).thenReturn(TransactionStatus.ACSC);
 
         // When
         AuthorisationProcessorResponse actual = pisAuthorisationProcessorService.doScaReceived(buildAuthorisationProcessorRequest());
@@ -610,7 +618,7 @@ class PisAuthorisationProcessorServiceImplTest {
                             .payload(spiCurrencyConversionInfo)
                             .build());
         when(authenticationObjectMapper.toAuthenticationObjectList(buildSpiAuthenticationObjectSingleValueList(false))).thenReturn(Collections.singletonList(buildAuthenticationObject(false)));
-        when(spiToXs2aTransactionMapper.mapToTransactionStatus(SpiTransactionStatus.ACSC)).thenReturn(TransactionStatus.ACSC);
+        when(spiToXs2aTransactionMapper.mapToXs2aTransactionStatus(SpiTransactionStatus.ACSC)).thenReturn(TransactionStatus.ACSC);
 
         // When
         AuthorisationProcessorResponse actual = pisAuthorisationProcessorService.doScaReceived(buildAuthorisationProcessorRequest());
@@ -710,7 +718,7 @@ class PisAuthorisationProcessorServiceImplTest {
             .thenReturn(SpiResponse.<SpiCurrencyConversionInfo>builder()
                             .payload(spiCurrencyConversionInfo)
                             .build());
-        when(spiToXs2aTransactionMapper.mapToTransactionStatus(SpiTransactionStatus.ACSC)).thenReturn(TransactionStatus.ACSC);
+        when(spiToXs2aTransactionMapper.mapToXs2aTransactionStatus(SpiTransactionStatus.ACSC)).thenReturn(TransactionStatus.ACSC);
         // When
         AuthorisationProcessorResponse actual = pisAuthorisationProcessorService.doScaPsuIdentified(buildAuthorisationProcessorRequest());
 
@@ -751,9 +759,11 @@ class PisAuthorisationProcessorServiceImplTest {
                             .payload(spiCurrencyConversionInfo)
                             .build());
         when(authenticationObjectMapper.toAuthenticationObjectList(buildSpiAuthenticationObjectSingleValueList(false))).thenReturn(Collections.singletonList(buildAuthenticationObject(false)));
-        when(spiToXs2aPisMapper.mapToPaymentType(SpiPaymentType.SINGLE)).thenReturn(PaymentType.SINGLE);
-        when(authenticationObjectMapper.toAuthenticationObject(buildSpiAuthenticationObject(false))).thenReturn(buildAuthenticationObject(false));
+        when(spiToXs2aPaymentTypeMapper.mapToXs2aPaymentType(SpiPaymentType.SINGLE)).thenReturn(PaymentType.SINGLE);
+        when(authenticationObjectMapper.toAuthenticationObject(buildSpiAuthenticationObject())).thenReturn(buildAuthenticationObject(false));
         when(challengeDataMapper.toChallengeData(buildSpiChallengeData())).thenReturn(buildChallengeData());
+        when(spiToXs2aScaStatusMapper.mapToXs2aScaStatus(SpiScaStatus.SCAMETHODSELECTED)).thenReturn(ScaStatus.SCAMETHODSELECTED);
+        when(authenticationObjectMapper.toAuthenticationObjectList(buildSpiAuthenticationObjectSingleValueList())).thenReturn(buildAuthenticationObjectSingleValueList());
 
         // When
         AuthorisationProcessorResponse actual = pisAuthorisationProcessorService.doScaPsuIdentified(buildAuthorisationProcessorRequest());
@@ -859,7 +869,7 @@ class PisAuthorisationProcessorServiceImplTest {
             .thenReturn(SpiResponse.<SpiCurrencyConversionInfo>builder()
                             .payload(spiCurrencyConversionInfo)
                             .build());
-        when(spiToXs2aTransactionMapper.mapToTransactionStatus(SpiTransactionStatus.ACSC)).thenReturn(TransactionStatus.ACSC);
+        when(spiToXs2aTransactionMapper.mapToXs2aTransactionStatus(SpiTransactionStatus.ACSC)).thenReturn(TransactionStatus.ACSC);
 
         // When
         AuthorisationProcessorResponse actual = pisAuthorisationProcessorService.doScaPsuIdentified(buildAuthorisationProcessorRequest());
@@ -968,7 +978,7 @@ class PisAuthorisationProcessorServiceImplTest {
             .thenReturn(SpiResponse.<SpiCurrencyConversionInfo>builder()
                             .payload(spiCurrencyConversionInfo)
                             .build());
-        when(spiToXs2aTransactionMapper.mapToTransactionStatus(SpiTransactionStatus.ACSC)).thenReturn(TransactionStatus.ACSC);
+        when(spiToXs2aTransactionMapper.mapToXs2aTransactionStatus(SpiTransactionStatus.ACSC)).thenReturn(TransactionStatus.ACSC);
 
         // When
         AuthorisationProcessorResponse actual = pisAuthorisationProcessorService.doScaPsuIdentified(buildAuthorisationProcessorRequest());
@@ -1112,7 +1122,7 @@ class PisAuthorisationProcessorServiceImplTest {
                             .payload(spiCurrencyConversionInfo)
                             .build());
         when(authenticationObjectMapper.toAuthenticationObjectList(buildSpiAuthenticationObjectSingleValueList())).thenReturn(buildAuthenticationObjectSingleValueList());
-        when(spiToXs2aTransactionMapper.mapToTransactionStatus(SpiTransactionStatus.ACSC)).thenReturn(TransactionStatus.ACSC);
+        when(spiToXs2aTransactionMapper.mapToXs2aTransactionStatus(SpiTransactionStatus.ACSC)).thenReturn(TransactionStatus.ACSC);
 
         // When
         AuthorisationProcessorResponse actual = pisAuthorisationProcessorService.doScaPsuIdentified(buildAuthorisationProcessorRequest());
@@ -1324,7 +1334,7 @@ class PisAuthorisationProcessorServiceImplTest {
             .thenReturn(SpiResponse.<SpiCurrencyConversionInfo>builder()
                             .payload(spiCurrencyConversionInfo)
                             .build());
-        when(spiToXs2aTransactionMapper.mapToTransactionStatus(SpiTransactionStatus.ACSC)).thenReturn(TransactionStatus.ACSC);
+        when(spiToXs2aTransactionMapper.mapToXs2aTransactionStatus(SpiTransactionStatus.ACSC)).thenReturn(TransactionStatus.ACSC);
 
         // When
         AuthorisationProcessorResponse actual = pisAuthorisationProcessorService.doScaPsuAuthenticated(buildAuthorisationProcessorRequest());
@@ -1387,7 +1397,7 @@ class PisAuthorisationProcessorServiceImplTest {
             .thenReturn(SpiResponse.<SpiCurrencyConversionInfo>builder()
                             .payload(spiCurrencyConversionInfo)
                             .build());
-        when(spiToXs2aTransactionMapper.mapToTransactionStatus(SpiTransactionStatus.PATC)).thenReturn(TransactionStatus.PATC);
+        when(spiToXs2aTransactionMapper.mapToXs2aTransactionStatus(SpiTransactionStatus.PATC)).thenReturn(TransactionStatus.PATC);
 
         // When
         AuthorisationProcessorResponse actual = pisAuthorisationProcessorService.doScaPsuAuthenticated(buildAuthorisationProcessorRequest());
@@ -1422,7 +1432,7 @@ class PisAuthorisationProcessorServiceImplTest {
         SpiSinglePayment spiPayment = new SpiSinglePayment("sepa-credit-transfers");
         spiPayment.setPaymentId(TEST_PAYMENT_ID);
         when(xs2aToSpiPaymentMapper.mapToSpiPayment(pisCommonPaymentResponse)).thenReturn(spiPayment);
-        when(spiToXs2aTransactionMapper.mapToTransactionStatus(SpiTransactionStatus.ACSC)).thenReturn(TransactionStatus.ACSC);
+        when(spiToXs2aTransactionMapper.mapToXs2aTransactionStatus(SpiTransactionStatus.ACSC)).thenReturn(TransactionStatus.ACSC);
 
         // When
         AuthorisationProcessorResponse actual = pisAuthorisationProcessorService.doScaMethodSelected(buildAuthorisationProcessorRequest());
@@ -1457,7 +1467,7 @@ class PisAuthorisationProcessorServiceImplTest {
         SpiSinglePayment spiPayment = new SpiSinglePayment("sepa-credit-transfers");
         spiPayment.setPaymentId(TEST_PAYMENT_ID);
         when(xs2aToSpiPaymentMapper.mapToSpiPayment(pisCommonPaymentResponse)).thenReturn(spiPayment);
-        when(spiToXs2aTransactionMapper.mapToTransactionStatus(SpiTransactionStatus.PATC)).thenReturn(TransactionStatus.PATC);
+        when(spiToXs2aTransactionMapper.mapToXs2aTransactionStatus(SpiTransactionStatus.PATC)).thenReturn(TransactionStatus.PATC);
 
         // When
         AuthorisationProcessorResponse actual = pisAuthorisationProcessorService.doScaMethodSelected(buildAuthorisationProcessorRequest());
@@ -1562,15 +1572,52 @@ class PisAuthorisationProcessorServiceImplTest {
                                                                      .build();
         when(paymentAuthorisationSpi.startAuthorisation(SPI_CONTEXT_DATA, TEST_SPI_SCA_APPROACH, TEST_SPI_SCA_STATUS, TEST_AUTHORISATION_ID, TEST_SPI_SINGLE_PAYMENT, spiAspspConsentDataProvider))
             .thenReturn(spiResponse);
-        when(xs2aToSpiAuthorizationMapper.mapToSpiScaStatus(TEST_SCA_STATUS)).thenReturn(TEST_SPI_SCA_STATUS);
-        when(xs2aToSpiAuthorizationMapper.mapToSpiScaApproach(TEST_SCA_APPROACH)).thenReturn(TEST_SPI_SCA_APPROACH);
-        when(spiToXs2aAuthorizationMapper.mapToScaStatus(TEST_SPI_SCA_STATUS)).thenReturn(TEST_SCA_STATUS);
-        when(spiToXs2aAuthorizationMapper.mapToScaApproach(TEST_SPI_SCA_APPROACH)).thenReturn(TEST_SCA_APPROACH);
+        when(spiToXs2aScaStatusMapper.mapToXs2aScaStatus(TEST_SPI_SCA_STATUS)).thenReturn(TEST_SCA_STATUS);
+        when(spiToXs2aScaApproachMapper.mapToXs2aScaApproach(TEST_SPI_SCA_APPROACH)).thenReturn(TEST_SCA_APPROACH);
         when(tppMessageInformationMapper.toTppMessageInformationSet(TEST_SPI_TPP_MESSAGES)).thenReturn(TEST_TPP_MESSAGES);
+        when(pisScaAuthorisationServiceResolver.getService()).thenReturn(pisScaAuthorisationService);
+        when(spiToXs2aPaymentTypeMapper.mapToXs2aPaymentType(SpiPaymentType.SINGLE)).thenReturn(PaymentType.SINGLE);
+        Xs2aCreatePisAuthorisationResponse xs2aCreatePisAuthorisationResponse = new Xs2aCreatePisAuthorisationResponse(TEST_AUTHORISATION_ID,
+                                                                                                                       TEST_SCA_STATUS,
+                                                                                                                       TEST_SCA_APPROACH,
+                                                                                                                       PaymentType.SINGLE,
+                                                                                                                       null, TEST_PSU_DATA);
+        when(pisScaAuthorisationService.createCommonPaymentAuthorisation(any(Xs2aCreateAuthorisationRequest.class), any(PaymentType.class))).thenReturn(Optional.of(xs2aCreatePisAuthorisationResponse));
 
         // When
         AuthorisationProcessorResponse actual = pisAuthorisationProcessorService.doScaStarted(authorisationProcessorRequest);
         CreatePaymentAuthorisationProcessorResponse expected = buildCreatePaymentAuthorisationProcessorResponse();
+
+        // Then
+        assertThat(actual).isEqualTo(expected);
+    }
+
+    @Test
+    void doScaStarted_failed_authorisation() {
+        // Given
+        AuthorisationProcessorRequest authorisationProcessorRequest = buildAuthorisationProcessorRequest();
+        when(spiContextDataProvider.provideWithPsuIdData(TEST_PSU_DATA)).thenReturn(SPI_CONTEXT_DATA);
+        when(aspspConsentDataProviderFactory.getSpiAspspDataProviderFor(TEST_PAYMENT_ID)).thenReturn(spiAspspConsentDataProvider);
+        when(xs2aPisCommonPaymentService.getPisCommonPaymentById(TEST_PAYMENT_ID)).thenReturn(Optional.of(commonPaymentResponse));
+        when(xs2aToSpiPaymentMapper.mapToSpiPayment(any(PisCommonPaymentResponse.class))).thenReturn(TEST_SPI_SINGLE_PAYMENT);
+        SpiResponse<SpiStartAuthorisationResponse> spiResponse = SpiResponse.<SpiStartAuthorisationResponse>builder()
+                                                                     .payload(new SpiStartAuthorisationResponse(TEST_SPI_SCA_APPROACH, TEST_SPI_SCA_STATUS, TEST_PSU_MESSAGE, TEST_SPI_TPP_MESSAGES))
+                                                                     .build();
+        when(paymentAuthorisationSpi.startAuthorisation(SPI_CONTEXT_DATA, TEST_SPI_SCA_APPROACH, TEST_SPI_SCA_STATUS, TEST_AUTHORISATION_ID, TEST_SPI_SINGLE_PAYMENT, spiAspspConsentDataProvider))
+            .thenReturn(spiResponse);
+        when(spiToXs2aScaStatusMapper.mapToXs2aScaStatus(TEST_SPI_SCA_STATUS)).thenReturn(TEST_SCA_STATUS);
+        when(spiToXs2aScaApproachMapper.mapToXs2aScaApproach(TEST_SPI_SCA_APPROACH)).thenReturn(TEST_SCA_APPROACH);
+        when(pisScaAuthorisationServiceResolver.getService()).thenReturn(pisScaAuthorisationService);
+        when(spiToXs2aPaymentTypeMapper.mapToXs2aPaymentType(SpiPaymentType.SINGLE)).thenReturn(PaymentType.SINGLE);
+        when(pisScaAuthorisationService.createCommonPaymentAuthorisation(any(Xs2aCreateAuthorisationRequest.class), any(PaymentType.class))).thenReturn(Optional.empty());
+
+        // When
+        AuthorisationProcessorResponse actual = pisAuthorisationProcessorService.doScaStarted(authorisationProcessorRequest);
+        ErrorHolder errorHolder = ErrorHolder.builder(TEST_ERROR_TYPE_400)
+                                      .tppMessages(TppMessageInformation.of(MessageErrorCode.PAYMENT_FAILED))
+                                      .build();
+        ;
+        CreatePaymentAuthorisationProcessorResponse expected = buildCreatePaymentAuthorisationProcessorResponseWithError(errorHolder);
 
         // Then
         assertThat(actual).isEqualTo(expected);
@@ -1591,8 +1638,6 @@ class PisAuthorisationProcessorServiceImplTest {
             .thenReturn(spiResponse);
         ErrorHolder errorHolder = ErrorHolder.builder(TEST_ERROR_TYPE_400).build();
         when(spiErrorMapper.mapToErrorHolder(eq(spiResponse), any())).thenReturn(errorHolder);
-        when(xs2aToSpiAuthorizationMapper.mapToSpiScaStatus(TEST_SCA_STATUS)).thenReturn(TEST_SPI_SCA_STATUS);
-        when(xs2aToSpiAuthorizationMapper.mapToSpiScaApproach(TEST_SCA_APPROACH)).thenReturn(TEST_SPI_SCA_APPROACH);
 
         // When
         AuthorisationProcessorResponse actual = pisAuthorisationProcessorService.doScaStarted(authorisationProcessorRequest);
@@ -1667,6 +1712,7 @@ class PisAuthorisationProcessorServiceImplTest {
         method.setAuthenticationType(TEST_AUTHENTICATION_TYPE);
         spiAuthorizationCodeResult.setSelectedScaMethod(method);
         spiAuthorizationCodeResult.setChallengeData(buildSpiChallengeData());
+        spiAuthorizationCodeResult.setScaStatus(SpiScaStatus.SCAMETHODSELECTED);
         return spiAuthorizationCodeResult;
     }
 
@@ -1755,11 +1801,11 @@ class PisAuthorisationProcessorServiceImplTest {
         return sms;
     }
 
-    private SpiAuthenticationObject buildSpiAuthenticationObject(boolean isDecoupled) {
+    private SpiAuthenticationObject buildSpiAuthenticationObject() {
         SpiAuthenticationObject sms = new SpiAuthenticationObject();
         sms.setAuthenticationType(TEST_AUTHENTICATION_TYPE);
         sms.setAuthenticationMethodId(TEST_AUTHENTICATION_METHOD_ID);
-        sms.setDecoupled(isDecoupled);
+        sms.setDecoupled(false);
         return sms;
     }
 
@@ -1797,7 +1843,7 @@ class PisAuthorisationProcessorServiceImplTest {
     }
 
     private CreatePaymentAuthorisationProcessorResponse buildCreatePaymentAuthorisationProcessorResponse() {
-        return new CreatePaymentAuthorisationProcessorResponse(TEST_SCA_STATUS, TEST_SCA_APPROACH, TEST_PSU_MESSAGE, TEST_TPP_MESSAGES, TEST_PAYMENT_ID, TEST_PSU_DATA);
+        return new CreatePaymentAuthorisationProcessorResponse(TEST_SCA_STATUS, TEST_SCA_APPROACH, TEST_PSU_MESSAGE, TEST_TPP_MESSAGES, TEST_PAYMENT_ID, TEST_AUTHORISATION_ID, null, TEST_PSU_DATA);
     }
 
     private CreatePaymentAuthorisationProcessorResponse buildCreatePaymentAuthorisationProcessorResponseWithError(ErrorHolder errorHolder) {

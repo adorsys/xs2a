@@ -22,7 +22,6 @@ import de.adorsys.psd2.consent.api.CmsError;
 import de.adorsys.psd2.consent.api.CmsResponse;
 import de.adorsys.psd2.consent.api.pis.CreatePisCommonPaymentResponse;
 import de.adorsys.psd2.consent.api.pis.PisCommonPaymentResponse;
-import de.adorsys.psd2.consent.api.pis.proto.PisCommonPaymentRequest;
 import de.adorsys.psd2.consent.api.pis.proto.PisPaymentInfo;
 import de.adorsys.psd2.consent.api.service.PisCommonPaymentService;
 import de.adorsys.psd2.consent.service.security.SecurityDataService;
@@ -38,8 +37,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -76,6 +74,22 @@ class PisCommonPaymentServiceInternalEncryptedTest {
 
         assertEquals(expected, actual.getPayload());
         verify(pisCommonPaymentService, times(1)).createCommonPayment(request);
+    }
+
+    @Test
+    void createCommonPayment_errorWhenCreate() {
+        // Given
+        PisPaymentInfo request = buildPisPaymentInfoRequest();
+        when(pisCommonPaymentService.createCommonPayment(buildPisPaymentInfoRequest()))
+            .thenReturn(CmsResponse.<CreatePisCommonPaymentResponse>builder()
+                            .error(CmsError.TECHNICAL_ERROR)
+                            .build());
+
+        // When
+        CmsResponse<CreatePisCommonPaymentResponse> actual = pisCommonPaymentServiceInternalEncrypted.createCommonPayment(request);
+
+        // Then
+        assertFalse(actual.isSuccessful());
     }
 
     @Test
@@ -262,10 +276,6 @@ class PisCommonPaymentServiceInternalEncryptedTest {
 
     private PisPaymentInfo buildPisPaymentInfoRequest() {
         return new PisPaymentInfo();
-    }
-
-    private PisCommonPaymentRequest buildPisCommonPaymentRequest() {
-        return new PisCommonPaymentRequest();
     }
 
     private CreatePisCommonPaymentResponse buildCreatePisCommonPaymentResponse(String id) {

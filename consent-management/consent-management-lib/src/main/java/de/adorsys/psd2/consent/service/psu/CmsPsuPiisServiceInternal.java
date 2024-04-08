@@ -35,7 +35,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -84,7 +84,7 @@ public class CmsPsuPiisServiceInternal implements CmsPsuPiisService {
             return true;
         }
 
-        log.info("Consent ID [{}], Instance ID: [{}]. Revoke consent failed, because given psuData is not equals stored psuData, or consent status is finalised, or consent not found",
+        log.info("Consent ID [{}], Instance ID: [{}]. Revoke consent failed,  given psuData is not equals stored psuData, or consent status is finalised, or consent not found",
                  consentId, instanceId);
         return false;
     }
@@ -105,7 +105,7 @@ public class CmsPsuPiisServiceInternal implements CmsPsuPiisService {
     }
 
     private void revokeConsent(ConsentEntity consent) {
-        consent.setLastActionDate(LocalDate.now());
+        consent.setLastActionDateTime(LocalDateTime.now());
         consent.setConsentStatus(ConsentStatus.REVOKED_BY_PSU);
     }
 }

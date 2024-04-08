@@ -30,8 +30,8 @@ import de.adorsys.psd2.xs2a.domain.consent.pis.Xs2aUpdatePisCommonPaymentPsuData
 import de.adorsys.psd2.xs2a.service.authorization.Xs2aAuthorisationService;
 import de.adorsys.psd2.xs2a.service.context.SpiContextDataProvider;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiErrorMapper;
-import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiToXs2aAuthorizationMapper;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiToXs2aCurrencyConversionInfoMapper;
+import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiToXs2aScaStatusMapper;
 import de.adorsys.psd2.xs2a.service.spi.SpiAspspConsentDataProviderFactory;
 import de.adorsys.psd2.xs2a.spi.domain.SpiAspspConsentDataProvider;
 import de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiAuthorisationDecoupledScaResponse;
@@ -61,7 +61,7 @@ public class PisCommonDecoupledService {
     private final Xs2aAuthorisationService xs2aAuthorisationService;
     private final CurrencyConversionInfoSpi currencyConversionInfoSpi;
     private final SpiToXs2aCurrencyConversionInfoMapper spiToXs2aCurrencyConversionInfoMapper;
-    private final SpiToXs2aAuthorizationMapper spiToXs2aAuthorizationMapper;
+    private final SpiToXs2aScaStatusMapper spiToXs2aScaStatusMapper;
 
     public Xs2aUpdatePisCommonPaymentPsuDataResponse proceedDecoupledInitiation(PaymentAuthorisationParameters request, SpiPayment payment, String authenticationMethodId) {
         return proceedDecoupled(request, payment, authenticationMethodId, PIS_CREATION);
@@ -112,7 +112,7 @@ public class PisCommonDecoupledService {
         SpiAuthorisationDecoupledScaResponse spiAuthorisationDecoupledScaResponse = spiResponse.getPayload();
 
         Xs2aUpdatePisCommonPaymentPsuDataResponse response = new Xs2aUpdatePisCommonPaymentPsuDataResponse(
-            spiToXs2aAuthorizationMapper.mapToScaStatus(spiAuthorisationDecoupledScaResponse.getScaStatus()),
+            spiToXs2aScaStatusMapper.mapToXs2aScaStatus(spiAuthorisationDecoupledScaResponse.getScaStatus()),
             request.getPaymentId(), request.getAuthorisationId(), psuData, xs2aCurrencyConversionInfo);
         response.setPsuMessage(spiAuthorisationDecoupledScaResponse.getPsuMessage());
         return response;

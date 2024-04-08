@@ -20,10 +20,10 @@ package de.adorsys.psd2.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 import org.springframework.validation.annotation.Validated;
 
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
 import java.util.Map;
 import java.util.Objects;
 
@@ -32,7 +32,7 @@ import java.util.Objects;
  */
 @Schema(description = "JSON based card account report.  This card account report contains transactions resulting from the query parameters. ")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-10-26T13:16:54.081225+03:00[Europe/Kiev]")
+@jakarta.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-10-25T13:15:56.196839+03:00[Europe/Kiev]")
 
 
 public class CardAccountReport   {
@@ -50,18 +50,17 @@ public class CardAccountReport   {
     return this;
   }
 
-    /**
-     * Get booked
-     *
-     * @return booked
-     **/
-    @Schema(description = "")
-    @JsonProperty("booked")
+  /**
+   * Get booked
+   * @return booked
+   **/
+  @Schema(description = "")
+  @JsonProperty("booked")
 
-    @Valid
-    public CardTransactionList getBooked() {
-        return booked;
-    }
+  @Valid
+  public CardTransactionList getBooked() {
+    return booked;
+  }
 
   public void setBooked(CardTransactionList booked) {
     this.booked = booked;
@@ -72,39 +71,37 @@ public class CardAccountReport   {
     return this;
   }
 
-    /**
-     * Get pending
-     *
-     * @return pending
-     **/
-    @Schema(description = "")
-    @JsonProperty("pending")
+  /**
+   * Get pending
+   * @return pending
+   **/
+  @Schema(description = "")
+  @JsonProperty("pending")
 
-    @Valid
-    public CardTransactionList getPending() {
-        return pending;
+  @Valid
+  public CardTransactionList getPending() {
+    return pending;
   }
 
   public void setPending(CardTransactionList pending) {
     this.pending = pending;
   }
 
-    public CardAccountReport _links(Map _links) {
-        this._links = _links;
-        return this;
-    }
+  public CardAccountReport _links(Map _links) {
+    this._links = _links;
+    return this;
+  }
 
-    /**
-     * Get _links
-     *
-     * @return _links
-     **/
-    @Schema(required = true, description = "")
-    @JsonProperty("_links")
+  /**
+   * Get _links
+   * @return _links
+   **/
+  @Schema(required = true, description = "")
+  @JsonProperty("_links")
     @NotNull
 
-    @Valid
-    public Map getLinks() {
+  @Valid
+  public Map getLinks() {
     return _links;
   }
 

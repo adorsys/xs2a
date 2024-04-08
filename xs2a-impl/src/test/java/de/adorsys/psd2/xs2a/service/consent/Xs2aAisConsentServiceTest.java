@@ -139,7 +139,6 @@ class Xs2aAisConsentServiceTest {
         when(cmsCreateConsentResponseService.getCmsCreateConsentResponse(CMS_CONSENT)).thenReturn(Xs2aResponse.<CmsCreateConsentResponse>builder()
                                                                                                       .build());
 
-
         // When
         Xs2aResponse<Xs2aCreateAisConsentResponse> actualResponse = xs2aAisConsentService.createConsent(CREATE_CONSENT_REQ, PSU_DATA, TPP_INFO);
 

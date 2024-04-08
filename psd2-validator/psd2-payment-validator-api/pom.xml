@@ -24,7 +24,7 @@
 	<parent>
         <artifactId>psd2-validator</artifactId>
         <groupId>de.adorsys.psd2</groupId>
-        <version>14.10-SNAPSHOT</version>
+        <version>17.3</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
@@ -44,8 +44,8 @@
         </dependency>
 
         <dependency>
-            <groupId>javax.servlet</groupId>
-            <artifactId>javax.servlet-api</artifactId>
+            <groupId>jakarta.servlet</groupId>
+            <artifactId>jakarta.servlet-api</artifactId>
         </dependency>
 
         <dependency>

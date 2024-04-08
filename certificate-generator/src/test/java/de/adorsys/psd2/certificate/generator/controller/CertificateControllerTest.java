@@ -38,8 +38,7 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.Collections;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.is;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -82,8 +81,8 @@ class CertificateControllerTest {
                                                     .build();
 
         mockMvc.perform(
-            post("/api/cert-generator").contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(certificateRequest)))
+                post("/api/cert-generator").contentType(MediaType.APPLICATION_JSON)
+                    .content(objectMapper.writeValueAsString(certificateRequest)))
             .andExpect(status().isOk())
             .andExpect(jsonPath("$.encodedCert").value(CERTIFICATE))
             .andExpect(jsonPath("$.privateKey").value(PRIVATE_KEY));
@@ -98,12 +97,12 @@ class CertificateControllerTest {
                                                     .build();
 
         MockHttpServletResponse response = mockMvc.perform(
-            post("/api/cert-generator").contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(certificateRequest)))
+                post("/api/cert-generator").contentType(MediaType.APPLICATION_JSON)
+                    .content(objectMapper.writeValueAsString(certificateRequest)))
                                                .andExpect(status().isBadRequest())
                                                .andReturn().getResponse();
 
-        assertThat(response.getContentAsString(), is(""));
+        assertEquals("", response.getContentAsString());
     }
 
     @Test
@@ -115,12 +114,12 @@ class CertificateControllerTest {
                                                     .build();
 
         MockHttpServletResponse response = mockMvc.perform(
-            post("/api/cert-generator").contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(certificateRequest)))
+                post("/api/cert-generator").contentType(MediaType.APPLICATION_JSON)
+                    .content(objectMapper.writeValueAsString(certificateRequest)))
                                                .andExpect(status().isBadRequest())
                                                .andReturn().getResponse();
 
-        assertThat(response.getContentAsString(), is(""));
+        assertEquals("", response.getContentAsString());
     }
 
     @Test
@@ -132,12 +131,12 @@ class CertificateControllerTest {
                                                     .build();
 
         MockHttpServletResponse response = mockMvc.perform(
-            post("/api/cert-generator").contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(certificateRequest)))
+                post("/api/cert-generator").contentType(MediaType.APPLICATION_JSON)
+                    .content(objectMapper.writeValueAsString(certificateRequest)))
                                                .andExpect(status().isBadRequest())
                                                .andReturn().getResponse();
 
-        assertThat(response.getContentAsString(), is(""));
+        assertEquals("", response.getContentAsString());
     }
 }
 

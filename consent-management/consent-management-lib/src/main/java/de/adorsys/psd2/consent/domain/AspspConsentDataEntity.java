@@ -18,18 +18,16 @@
 
 package de.adorsys.psd2.consent.domain;
 
-import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Lob;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.Lob;
 
 @Data
 @Entity(name = "aspsp_consent_data")
-@Schema(description = "ASPSP consent data", name = "AspspConsentData")
 @NoArgsConstructor
 public class AspspConsentDataEntity extends InstanceDependableEntity {
     @Id

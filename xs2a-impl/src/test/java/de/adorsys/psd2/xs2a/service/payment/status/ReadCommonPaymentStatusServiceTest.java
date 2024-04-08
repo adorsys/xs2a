@@ -91,7 +91,7 @@ class ReadCommonPaymentStatusServiceTest {
     @Mock
     private SpiToXs2aTppMessageInformationMapper tppMessageInformationMapper;
     @Mock
-    private SpiToXs2aTransactionMapper spiToXs2aTransactionMapper;;
+    private SpiToXs2aTransactionStatusMapper spiToXs2aTransactionStatusMapper;
 
     @BeforeEach
     void init() {
@@ -111,8 +111,8 @@ class ReadCommonPaymentStatusServiceTest {
         when(mediaTypeMapper.mapToMediaType(JSON_MEDIA_TYPE))
             .thenReturn(MediaType.APPLICATION_JSON);
         when(tppMessageInformationMapper.toTppMessageInformationSet(null)).thenReturn(null);
-        when(spiToXs2aTransactionMapper.mapToTransactionStatus(SpiTransactionStatus.ACSP)).thenReturn(TransactionStatus.ACSP);
-
+        when(spiToXs2aTransactionStatusMapper.mapToXs2aTransactionStatus(SpiTransactionStatus.ACSP))
+            .thenReturn(TransactionStatus.ACSP);
         // When
         ReadPaymentStatusResponse actualResponse = readCommonPaymentStatusService.readPaymentStatus(PIS_COMMON_PAYMENT_RESPONSE, SPI_CONTEXT_DATA, SOME_ENCRYPTED_PAYMENT_ID, JSON_MEDIA_TYPE);
 

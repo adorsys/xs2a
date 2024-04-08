@@ -37,15 +37,13 @@ import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
 import de.adorsys.psd2.xs2a.core.tpp.TppRole;
 import de.adorsys.psd2.xs2a.domain.ResponseObject;
 import de.adorsys.psd2.xs2a.domain.consent.CreatePaymentAuthorisationProcessorResponse;
-import de.adorsys.psd2.xs2a.domain.consent.Xs2aCreatePisAuthorisationResponse;
 import de.adorsys.psd2.xs2a.domain.consent.Xs2aPisCommonPayment;
 import de.adorsys.psd2.xs2a.domain.pis.*;
 import de.adorsys.psd2.xs2a.service.RequestProviderService;
 import de.adorsys.psd2.xs2a.service.ScaApproachResolver;
+import de.adorsys.psd2.xs2a.service.UuidGeneratorService;
 import de.adorsys.psd2.xs2a.service.authorization.AuthorisationChainResponsibilityService;
 import de.adorsys.psd2.xs2a.service.authorization.AuthorisationMethodDecider;
-import de.adorsys.psd2.xs2a.service.authorization.pis.PisScaAuthorisationService;
-import de.adorsys.psd2.xs2a.service.authorization.pis.PisScaAuthorisationServiceResolver;
 import de.adorsys.psd2.xs2a.service.consent.Xs2aPisCommonPaymentService;
 import de.adorsys.psd2.xs2a.service.mapper.cms_xs2a_mappers.Xs2aPisCommonPaymentMapper;
 import de.adorsys.psd2.xs2a.service.mapper.cms_xs2a_mappers.Xs2aToCmsPisCommonPaymentRequestMapper;
@@ -78,7 +76,6 @@ class CreateBulkPaymentServiceTest {
     private static final TppInfo WRONG_TPP_INFO = new TppInfo();
     private static final Xs2aPisCommonPayment PIS_COMMON_PAYMENT = new Xs2aPisCommonPayment(PAYMENT_ID, PSU_DATA);
     private static final Xs2aPisCommonPayment PIS_COMMON_PAYMENT_FAIL = new Xs2aPisCommonPayment(null, PSU_DATA);
-    private static final PaymentInitiationParameters PARAM = buildPaymentInitiationParameters();
     private static final CreatePisCommonPaymentResponse PIS_COMMON_PAYMENT_RESPONSE = new CreatePisCommonPaymentResponse(PAYMENT_ID, null);
     private static final PisPaymentInfo PAYMENT_INFO = buildPisPaymentInfoRequest();
     private static final String INTERNAL_REQUEST_ID = "5c2d5564-367f-4e03-a621-6bef76fa4208";
@@ -88,7 +85,6 @@ class CreateBulkPaymentServiceTest {
     private static final ScaApproach SCA_APPROACH = ScaApproach.EMBEDDED;
     private static final Set<TppMessageInformation> TEST_TPP_MESSAGES = Collections.singleton(TppMessageInformation.of(MessageErrorCode.FORMAT_ERROR));
     private static final String TEST_PSU_MESSAGE = "This test message is created in ASPSP and directed to PSU";
-    private static final Xs2aCreatePisAuthorisationResponse CREATE_PIS_AUTHORISATION_RESPONSE = new Xs2aCreatePisAuthorisationResponse(null, SCA_STATUS, null, null, null, null, null, null);
 
     @InjectMocks
     private CreateBulkPaymentService createBulkPaymentService;
@@ -96,10 +92,6 @@ class CreateBulkPaymentServiceTest {
     private BulkPaymentInitiationService bulkPaymentInitiationService;
     @Mock
     private Xs2aPisCommonPaymentService pisCommonPaymentService;
-    @Mock
-    private PisScaAuthorisationService pisScaAuthorisationService;
-    @Mock
-    private PisScaAuthorisationServiceResolver pisScaAuthorisationServiceResolver;
     @Mock
     private Xs2aPisCommonPaymentMapper xs2aPisCommonPaymentMapper;
     @Mock
@@ -119,6 +111,8 @@ class CreateBulkPaymentServiceTest {
     private ScaApproachResolver scaApproachResolver;
     @Mock
     private LoggingContextService loggingContextService;
+    @Mock
+    private UuidGeneratorService uuidGeneratorService;
 
     @BeforeEach
     void init() {
@@ -136,7 +130,7 @@ class CreateBulkPaymentServiceTest {
         when(requestProviderService.getInternalRequestIdString()).thenReturn(INTERNAL_REQUEST_ID);
 
         //When
-        ResponseObject<PaymentInitiationResponse> actualResponse = createBulkPaymentService.createPayment(PAYMENT_BODY, buildPaymentInitiationParameters(), buildTppInfo());
+        ResponseObject<PaymentInitiationResponse> actualResponse = createBulkPaymentService.createPayment(PAYMENT_BODY, buildPaymentInitiationParameters(), TPP_INFO);
 
         //Then
         assertThat(actualResponse.hasError()).isFalse();
@@ -174,35 +168,7 @@ class CreateBulkPaymentServiceTest {
             .thenReturn(PIS_COMMON_PAYMENT_FAIL);
 
         //When
-        ResponseObject<PaymentInitiationResponse> actualResponse = createBulkPaymentService.createPayment(PAYMENT_BODY, buildPaymentInitiationParameters(), buildTppInfo());
-
-        //Then
-        assertThat(actualResponse.hasError()).isTrue();
-        assertThat(actualResponse.getError().getTppMessage().getMessageErrorCode()).isEqualTo(MessageErrorCode.PAYMENT_FAILED);
-    }
-
-    @Test
-    void createPayment_pisScaAuthorisationService_createCommonPaymentAuthorisation_fail() {
-        // Given
-        BulkPaymentInitiationResponse buildBulkPaymentInitiationResponse = buildBulkPaymentInitiationResponse(initialSpiAspspConsentDataProvider);
-        when(bulkPaymentInitiationService.initiatePayment(any(BulkPayment.class), eq(PAYMENT_PRODUCT), eq(PSU_DATA))).thenReturn(buildBulkPaymentInitiationResponse);
-        when(pisCommonPaymentService.createCommonPayment(PAYMENT_INFO)).thenReturn(PIS_COMMON_PAYMENT_RESPONSE);
-        when(xs2aPisCommonPaymentMapper.mapToXs2aPisCommonPayment(PIS_COMMON_PAYMENT_RESPONSE, PSU_DATA)).thenReturn(PIS_COMMON_PAYMENT);
-        when(xs2aToCmsPisCommonPaymentRequestMapper.mapToPisPaymentInfo(any(PisPaymentInfoCreationObject.class))).thenReturn(PAYMENT_INFO);
-        when(requestProviderService.getInternalRequestIdString()).thenReturn(INTERNAL_REQUEST_ID);
-
-        when(authorisationMethodDecider.isImplicitMethod(false, false))
-            .thenReturn(true);
-        when(pisScaAuthorisationServiceResolver.getService())
-            .thenReturn(pisScaAuthorisationService);
-        CreatePaymentAuthorisationProcessorResponse response = new CreatePaymentAuthorisationProcessorResponse(SCA_STATUS, SCA_APPROACH, TEST_PSU_MESSAGE, TEST_TPP_MESSAGES, PAYMENT_ID, PSU_DATA);
-        when(authorisationChainResponsibilityService.apply(any())).thenReturn(response);
-
-        when(pisScaAuthorisationService.createCommonPaymentAuthorisation(any(), eq(PaymentType.BULK)))
-            .thenReturn(Optional.empty());
-
-        //When
-        ResponseObject<PaymentInitiationResponse> actualResponse = createBulkPaymentService.createPayment(PAYMENT_BODY, buildPaymentInitiationParameters(), buildTppInfo());
+        ResponseObject<PaymentInitiationResponse> actualResponse = createBulkPaymentService.createPayment(PAYMENT_BODY, buildPaymentInitiationParameters(), TPP_INFO);
 
         //Then
         assertThat(actualResponse.hasError()).isTrue();
@@ -222,16 +188,12 @@ class CreateBulkPaymentServiceTest {
         BulkPaymentInitiationResponse expectedResponse = buildBulkPaymentInitiationResponse(initialSpiAspspConsentDataProvider);
         when(authorisationMethodDecider.isImplicitMethod(false, false))
             .thenReturn(true);
-        when(pisScaAuthorisationServiceResolver.getService())
-            .thenReturn(pisScaAuthorisationService);
 
         CreatePaymentAuthorisationProcessorResponse response = new CreatePaymentAuthorisationProcessorResponse(SCA_STATUS, SCA_APPROACH, TEST_PSU_MESSAGE, TEST_TPP_MESSAGES, PAYMENT_ID, PSU_DATA);
         when(authorisationChainResponsibilityService.apply(any())).thenReturn(response);
-        when(pisScaAuthorisationService.createCommonPaymentAuthorisation(any(), eq(PaymentType.BULK)))
-            .thenReturn(Optional.of(CREATE_PIS_AUTHORISATION_RESPONSE));
 
         //When
-        ResponseObject<PaymentInitiationResponse> actualResponse = createBulkPaymentService.createPayment(PAYMENT_BODY, buildPaymentInitiationParameters(), buildTppInfo());
+        ResponseObject<PaymentInitiationResponse> actualResponse = createBulkPaymentService.createPayment(PAYMENT_BODY, buildPaymentInitiationParameters(), TPP_INFO);
 
         //Then
         assertThat(actualResponse.hasError()).isFalse();

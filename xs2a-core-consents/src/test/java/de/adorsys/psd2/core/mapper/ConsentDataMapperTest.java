@@ -25,6 +25,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 class ConsentDataMapperTest {
 
@@ -46,10 +47,36 @@ class ConsentDataMapperTest {
     }
 
     @Test
+    void mapToAisConsentData_nullData() {
+        AisConsentData expected = new AisConsentData(null, null, null, false);
+
+        assertEquals(expected, consentDataMapper.mapToAisConsentData(null));
+    }
+
+    @Test
+    void mapToAisConsentData_exception() {
+
+        assertNull(consentDataMapper.mapToAisConsentData("".getBytes()));
+    }
+
+    @Test
     void mapToPiisConsentData() {
         PiisConsentData consentData = jsonReader.getObjectFromFile("json/data/piis/piis-consent-data.json", PiisConsentData.class);
         byte[] bytesFromConsentData = consentDataMapper.getBytesFromConsentData(consentData);
 
         assertEquals(consentData, consentDataMapper.mapToPiisConsentData(bytesFromConsentData));
+    }
+
+    @Test
+    void mapToPiisConsentData_nullData() {
+        PiisConsentData expected = new PiisConsentData(null, null, null, null);
+
+        assertEquals(expected, consentDataMapper.mapToPiisConsentData(null));
+    }
+
+    @Test
+    void mapToPiisConsentData_exception() {
+
+        assertNull(consentDataMapper.mapToPiisConsentData("".getBytes()));
     }
 }

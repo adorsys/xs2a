@@ -46,7 +46,7 @@ public interface CmsAspspPisTransactionApi {
         @Parameter(name = "payment-id", description = "The payment identification assigned to the created payment", example = "bf489af6-a2cb-4b75-b71d-d66d58b934d7", required = true)
         @PathVariable("payment-id") String paymentId,
         @Schema(description = "The following code values are permitted: 'ACCC', 'ACCP', 'ACSC', 'ACSP', 'ACTC', 'ACWC', 'ACWP', 'PDNG', 'RJCT', 'RCVD', 'CANC', 'ACFC', 'PATC'. These values might be extended by ASPSP by more values.",
-            allowableValues = "ACCC, ACCP, ACSC, ACSP, ACTC, ACWC, ACWP, RCVD, PDNG, RJCT, CANC, ACFC, PATC", required = true)
+            allowableValues = "ACCC, ACCP, ACSC, ACSP, ACTC, ACWC, ACWP, RCVD, PDNG, RJCT, CANC, ACFC, PATC", requiredMode = Schema.RequiredMode.REQUIRED)
         @PathVariable("status") String status,
         @RequestHeader(value = "instance-id", required = false, defaultValue = DEFAULT_SERVICE_INSTANCE_ID) String instanceId);
 }

@@ -67,9 +67,11 @@ import java.util.stream.Collectors;
 
 import static de.adorsys.psd2.xs2a.core.error.ErrorType.AIS_400;
 import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.*;
+
 @Slf4j
 @Service
 @AllArgsConstructor
+@SuppressWarnings("PMD.TooManyMethods")
 public class TransactionService {
 
     private final AccountSpi accountSpi;
@@ -79,6 +81,7 @@ public class TransactionService {
     private final SpiTransactionListToXs2aAccountReportMapper transactionsToAccountReportMapper;
     private final SpiToXs2aTransactionMapper spiToXs2aTransactionMapper;
     private final SpiToXs2aDownloadTransactionsMapper spiToXs2aDownloadTransactionsMapper;
+    private final Xs2aToSpiBookingStatusMapper xs2aToSpiBookingStatusMapper;
 
     private final ValueValidatorService validatorService;
     private final Xs2aAisConsentService aisConsentService;
@@ -88,7 +91,6 @@ public class TransactionService {
     private final AspspProfileServiceWrapper aspspProfileService;
     private final Xs2aEventService xs2aEventService;
     private final SpiErrorMapper spiErrorMapper;
-    private final Xs2aToSpiConsentMapper xs2aToSpiConsentMapper;
 
     private final GetTransactionsReportValidator getTransactionsReportValidator;
     private final DownloadTransactionsReportValidator downloadTransactionsReportValidator;
@@ -303,8 +305,10 @@ public class TransactionService {
         boolean isTransactionsShouldContainBalances =
             !aspspProfileService.isTransactionsWithoutBalancesSupported() || request.isWithBalance();
 
-        return new SpiTransactionReportParameters(request.getAcceptHeader(), isTransactionsShouldContainBalances, request.getDateFrom(), request.getDateTo(),
-                                                  xs2aToSpiConsentMapper.mapToSpiBookingStatus(request.getBookingStatus()), request.getEntryReferenceFrom(), request.getDeltaList(),
+        return new SpiTransactionReportParameters(request.getAcceptHeader(), isTransactionsShouldContainBalances,
+                                                  request.getDateFrom(), request.getDateTo(),
+                                                  xs2aToSpiBookingStatusMapper.mapToSpiBookingStatus(request.getBookingStatus()),
+                                                  request.getEntryReferenceFrom(), request.getDeltaList(),
                                                   request.getPageIndex(), request.getItemsPerPage());
     }
 

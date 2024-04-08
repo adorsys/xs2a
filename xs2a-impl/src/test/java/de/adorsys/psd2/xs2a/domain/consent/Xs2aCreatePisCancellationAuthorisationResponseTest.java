@@ -19,6 +19,7 @@
 package de.adorsys.psd2.xs2a.domain.consent;
 
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
+import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import de.adorsys.psd2.xs2a.domain.authorisation.AuthorisationResponseType;
 import org.junit.jupiter.api.Test;
@@ -29,7 +30,7 @@ class Xs2aCreatePisCancellationAuthorisationResponseTest {
     @Test
     void getAuthorisationResponseType_shouldReturnStart() {
         // Given
-        Xs2aCreatePisCancellationAuthorisationResponse response = new Xs2aCreatePisCancellationAuthorisationResponse("some cancellation id", ScaStatus.RECEIVED, PaymentType.SINGLE, null);
+        Xs2aCreatePisCancellationAuthorisationResponse response = new Xs2aCreatePisCancellationAuthorisationResponse("some cancellation id", ScaStatus.RECEIVED, ScaApproach.EMBEDDED, PaymentType.SINGLE, null);
 
         // When
         AuthorisationResponseType actual = response.getAuthorisationResponseType();

@@ -44,7 +44,7 @@ public class UpdatePaymentAfterSpiServiceInternal implements UpdatePaymentAfterS
     public CmsResponse<Boolean> updatePaymentStatus(@NotNull String paymentId, @NotNull TransactionStatus status) {
         Optional<PisCommonPaymentData> paymentDataOptional = commonPaymentDataService.getPisCommonPaymentData(paymentId, null);
         if (paymentDataOptional.isEmpty() || paymentDataOptional.get().isFinalised()) {
-            log.info("Payment ID [{}]. Update payment status by id failed, because pis payment data not found or payment is finalized",
+            log.info("Payment ID [{}]. Update payment status by ID failed, PIS payment data not found or payment is finalised",
                      paymentId);
             return CmsResponse.<Boolean>builder()
                        .payload(false)
@@ -62,7 +62,7 @@ public class UpdatePaymentAfterSpiServiceInternal implements UpdatePaymentAfterS
     public CmsResponse<Boolean> updateInternalPaymentStatus(@NotNull String paymentId, @NotNull InternalPaymentStatus status) {
         Optional<PisCommonPaymentData> paymentDataOptional = commonPaymentDataService.getPisCommonPaymentData(paymentId, null);
         if (paymentDataOptional.isEmpty()) {
-            log.info("Payment ID [{}]. Update internal payment status by id failed, because pis payment data not found or payment is finalized",
+            log.info("Payment ID [{}]. Update internal payment status by ID failed, PIS payment data not found or payment is finalised",
                      paymentId);
             return CmsResponse.<Boolean>builder()
                        .payload(false)
@@ -81,7 +81,7 @@ public class UpdatePaymentAfterSpiServiceInternal implements UpdatePaymentAfterS
         Optional<PisCommonPaymentData> paymentDataOptional = commonPaymentDataService.getPisCommonPaymentData(paymentId, null);
 
         if (paymentDataOptional.isEmpty() || paymentDataOptional.get().isFinalised()) {
-            log.info("Payment ID [{}]. Update payment status by id failed, because pis payment data not found or payment is finalized",
+            log.info("Payment ID [{}]. Update payment status by ID failed, PIS payment data not found or payment is finalised",
                      paymentId);
             return CmsResponse.<Boolean>builder()
                        .payload(false)
@@ -100,7 +100,7 @@ public class UpdatePaymentAfterSpiServiceInternal implements UpdatePaymentAfterS
     public CmsResponse<Boolean> updatePaymentCancellationInternalRequestId(@NotNull String paymentId, @NotNull String internalRequestId) {
         Optional<PisCommonPaymentData> paymentDataOptional = commonPaymentDataService.getPisCommonPaymentData(paymentId, null);
         if (paymentDataOptional.isEmpty() || paymentDataOptional.get().isFinalised()) {
-            log.info("Payment ID [{}]. Update payment intrenal request id failed, because pis payment data not found or payment is finalized",
+            log.info("Payment ID [{}]. Update payment internal request ID failed, PIS payment data not found or payment is finalised",
                      paymentId);
             return CmsResponse.<Boolean>builder()
                        .payload(false)

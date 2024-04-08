@@ -24,57 +24,57 @@
     <include relativeToChangelogFile="true" file="_typedef.xml"/>
 
     <changeSet author="mpo@adorsys.com.ua" id="2018-11-08-7">
+        <validCheckSum>8:52fc968cabbca3de655bf4693f7ef472</validCheckSum>
         <comment>Create sequence for ais consent id.</comment>
         <createSequence sequenceName="ais_consent_id_seq"/>
-        <sql dbms="mariadb">CREATE SEQUENCE ais_consent_id_seq</sql>
     </changeSet>
 
     <changeSet author="pru@adorsys.com.ua" id="2018-07-24-3">
+        <validCheckSum>8:7afeeb971a83dfa663ad64959904e1a5</validCheckSum>
         <comment>Create sequence for ais consent action id.</comment>
         <createSequence sequenceName="ais_consent_action_id_seq"/>
-        <sql dbms="mariadb">CREATE SEQUENCE ais_consent_action_id_seq</sql>
     </changeSet>
 
     <changeSet author="pru@adorsys.com.ua" id="2018-07-24-4">
+        <validCheckSum>8:e32a2e2fd457789aa0588a1bcf085f06</validCheckSum>
         <comment>Create sequence for pis consent id.</comment>
         <createSequence sequenceName="pis_consent_id_seq"/>
-        <sql dbms="mariadb">CREATE SEQUENCE pis_consent_id_seq</sql>
     </changeSet>
 
     <changeSet author="mpo@adorsys.com.ua" id="2018-11-08-1">
+        <validCheckSum>8:df0974a524a4eeb41dcf0574b1da7f68</validCheckSum>
         <comment>Create sequence for pis account reference id.</comment>
         <createSequence sequenceName="pis_acc_reference_id_seq"/>
-        <sql dbms="mariadb">CREATE SEQUENCE pis_acc_reference_id_seq</sql>
     </changeSet>
 
     <changeSet author="msh@adorsys.com.ua" id="2018-08-14-2">
+        <validCheckSum>8:57fc092ee7eca04885a95b3a6381d001</validCheckSum>
         <comment>Create sequence for pis address id.</comment>
         <createSequence sequenceName="pis_address_id_seq"/>
-        <sql dbms="mariadb">CREATE SEQUENCE pis_address_id_seq</sql>
     </changeSet>
 
     <changeSet author="msh@adorsys.com.ua" id="2018-08-14-3">
+        <validCheckSum>8:49e3ca7e9b66aeec7317d97417d1fe57</validCheckSum>
         <comment>Create sequence for pis payment data id.</comment>
         <createSequence sequenceName="pis_payment_data_id_seq"/>
-        <sql dbms="mariadb">CREATE SEQUENCE pis_payment_data_id_seq</sql>
     </changeSet>
 
     <changeSet author="msh@adorsys.com.ua" id="2018-08-14-4">
+        <validCheckSum>8:5c6fa9183627e943b0c2d9d918d56e79</validCheckSum>
         <comment>Create sequence for pis remittance id.</comment>
         <createSequence sequenceName="pis_remittance_id_seq"/>
-        <sql dbms="mariadb">CREATE SEQUENCE pis_remittance_id_seq</sql>
     </changeSet>
 
     <changeSet author="msh@adorsys.com.ua" id="2018-08-14-5">
+        <validCheckSum>8:8129938c6fbfbbf06dd9e78cd80b74bf</validCheckSum>
         <comment>Create sequence for pis tpp info id.</comment>
         <createSequence sequenceName="pis_tpp_info_id_seq"/>
-        <sql dbms="mariadb">CREATE SEQUENCE pis_tpp_info_id_seq</sql>
     </changeSet>
 
     <changeSet author="mpo@adorsys.com.ua" id="2018-11-08-2">
+        <validCheckSum>8:11f78a20fa2494051112ba238d495a2d</validCheckSum>
         <comment>Create sequence for pis consent authorization.</comment>
         <createSequence sequenceName="pis_consent_auth_id_seq"/>
-        <sql dbms="mariadb">CREATE SEQUENCE pis_consent_auth_id_seq</sql>
     </changeSet>
 
     <changeSet author="mpo@adorsys.com.ua" id="2018-05-09-1">
@@ -361,9 +361,9 @@
     </changeSet>
 
     <changeSet author="mpo@adorsys.de" id="2018-11-08-6">
+        <validCheckSum>8:d670b13fdda0f665d221bd29b0d44900</validCheckSum>
         <comment>Create sequence for ais consent authorization id.</comment>
         <createSequence sequenceName="ais_consent_auth_id_seq"/>
-        <sql dbms="mariadb">CREATE SEQUENCE ais_consent_auth_id_seq</sql>
     </changeSet>
 
     <changeSet author="age@adorsys.de" id="2018-08-28-2">

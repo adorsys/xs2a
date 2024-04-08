@@ -43,7 +43,7 @@ public class AccountInfo {
     @Schema(description = "ISO 4217 currency code", example = "EUR")
     private String currency;
 
-    @Schema(description = "Type of the account reference: IBAN, BBAN, IBAN, BBAN, PAN, MASKED_PAN, MSISDN", required = true, example = "IBAN")
+    @Schema(description = "Type of the account reference: IBAN, BBAN, IBAN, BBAN, PAN, MASKED_PAN, MSISDN", requiredMode = Schema.RequiredMode.REQUIRED, example = "IBAN")
     private AccountReferenceType accountType;
 
     private AccountInfo() {

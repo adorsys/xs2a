@@ -35,8 +35,8 @@ import de.adorsys.psd2.xs2a.service.authorization.Xs2aAuthorisationService;
 import de.adorsys.psd2.xs2a.service.consent.Xs2aPiisConsentService;
 import de.adorsys.psd2.xs2a.service.context.SpiContextDataProvider;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiErrorMapper;
-import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiToXs2aAuthorizationMapper;
-import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiToXs2aConsentMapper;
+import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiToXs2aConsentStatusMapper;
+import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiToXs2aScaStatusMapper;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.Xs2aToSpiPiisConsentMapper;
 import de.adorsys.psd2.xs2a.service.profile.AspspProfileServiceWrapper;
 import de.adorsys.psd2.xs2a.service.spi.SpiAspspConsentDataProviderFactory;
@@ -103,9 +103,9 @@ class PiisAuthorisationConfirmationServiceTest {
     @Mock
     private SpiAspspConsentDataProvider aspspConsentDataProvider;
     @Mock
-    private SpiToXs2aConsentMapper spiToXs2aConsentMapper;
+    private SpiToXs2aConsentStatusMapper spiToXs2aConsentStatusMapper;
     @Mock
-    private SpiToXs2aAuthorizationMapper spiToXs2aAuthorizationMapper;
+    private SpiToXs2aScaStatusMapper spiToXs2aScaStatusMapper;
 
     @Test
     void processAuthorisationConfirmation_success_checkOnSpi() {
@@ -135,7 +135,8 @@ class PiisAuthorisationConfirmationServiceTest {
             .thenReturn(SpiResponse.<SpiConsentConfirmationCodeValidationResponse>builder()
                             .payload(new SpiConsentConfirmationCodeValidationResponse(SpiScaStatus.FINALISED, SpiConsentStatus.VALID))
                             .build());
-        when(spiToXs2aAuthorizationMapper.mapToScaStatus(SpiScaStatus.FINALISED)).thenReturn(ScaStatus.FINALISED);
+        when(spiToXs2aConsentStatusMapper.mapToXs2aConsentStatus(SpiConsentStatus.VALID)).thenReturn(ConsentStatus.VALID);
+        when(spiToXs2aScaStatusMapper.mapToXs2aScaStatus(SpiScaStatus.FINALISED)).thenReturn(ScaStatus.FINALISED);
 
         // when
         ResponseObject<UpdateConsentPsuDataResponse> actualResult = piisAuthorisationConfirmationService.processAuthorisationConfirmation(request);
@@ -164,8 +165,7 @@ class PiisAuthorisationConfirmationServiceTest {
         SpiConsentConfirmationCodeValidationResponse spiConsentConfirmationCodeValidationResponse = preparationsForNotifyConfirmationCodeValidation(true);
         SpiResponse<SpiConsentConfirmationCodeValidationResponse> spiResponse = SpiResponse.<SpiConsentConfirmationCodeValidationResponse>builder().payload(spiConsentConfirmationCodeValidationResponse).build();
         when(piisConsentSpi.notifyConfirmationCodeValidation(contextData, true, spiPiisConsent, aspspConsentDataProvider)).thenReturn(spiResponse);
-        when(spiToXs2aAuthorizationMapper.mapToScaStatus(SpiScaStatus.FINALISED)).thenReturn(ScaStatus.FINALISED);
-        when(spiToXs2aConsentMapper.mapToConsentStatus(SpiConsentStatus.VALID)).thenReturn(ConsentStatus.VALID);
+        when(spiToXs2aScaStatusMapper.mapToXs2aScaStatus(SpiScaStatus.FINALISED)).thenReturn(ScaStatus.FINALISED);
 
         // when
         ResponseObject<UpdateConsentPsuDataResponse> actualResult = piisAuthorisationConfirmationService.processAuthorisationConfirmation(request);
@@ -241,8 +241,7 @@ class PiisAuthorisationConfirmationServiceTest {
             .thenReturn(CmsResponse.<Authorisation>builder()
                             .payload(authorisationResponse)
                             .build());
-        when(spiToXs2aAuthorizationMapper.mapToScaStatus(SpiScaStatus.FAILED)).thenReturn(ScaStatus.FAILED);
-        when(spiToXs2aConsentMapper.mapToConsentStatus(SpiConsentStatus.REJECTED)).thenReturn(ConsentStatus.REJECTED);
+        when(spiToXs2aScaStatusMapper.mapToXs2aScaStatus(SpiScaStatus.FAILED)).thenReturn(ScaStatus.FAILED);
         SpiContextData contextData = getSpiContextData();
         SpiConsentConfirmationCodeValidationResponse spiConsentConfirmationCodeValidationResponse = preparationsForNotifyConfirmationCodeValidation(false);
         SpiResponse<SpiConsentConfirmationCodeValidationResponse> spiResponse = SpiResponse.<SpiConsentConfirmationCodeValidationResponse>builder().payload(spiConsentConfirmationCodeValidationResponse).build();

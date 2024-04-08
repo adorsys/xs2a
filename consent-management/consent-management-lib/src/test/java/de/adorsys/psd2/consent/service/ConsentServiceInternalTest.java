@@ -55,13 +55,10 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.test.util.ReflectionTestUtils;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.EnumSet;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -122,6 +119,7 @@ class ConsentServiceInternalTest {
         AuthorisationEntity authorisationEntity = buildConsentAuthorisation();
         authorisationEntities.add(authorisationEntity);
         consentEntity = buildConsentEntity(EXTERNAL_CONSENT_ID);
+        ReflectionTestUtils.setField(consentServiceInternal, "maxChunkSize", 1000);
     }
 
     @Test
@@ -546,7 +544,7 @@ class ConsentServiceInternalTest {
 
         ConsentEntity oldConsent = buildConsentEntity(EXTERNAL_CONSENT_ID_NOT_EXIST);
         List<ConsentEntity> oldConsents = Collections.singletonList(oldConsent);
-        when(consentJpaRepository.findOldConsentsByNewConsentParams(Collections.singleton(PSU_ID), AUTHORISATION_NUMBER, INSTANCE_ID, EXTERNAL_CONSENT_ID, EnumSet.of(ConsentStatus.RECEIVED, ConsentStatus.PARTIALLY_AUTHORISED, ConsentStatus.VALID)))
+        when(consentJpaRepository.findOldConsentsByNewConsentParams(Collections.singletonList(PSU_ID), AUTHORISATION_NUMBER, INSTANCE_ID, EXTERNAL_CONSENT_ID, EnumSet.of(ConsentStatus.RECEIVED, ConsentStatus.PARTIALLY_AUTHORISED, ConsentStatus.VALID)))
             .thenReturn(oldConsents);
 
         // When
@@ -573,7 +571,7 @@ class ConsentServiceInternalTest {
         when(psuDataMapper.mapToPsuDataList(request.getPsuIdDataList(), request.getInstanceId())).thenReturn(psuDataList);
         ConsentEntity oldConsent = buildConsentEntity(EXTERNAL_CONSENT_ID_NOT_EXIST);
         List<ConsentEntity> oldConsents = Collections.singletonList(oldConsent);
-        when(consentJpaRepository.findOldConsentsByNewConsentParams(Collections.singleton(PSU_ID),
+        when(consentJpaRepository.findOldConsentsByNewConsentParams(Collections.singletonList(PSU_ID),
                                                                     AUTHORISATION_NUMBER,
                                                                     INSTANCE_ID,
                                                                     EXTERNAL_CONSENT_ID,
@@ -616,7 +614,7 @@ class ConsentServiceInternalTest {
         ConsentEntity oldConsent = buildConsentEntity(EXTERNAL_CONSENT_ID_NOT_EXIST);
         oldConsent.setConsentStatus(ConsentStatus.PARTIALLY_AUTHORISED);
         List<ConsentEntity> oldConsents = Collections.singletonList(oldConsent);
-        when(consentJpaRepository.findOldConsentsByNewConsentParams(Collections.singleton(PSU_ID), AUTHORISATION_NUMBER, INSTANCE_ID, EXTERNAL_CONSENT_ID, EnumSet.of(ConsentStatus.RECEIVED, ConsentStatus.PARTIALLY_AUTHORISED, ConsentStatus.VALID)))
+        when(consentJpaRepository.findOldConsentsByNewConsentParams(Collections.singletonList(PSU_ID), AUTHORISATION_NUMBER, INSTANCE_ID, EXTERNAL_CONSENT_ID, EnumSet.of(ConsentStatus.RECEIVED, ConsentStatus.PARTIALLY_AUTHORISED, ConsentStatus.VALID)))
             .thenReturn(oldConsents);
 
         // When

@@ -20,17 +20,17 @@ package de.adorsys.psd2.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 import org.springframework.validation.annotation.Validated;
 
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
 import java.util.Objects;
 
 /**
  * SigningBasketStatusResponse200
  */
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-10-26T13:16:54.081225+03:00[Europe/Kiev]")
+@jakarta.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-10-25T13:15:56.196839+03:00[Europe/Kiev]")
 
 
 public class SigningBasketStatusResponse200   {
@@ -42,19 +42,18 @@ public class SigningBasketStatusResponse200   {
     return this;
   }
 
-    /**
-     * Get transactionStatus
-     *
-     * @return transactionStatus
-     **/
-    @Schema(required = true, description = "")
-    @JsonProperty("transactionStatus")
+  /**
+   * Get transactionStatus
+   * @return transactionStatus
+   **/
+  @Schema(required = true, description = "")
+  @JsonProperty("transactionStatus")
     @NotNull
 
-    @Valid
-    public TransactionStatusSBS getTransactionStatus() {
-        return transactionStatus;
-    }
+  @Valid
+  public TransactionStatusSBS getTransactionStatus() {
+    return transactionStatus;
+  }
 
   public void setTransactionStatus(TransactionStatusSBS transactionStatus) {
     this.transactionStatus = transactionStatus;

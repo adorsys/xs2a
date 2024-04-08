@@ -33,8 +33,9 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.apache.commons.collections4.CollectionUtils;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
@@ -90,8 +91,8 @@ public class ConsentEntity extends InstanceDependableEntity implements Authorisa
     @Column(name = "valid_until")
     private LocalDate validUntil;
 
-    @Column(name = "last_action_date")
-    private LocalDate lastActionDate;
+    @Column(name = "last_action_date_time")
+    private LocalDateTime lastActionDateTime;
 
     @Column(name = "request_date_time", nullable = false)
     private OffsetDateTime requestDateTime;

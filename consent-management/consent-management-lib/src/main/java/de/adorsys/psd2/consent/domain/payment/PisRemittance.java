@@ -18,16 +18,14 @@
 
 package de.adorsys.psd2.consent.domain.payment;
 
-import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 
 @Data
 @Entity(name = "pis_remittance")
 @NoArgsConstructor
-@Schema(description = "Remittance in pis", name = "PisRemittance")
 public class PisRemittance {
     @Id
     @Column(name = "remittance_id")
@@ -35,14 +33,11 @@ public class PisRemittance {
     @SequenceGenerator(name = "pis_remittance_generator", sequenceName = "pis_remittance_id_seq", allocationSize = 1)
     private Long id;
 
-    @Schema(description = "The actual reference", required = true, example = "Ref Number Merchant")
     private String reference;
 
     @Column(name = "reference_type")
-    @Schema(description = "Reference type", example = "reference type")
     private String referenceType;
 
     @Column(name = "reference_issuer")
-    @Schema(description = "Reference issuer", example = "reference issuer")
     private String referenceIssuer;
 }

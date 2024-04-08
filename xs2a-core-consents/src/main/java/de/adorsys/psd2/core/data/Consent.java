@@ -35,6 +35,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.Map;
@@ -60,7 +61,7 @@ public abstract class Consent<T> implements ConsentAutorizable {
     @Nullable
     private LocalDate expireDate;
     @Nullable
-    private LocalDate lastActionDate;
+    private LocalDateTime lastActionDateTime;
     @Nullable
     private OffsetDateTime creationTimestamp;
     @Nullable

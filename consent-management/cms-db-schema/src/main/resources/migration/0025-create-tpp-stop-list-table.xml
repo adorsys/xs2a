@@ -22,10 +22,9 @@
                    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.4.xsd">
 
     <changeSet author="msh@adorsys.com.ua" id="2018-12-10-3">
+        <validCheckSum>8:1fb375c87cfe59bad255281eec8ba50e</validCheckSum>
         <comment>Create sequence for tpp_stop_list id.</comment>
-
         <createSequence sequenceName="tpp_stop_list_id_seq"/>
-        <sql dbms="mariadb">CREATE SEQUENCE tpp_stop_list_id_seq</sql>
     </changeSet>
 
     <changeSet author="msh@adorsys.com.ua" id="2018-12-10-4">

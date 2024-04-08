@@ -20,11 +20,11 @@ package de.adorsys.psd2.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import org.springframework.validation.annotation.Validated;
 
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -35,7 +35,7 @@ import java.util.Objects;
  */
 @Schema(description = "Body of the response for a successful cancel payment request.")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-10-26T13:16:54.081225+03:00[Europe/Kiev]")
+@jakarta.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-10-25T13:15:56.196839+03:00[Europe/Kiev]")
 
 
 public class PaymentInitiationCancelResponse202   {
@@ -69,19 +69,18 @@ public class PaymentInitiationCancelResponse202   {
     return this;
   }
 
-    /**
-     * Get transactionStatus
-     *
-     * @return transactionStatus
-     **/
-    @Schema(required = true, description = "")
-    @JsonProperty("transactionStatus")
+  /**
+   * Get transactionStatus
+   * @return transactionStatus
+   **/
+  @Schema(required = true, description = "")
+  @JsonProperty("transactionStatus")
     @NotNull
 
-    @Valid
-    public TransactionStatus getTransactionStatus() {
-        return transactionStatus;
-    }
+  @Valid
+  public TransactionStatus getTransactionStatus() {
+    return transactionStatus;
+  }
 
   public void setTransactionStatus(TransactionStatus transactionStatus) {
     this.transactionStatus = transactionStatus;
@@ -92,17 +91,16 @@ public class PaymentInitiationCancelResponse202   {
     return this;
   }
 
-    /**
-     * Get scaMethods
-     *
-     * @return scaMethods
-     **/
-    @Schema(description = "")
-    @JsonProperty("scaMethods")
+  /**
+   * Get scaMethods
+   * @return scaMethods
+   **/
+  @Schema(description = "")
+  @JsonProperty("scaMethods")
 
-    @Valid
-    public ScaMethods getScaMethods() {
-        return scaMethods;
+  @Valid
+  public ScaMethods getScaMethods() {
+    return scaMethods;
   }
 
   public void setScaMethods(ScaMethods scaMethods) {
@@ -111,20 +109,19 @@ public class PaymentInitiationCancelResponse202   {
 
   public PaymentInitiationCancelResponse202 chosenScaMethod(ChosenScaMethod chosenScaMethod) {
     this.chosenScaMethod = chosenScaMethod;
-      return this;
+    return this;
   }
 
-    /**
-     * Get chosenScaMethod
-     *
-     * @return chosenScaMethod
-     **/
-    @Schema(description = "")
-    @JsonProperty("chosenScaMethod")
+  /**
+   * Get chosenScaMethod
+   * @return chosenScaMethod
+   **/
+  @Schema(description = "")
+  @JsonProperty("chosenScaMethod")
 
-    @Valid
-    public ChosenScaMethod getChosenScaMethod() {
-        return chosenScaMethod;
+  @Valid
+  public ChosenScaMethod getChosenScaMethod() {
+    return chosenScaMethod;
   }
 
   public void setChosenScaMethod(ChosenScaMethod chosenScaMethod) {
@@ -133,19 +130,18 @@ public class PaymentInitiationCancelResponse202   {
 
   public PaymentInitiationCancelResponse202 challengeData(ChallengeData challengeData) {
     this.challengeData = challengeData;
-      return this;
+    return this;
   }
 
-    /**
-     * Get challengeData
-     *
-     * @return challengeData
-     **/
-    @Schema(description = "")
-    @JsonProperty("challengeData")
+  /**
+   * Get challengeData
+   * @return challengeData
+   **/
+  @Schema(description = "")
+  @JsonProperty("challengeData")
 
-    @Valid
-    public ChallengeData getChallengeData() {
+  @Valid
+  public ChallengeData getChallengeData() {
     return challengeData;
   }
 
@@ -154,24 +150,23 @@ public class PaymentInitiationCancelResponse202   {
   }
 
   public PaymentInitiationCancelResponse202 _links(Map _links) {
-      this._links = _links;
-      return this;
+    this._links = _links;
+    return this;
   }
 
-    /**
-     * Get _links
-     *
-     * @return _links
-     **/
-    @Schema(description = "")
-    @JsonProperty("_links")
+  /**
+   * Get _links
+   * @return _links
+   **/
+  @Schema(description = "")
+  @JsonProperty("_links")
 
-    @Valid
-    public Map getLinks() {
-        return _links;
-    }
+  @Valid
+  public Map getLinks() {
+    return _links;
+  }
 
-    public void setLinks(Map _links) {
+  public void setLinks(Map _links) {
     this._links = _links;
   }
 
@@ -184,19 +179,18 @@ public class PaymentInitiationCancelResponse202   {
     if (this.tppMessages == null) {
       this.tppMessages = new ArrayList<>();
     }
-      this.tppMessages.add(tppMessagesItem);
-      return this;
+    this.tppMessages.add(tppMessagesItem);
+    return this;
   }
 
-    /**
-     * Get tppMessages
-     *
-     * @return tppMessages
-     **/
-    @Schema(description = "")
-    @JsonProperty("tppMessages")
+  /**
+   * Get tppMessages
+   * @return tppMessages
+   **/
+  @Schema(description = "")
+  @JsonProperty("tppMessages")
     @Valid
-    public List<TppMessageGeneric> getTppMessages() {
+  public List<TppMessageGeneric> getTppMessages() {
     return tppMessages;
   }
 
@@ -205,20 +199,19 @@ public class PaymentInitiationCancelResponse202   {
   }
 
   public PaymentInitiationCancelResponse202 scaStatus(ScaStatus scaStatus) {
-      this.scaStatus = scaStatus;
-      return this;
+    this.scaStatus = scaStatus;
+    return this;
   }
 
-    /**
-     * Get scaStatus
-     *
-     * @return scaStatus
-     **/
-    @Schema(description = "")
-    @JsonProperty("scaStatus")
+  /**
+   * Get scaStatus
+   * @return scaStatus
+   **/
+  @Schema(description = "")
+  @JsonProperty("scaStatus")
 
-    @Valid
-    public ScaStatus getScaStatus() {
+  @Valid
+  public ScaStatus getScaStatus() {
     return scaStatus;
   }
 
@@ -227,17 +220,16 @@ public class PaymentInitiationCancelResponse202   {
   }
 
   public PaymentInitiationCancelResponse202 psuMessage(String psuMessage) {
-      this.psuMessage = psuMessage;
-      return this;
+    this.psuMessage = psuMessage;
+    return this;
   }
 
-    /**
-     * Text to be displayed to the PSU.
-     *
-     * @return psuMessage
-     **/
-    @Schema(description = "Text to be displayed to the PSU.")
-    @JsonProperty("psuMessage")
+  /**
+   * Text to be displayed to the PSU.
+   * @return psuMessage
+   **/
+  @Schema(description = "Text to be displayed to the PSU.")
+  @JsonProperty("psuMessage")
 
 @Size(max=500)   public String getPsuMessage() {
     return psuMessage;

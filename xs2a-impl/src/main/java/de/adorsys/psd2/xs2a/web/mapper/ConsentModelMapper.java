@@ -115,7 +115,10 @@ public class ConsentModelMapper {
                                 .recurringIndicator(consent.isRecurringIndicator())
                                 .validUntil(consent.getValidUntil())
                                 .frequencyPerDay(consent.getFrequencyPerDay())
-                                .lastActionDate(consent.getLastActionDate())
+                                .lastActionDate(consent.getLastActionDateTime() == null
+                                                    ? null
+                                                    : consent.getLastActionDateTime().toLocalDate()
+                                )
                                 .consentStatus(ConsentStatus.fromValue(consent.getConsentStatus().getValue()))
                    )
                    .orElse(null);

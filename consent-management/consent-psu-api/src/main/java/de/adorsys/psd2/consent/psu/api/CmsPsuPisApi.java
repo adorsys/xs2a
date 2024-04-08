@@ -74,7 +74,7 @@ public interface CmsPsuPisApi {
         @Schema(description = "Payment service. Permitted values are : payments, bulk-payments, periodic-payments",
             allowableValues = "payments, bulk-payments, periodic-payments",
             example = "payments",
-            required = true)
+            requiredMode = Schema.RequiredMode.REQUIRED)
         @PathVariable("payment-service") String paymentService,
 
         @Parameter(description = "Payment product",
@@ -195,7 +195,7 @@ public interface CmsPsuPisApi {
         @PathVariable("authorisation-id") String authorisationId,
         @Schema(description = "The following code values are permitted 'received', 'psuIdentified', 'psuAuthenticated', 'scaMethodSelected', 'started', 'finalised', 'failed', 'exempted', 'unconfirmed'. These values might be extended by ASPSP by more values.",
             allowableValues = "RECEIVED, PSUIDENTIFIED, PSUAUTHENTICATED, SCAMETHODSELECTED,  STARTED,  FINALISED, FAILED, EXEMPTED, UNCONFIRMED",
-            required = true)
+            requiredMode = Schema.RequiredMode.REQUIRED)
         @PathVariable("status") String status,
         @RequestHeader(value = "instance-id", required = false, defaultValue = DEFAULT_SERVICE_INSTANCE_ID) String instanceId,
         @RequestBody(required = false) AuthenticationDataHolder authenticationDataHolder);
@@ -213,7 +213,7 @@ public interface CmsPsuPisApi {
         @PathVariable("payment-id") String paymentId,
         @Schema(description = "The following code values are permitted 'ACCC', 'ACCP', 'ACSC', 'ACSP', 'ACTC', 'ACWC', 'ACWP', 'PDNG', 'RJCT', 'RCVD', 'CANC', 'ACFC', 'PATC'. These values might be extended by ASPSP by more values.",
             allowableValues = "ACCC, ACCP, ACSC, ACSP, ACTC, ACWC, ACWP, RCVD, PDNG, RJCT, CANC, ACFC, PATC",
-            required = true)
+            requiredMode = Schema.RequiredMode.REQUIRED)
         @PathVariable("status") String status,
         @RequestHeader(value = "instance-id", required = false, defaultValue = DEFAULT_SERVICE_INSTANCE_ID) String instanceId);
 

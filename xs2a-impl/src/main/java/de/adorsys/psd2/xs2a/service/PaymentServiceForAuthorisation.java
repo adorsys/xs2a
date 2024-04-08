@@ -49,8 +49,8 @@ public abstract class PaymentServiceForAuthorisation {
     private final Xs2aAuthorisationService xs2aAuthorisationService;
     private final Xs2aToSpiPaymentMapper xs2aToSpiPaymentMapper;
     private final SpiToXs2aLinksMapper spiToXs2aLinksMapper;
-    private final SpiToXs2aTppMessageInformationMapper tppMessageInformationMapper;
-    private final SpiToXs2aAuthorizationMapper spiToXs2aAuthorizationMapper;
+    private final SpiToXs2aScaStatusMapper spiToXs2aScaStatusMapper;
+    private final SpiToXs2aTppMessageInformationMapper spiToXs2aTppMessageInformationMapper;
 
     /**
      * Gets SCA status response of payment authorisation
@@ -84,10 +84,10 @@ public abstract class PaymentServiceForAuthorisation {
         }
 
         SpiScaStatusResponse spiScaInformationPayload = spiScaStatusResponse.getPayload();
-        ScaStatus spiScaStatus = spiToXs2aAuthorizationMapper.mapToScaStatus(spiScaInformationPayload.getScaStatus());
+        ScaStatus scaStatusFromSpi = spiToXs2aScaStatusMapper.mapToXs2aScaStatus(spiScaInformationPayload.getScaStatus());
 
-        if (scaStatus.isNotFinalisedStatus() && scaStatus != spiScaStatus) {
-            scaStatus = spiScaStatus;
+        if (scaStatus.isNotFinalisedStatus() && scaStatus != scaStatusFromSpi) {
+            scaStatus = scaStatusFromSpi;
             xs2aAuthorisationService.updateAuthorisationStatus(authorisationId, scaStatus);
             log.info("Authorisation-ID [{}], Payment-ID [{}]. SCA status was changed to [{}] from SPI.", authorisationId, paymentId, scaStatus);
         }
@@ -97,7 +97,7 @@ public abstract class PaymentServiceForAuthorisation {
                                                                    beneficiaryFlag,
                                                                    spiScaInformationPayload.getPsuMessage(),
                                                                    spiToXs2aLinksMapper.toXs2aLinks(spiScaInformationPayload.getLinks()),
-                                                                   tppMessageInformationMapper.toTppMessageInformationSet(spiScaInformationPayload.getTppMessageInformation())
+                                                                   spiToXs2aTppMessageInformationMapper.toTppMessageInformationSet(spiScaInformationPayload.getTppMessageInformation())
         );
 
         return ResponseObject.<Xs2aScaStatusResponse>builder()
@@ -106,7 +106,7 @@ public abstract class PaymentServiceForAuthorisation {
     }
 
     abstract ResponseObject<PaymentScaStatus> getCMSScaStatus(String paymentId, String authorisationId,
-                                                                  PaymentType paymentType, String paymentProduct);
+                                                              PaymentType paymentType, String paymentProduct);
 
     abstract SpiResponse<SpiScaStatusResponse> getScaStatus(@NotNull ScaStatus scaStatus,
                                                             @NotNull SpiContextData contextData,

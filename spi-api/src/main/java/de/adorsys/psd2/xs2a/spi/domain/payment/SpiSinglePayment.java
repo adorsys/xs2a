@@ -50,7 +50,7 @@ public class SpiSinglePayment implements SpiPayment {
     private OffsetDateTime statusChangeTimestamp;
     private String ultimateDebtor;
     private String ultimateCreditor;
-    private SpiPisPurposeCode purposeCode;
+    private SpiPurposeCode purposeCode;
     private String remittanceInformationUnstructured;
     private List<String> remittanceInformationUnstructuredArray;
     private SpiRemittance remittanceInformationStructured;

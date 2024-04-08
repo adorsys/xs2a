@@ -23,10 +23,9 @@
                    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.4.xsd">
 
     <changeSet author="ssh@adorsys.com.ua" id="2018-11-06-1">
+        <validCheckSum>8:59ecf7464088b880e92376e8166c2ffb</validCheckSum>
         <comment>Create sequence for piis consent id.</comment>
-
         <createSequence sequenceName="piis_consent_id_seq"/>
-        <sql dbms="mariadb">CREATE SEQUENCE piis_consent_id_seq</sql>
     </changeSet>
 
     <changeSet author="ssh@adorsys.com.ua" id="2018-11-06-2">

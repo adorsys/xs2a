@@ -22,6 +22,7 @@ package de.adorsys.psd2.xs2a.service.payment;
 import de.adorsys.psd2.consent.api.CmsResponse;
 import de.adorsys.psd2.consent.api.service.UpdatePaymentAfterSpiServiceEncrypted;
 import de.adorsys.psd2.logger.context.LoggingContextService;
+import de.adorsys.psd2.xs2a.core.pis.InternalPaymentStatus;
 import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
 import de.adorsys.psd2.xs2a.core.tpp.TppRedirectUri;
 import org.junit.jupiter.api.Test;
@@ -37,7 +38,10 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 class Xs2AUpdatePaymentAfterSpiServiceTest {
     private static final TransactionStatus TRANSACTION_STATUS = TransactionStatus.ACSP;
+    private static final InternalPaymentStatus INTERNAL_PAYMENT_STATUS = InternalPaymentStatus.INITIATED;
+
     private static final String PAYMENT_ID = "d6cb50e5-bb88-4bbf-a5c1-42ee1ed1df2c";
+    private static final String INTERNAL_REQUEST_ID = "5c2d5564-367f-4e03-a621-6bef76fa4208";
 
     @InjectMocks
     private Xs2aUpdatePaymentAfterSpiService xs2AUpdatePaymentAfterSpiService;
@@ -55,6 +59,19 @@ class Xs2AUpdatePaymentAfterSpiServiceTest {
 
         //When
         boolean actualResponse = xs2AUpdatePaymentAfterSpiService.updatePaymentStatus(PAYMENT_ID, TRANSACTION_STATUS);
+
+        //Then
+        assertThat(actualResponse).isTrue();
+    }
+
+    @Test
+    void updateInternalPaymentStatus_success() {
+        //Given
+        when(updatePaymentStatusAfterSpiService.updateInternalPaymentStatus(PAYMENT_ID, INTERNAL_PAYMENT_STATUS))
+            .thenReturn(CmsResponse.<Boolean>builder().payload(true).build());
+
+        //When
+        boolean actualResponse = xs2AUpdatePaymentAfterSpiService.updateInternalPaymentStatus(PAYMENT_ID, INTERNAL_PAYMENT_STATUS);
 
         //Then
         assertThat(actualResponse).isTrue();
@@ -108,6 +125,15 @@ class Xs2AUpdatePaymentAfterSpiServiceTest {
             .thenReturn(CmsResponse.<Boolean>builder().payload(true).build());
 
         boolean actualResponse = xs2AUpdatePaymentAfterSpiService.updatePaymentCancellationTppRedirectUri(PAYMENT_ID, tppRedirectUri);
+        assertThat(actualResponse).isTrue();
+    }
+
+    @Test
+    void updatePaymentCancellationInternalRequestId_success() {
+        when(updatePaymentStatusAfterSpiService.updatePaymentCancellationInternalRequestId(PAYMENT_ID, INTERNAL_REQUEST_ID))
+            .thenReturn(CmsResponse.<Boolean>builder().payload(true).build());
+
+        boolean actualResponse = xs2AUpdatePaymentAfterSpiService.updatePaymentCancellationInternalRequestId(PAYMENT_ID, INTERNAL_REQUEST_ID);
         assertThat(actualResponse).isTrue();
     }
 

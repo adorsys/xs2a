@@ -18,7 +18,7 @@
 
 package de.adorsys.psd2.xs2a.spi.domain.consent;
 
-import de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiAuthenticationObject;
+import de.adorsys.psd2.xs2a.spi.domain.common.SpiAuthenticationObject;
 import de.adorsys.psd2.xs2a.spi.domain.response.SpiTppMessageInformation;
 import lombok.AllArgsConstructor;
 import lombok.Data;

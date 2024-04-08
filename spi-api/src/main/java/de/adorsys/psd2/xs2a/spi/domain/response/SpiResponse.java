@@ -61,7 +61,7 @@ public class SpiResponse<T> {
     }
 
     public boolean isSuccessful() {
-        return errors.isEmpty()  && payload != null;
+        return errors.isEmpty() && payload != null;
     }
 
     public static class SpiResponseBuilder<T> {

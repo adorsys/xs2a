@@ -2,12 +2,19 @@
 
 == Table of Contents
 
-* Updated postman tests
+* Changed type of column in `consent` SQL table
+
+* Postman tests were updated
+
 * Bumped dependency versions
 
-== Updated postman tests
+== Changed type of column in `consent` SQL table
 
-XS2A Postman tests were updated.
+From now on, the type of `last_action_date` column in `consent` table is DATETIME (before it was DATE) and its name is changed to `last_action_date_time`.
+
+== Postman tests were updated
+
+Some Postman collections were updated due to incorrect date and expired QWAC certificate.
 
 == Bumped dependency versions
 
@@ -23,4 +30,4 @@ Versions of dependencies were updated:
 - spring-core - to 5.3.26;
 - spring-data-jpa - to 2.7.10;
 - spring-boot - to 2.7.10;
-- spring-boot-starter-web - to 2.7.10.
+- spring-boot-starter-web - to 2.7.10;

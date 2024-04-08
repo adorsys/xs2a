@@ -20,9 +20,9 @@ package de.adorsys.psd2.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.constraints.NotNull;
 import org.springframework.validation.annotation.Validated;
 
-import javax.validation.constraints.NotNull;
 import java.util.Objects;
 
 /**
@@ -30,30 +30,29 @@ import java.util.Objects;
  */
 @Schema(description = "Content of the body of an authorisation confirmation request ")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-10-26T13:16:54.081225+03:00[Europe/Kiev]")
+@jakarta.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-10-25T13:15:56.196839+03:00[Europe/Kiev]")
 
 
-public class AuthorisationConfirmation {
-    @JsonProperty("confirmationCode")
-    private String confirmationCode = null;
+public class AuthorisationConfirmation   {
+  @JsonProperty("confirmationCode")
+  private String confirmationCode = null;
 
-    public AuthorisationConfirmation confirmationCode(String confirmationCode) {
-        this.confirmationCode = confirmationCode;
-        return this;
-    }
+  public AuthorisationConfirmation confirmationCode(String confirmationCode) {
+    this.confirmationCode = confirmationCode;
+    return this;
+  }
 
-    /**
-     * Confirmation Code as retrieved by the TPP from the redirect based SCA process.
-     *
-     * @return confirmationCode
-     **/
-    @Schema(required = true, description = "Confirmation Code as retrieved by the TPP from the redirect based SCA process.")
-    @JsonProperty("confirmationCode")
+  /**
+   * Confirmation Code as retrieved by the TPP from the redirect based SCA process.
+   * @return confirmationCode
+   **/
+  @Schema(required = true, description = "Confirmation Code as retrieved by the TPP from the redirect based SCA process.")
+  @JsonProperty("confirmationCode")
     @NotNull
 
-    public String getConfirmationCode() {
-        return confirmationCode;
-    }
+  public String getConfirmationCode() {
+    return confirmationCode;
+  }
 
   public void setConfirmationCode(String confirmationCode) {
     this.confirmationCode = confirmationCode;

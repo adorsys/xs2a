@@ -47,11 +47,14 @@ class FailedAuthorisationProcessorTest {
 
     @Test
     void execute() {
+        // Givrn
         AisAuthorisationProcessorRequest request = new AisAuthorisationProcessorRequest(null, null, null, null);
         when(processorService.doScaFailed(request)).thenReturn(new AuthorisationProcessorResponse());
 
+        // When
         processor.execute(request, processorService);
 
+        // Then
         verify(processorService, times(1)).doScaFailed(request);
     }
 }

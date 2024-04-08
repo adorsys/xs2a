@@ -21,7 +21,11 @@ package de.adorsys.psd2.xs2a.web.controller.psd2;
 import de.adorsys.psd2.api.CardAccountsApi;
 import de.adorsys.psd2.xs2a.core.ais.BookingStatus;
 import de.adorsys.psd2.xs2a.domain.ResponseObject;
-import de.adorsys.psd2.xs2a.domain.account.*;
+import de.adorsys.psd2.xs2a.domain.account.Xs2aBalancesReport;
+import de.adorsys.psd2.xs2a.domain.account.Xs2aCardAccountDetailsHolder;
+import de.adorsys.psd2.xs2a.domain.account.Xs2aCardAccountListHolder;
+import de.adorsys.psd2.xs2a.domain.account.Xs2aCardTransactionsReport;
+import de.adorsys.psd2.xs2a.domain.account.Xs2aCardTransactionsReportByPeriodRequest;
 import de.adorsys.psd2.xs2a.service.ais.CardAccountBalanceService;
 import de.adorsys.psd2.xs2a.service.ais.CardAccountService;
 import de.adorsys.psd2.xs2a.service.ais.CardTransactionService;
@@ -34,7 +38,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 import java.time.LocalDate;
 import java.util.UUID;
 

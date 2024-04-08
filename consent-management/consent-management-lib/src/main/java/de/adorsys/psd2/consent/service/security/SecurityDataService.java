@@ -73,7 +73,7 @@ public class SecurityDataService {
                                            .map(this::addVersionToEncryptedId);
 
         if (encryptedId.isEmpty()) {
-            log.info("ID: [{}]. Couldn't encrypt ID", originalId);
+            log.info("ID: [{}]. Unable to encrypt ID", originalId);
         }
 
         return encryptedId;
@@ -87,7 +87,7 @@ public class SecurityDataService {
      */
     public Optional<String> decryptId(String encryptedId) {
         if (!encryptedId.contains(SEPARATOR)) {
-            log.info("ID: [{}]. Couldn't decrypt, because id does not contain separator [{}]", encryptedId, SEPARATOR);
+            log.info("ID: [{}]. Unable to decrypt, ID does not contain separator [{}]", encryptedId, SEPARATOR);
             return Optional.empty();
         }
 
@@ -95,7 +95,7 @@ public class SecurityDataService {
                                            .map(cmst -> cmst.split(SEPARATOR)[0]);
 
         if (decryptedId.isEmpty()) {
-            log.info("ID: [{}]. Couldn't decrypt ID", encryptedId);
+            log.info("ID: [{}]. Unable to decrypt ID", encryptedId);
         }
 
         return decryptedId;
@@ -155,7 +155,7 @@ public class SecurityDataService {
 
         byte[] bytesCompositeId = decode64(encryptedCompositeId);
         if (bytesCompositeId == null) {
-            log.info("ID: [{}]. Couldn't decrypt composite id", encryptedId);
+            log.info("ID: [{}]. Unable to decrypt composite ID", encryptedId);
             return Optional.empty();
         }
 
@@ -172,7 +172,7 @@ public class SecurityDataService {
         try {
             return Base64.getUrlDecoder().decode(raw);
         } catch (IllegalArgumentException ex) {
-            log.info("ID: [{}]. Input id has wrong format", raw);
+            log.info("ID: [{}]. Input ID has wrong format", raw);
             return new byte[0];
         }
     }

@@ -47,11 +47,14 @@ class ExemptedAuthorisationProcessorTest {
 
     @Test
     void execute() {
+        // Goven
         AisAuthorisationProcessorRequest request = new AisAuthorisationProcessorRequest(null, null, null, null);
         when(processorService.doScaExempted(request)).thenReturn(new AuthorisationProcessorResponse());
 
+        // When
         processor.execute(request, processorService);
 
+        // Then
         verify(processorService, times(1)).doScaExempted(request);
     }
 }

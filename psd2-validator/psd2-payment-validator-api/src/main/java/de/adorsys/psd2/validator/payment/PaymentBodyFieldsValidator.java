@@ -21,7 +21,7 @@ package de.adorsys.psd2.validator.payment;
 
 import de.adorsys.psd2.xs2a.core.error.MessageError;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 
 public interface PaymentBodyFieldsValidator {
     /**

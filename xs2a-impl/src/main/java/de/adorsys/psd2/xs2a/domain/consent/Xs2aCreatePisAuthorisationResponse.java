@@ -44,10 +44,11 @@ public class Xs2aCreatePisAuthorisationResponse implements AuthorisationResponse
     private ScaApproach scaApproach;
     private final Set<TppMessageInformation> tppMessageInformation = new HashSet<>();
 
-    public Xs2aCreatePisAuthorisationResponse(String authorisationId, ScaStatus scaStatus, PaymentType paymentType,
+    public Xs2aCreatePisAuthorisationResponse(String authorisationId, ScaStatus scaStatus, ScaApproach scaApproach, PaymentType paymentType,
                                               String internalRequestId, PsuIdData psuIdData) {
         this.authorisationId = authorisationId;
         this.scaStatus = scaStatus;
+        this.scaApproach = scaApproach;
         this.paymentType = paymentType;
         this.internalRequestId = internalRequestId;
         this.psuIdData = psuIdData;

@@ -20,18 +20,18 @@ package de.adorsys.psd2.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import org.springframework.validation.annotation.Validated;
 
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
 import java.util.Objects;
 
 /**
  * TppMessage201PaymentInitiation
  */
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-10-26T13:16:54.081225+03:00[Europe/Kiev]")
+@jakarta.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-10-25T13:15:56.196839+03:00[Europe/Kiev]")
 
 
 public class TppMessage201PaymentInitiation   {
@@ -52,19 +52,18 @@ public class TppMessage201PaymentInitiation   {
     return this;
   }
 
-    /**
-     * Get category
-     *
-     * @return category
-     **/
-    @Schema(required = true, description = "")
-    @JsonProperty("category")
+  /**
+   * Get category
+   * @return category
+   **/
+  @Schema(required = true, description = "")
+  @JsonProperty("category")
     @NotNull
 
-    @Valid
-    public TppMessageCategory getCategory() {
-        return category;
-    }
+  @Valid
+  public TppMessageCategory getCategory() {
+    return category;
+  }
 
   public void setCategory(TppMessageCategory category) {
     this.category = category;
@@ -75,18 +74,17 @@ public class TppMessage201PaymentInitiation   {
     return this;
   }
 
-    /**
-     * Get code
-     *
-     * @return code
-     **/
-    @Schema(required = true, description = "")
-    @JsonProperty("code")
+  /**
+   * Get code
+   * @return code
+   **/
+  @Schema(required = true, description = "")
+  @JsonProperty("code")
     @NotNull
 
-    @Valid
-    public MessageCode201PaymentInitiation getCode() {
-        return code;
+  @Valid
+  public MessageCode201PaymentInitiation getCode() {
+    return code;
   }
 
   public void setCode(MessageCode201PaymentInitiation code) {
@@ -95,18 +93,17 @@ public class TppMessage201PaymentInitiation   {
 
   public TppMessage201PaymentInitiation path(String path) {
     this.path = path;
-      return this;
+    return this;
   }
 
-    /**
-     * Get path
-     *
-     * @return path
-     **/
-    @Schema(description = "")
-    @JsonProperty("path")
+  /**
+   * Get path
+   * @return path
+   **/
+  @Schema(description = "")
+  @JsonProperty("path")
 
-    public String getPath() {
+  public String getPath() {
     return path;
   }
 
@@ -116,19 +113,17 @@ public class TppMessage201PaymentInitiation   {
 
   public TppMessage201PaymentInitiation text(String text) {
     this.text = text;
-      return this;
+    return this;
   }
 
-    /**
-     * Additional explaining text to the TPP.
-     *
-     * @return text
-     **/
-    @Schema(description = "Additional explaining text to the TPP.")
-    @JsonProperty("text")
+  /**
+   * Additional explaining text to the TPP.
+   * @return text
+   **/
+  @Schema(description = "Additional explaining text to the TPP.")
+  @JsonProperty("text")
 
-    @Size(max = 500)
-    public String getText() {
+@Size(max=500)   public String getText() {
     return text;
   }
 

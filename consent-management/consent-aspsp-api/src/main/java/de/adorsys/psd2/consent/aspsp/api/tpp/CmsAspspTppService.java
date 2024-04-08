@@ -47,9 +47,12 @@ public interface CmsAspspTppService {
      * @param tppAuthorisationNumber ID of TPP to lock
      * @param instanceId             optional ID of particular service instance
      * @param lockPeriod             Time period of locking. May be omitted.
+     * @param updatedBy              ID of the person who blocked a TPP
+     * @param reason                 The reason why a TPP is blocked
      * @return <code>true</code> if lock was done. <code>false</code> otherwise.
      */
-    boolean blockTpp(@NotNull String tppAuthorisationNumber, @NotNull String instanceId, @Nullable Duration lockPeriod);
+    boolean blockTpp(@NotNull String tppAuthorisationNumber, @NotNull String instanceId,
+                     @Nullable Duration lockPeriod, String updatedBy, String reason);
 
     /**
      * Releases lock of requests from TPP by given TPP ID.
@@ -57,9 +60,11 @@ public interface CmsAspspTppService {
      *
      * @param tppAuthorisationNumber ID of TPP to lock
      * @param instanceId             optional ID of particular service instance
+     * @param updatedBy              ID of the person who blocked a TPP
+     * @param reason                 The reason why a TPP is blocked
      * @return <code>true</code> if TPP was found and unlock was done. <code>false</code> otherwise.
      */
-    boolean unblockTpp(@NotNull String tppAuthorisationNumber, @NotNull String instanceId);
+    boolean unblockTpp(@NotNull String tppAuthorisationNumber, @NotNull String instanceId, String updatedBy, String reason);
 
     /**
      * Loads TPP info record by TPP authorisation number

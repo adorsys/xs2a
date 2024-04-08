@@ -48,7 +48,11 @@ import de.adorsys.psd2.xs2a.integration.builder.UrlBuilder;
 import de.adorsys.psd2.xs2a.service.spi.SpiAspspConsentDataProviderFactory;
 import de.adorsys.psd2.xs2a.spi.domain.SpiAspspConsentDataProvider;
 import de.adorsys.psd2.xs2a.spi.domain.SpiContextData;
-import de.adorsys.psd2.xs2a.spi.domain.authorisation.*;
+import de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiAuthorisationStatus;
+import de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiAuthorizationCodeResult;
+import de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiAvailableScaMethodsResponse;
+import de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiPsuAuthorisationResponse;
+import de.adorsys.psd2.xs2a.spi.domain.common.SpiAuthenticationObject;
 import de.adorsys.psd2.xs2a.spi.domain.psu.SpiPsuData;
 import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponse;
 import de.adorsys.psd2.xs2a.spi.domain.sca.SpiScaStatus;
@@ -110,9 +114,9 @@ class UpdatePsuDataForPaymentCancellationIT {
     @MockBean
     private TppStopListService tppStopListService;
     @MockBean
-    private AspspProfileService aspspProfileService;
-    @MockBean
     private Xs2aEventServiceEncrypted eventServiceEncrypted;
+    @MockBean
+    private AspspProfileService aspspProfileService;
     @MockBean
     private PisCommonPaymentServiceEncrypted pisCommonPaymentServiceEncrypted;
     @MockBean

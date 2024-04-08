@@ -43,8 +43,7 @@ import de.adorsys.psd2.xs2a.service.mapper.cms_xs2a_mappers.Xs2aAisConsentMapper
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiCardTransactionListToXs2aAccountReportMapper;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiErrorMapper;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiToXs2aBalanceMapper;
-import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.Xs2aToSpiConsentMapper;
-import de.adorsys.psd2.xs2a.service.profile.AspspProfileServiceWrapper;
+import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.Xs2aToSpiBookingStatusMapper;
 import de.adorsys.psd2.xs2a.service.spi.SpiAspspConsentDataProviderFactory;
 import de.adorsys.psd2.xs2a.service.validator.ais.account.GetCardTransactionsReportValidator;
 import de.adorsys.psd2.xs2a.service.validator.ais.account.dto.CardTransactionsReportByPeriodObject;
@@ -80,7 +79,6 @@ public class CardTransactionService {
     private final Xs2aAccountService xs2aAccountService;
     private final Xs2aAisConsentMapper consentMapper;
     private final TppService tppService;
-    private final AspspProfileServiceWrapper aspspProfileService;
     private final Xs2aEventService xs2aEventService;
     private final SpiErrorMapper spiErrorMapper;
     private final GetCardTransactionsReportValidator getCardTransactionsReportValidator;
@@ -88,7 +86,7 @@ public class CardTransactionService {
     private final AccountHelperService accountHelperService;
     private final LoggingContextService loggingContextService;
     private final CardAccountHandler cardAccountHandler;
-    private final Xs2aToSpiConsentMapper xs2aToSpiConsentMapper;
+    private final Xs2aToSpiBookingStatusMapper xs2aToSpiBookingStatusMapper;
 
     /**
      * Read Card transaction reports of a given account addressed by "account-id", depending on the steering parameter
@@ -163,7 +161,8 @@ public class CardTransactionService {
 
     private SpiTransactionReportParameters buildSpiTransactionReportParameters(Xs2aCardTransactionsReportByPeriodRequest request) {
         return new SpiTransactionReportParameters(request.getAcceptHeader(), Boolean.FALSE, request.getDateFrom(), request.getDateTo(),
-                                                  xs2aToSpiConsentMapper.mapToSpiBookingStatus(request.getBookingStatus()), request.getEntryReferenceFrom(), request.getDeltaList(), null, null);
+                                                  xs2aToSpiBookingStatusMapper.mapToSpiBookingStatus(request.getBookingStatus()),
+                                                  request.getEntryReferenceFrom(), request.getDeltaList(), null, null);
     }
 
     private SpiAccountReference getRequestedAccountReference(AisConsent aisConsent, String accountId) {

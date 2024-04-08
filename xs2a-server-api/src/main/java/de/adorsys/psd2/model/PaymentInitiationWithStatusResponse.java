@@ -20,36 +20,36 @@ package de.adorsys.psd2.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.Size;
 import org.springframework.validation.annotation.Validated;
 
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Pattern;
-import javax.validation.constraints.Size;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
 /**
- * Generic JSON response body consistion of the corresponding payment initation JSON body together with an optional transaction status field.
+ * Generic JSON response body consistion of the corresponding payment initiation JSON body together with an optional transaction status field.
  */
-@Schema(description = "Generic JSON response body consistion of the corresponding payment initation JSON body together with an optional transaction status field. ")
+@Schema(description = "Generic JSON response body consistion of the corresponding payment initiation JSON body together with an optional transaction status field. ")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-10-26T13:16:54.081225+03:00[Europe/Kiev]")
+@jakarta.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-10-25T13:15:56.196839+03:00[Europe/Kiev]")
 
 
-public class PaymentInitiationWithStatusResponse {
-    @JsonProperty("endToEndIdentification")
-    private String endToEndIdentification = null;
+public class PaymentInitiationWithStatusResponse   {
+  @JsonProperty("endToEndIdentification")
+  private String endToEndIdentification = null;
 
-    @JsonProperty("instructionIdentification")
-    private String instructionIdentification = null;
+  @JsonProperty("instructionIdentification")
+  private String instructionIdentification = null;
 
-    @JsonProperty("debtorName")
-    private String debtorName = null;
+  @JsonProperty("debtorName")
+  private String debtorName = null;
 
-    @JsonProperty("debtorAccount")
+  @JsonProperty("debtorAccount")
   private AccountReference debtorAccount = null;
 
   @JsonProperty("ultimateDebtor")
@@ -85,8 +85,8 @@ public class PaymentInitiationWithStatusResponse {
   @JsonProperty("remittanceInformationUnstructured")
   private String remittanceInformationUnstructured = null;
 
-    @JsonProperty("remittanceInformationStructured")
-    private RemittanceInformationStructuredMax140 remittanceInformationStructured = null;
+  @JsonProperty("remittanceInformationStructured")
+  private RemittanceInformationStructuredMax140 remittanceInformationStructured = null;
 
   @JsonProperty("remittanceInformationStructuredArray")
   private RemittanceInformationStructuredArray remittanceInformationStructuredArray = null;
@@ -106,18 +106,16 @@ public class PaymentInitiationWithStatusResponse {
     return this;
   }
 
-    /**
-     * Get endToEndIdentification
-     *
-     * @return endToEndIdentification
-     **/
-    @Schema(description = "")
-    @JsonProperty("endToEndIdentification")
+  /**
+   * Get endToEndIdentification
+   * @return endToEndIdentification
+   **/
+  @Schema(description = "")
+  @JsonProperty("endToEndIdentification")
 
-    @Size(max = 35)
-    public String getEndToEndIdentification() {
-        return endToEndIdentification;
-    }
+@Size(max=35)   public String getEndToEndIdentification() {
+    return endToEndIdentification;
+  }
 
   public void setEndToEndIdentification(String endToEndIdentification) {
     this.endToEndIdentification = endToEndIdentification;
@@ -128,17 +126,15 @@ public class PaymentInitiationWithStatusResponse {
     return this;
   }
 
-    /**
-     * Get instructionIdentification
-     *
-     * @return instructionIdentification
-     **/
-    @Schema(description = "")
-    @JsonProperty("instructionIdentification")
+  /**
+   * Get instructionIdentification
+   * @return instructionIdentification
+   **/
+  @Schema(description = "")
+  @JsonProperty("instructionIdentification")
 
-    @Size(max = 35)
-    public String getInstructionIdentification() {
-        return instructionIdentification;
+@Size(max=35)   public String getInstructionIdentification() {
+    return instructionIdentification;
   }
 
   public void setInstructionIdentification(String instructionIdentification) {
@@ -147,20 +143,18 @@ public class PaymentInitiationWithStatusResponse {
 
   public PaymentInitiationWithStatusResponse debtorName(String debtorName) {
     this.debtorName = debtorName;
-      return this;
+    return this;
   }
 
-    /**
-     * Debtor name.
-     *
-     * @return debtorName
-     **/
-    @Schema(example = "Debtor Name", description = "Debtor name.")
-    @JsonProperty("debtorName")
+  /**
+   * Debtor name.
+   * @return debtorName
+   **/
+  @Schema(example = "Debtor Name", description = "Debtor name.")
+  @JsonProperty("debtorName")
 
-    @Size(max = 70)
-    public String getDebtorName() {
-        return debtorName;
+@Size(max=70)   public String getDebtorName() {
+    return debtorName;
   }
 
   public void setDebtorName(String debtorName) {
@@ -169,20 +163,19 @@ public class PaymentInitiationWithStatusResponse {
 
   public PaymentInitiationWithStatusResponse debtorAccount(AccountReference debtorAccount) {
     this.debtorAccount = debtorAccount;
-      return this;
+    return this;
   }
 
-    /**
-     * Get debtorAccount
-     *
-     * @return debtorAccount
-     **/
-    @Schema(required = true, description = "")
-    @JsonProperty("debtorAccount")
+  /**
+   * Get debtorAccount
+   * @return debtorAccount
+   **/
+  @Schema(required = true, description = "")
+  @JsonProperty("debtorAccount")
     @NotNull
 
-    @Valid
-    public AccountReference getDebtorAccount() {
+  @Valid
+  public AccountReference getDebtorAccount() {
     return debtorAccount;
   }
 
@@ -192,19 +185,17 @@ public class PaymentInitiationWithStatusResponse {
 
   public PaymentInitiationWithStatusResponse ultimateDebtor(String ultimateDebtor) {
     this.ultimateDebtor = ultimateDebtor;
-      return this;
+    return this;
   }
 
-    /**
-     * Ultimate debtor.
-     *
-     * @return ultimateDebtor
-     **/
-    @Schema(example = "Ultimate Debtor", description = "Ultimate debtor.")
-    @JsonProperty("ultimateDebtor")
+  /**
+   * Ultimate debtor.
+   * @return ultimateDebtor
+   **/
+  @Schema(example = "Ultimate Debtor", description = "Ultimate debtor.")
+  @JsonProperty("ultimateDebtor")
 
-    @Size(max = 70)
-    public String getUltimateDebtor() {
+@Size(max=70)   public String getUltimateDebtor() {
     return ultimateDebtor;
   }
 
@@ -214,20 +205,19 @@ public class PaymentInitiationWithStatusResponse {
 
   public PaymentInitiationWithStatusResponse instructedAmount(Amount instructedAmount) {
     this.instructedAmount = instructedAmount;
-      return this;
+    return this;
   }
 
-    /**
-     * Get instructedAmount
-     *
-     * @return instructedAmount
-     **/
-    @Schema(required = true, description = "")
-    @JsonProperty("instructedAmount")
+  /**
+   * Get instructedAmount
+   * @return instructedAmount
+   **/
+  @Schema(required = true, description = "")
+  @JsonProperty("instructedAmount")
     @NotNull
 
-    @Valid
-    public Amount getInstructedAmount() {
+  @Valid
+  public Amount getInstructedAmount() {
     return instructedAmount;
   }
 
@@ -236,21 +226,20 @@ public class PaymentInitiationWithStatusResponse {
   }
 
   public PaymentInitiationWithStatusResponse creditorAccount(AccountReference creditorAccount) {
-      this.creditorAccount = creditorAccount;
-      return this;
+    this.creditorAccount = creditorAccount;
+    return this;
   }
 
-    /**
-     * Get creditorAccount
-     *
-     * @return creditorAccount
-     **/
-    @Schema(required = true, description = "")
-    @JsonProperty("creditorAccount")
+  /**
+   * Get creditorAccount
+   * @return creditorAccount
+   **/
+  @Schema(required = true, description = "")
+  @JsonProperty("creditorAccount")
     @NotNull
 
-    @Valid
-    public AccountReference getCreditorAccount() {
+  @Valid
+  public AccountReference getCreditorAccount() {
     return creditorAccount;
   }
 
@@ -259,19 +248,18 @@ public class PaymentInitiationWithStatusResponse {
   }
 
   public PaymentInitiationWithStatusResponse creditorAgent(String creditorAgent) {
-      this.creditorAgent = creditorAgent;
-      return this;
+    this.creditorAgent = creditorAgent;
+    return this;
   }
 
-    /**
-     * BICFI
-     *
-     * @return creditorAgent
-     **/
-    @Schema(example = "AAAADEBBXXX", description = "BICFI ")
-    @JsonProperty("creditorAgent")
+  /**
+   * BICFI
+   * @return creditorAgent
+   **/
+  @Schema(example = "AAAADEBBXXX", description = "BICFI ")
+  @JsonProperty("creditorAgent")
 
-    @Pattern(regexp = "[A-Z]{6,6}[A-Z2-9][A-NP-Z0-9]([A-Z0-9]{3,3}){0,1}")   public String getCreditorAgent() {
+@Pattern(regexp="[A-Z]{6,6}[A-Z2-9][A-NP-Z0-9]([A-Z0-9]{3,3}){0,1}")   public String getCreditorAgent() {
     return creditorAgent;
   }
 
@@ -280,17 +268,16 @@ public class PaymentInitiationWithStatusResponse {
   }
 
   public PaymentInitiationWithStatusResponse creditorName(String creditorName) {
-      this.creditorName = creditorName;
-      return this;
+    this.creditorName = creditorName;
+    return this;
   }
 
-    /**
-     * Creditor name.
-     *
-     * @return creditorName
-     **/
-    @Schema(example = "Creditor Name", required = true, description = "Creditor name.")
-    @JsonProperty("creditorName")
+  /**
+   * Creditor name.
+   * @return creditorName
+   **/
+  @Schema(example = "Creditor Name", required = true, description = "Creditor name.")
+  @JsonProperty("creditorName")
     @NotNull
 
 @Size(max=70)   public String getCreditorName() {
@@ -302,20 +289,19 @@ public class PaymentInitiationWithStatusResponse {
   }
 
   public PaymentInitiationWithStatusResponse creditorAddress(Address creditorAddress) {
-      this.creditorAddress = creditorAddress;
-      return this;
+    this.creditorAddress = creditorAddress;
+    return this;
   }
 
-    /**
-     * Get creditorAddress
-     *
-     * @return creditorAddress
-     **/
-    @Schema(description = "")
-    @JsonProperty("creditorAddress")
+  /**
+   * Get creditorAddress
+   * @return creditorAddress
+   **/
+  @Schema(description = "")
+  @JsonProperty("creditorAddress")
 
-    @Valid
-    public Address getCreditorAddress() {
+  @Valid
+  public Address getCreditorAddress() {
     return creditorAddress;
   }
 
@@ -324,16 +310,15 @@ public class PaymentInitiationWithStatusResponse {
   }
 
   public PaymentInitiationWithStatusResponse creditorId(String creditorId) {
-      this.creditorId = creditorId;
-      return this;
+    this.creditorId = creditorId;
+    return this;
   }
 
-    /**
-     * Identification of Creditors, e.g. a SEPA Creditor ID.
-     *
-     * @return creditorId
-     **/
-    @Schema(description = "Identification of Creditors, e.g. a SEPA Creditor ID.")
+  /**
+   * Identification of Creditors, e.g. a SEPA Creditor ID.
+   * @return creditorId
+   **/
+  @Schema(description = "Identification of Creditors, e.g. a SEPA Creditor ID.")
   @JsonProperty("creditorId")
 
 @Size(max=35)   public String getCreditorId() {
@@ -345,16 +330,15 @@ public class PaymentInitiationWithStatusResponse {
   }
 
   public PaymentInitiationWithStatusResponse ultimateCreditor(String ultimateCreditor) {
-      this.ultimateCreditor = ultimateCreditor;
-      return this;
+    this.ultimateCreditor = ultimateCreditor;
+    return this;
   }
 
-    /**
-     * Ultimate creditor.
-     *
-     * @return ultimateCreditor
-     **/
-    @Schema(example = "Ultimate Creditor", description = "Ultimate creditor.")
+  /**
+   * Ultimate creditor.
+   * @return ultimateCreditor
+   **/
+  @Schema(example = "Ultimate Creditor", description = "Ultimate creditor.")
   @JsonProperty("ultimateCreditor")
 
 @Size(max=70)   public String getUltimateCreditor() {
@@ -365,14 +349,14 @@ public class PaymentInitiationWithStatusResponse {
     this.ultimateCreditor = ultimateCreditor;
   }
 
-    public PaymentInitiationWithStatusResponse purposeCode(PurposeCode purposeCode) {
-        this.purposeCode = purposeCode;
-        return this;
-    }
+  public PaymentInitiationWithStatusResponse purposeCode(PurposeCode purposeCode) {
+    this.purposeCode = purposeCode;
+    return this;
+  }
 
-    /**
-     * Get purposeCode
-     * @return purposeCode
+  /**
+   * Get purposeCode
+   * @return purposeCode
    **/
   @Schema(description = "")
   @JsonProperty("purposeCode")
@@ -386,14 +370,14 @@ public class PaymentInitiationWithStatusResponse {
     this.purposeCode = purposeCode;
   }
 
-    public PaymentInitiationWithStatusResponse chargeBearer(ChargeBearer chargeBearer) {
-        this.chargeBearer = chargeBearer;
-        return this;
-    }
+  public PaymentInitiationWithStatusResponse chargeBearer(ChargeBearer chargeBearer) {
+    this.chargeBearer = chargeBearer;
+    return this;
+  }
 
-    /**
-     * Get chargeBearer
-     * @return chargeBearer
+  /**
+   * Get chargeBearer
+   * @return chargeBearer
    **/
   @Schema(description = "")
   @JsonProperty("chargeBearer")
@@ -408,63 +392,60 @@ public class PaymentInitiationWithStatusResponse {
   }
 
   public PaymentInitiationWithStatusResponse remittanceInformationUnstructured(String remittanceInformationUnstructured) {
-      this.remittanceInformationUnstructured = remittanceInformationUnstructured;
-      return this;
+    this.remittanceInformationUnstructured = remittanceInformationUnstructured;
+    return this;
   }
 
-    /**
-     * Unstructured remittance information.
-     *
-     * @return remittanceInformationUnstructured
-     **/
-    @Schema(example = "Ref Number Merchant", description = "Unstructured remittance information. ")
-    @JsonProperty("remittanceInformationUnstructured")
+  /**
+   * Unstructured remittance information.
+   * @return remittanceInformationUnstructured
+   **/
+  @Schema(example = "Ref Number Merchant", description = "Unstructured remittance information. ")
+  @JsonProperty("remittanceInformationUnstructured")
 
 @Size(max=140)   public String getRemittanceInformationUnstructured() {
     return remittanceInformationUnstructured;
   }
 
   public void setRemittanceInformationUnstructured(String remittanceInformationUnstructured) {
-      this.remittanceInformationUnstructured = remittanceInformationUnstructured;
+    this.remittanceInformationUnstructured = remittanceInformationUnstructured;
   }
 
-    public PaymentInitiationWithStatusResponse remittanceInformationStructured(RemittanceInformationStructuredMax140 remittanceInformationStructured) {
-        this.remittanceInformationStructured = remittanceInformationStructured;
-        return this;
-    }
+  public PaymentInitiationWithStatusResponse remittanceInformationStructured(RemittanceInformationStructuredMax140 remittanceInformationStructured) {
+    this.remittanceInformationStructured = remittanceInformationStructured;
+    return this;
+  }
 
-    /**
-     * Get remittanceInformationStructured
-     *
-     * @return remittanceInformationStructured
-     **/
-    @Schema(description = "")
-    @JsonProperty("remittanceInformationStructured")
+  /**
+   * Get remittanceInformationStructured
+   * @return remittanceInformationStructured
+   **/
+  @Schema(description = "")
+  @JsonProperty("remittanceInformationStructured")
 
-    @Valid
-    public RemittanceInformationStructuredMax140 getRemittanceInformationStructured() {
-        return remittanceInformationStructured;
-    }
+  @Valid
+  public RemittanceInformationStructuredMax140 getRemittanceInformationStructured() {
+    return remittanceInformationStructured;
+  }
 
-    public void setRemittanceInformationStructured(RemittanceInformationStructuredMax140 remittanceInformationStructured) {
+  public void setRemittanceInformationStructured(RemittanceInformationStructuredMax140 remittanceInformationStructured) {
     this.remittanceInformationStructured = remittanceInformationStructured;
   }
 
   public PaymentInitiationWithStatusResponse remittanceInformationStructuredArray(RemittanceInformationStructuredArray remittanceInformationStructuredArray) {
-      this.remittanceInformationStructuredArray = remittanceInformationStructuredArray;
-      return this;
+    this.remittanceInformationStructuredArray = remittanceInformationStructuredArray;
+    return this;
   }
 
-    /**
-     * Get remittanceInformationStructuredArray
-     *
-     * @return remittanceInformationStructuredArray
-     **/
-    @Schema(description = "")
-    @JsonProperty("remittanceInformationStructuredArray")
+  /**
+   * Get remittanceInformationStructuredArray
+   * @return remittanceInformationStructuredArray
+   **/
+  @Schema(description = "")
+  @JsonProperty("remittanceInformationStructuredArray")
 
-    @Valid
-    public RemittanceInformationStructuredArray getRemittanceInformationStructuredArray() {
+  @Valid
+  public RemittanceInformationStructuredArray getRemittanceInformationStructuredArray() {
     return remittanceInformationStructuredArray;
   }
 
@@ -472,14 +453,14 @@ public class PaymentInitiationWithStatusResponse {
     this.remittanceInformationStructuredArray = remittanceInformationStructuredArray;
   }
 
-    public PaymentInitiationWithStatusResponse requestedExecutionDate(LocalDate requestedExecutionDate) {
-        this.requestedExecutionDate = requestedExecutionDate;
-        return this;
-    }
+  public PaymentInitiationWithStatusResponse requestedExecutionDate(LocalDate requestedExecutionDate) {
+    this.requestedExecutionDate = requestedExecutionDate;
+    return this;
+  }
 
-    /**
-     * Get requestedExecutionDate
-     * @return requestedExecutionDate
+  /**
+   * Get requestedExecutionDate
+   * @return requestedExecutionDate
    **/
   @Schema(description = "")
   @JsonProperty("requestedExecutionDate")
@@ -493,14 +474,14 @@ public class PaymentInitiationWithStatusResponse {
     this.requestedExecutionDate = requestedExecutionDate;
   }
 
-    public PaymentInitiationWithStatusResponse transactionStatus(TransactionStatus transactionStatus) {
-        this.transactionStatus = transactionStatus;
-        return this;
-    }
+  public PaymentInitiationWithStatusResponse transactionStatus(TransactionStatus transactionStatus) {
+    this.transactionStatus = transactionStatus;
+    return this;
+  }
 
-    /**
-     * Get transactionStatus
-     * @return transactionStatus
+  /**
+   * Get transactionStatus
+   * @return transactionStatus
    **/
   @Schema(description = "")
   @JsonProperty("transactionStatus")
@@ -520,17 +501,17 @@ public class PaymentInitiationWithStatusResponse {
   }
 
   public PaymentInitiationWithStatusResponse addTppMessagesItem(TppMessageGeneric tppMessagesItem) {
-      if (this.tppMessages == null) {
-          this.tppMessages = new ArrayList<>();
-      }
-      this.tppMessages.add(tppMessagesItem);
-      return this;
+    if (this.tppMessages == null) {
+      this.tppMessages = new ArrayList<>();
+    }
+    this.tppMessages.add(tppMessagesItem);
+    return this;
   }
 
-    /**
-     * Messages to the TPP on operational issues.
-     * @return tppMessages
-     **/
+  /**
+   * Messages to the TPP on operational issues.
+   * @return tppMessages
+   **/
   @Schema(description = "Messages to the TPP on operational issues.")
   @JsonProperty("tppMessages")
     @Valid

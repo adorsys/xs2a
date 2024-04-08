@@ -25,7 +25,7 @@ import com.fasterxml.jackson.annotation.JsonValue;
  * Day of execution as string.  This string consists of up two characters. Leading zeroes are not allowed.  31 is ultimo of the month.
  */
 public enum DayOfExecution {
-    _1("1"),
+  _1("1"),
     _2("2"),
     _3("3"),
     _4("4"),
@@ -57,25 +57,25 @@ public enum DayOfExecution {
     _30("30"),
     _31("31");
 
-    private String value;
+  private String value;
 
-    DayOfExecution(String value) {
-        this.value = value;
-    }
+  DayOfExecution(String value) {
+    this.value = value;
+  }
 
-    @Override
-    @JsonValue
-    public String toString() {
-        return String.valueOf(value);
-    }
+  @Override
+  @JsonValue
+  public String toString() {
+    return String.valueOf(value);
+  }
 
-    @JsonCreator
-    public static DayOfExecution fromValue(String text) {
-        for (DayOfExecution b : DayOfExecution.values()) {
-            if (String.valueOf(b.value).equals(text)) {
-                return b;
-            }
-        }
-        return null;
+  @JsonCreator
+  public static DayOfExecution fromValue(String text) {
+    for (DayOfExecution b : DayOfExecution.values()) {
+      if (String.valueOf(b.value).equals(text)) {
+        return b;
+      }
     }
+    return null;
+  }
 }

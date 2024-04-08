@@ -47,9 +47,11 @@ import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
 import de.adorsys.psd2.xs2a.integration.builder.AspspSettingsBuilder;
 import de.adorsys.psd2.xs2a.integration.builder.TppInfoBuilder;
 import de.adorsys.psd2.xs2a.integration.builder.UrlBuilder;
+import de.adorsys.psd2.xs2a.service.UuidGeneratorService;
 import de.adorsys.psd2.xs2a.spi.domain.SpiAspspConsentDataProvider;
 import de.adorsys.psd2.xs2a.spi.domain.SpiContextData;
 import de.adorsys.psd2.xs2a.spi.domain.authorisation.*;
+import de.adorsys.psd2.xs2a.spi.domain.common.SpiAuthenticationObject;
 import de.adorsys.psd2.xs2a.spi.domain.payment.SpiPaymentInfo;
 import de.adorsys.psd2.xs2a.spi.domain.payment.SpiTransactionStatus;
 import de.adorsys.psd2.xs2a.spi.domain.payment.response.SpiPaymentExecutionResponse;
@@ -128,9 +130,9 @@ class PaymentStartAuthorisationIT {
     @MockBean
     private TppStopListService tppStopListService;
     @MockBean
-    private AspspProfileService aspspProfileService;
-    @MockBean
     private Xs2aEventServiceEncrypted eventServiceEncrypted;
+    @MockBean
+    private AspspProfileService aspspProfileService;
     @MockBean
     private PisCommonPaymentServiceEncrypted pisCommonPaymentServiceEncrypted;
     @MockBean
@@ -148,12 +150,13 @@ class PaymentStartAuthorisationIT {
     private RestTemplate consentRestTemplate;
     @MockBean
     private BuildProperties buildProperties;
+    @MockBean
+    private UuidGeneratorService uuidGeneratorService;
 
     @Captor
     private ArgumentCaptor<CreateAuthorisationRequest> createAuthorisationRequest;
     @Captor
     private ArgumentCaptor<PisAuthorisationParentHolder> parentHolderCaptor;
-
 
     private final HttpHeaders httpHeadersExplicit = new HttpHeaders();
 
@@ -192,7 +195,7 @@ class PaymentStartAuthorisationIT {
 
         given(authorisationServiceEncrypted.getAuthorisationById(AUTHORISATION_ID))
             .willReturn(CmsResponse.<Authorisation>builder()
-                            .payload(buildGetPisAuthorisationResponse(ScaStatus.PSUIDENTIFIED))
+                            .payload(buildGetPisAuthorisationResponse())
                             .build());
         given(authorisationServiceEncrypted.getAuthorisationScaApproach(AUTHORISATION_ID))
             .willReturn(CmsResponse.<AuthorisationScaApproachResponse>builder()
@@ -243,6 +246,8 @@ class PaymentStartAuthorisationIT {
             .willReturn(SpiResponse.<SpiStartAuthorisationResponse>builder()
                             .payload(startAuthorisationResponse)
                             .build());
+        given(uuidGeneratorService.generate())
+            .willReturn(AUTHORISATION_ID);
 
         MockHttpServletRequestBuilder requestBuilder = post(UrlBuilder.buildPaymentStartAuthorisationUrl(
             SINGLE_PAYMENT_TYPE.getValue(), SEPA_PAYMENT_PRODUCT, PAYMENT_ID));
@@ -263,9 +268,9 @@ class PaymentStartAuthorisationIT {
     }
 
     @NotNull
-    private Authorisation buildGetPisAuthorisationResponse(ScaStatus scaStatus) {
+    private Authorisation buildGetPisAuthorisationResponse() {
         Authorisation getPisAuthorisationResponse = new Authorisation();
-        getPisAuthorisationResponse.setScaStatus(scaStatus);
+        getPisAuthorisationResponse.setScaStatus(ScaStatus.PSUIDENTIFIED);
         getPisAuthorisationResponse.setAuthorisationType(AuthorisationType.PIS_CREATION);
         getPisAuthorisationResponse.setParentId(PAYMENT_ID);
         return getPisAuthorisationResponse;

@@ -33,6 +33,8 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -43,13 +45,11 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.validation.Valid;
 import java.io.IOException;
 import java.util.Optional;
 import java.util.UUID;
 
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-05-06T13:00:42.214155+03:00[Europe/Kiev]")
+@jakarta.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-05-06T13:00:42.214155+03:00[Europe/Kiev]")
 @Validated
 public interface ConfirmationOfFundsServicePiisApi {
 
@@ -94,18 +94,18 @@ public interface ConfirmationOfFundsServicePiisApi {
 
         @ApiResponse(responseCode = "500", description = "Internal Server Error"),
 
-        @ApiResponse(responseCode = "503", description = "Service Unavailable")})
+        @ApiResponse(responseCode = "503", description = "Service Unavailable") })
     @RequestMapping(value = "/v1/funds-confirmations",
-        produces = {"application/json", "application/problem+json"},
-        consumes = {"application/json"},
+        produces = { "application/json", "application/problem+json" },
+        consumes = { "application/json" },
         method = RequestMethod.POST)
-    default ResponseEntity<InlineResponse2003> _checkAvailabilityOfFunds(@Parameter(in = ParameterIn.HEADER, description = "ID of the request, unique to the call, as determined by the initiating party.", required = true, schema = @Schema()) @RequestHeader(value = "X-Request-ID", required = true) UUID xRequestID, @Parameter(in = ParameterIn.DEFAULT, description = "Request body for a confirmation of funds request. ", required = true, schema = @Schema()) @Valid @RequestBody ConfirmationOfFunds body, @Parameter(in = ParameterIn.HEADER, description = "This field  might be used in case where a consent was agreed between ASPSP and PSU through an OAuth2 based protocol,  facilitated by the TPP. ", schema = @Schema()) @RequestHeader(value = "Authorization", required = false) String authorization, @Parameter(in = ParameterIn.HEADER, description = "This data element may be contained, if the payment initiation transaction is part of a session, i.e. combined AIS/PIS service. This then contains the consentId of the related AIS consent, which was performed prior to this payment initiation. ", schema = @Schema()) @RequestHeader(value = "Consent-ID", required = false) String consentID, @Parameter(in = ParameterIn.HEADER, description = "Is contained if and only if the \"Signature\" element is contained in the header of the request.", schema = @Schema()) @RequestHeader(value = "Digest", required = false) String digest, @Parameter(in = ParameterIn.HEADER, description = "A signature of the request by the TPP on application level. This might be mandated by ASPSP. ", schema = @Schema()) @RequestHeader(value = "Signature", required = false) String signature, @Parameter(in = ParameterIn.HEADER, description = "The certificate used for signing the request, in base64 encoding.  Must be contained if a signature is contained. ", schema = @Schema()) @RequestHeader(value = "TPP-Signature-Certificate", required = false) byte[] tpPSignatureCertificate) {
-        return checkAvailabilityOfFunds(xRequestID, body, authorization, consentID, digest, signature, tpPSignatureCertificate);
+    default ResponseEntity<InlineResponse2003> _checkAvailabilityOfFunds(@Parameter(in = ParameterIn.HEADER, description = "ID of the request, unique to the call, as determined by the initiating party." ,required=true,schema=@Schema()) @RequestHeader(value="X-Request-ID", required=true) UUID xRequestID, @Parameter(in = ParameterIn.DEFAULT, description = "Request body for a confirmation of funds request. ", required=true, schema=@Schema()) @Valid @RequestBody ConfirmationOfFunds body, @Parameter(in = ParameterIn.HEADER, description = "This data element may be contained, if the payment initiation transaction is part of a session, i.e. combined AIS/PIS service. This then contains the consentId of the related AIS consent, which was performed prior to this payment initiation. " ,schema=@Schema()) @RequestHeader(value="Consent-ID", required=false) String consentID, @Parameter(in = ParameterIn.HEADER, description = "Is contained if and only if the \"Signature\" element is contained in the header of the request." ,schema=@Schema()) @RequestHeader(value="Digest", required=false) String digest, @Parameter(in = ParameterIn.HEADER, description = "A signature of the request by the TPP on application level. This might be mandated by ASPSP. " ,schema=@Schema()) @RequestHeader(value="Signature", required=false) String signature, @Parameter(in = ParameterIn.HEADER, description = "The certificate used for signing the request, in base64 encoding.  Must be contained if a signature is contained. " ,schema=@Schema()) @RequestHeader(value="TPP-Signature-Certificate", required=false) byte[] tpPSignatureCertificate) {
+        return checkAvailabilityOfFunds(xRequestID, body, consentID, digest, signature, tpPSignatureCertificate);
     }
 
     // Override this method
-    default ResponseEntity<InlineResponse2003> checkAvailabilityOfFunds(UUID xRequestID, ConfirmationOfFunds body, String authorization, String consentID, String digest, String signature, byte[] tpPSignatureCertificate) {
-        if (getObjectMapper().isPresent() && getAcceptHeader().isPresent()) {
+    default ResponseEntity<InlineResponse2003> checkAvailabilityOfFunds(UUID xRequestID,ConfirmationOfFunds body,String consentID,String digest,String signature,byte[] tpPSignatureCertificate) {
+        if(getObjectMapper().isPresent() && getAcceptHeader().isPresent()) {
             if (getAcceptHeader().get().contains("application/json")) {
                 try {
                     return new ResponseEntity<>(getObjectMapper().get().readValue("{\n  \"fundsAvailable\" : true\n}", InlineResponse2003.class), HttpStatus.NOT_IMPLEMENTED);

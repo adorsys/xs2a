@@ -43,6 +43,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -96,7 +97,7 @@ public class AisConsentServiceInternal implements AisConsentService {
         Optional<ConsentEntity> consentOptional = aisConsentRepository.getActualAisConsent(consentId);
 
         if (consentOptional.isEmpty()) {
-            log.info("Consent ID [{}]. Update aspsp account access with response failed, because consent not found",
+            log.info("Consent ID [{}]. Update ASPSP account access with response has failed, consent not found",
                      consentId);
             return CmsResponse.<CmsConsent>builder()
                        .error(LOGICAL_ERROR)
@@ -157,7 +158,7 @@ public class AisConsentServiceInternal implements AisConsentService {
             consent.setConsentStatus(EXPIRED);
         }
 
-        consent.setLastActionDate(LocalDate.now());
+        consent.setLastActionDateTime(LocalDateTime.now());
 
         aisConsentRepository.verifyAndSave(consent);
     }

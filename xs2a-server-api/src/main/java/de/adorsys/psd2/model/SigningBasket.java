@@ -20,9 +20,9 @@ package de.adorsys.psd2.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.Valid;
 import org.springframework.validation.annotation.Validated;
 
-import javax.validation.Valid;
 import java.util.Objects;
 
 /**
@@ -30,7 +30,7 @@ import java.util.Objects;
  */
 @Schema(description = "JSON Body of a establish signing basket request. The body shall contain at least one entry. ")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-10-26T13:16:54.081225+03:00[Europe/Kiev]")
+@jakarta.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-10-25T13:15:56.196839+03:00[Europe/Kiev]")
 
 
 public class SigningBasket   {
@@ -45,18 +45,17 @@ public class SigningBasket   {
     return this;
   }
 
-    /**
-     * Get paymentIds
-     *
-     * @return paymentIds
-     **/
-    @Schema(description = "")
-    @JsonProperty("paymentIds")
+  /**
+   * Get paymentIds
+   * @return paymentIds
+   **/
+  @Schema(description = "")
+  @JsonProperty("paymentIds")
 
-    @Valid
-    public PaymentIdList getPaymentIds() {
-        return paymentIds;
-    }
+  @Valid
+  public PaymentIdList getPaymentIds() {
+    return paymentIds;
+  }
 
   public void setPaymentIds(PaymentIdList paymentIds) {
     this.paymentIds = paymentIds;
@@ -67,17 +66,16 @@ public class SigningBasket   {
     return this;
   }
 
-    /**
-     * Get consentIds
-     *
-     * @return consentIds
-     **/
-    @Schema(description = "")
-    @JsonProperty("consentIds")
+  /**
+   * Get consentIds
+   * @return consentIds
+   **/
+  @Schema(description = "")
+  @JsonProperty("consentIds")
 
-    @Valid
-    public ConsentIdList getConsentIds() {
-        return consentIds;
+  @Valid
+  public ConsentIdList getConsentIds() {
+    return consentIds;
   }
 
   public void setConsentIds(ConsentIdList consentIds) {

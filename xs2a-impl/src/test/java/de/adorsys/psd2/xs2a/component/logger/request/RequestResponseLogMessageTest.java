@@ -21,17 +21,22 @@ package de.adorsys.psd2.xs2a.component.logger.request;
 import de.adorsys.psd2.xs2a.component.MultiReadHttpServletRequest;
 import de.adorsys.psd2.xs2a.component.MultiReadHttpServletResponse;
 import de.adorsys.xs2a.reader.JsonReader;
+import org.apache.commons.io.IOUtils;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.MockedStatic;
+import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpStatus;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
+import org.springframework.web.util.WebUtils;
 
 import java.io.IOException;
+import java.io.InputStream;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
 
 @ExtendWith(MockitoExtension.class)
 class RequestResponseLogMessageTest {
@@ -52,10 +57,10 @@ class RequestResponseLogMessageTest {
     private static final String MULTIPART_JSON_PART = "json_standingorderType";
     private static final String MULTIPART_XML_PART = "xml_sct";
 
-    private JsonReader jsonReader = new JsonReader();
+    private final JsonReader jsonReader = new JsonReader();
 
-    private MockHttpServletRequest request = new MockHttpServletRequest();
-    private MockHttpServletResponse response = new MockHttpServletResponse();
+    private final MockHttpServletRequest request = new MockHttpServletRequest();
+    private final MockHttpServletResponse response = new MockHttpServletResponse();
 
     @Test
     void withRequestUri_shouldAddRequestUri() {
@@ -217,6 +222,19 @@ class RequestResponseLogMessageTest {
     }
 
     @Test
+    void withRequestPayload_nativeRequestNull() {
+        MultiReadHttpServletRequest multiReadRequest = new MultiReadHttpServletRequest(request);
+
+        try (MockedStatic<WebUtils> webUtilsMockedStatic = Mockito.mockStatic(WebUtils.class)) {
+            webUtilsMockedStatic.when(() -> WebUtils.getNativeRequest(multiReadRequest, MultiReadHttpServletRequest.class)).thenReturn(null);
+            RequestResponseLogMessage logMessage = RequestResponseLogMessage.builder(multiReadRequest, response)
+                                                       .withRequestPayload()
+                                                       .build();
+            assertNotNull(logMessage);
+        }
+    }
+
+    @Test
     void withResponseStatus_shouldAddResponseStatus() {
         // Given
         HttpStatus responseStatus = HttpStatus.OK;
@@ -286,5 +304,33 @@ class RequestResponseLogMessageTest {
 
         // Then
         assertEquals(expectedMessage, logMessage.getMessage());
+    }
+
+    @Test
+    void withResponseBody_nativeResponseNull() {
+        // Given
+        MultiReadHttpServletResponse multiReadResponse = new MultiReadHttpServletResponse(response);
+
+        try (MockedStatic<WebUtils> webUtilsMockedStatic = Mockito.mockStatic(WebUtils.class)) {
+            webUtilsMockedStatic.when(() -> WebUtils.getNativeResponse(multiReadResponse, MultiReadHttpServletResponse.class)).thenReturn(null);
+            RequestResponseLogMessage logMessage = RequestResponseLogMessage.builder(request, multiReadResponse)
+                                                       .withResponseBody()
+                                                       .build();
+            assertNotNull(logMessage);
+        }
+    }
+
+    @Test
+    void withResponseBody_toByteArrayException() {
+        // Given
+        MultiReadHttpServletRequest multiReadRequest = new MultiReadHttpServletRequest(request);
+
+        try (MockedStatic<IOUtils> IOUtilsMockedStatic = Mockito.mockStatic(IOUtils.class)) {
+            IOUtilsMockedStatic.when(() -> IOUtils.toByteArray(any(InputStream.class))).thenThrow(IOException.class);
+            RequestResponseLogMessage logMessage = RequestResponseLogMessage.builder(multiReadRequest, response)
+                                                       .withRequestPayload()
+                                                       .build();
+            assertNotNull(logMessage);
+        }
     }
 }

@@ -71,6 +71,15 @@ class SecurityDataServiceTest {
     }
 
     @Test
+    void init_Fail() {
+        // Given
+        when(environment.getProperty("server_key")).thenReturn("");
+
+        // When
+        assertThrows(IllegalArgumentException.class, () -> new SecurityDataService(environment, cryptoProviderHolder));
+    }
+
+    @Test
     void getEncryptedId_Success() {
         // Given
         when(cryptoProviderHolder.getDefaultIdProvider())
@@ -98,6 +107,24 @@ class SecurityDataServiceTest {
         // Then
         assertEquals(CONSENT_ID, consentId);
         assertEquals(CONSENT_KEY_LENGTH, consentKey.length());
+    }
+
+    @Test
+    void isConsentEncrypted_withSeparator_Success() {
+        // Given
+        boolean actual = securityDataService.isConsentIdEncrypted(getEncryptedConsentId(CRYPTO_PROVIDER_ID));
+
+        // Then
+        assertTrue(actual);
+    }
+
+    @Test
+    void isConsentEncrypted_withoutSeparator_Success() {
+        // Given
+        boolean actual = securityDataService.isConsentIdEncrypted(CONSENT_ID);
+
+        // Then
+        assertFalse(actual);
     }
 
     @Test

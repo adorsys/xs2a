@@ -1,0 +1,15 @@
+= Release notes v.17.1
+
+== Table of Contents
+
+* Fixed bug with consents expiration for Oracle DB
+
+* Dockerfiles fix
+
+== Fixed bug with consents expiration for Oracle DB
+
+Fixed bug with limitation of SQL query parameters for Oracle DB (PASD-243).
+
+== Dockerfiles fix
+
+Fixed possibility to configure internal application server port in Docker (PASD-244).

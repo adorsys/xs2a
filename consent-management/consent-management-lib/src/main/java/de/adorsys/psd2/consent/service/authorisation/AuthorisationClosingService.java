@@ -46,7 +46,7 @@ public class AuthorisationClosingService {
     @Transactional
     public void closePreviousAuthorisationsByAuthorisation(AuthorisationEntity authorisation, PsuIdData psuIdData) {
         if (psuIdData == null || psuIdData.isEmpty()) {
-            log.info("Closing previous authorisations by PSU is skipped, because no PSU data has been provided in the request");
+            log.info("Closing previous authorisations by PSU is skipped, no PSU data has been provided in the request");
             return;
         }
 
@@ -62,7 +62,7 @@ public class AuthorisationClosingService {
     @Transactional
     public void closePreviousAuthorisationsByParent(String parentId, AuthorisationType authorisationType, PsuIdData psuIdData) {
         if (psuIdData == null || psuIdData.isEmpty()) {
-            log.info("Closing previous authorisations by PSU is skipped, because no PSU data has been provided in the request");
+            log.info("Closing previous authorisations by PSU is skipped, no PSU data has been provided in the request");
             return;
         }
 

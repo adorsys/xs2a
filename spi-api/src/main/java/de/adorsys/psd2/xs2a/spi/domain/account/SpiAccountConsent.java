@@ -30,6 +30,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 import java.util.List;
 
@@ -43,7 +44,7 @@ public class SpiAccountConsent implements SpiConsent {
     private LocalDate validUntil;
     private LocalDate expireDate;
     private int frequencyPerDay;
-    private LocalDate lastActionDate;
+    private LocalDateTime lastActionDateTime;
     private SpiConsentStatus consentStatus;
     private boolean withBalance;
     private boolean tppRedirectPreferred;

@@ -20,10 +20,10 @@ package de.adorsys.psd2.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import org.springframework.validation.annotation.Validated;
 
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
 import java.util.Objects;
 
 /**
@@ -31,7 +31,7 @@ import java.util.Objects;
  */
 @Schema(description = "This is a data element to support the declaration of additional errors in the context of [RFC7807].")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-10-26T13:16:54.081225+03:00[Europe/Kiev]")
+@jakarta.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-10-25T13:15:56.196839+03:00[Europe/Kiev]")
 
 
 public class Error406PISAdditionalErrors   {
@@ -49,18 +49,16 @@ public class Error406PISAdditionalErrors   {
     return this;
   }
 
-    /**
-     * Short human readable description of error type.  Could be in local language.  To be provided by ASPSPs.
-     *
-     * @return title
-     **/
-    @Schema(description = "Short human readable description of error type.  Could be in local language.  To be provided by ASPSPs. ")
-    @JsonProperty("title")
+  /**
+   * Short human readable description of error type.  Could be in local language.  To be provided by ASPSPs.
+   * @return title
+   **/
+  @Schema(description = "Short human readable description of error type.  Could be in local language.  To be provided by ASPSPs. ")
+  @JsonProperty("title")
 
-    @Size(max = 70)
-    public String getTitle() {
-        return title;
-    }
+@Size(max=70)   public String getTitle() {
+    return title;
+  }
 
   public void setTitle(String title) {
     this.title = title;
@@ -71,17 +69,15 @@ public class Error406PISAdditionalErrors   {
     return this;
   }
 
-    /**
-     * Detailed human readable text specific to this instance of the error.  XPath might be used to point to the issue generating the error in addition. Remark for Future: In future, a dedicated field might be introduced for the XPath.
-     *
-     * @return detail
-     **/
-    @Schema(description = "Detailed human readable text specific to this instance of the error.  XPath might be used to point to the issue generating the error in addition. Remark for Future: In future, a dedicated field might be introduced for the XPath. ")
-    @JsonProperty("detail")
+  /**
+   * Detailed human readable text specific to this instance of the error.  XPath might be used to point to the issue generating the error in addition. Remark for Future: In future, a dedicated field might be introduced for the XPath.
+   * @return detail
+   **/
+  @Schema(description = "Detailed human readable text specific to this instance of the error.  XPath might be used to point to the issue generating the error in addition. Remark for Future: In future, a dedicated field might be introduced for the XPath. ")
+  @JsonProperty("detail")
 
-    @Size(max = 500)
-    public String getDetail() {
-        return detail;
+@Size(max=500)   public String getDetail() {
+    return detail;
   }
 
   public void setDetail(String detail) {
@@ -90,19 +86,18 @@ public class Error406PISAdditionalErrors   {
 
   public Error406PISAdditionalErrors code(String code) {
     this.code = code;
-      return this;
+    return this;
   }
 
-    /**
-     * Message codes defined for PIS for HTTP Error code 406 (NOT ACCEPTABLE).
-     *
-     * @return code
-     **/
-    @Schema(required = true, description = "Message codes defined for PIS for HTTP Error code 406 (NOT ACCEPTABLE).")
-    @JsonProperty("code")
+  /**
+   * Message codes defined for PIS for HTTP Error code 406 (NOT ACCEPTABLE).
+   * @return code
+   **/
+  @Schema(required = true, description = "Message codes defined for PIS for HTTP Error code 406 (NOT ACCEPTABLE).")
+  @JsonProperty("code")
     @NotNull
 
-    public String getCode() {
+  public String getCode() {
     return code;
   }
 

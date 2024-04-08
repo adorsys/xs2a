@@ -20,10 +20,10 @@ package de.adorsys.psd2.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import org.springframework.validation.annotation.Validated;
 
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
 import java.util.Objects;
 
 /**
@@ -31,31 +31,29 @@ import java.util.Objects;
  */
 @Schema(description = "Content of the body of a Select PSU authentication method request ")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-10-26T13:16:54.081225+03:00[Europe/Kiev]")
+@jakarta.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-10-25T13:15:56.196839+03:00[Europe/Kiev]")
 
 
-public class SelectPsuAuthenticationMethod {
-    @JsonProperty("authenticationMethodId")
-    private String authenticationMethodId = null;
+public class SelectPsuAuthenticationMethod   {
+  @JsonProperty("authenticationMethodId")
+  private String authenticationMethodId = null;
 
-    public SelectPsuAuthenticationMethod authenticationMethodId(String authenticationMethodId) {
-        this.authenticationMethodId = authenticationMethodId;
-        return this;
-    }
+  public SelectPsuAuthenticationMethod authenticationMethodId(String authenticationMethodId) {
+    this.authenticationMethodId = authenticationMethodId;
+    return this;
+  }
 
-    /**
-     * An identification provided by the ASPSP for the later identification of the authentication method selection.
-     *
-     * @return authenticationMethodId
-     **/
-    @Schema(example = "myAuthenticationID", required = true, description = "An identification provided by the ASPSP for the later identification of the authentication method selection. ")
-    @JsonProperty("authenticationMethodId")
+  /**
+   * An identification provided by the ASPSP for the later identification of the authentication method selection.
+   * @return authenticationMethodId
+   **/
+  @Schema(example = "myAuthenticationID", required = true, description = "An identification provided by the ASPSP for the later identification of the authentication method selection. ")
+  @JsonProperty("authenticationMethodId")
     @NotNull
 
-    @Size(max = 35)
-    public String getAuthenticationMethodId() {
-        return authenticationMethodId;
-    }
+@Size(max=35)   public String getAuthenticationMethodId() {
+    return authenticationMethodId;
+  }
 
   public void setAuthenticationMethodId(String authenticationMethodId) {
     this.authenticationMethodId = authenticationMethodId;

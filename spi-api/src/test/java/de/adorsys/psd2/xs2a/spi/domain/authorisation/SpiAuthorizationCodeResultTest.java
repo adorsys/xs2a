@@ -18,6 +18,7 @@
 
 package de.adorsys.psd2.xs2a.spi.domain.authorisation;
 
+import de.adorsys.psd2.xs2a.spi.domain.common.SpiAuthenticationObject;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;

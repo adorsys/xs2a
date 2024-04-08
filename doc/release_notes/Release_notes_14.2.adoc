@@ -8,8 +8,7 @@
 
 == Fixed duplicated links in responses
 
-Some responses contained duplicated links objects.
-This bug was fixed.
+Some responses contained duplicated links objects. This bug was fixed.
 
 == Documentation update
 

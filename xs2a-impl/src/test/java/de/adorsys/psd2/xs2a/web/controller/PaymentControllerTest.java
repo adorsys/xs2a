@@ -227,7 +227,7 @@ class PaymentControllerTest {
                 null);
 
         // Then
-        HttpStatus actualHttpStatus = actualResponse.getStatusCode();
+        HttpStatus actualHttpStatus = (HttpStatus) actualResponse.getStatusCode();
         assertThat(actualHttpStatus).isEqualTo(OK);
         assertThat(actualResponse.getBody()).isEqualTo(expectedBody);
     }
@@ -251,7 +251,7 @@ class PaymentControllerTest {
             null, null);
 
         // Then
-        HttpStatus actualHttpStatus = actualResponse.getStatusCode();
+        HttpStatus actualHttpStatus = (HttpStatus) actualResponse.getStatusCode();
         assertThat(actualHttpStatus).isEqualTo(OK);
         assertThat(actualResponse.getBody()).isEqualTo(rawPaymentStatus);
     }
@@ -1216,7 +1216,7 @@ class PaymentControllerTest {
     }
 
     private Xs2aCreatePisAuthorisationResponse buildXs2aCreatePisAuthorisationResponse() {
-        return new Xs2aCreatePisAuthorisationResponse(AUTHORISATION_ID, de.adorsys.psd2.xs2a.core.sca.ScaStatus.SCAMETHODSELECTED, SINGLE, REQUEST_ID.toString(), null);
+        return new Xs2aCreatePisAuthorisationResponse(AUTHORISATION_ID, de.adorsys.psd2.xs2a.core.sca.ScaStatus.SCAMETHODSELECTED, ScaApproach.EMBEDDED, SINGLE, REQUEST_ID.toString(), null);
     }
 
     private List<String> getAuthorisations() {

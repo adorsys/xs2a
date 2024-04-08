@@ -184,8 +184,7 @@ class TransactionServiceTest {
     @Mock
     SpiTransaction testSpiTransaction;
     @Mock
-    private Xs2aToSpiConsentMapper xs2aToSpiConsentMapper;
-
+    private Xs2aToSpiBookingStatusMapper xs2aToSpiBookingStatusMapper;
 
     @BeforeEach
     void setUp() {
@@ -250,7 +249,7 @@ class TransactionServiceTest {
                             .builder(AIS_400)
                             .tppMessages(TppMessageInformation.of(MessageErrorCode.FORMAT_ERROR))
                             .build());
-        when(xs2aToSpiConsentMapper.mapToSpiBookingStatus(BookingStatus.BOTH)).thenReturn(SpiBookingStatus.BOTH);
+        when(xs2aToSpiBookingStatusMapper.mapToSpiBookingStatus(BookingStatus.BOTH)).thenReturn(SpiBookingStatus.BOTH);
 
         // When
         ResponseObject<Xs2aTransactionsReport> actualResponse = transactionService.getTransactionsReportByPeriod(XS2A_TRANSACTIONS_REPORT_BY_PERIOD_REQUEST);
@@ -293,7 +292,7 @@ class TransactionServiceTest {
             .thenReturn(buildErrorServiceNotSupportedSpiResponse());
         when(consentMapper.mapToSpiAccountConsent(any()))
             .thenReturn(SPI_ACCOUNT_CONSENT);
-        when(xs2aToSpiConsentMapper.mapToSpiBookingStatus(BookingStatus.BOTH)).thenReturn(SpiBookingStatus.BOTH);
+        when(xs2aToSpiBookingStatusMapper.mapToSpiBookingStatus(BookingStatus.BOTH)).thenReturn(SpiBookingStatus.BOTH);
 
         // When
         ResponseObject<Xs2aTransactionsReport> actualResponse = transactionService.getTransactionsReportByPeriod(XS2A_TRANSACTIONS_REPORT_BY_PERIOD_REQUEST);
@@ -326,7 +325,7 @@ class TransactionServiceTest {
             .thenReturn(XS2A_ACCOUNT_REFERENCE);
         when(consentMapper.mapToSpiAccountConsent(any()))
             .thenReturn(SPI_ACCOUNT_CONSENT);
-        when(xs2aToSpiConsentMapper.mapToSpiBookingStatus(BookingStatus.BOTH)).thenReturn(SpiBookingStatus.BOTH);
+        when(xs2aToSpiBookingStatusMapper.mapToSpiBookingStatus(BookingStatus.BOTH)).thenReturn(SpiBookingStatus.BOTH);
 
         ArgumentCaptor<SpiTransactionReportParameters> argumentCaptor = ArgumentCaptor.forClass(SpiTransactionReportParameters.class);
 
@@ -371,7 +370,7 @@ class TransactionServiceTest {
             .thenReturn(XS2A_ACCOUNT_REFERENCE);
         when(consentMapper.mapToSpiAccountConsent(any()))
             .thenReturn(SPI_ACCOUNT_CONSENT);
-        when(xs2aToSpiConsentMapper.mapToSpiBookingStatus(BookingStatus.INFORMATION)).thenReturn(SpiBookingStatus.INFORMATION);
+        when(xs2aToSpiBookingStatusMapper.mapToSpiBookingStatus(BookingStatus.INFORMATION)).thenReturn(SpiBookingStatus.INFORMATION);
 
         ArgumentCaptor<SpiTransactionReportParameters> argumentCaptor = ArgumentCaptor.forClass(SpiTransactionReportParameters.class);
 
@@ -447,7 +446,7 @@ class TransactionServiceTest {
             .thenReturn(Collections.emptyList());
         when(consentMapper.mapToSpiAccountConsent(any()))
             .thenReturn(SPI_ACCOUNT_CONSENT);
-        when(xs2aToSpiConsentMapper.mapToSpiBookingStatus(BookingStatus.BOTH)).thenReturn(SpiBookingStatus.BOTH);
+        when(xs2aToSpiBookingStatusMapper.mapToSpiBookingStatus(BookingStatus.BOTH)).thenReturn(SpiBookingStatus.BOTH);
 
         // When
         ResponseObject<Xs2aTransactionsReport> actualResponse = transactionService.getTransactionsReportByPeriod(XS2A_TRANSACTIONS_REPORT_BY_PERIOD_REQUEST);
@@ -488,7 +487,7 @@ class TransactionServiceTest {
             .thenReturn(XS2A_ACCOUNT_REFERENCE);
         when(consentMapper.mapToSpiAccountConsent(any()))
             .thenReturn(SPI_ACCOUNT_CONSENT);
-        when(xs2aToSpiConsentMapper.mapToSpiBookingStatus(BookingStatus.BOTH)).thenReturn(SpiBookingStatus.BOTH);
+        when(xs2aToSpiBookingStatusMapper.mapToSpiBookingStatus(BookingStatus.BOTH)).thenReturn(SpiBookingStatus.BOTH);
 
         // When
         ResponseObject<Xs2aTransactionsReport> actualResponse = transactionService.getTransactionsReportByPeriod(XS2A_TRANSACTIONS_REPORT_BY_PERIOD_REQUEST);
@@ -526,7 +525,7 @@ class TransactionServiceTest {
             .thenReturn(XS2A_ACCOUNT_REFERENCE);
         when(consentMapper.mapToSpiAccountConsent(any()))
             .thenReturn(SPI_ACCOUNT_CONSENT);
-        when(xs2aToSpiConsentMapper.mapToSpiBookingStatus(BookingStatus.BOTH)).thenReturn(SpiBookingStatus.BOTH);
+        when(xs2aToSpiBookingStatusMapper.mapToSpiBookingStatus(BookingStatus.BOTH)).thenReturn(SpiBookingStatus.BOTH);
 
         // When
         ResponseObject<Xs2aTransactionsReport> actualResponse = transactionService.getTransactionsReportByPeriod(XS2A_TRANSACTIONS_REPORT_BY_PERIOD_REQUEST);
@@ -565,7 +564,7 @@ class TransactionServiceTest {
             .thenReturn(Collections.emptyList());
         when(consentMapper.mapToSpiAccountConsent(any()))
             .thenReturn(SPI_ACCOUNT_CONSENT);
-        when(xs2aToSpiConsentMapper.mapToSpiBookingStatus(BookingStatus.BOTH)).thenReturn(SpiBookingStatus.BOTH);
+        when(xs2aToSpiBookingStatusMapper.mapToSpiBookingStatus(BookingStatus.BOTH)).thenReturn(SpiBookingStatus.BOTH);
 
         ArgumentCaptor<EventType> argumentCaptor = ArgumentCaptor.forClass(EventType.class);
 
@@ -617,7 +616,7 @@ class TransactionServiceTest {
             .thenReturn(Collections.emptyList());
         when(consentMapper.mapToSpiAccountConsent(any()))
             .thenReturn(SPI_ACCOUNT_CONSENT);
-        when(xs2aToSpiConsentMapper.mapToSpiBookingStatus(BookingStatus.BOTH)).thenReturn(SpiBookingStatus.BOTH);
+        when(xs2aToSpiBookingStatusMapper.mapToSpiBookingStatus(BookingStatus.BOTH)).thenReturn(SpiBookingStatus.BOTH);
 
         ArgumentCaptor<ConsentStatus> argumentCaptor = ArgumentCaptor.forClass(ConsentStatus.class);
 

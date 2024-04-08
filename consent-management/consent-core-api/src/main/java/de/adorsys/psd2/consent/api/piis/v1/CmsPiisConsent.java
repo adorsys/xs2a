@@ -26,6 +26,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 
 @Data
@@ -35,7 +36,7 @@ public class CmsPiisConsent {
     private String id;
     private boolean recurringIndicator;
     private OffsetDateTime requestDateTime;
-    private LocalDate lastActionDate;
+    private LocalDateTime lastActionDateTime;
     private LocalDate expireDate;
     private PsuIdData psuData;
     private ConsentStatus consentStatus;

@@ -12,7 +12,7 @@
     "validUntil": "2031-03-14",
     "expireDate": "2031-01-21",
     "frequencyPerDay": 4,
-    "lastActionDate": "2020-01-13",
+    "lastActionDateTime": "2020-01-13T15:30:35.035",
     "consentStatus": "RECEIVED",
     "withBalance": true,
     "tppRedirectPreferred": true,

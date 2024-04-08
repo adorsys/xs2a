@@ -20,10 +20,10 @@ package de.adorsys.psd2.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 import org.springframework.validation.annotation.Validated;
 
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
 import java.util.Objects;
 
 /**
@@ -31,7 +31,7 @@ import java.util.Objects;
  */
 @Schema(description = "Body of the response for a successful read balance for a card account request.")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-10-26T13:16:54.081225+03:00[Europe/Kiev]")
+@jakarta.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-10-25T13:15:56.196839+03:00[Europe/Kiev]")
 
 
 public class ReadCardAccountBalanceResponse200   {
@@ -49,18 +49,17 @@ public class ReadCardAccountBalanceResponse200   {
     return this;
   }
 
-    /**
-     * Get cardAccount
-     *
-     * @return cardAccount
-     **/
-    @Schema(description = "")
-    @JsonProperty("cardAccount")
+  /**
+   * Get cardAccount
+   * @return cardAccount
+   **/
+  @Schema(description = "")
+  @JsonProperty("cardAccount")
 
-    @Valid
-    public AccountReference getCardAccount() {
-        return cardAccount;
-    }
+  @Valid
+  public AccountReference getCardAccount() {
+    return cardAccount;
+  }
 
   public void setCardAccount(AccountReference cardAccount) {
     this.cardAccount = cardAccount;
@@ -71,16 +70,15 @@ public class ReadCardAccountBalanceResponse200   {
     return this;
   }
 
-    /**
-     * If true, the amounts of debits on the reports are quoted positive with the related consequence for balances. If false, the amount of debits on the reports are quoted negative.
-     *
-     * @return debitAccounting
-     **/
-    @Schema(description = "If true, the amounts of debits on the reports are quoted positive with the related consequence for balances. If false, the amount of debits on the reports are quoted negative. ")
-    @JsonProperty("debitAccounting")
+  /**
+   * If true, the amounts of debits on the reports are quoted positive with the related consequence for balances. If false, the amount of debits on the reports are quoted negative.
+   * @return debitAccounting
+   **/
+  @Schema(description = "If true, the amounts of debits on the reports are quoted positive with the related consequence for balances. If false, the amount of debits on the reports are quoted negative. ")
+  @JsonProperty("debitAccounting")
 
-    public Boolean isDebitAccounting() {
-        return debitAccounting;
+  public Boolean isDebitAccounting() {
+    return debitAccounting;
   }
 
   public void setDebitAccounting(Boolean debitAccounting) {
@@ -89,20 +87,19 @@ public class ReadCardAccountBalanceResponse200   {
 
   public ReadCardAccountBalanceResponse200 balances(BalanceList balances) {
     this.balances = balances;
-      return this;
+    return this;
   }
 
-    /**
-     * Get balances
-     *
-     * @return balances
-     **/
-    @Schema(required = true, description = "")
-    @JsonProperty("balances")
+  /**
+   * Get balances
+   * @return balances
+   **/
+  @Schema(required = true, description = "")
+  @JsonProperty("balances")
     @NotNull
 
-    @Valid
-    public BalanceList getBalances() {
+  @Valid
+  public BalanceList getBalances() {
     return balances;
   }
 

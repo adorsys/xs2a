@@ -23,7 +23,7 @@
     <parent>
         <artifactId>xs2a</artifactId>
         <groupId>de.adorsys.psd2</groupId>
-        <version>14.10-SNAPSHOT</version>
+        <version>17.3</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -67,11 +67,6 @@
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>javax.xml.bind</groupId>
-            <artifactId>jaxb-api</artifactId>
         </dependency>
 
         <!-- Test dependencies-->

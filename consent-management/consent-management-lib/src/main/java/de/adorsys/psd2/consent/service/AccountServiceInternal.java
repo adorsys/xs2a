@@ -58,7 +58,7 @@ public class AccountServiceInternal implements AccountService {
             return true;
 
         } else {
-            log.info("Consent ID: [{}]. Save number of transactions failed, because consent not found", consentId);
+            log.info("Consent ID: [{}]. Save number of transactions has failed, consent not found", consentId);
             return false;
         }
 

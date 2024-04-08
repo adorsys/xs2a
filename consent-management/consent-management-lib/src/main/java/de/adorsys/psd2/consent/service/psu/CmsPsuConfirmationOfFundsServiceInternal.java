@@ -64,14 +64,14 @@ public class CmsPsuConfirmationOfFundsServiceInternal implements CmsPsuConfirmat
         Optional<ConsentEntity> actualConsent = getActualConsent(consentId, instanceId);
 
         if (actualConsent.isEmpty()) {
-            log.info("Consent ID: [{}], Instance ID: [{}]. Update of authorisation status failed, because consent either has finalised status or not found", consentId, instanceId);
+            log.info("Consent ID: [{}], Instance ID: [{}]. Update of authorisation status failed, consent has finalised status or not found", consentId, instanceId);
             return false;
         }
 
         return consentAuthorisationService.getAuthorisationByAuthorisationId(authorisationId, instanceId)
                    .map(authorisation -> consentAuthorisationService.updateScaStatusAndAuthenticationData(status, authorisation, authenticationDataHolder))
                    .orElseGet(() -> {
-                       log.info("Authorisation ID [{}], Instance ID: [{}]. Update authorisation status failed, because authorisation not found",
+                       log.info("Authorisation ID [{}], Instance ID: [{}]. Update authorisation status failed, authorisation not found",
                                 authorisationId, instanceId);
                        return false;
                    });
@@ -83,7 +83,7 @@ public class CmsPsuConfirmationOfFundsServiceInternal implements CmsPsuConfirmat
         return consentAuthorisationService.getAuthorisationByAuthorisationId(authorisationId, instanceId)
                    .map(auth -> cmsPsuConsentServiceInternal.updatePsuData(auth, psuIdData))
                    .orElseGet(() -> {
-                       log.info("Authorisation ID [{}], Instance ID: [{}]. Update PSU  in consent failed, because authorisation not found",
+                       log.info("Authorisation ID [{}], Instance ID: [{}]. Update PSU  in consent failed, authorisation not found",
                                 authorisationId, instanceId);
                        return false;
                    });
@@ -108,7 +108,7 @@ public class CmsPsuConfirmationOfFundsServiceInternal implements CmsPsuConfirmat
             return createCmsConsentResponseFromAuthorisation(authorisation, redirectId);
         }
 
-        log.info("Authorisation ID [{}], Instance ID: [{}]. Check redirect URL and get consent failed, because authorisation not found or has finalised status",
+        log.info("Authorisation ID [{}], Instance ID: [{}]. Check redirect URL and get consent failed, authorisation not found or has finalised status",
                  redirectId, instanceId);
         return Optional.empty();
     }
@@ -118,7 +118,7 @@ public class CmsPsuConfirmationOfFundsServiceInternal implements CmsPsuConfirmat
         Optional<CmsPsuConfirmationOfFundsAuthorisation> cmsPsuConfirmationOfFundsAuthorisation = consentAuthorisationService.getAuthorisationByAuthorisationId(authorisationId, instanceId)
                                                                                                       .map(cmsPsuAuthorisationMapper::mapToCmsPsuConfirmationOfFundsAuthorisation);
         if (cmsPsuConfirmationOfFundsAuthorisation.isEmpty()) {
-            log.info("Authorisation ID [{}], Instance ID: [{}]. Get authorisation failed, because authorisation not found", authorisationId, instanceId);
+            log.info("Authorisation ID [{}], Instance ID: [{}]. Get authorisation failed, authorisation not found", authorisationId, instanceId);
         }
 
         return cmsPsuConfirmationOfFundsAuthorisation;
@@ -130,7 +130,7 @@ public class CmsPsuConfirmationOfFundsServiceInternal implements CmsPsuConfirmat
         Optional<ConsentEntity> consentEntityOptional = getActualConsent(consentId, instanceId);
 
         if (consentEntityOptional.isEmpty()) {
-            log.info("Consent ID: [{}], Instance ID: [{}]. Update of consent status failed, because consent either has finalised status or not found", consentId, instanceId);
+            log.info("Consent ID: [{}], Instance ID: [{}]. Update of consent status failed, consent has finalised status or not found", consentId, instanceId);
             return false;
         }
 
@@ -147,7 +147,7 @@ public class CmsPsuConfirmationOfFundsServiceInternal implements CmsPsuConfirmat
     private Optional<CmsConfirmationOfFundsResponse> createCmsConsentResponseFromAuthorisation(AuthorisationEntity authorisation, String redirectId) {
         Optional<ConsentEntity> consentOptional = consentJpaRepository.findByExternalId(authorisation.getParentExternalId());
         if (consentOptional.isEmpty()) {
-            log.info("Authorisation ID [{}]. Check redirect URL and get consent failed in createCmsConsentResponseFromAuthorisation method, because PIIS consent is null",
+            log.info("Authorisation ID [{}]. Check redirect URL and get consent failed in createCmsConsentResponseFromAuthorisation method, PIIS consent is null",
                      redirectId);
             return Optional.empty();
         }

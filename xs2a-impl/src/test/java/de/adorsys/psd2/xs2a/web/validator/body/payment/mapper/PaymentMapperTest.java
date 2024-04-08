@@ -68,6 +68,18 @@ class PaymentMapperTest {
     }
 
     @Test
+    void mapToSinglePayment_wrongCurrency() {
+        PaymentInitiationJson paymentInitiationJson =
+            jsonReader.getObjectFromFile("json/web/validator/body/payment/mapper/single-payment-initiation-wrong-currency.json", PaymentInitiationJson.class);
+        SinglePayment expectedPayment = jsonReader.getObjectFromFile("json/web/validator/body/payment/mapper/xs2a-single-payment.json", SinglePayment.class);
+        expectedPayment.getInstructedAmount().setCurrency(null);
+
+        SinglePayment actualPayment = paymentMapper.mapToSinglePayment(paymentInitiationJson);
+
+        assertEquals(expectedPayment, actualPayment);
+    }
+
+    @Test
     void mapToPeriodicPayment() {
         PeriodicPaymentInitiationJson paymentInitiationJson =
             jsonReader.getObjectFromFile("json/web/validator/body/payment/mapper/periodic-payment-initiation.json", PeriodicPaymentInitiationJson.class);

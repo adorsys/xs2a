@@ -48,7 +48,7 @@ public class TppStopListServiceInternal implements TppStopListService {
         Boolean blocked = stopListEntityOptional
                               .filter(TppStopListEntity::isBlocked)
                               .map(sl -> {
-                                  log.info("TPP ID: [{}]. TPP has been blocked, because it's in stop list",
+                                  log.info("TPP ID: [{}]. TPP has been blocked,  it's in a stop list",
                                            tppAuthorisationNumber);
                                   return true;
                               })

@@ -20,62 +20,61 @@ package de.adorsys.psd2.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 import org.springframework.validation.annotation.Validated;
 
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
 import java.util.Objects;
 
 /**
  * InlineResponse200
  */
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-10-26T13:16:54.081225+03:00[Europe/Kiev]")
+@jakarta.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-10-25T13:15:56.196839+03:00[Europe/Kiev]")
 
 
-public class InlineResponse200 {
-    @JsonProperty("account")
-    private AccountDetails account = null;
+public class InlineResponse200   {
+  @JsonProperty("account")
+  private AccountDetails account = null;
 
-    public InlineResponse200 account(AccountDetails account) {
-        this.account = account;
-        return this;
-    }
+  public InlineResponse200 account(AccountDetails account) {
+    this.account = account;
+    return this;
+  }
 
-    /**
-     * Get account
-     *
-     * @return account
-     **/
-    @Schema(required = true, description = "")
-    @JsonProperty("account")
+  /**
+   * Get account
+   * @return account
+   **/
+  @Schema(required = true, description = "")
+  @JsonProperty("account")
     @NotNull
 
-    @Valid
-    public AccountDetails getAccount() {
-        return account;
-    }
+  @Valid
+  public AccountDetails getAccount() {
+    return account;
+  }
 
-    public void setAccount(AccountDetails account) {
-        this.account = account;
-    }
+  public void setAccount(AccountDetails account) {
+    this.account = account;
+  }
 
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (o == null || getClass() != o.getClass()) {
-            return false;
-        }
-        InlineResponse200 inlineResponse200 = (InlineResponse200) o;
-        return Objects.equals(this.account, inlineResponse200.account);
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) {
+      return true;
     }
+    if (o == null || getClass() != o.getClass()) {
+      return false;
+    }
+    InlineResponse200 inlineResponse200 = (InlineResponse200) o;
+    return Objects.equals(this.account, inlineResponse200.account);
+  }
 
   @Override
   public int hashCode() {
-      return Objects.hash(account);
+    return Objects.hash(account);
   }
 
   @Override
@@ -83,8 +82,8 @@ public class InlineResponse200 {
     StringBuilder sb = new StringBuilder();
     sb.append("class InlineResponse200 {\n");
 
-      sb.append("    account: ").append(toIndentedString(account)).append("\n");
-      sb.append("}");
+    sb.append("    account: ").append(toIndentedString(account)).append("\n");
+    sb.append("}");
     return sb.toString();
   }
 

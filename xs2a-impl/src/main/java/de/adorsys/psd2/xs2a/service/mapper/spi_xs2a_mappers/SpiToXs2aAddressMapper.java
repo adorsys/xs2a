@@ -25,7 +25,7 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Named;
 
-import javax.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotNull;
 
 @Mapper(componentModel = "spring", imports = {Xs2aCountryCode.class})
 public interface SpiToXs2aAddressMapper {

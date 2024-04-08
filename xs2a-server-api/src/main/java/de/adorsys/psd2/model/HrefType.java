@@ -29,7 +29,7 @@ import java.util.Objects;
  */
 @Schema(description = "Link to a resource.")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-10-26T13:16:54.081225+03:00[Europe/Kiev]")
+@jakarta.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-10-25T13:15:56.196839+03:00[Europe/Kiev]")
 
 
 public class HrefType   {
@@ -41,17 +41,16 @@ public class HrefType   {
     return this;
   }
 
-    /**
-     * Link to a resource.
-     *
-     * @return href
-     **/
-    @Schema(example = "/v1/payments/sepa-credit-transfers/1234-wertiq-983", description = "Link to a resource.")
-    @JsonProperty("href")
+  /**
+   * Link to a resource.
+   * @return href
+   **/
+  @Schema(example = "/v1/payments/sepa-credit-transfers/1234-wertiq-983", description = "Link to a resource.")
+  @JsonProperty("href")
 
-    public String getHref() {
-        return href;
-    }
+  public String getHref() {
+    return href;
+  }
 
   public void setHref(String href) {
     this.href = href;

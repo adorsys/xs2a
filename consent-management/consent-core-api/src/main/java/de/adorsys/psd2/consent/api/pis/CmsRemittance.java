@@ -24,7 +24,7 @@ import lombok.Data;
 @Data
 @Schema(description = "Remittance in CMS", name = "CmsRemittance")
 public class CmsRemittance {
-    @Schema(description = "the actual reference", required = true, example = "Ref Number Merchant")
+    @Schema(description = "the actual reference", requiredMode = Schema.RequiredMode.REQUIRED, example = "Ref Number Merchant")
     private String reference;
 
     @Schema(description = "reference type", example = "reference type")

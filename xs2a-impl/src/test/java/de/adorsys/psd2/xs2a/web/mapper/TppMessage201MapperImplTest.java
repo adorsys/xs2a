@@ -34,7 +34,9 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = {TppMessage201MapperImpl.class})
@@ -62,7 +64,7 @@ class TppMessage201MapperImplTest {
 
         TppMessage201PaymentInitiation actual = tppMessage201Mapper.mapToTppMessage201(tppMessageInformation);
 
-        TppMessage201PaymentInitiation expected = jsonReader.getObjectFromFile("json/service/mapper/tpp-message-mapper/tpp-message-2xx-error.json", TppMessage201PaymentInitiation.class);
+        TppMessage201PaymentInitiation expected = jsonReader.getObjectFromFile("json/service/mapper/tpp-message-mapper/tpp-message-201-error.json", TppMessage201PaymentInitiation.class);
 
         assertEquals(expected, actual);
     }
@@ -73,7 +75,7 @@ class TppMessage201MapperImplTest {
 
         TppMessage201PaymentInitiation actual = tppMessage201Mapper.mapToTppMessage201(tppMessageInformation);
 
-        TppMessage201PaymentInitiation expected = jsonReader.getObjectFromFile("json/service/mapper/tpp-message-mapper/tpp-message-2xx-warning.json", TppMessage201PaymentInitiation.class);
+        TppMessage201PaymentInitiation expected = jsonReader.getObjectFromFile("json/service/mapper/tpp-message-mapper/tpp-message-201-warning.json", TppMessage201PaymentInitiation.class);
 
         assertEquals(expected, actual);
     }

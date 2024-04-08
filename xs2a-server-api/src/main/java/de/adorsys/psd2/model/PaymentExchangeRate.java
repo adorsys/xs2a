@@ -20,11 +20,11 @@ package de.adorsys.psd2.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.Size;
 import org.springframework.validation.annotation.Validated;
 
-import javax.validation.Valid;
-import javax.validation.constraints.Pattern;
-import javax.validation.constraints.Size;
 import java.util.Objects;
 
 /**
@@ -32,7 +32,7 @@ import java.util.Objects;
  */
 @Schema(description = "Exchange Rate.")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-10-26T13:16:54.081225+03:00[Europe/Kiev]")
+@jakarta.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-10-25T13:15:56.196839+03:00[Europe/Kiev]")
 
 
 public class PaymentExchangeRate   {
@@ -53,18 +53,16 @@ public class PaymentExchangeRate   {
     return this;
   }
 
-    /**
-     * ISO 4217 Alpha 3 currency code.
-     *
-     * @return unitCurrency
-     **/
-    @Schema(example = "EUR", description = "ISO 4217 Alpha 3 currency code. ")
-    @JsonProperty("unitCurrency")
+  /**
+   * ISO 4217 Alpha 3 currency code.
+   * @return unitCurrency
+   **/
+  @Schema(example = "EUR", description = "ISO 4217 Alpha 3 currency code. ")
+  @JsonProperty("unitCurrency")
 
-    @Pattern(regexp = "[A-Z]{3}")
-    public String getUnitCurrency() {
-        return unitCurrency;
-    }
+@Pattern(regexp="[A-Z]{3}")   public String getUnitCurrency() {
+    return unitCurrency;
+  }
 
   public void setUnitCurrency(String unitCurrency) {
     this.unitCurrency = unitCurrency;
@@ -75,16 +73,15 @@ public class PaymentExchangeRate   {
     return this;
   }
 
-    /**
-     * Get exchangeRate
-     *
-     * @return exchangeRate
-     **/
-    @Schema(description = "")
-    @JsonProperty("exchangeRate")
+  /**
+   * Get exchangeRate
+   * @return exchangeRate
+   **/
+  @Schema(description = "")
+  @JsonProperty("exchangeRate")
 
-    public String getExchangeRate() {
-        return exchangeRate;
+  public String getExchangeRate() {
+    return exchangeRate;
   }
 
   public void setExchangeRate(String exchangeRate) {
@@ -93,20 +90,18 @@ public class PaymentExchangeRate   {
 
   public PaymentExchangeRate contractIdentification(String contractIdentification) {
     this.contractIdentification = contractIdentification;
-      return this;
+    return this;
   }
 
-    /**
-     * Get contractIdentification
-     *
-     * @return contractIdentification
-     **/
-    @Schema(description = "")
-    @JsonProperty("contractIdentification")
+  /**
+   * Get contractIdentification
+   * @return contractIdentification
+   **/
+  @Schema(description = "")
+  @JsonProperty("contractIdentification")
 
-    @Size(max = 35)
-    public String getContractIdentification() {
-        return contractIdentification;
+@Size(max=35)   public String getContractIdentification() {
+    return contractIdentification;
   }
 
   public void setContractIdentification(String contractIdentification) {
@@ -115,19 +110,18 @@ public class PaymentExchangeRate   {
 
   public PaymentExchangeRate rateType(ExchangeRateTypeCode rateType) {
     this.rateType = rateType;
-      return this;
+    return this;
   }
 
-    /**
-     * Get rateType
-     *
-     * @return rateType
-     **/
-    @Schema(description = "")
-    @JsonProperty("rateType")
+  /**
+   * Get rateType
+   * @return rateType
+   **/
+  @Schema(description = "")
+  @JsonProperty("rateType")
 
-    @Valid
-    public ExchangeRateTypeCode getRateType() {
+  @Valid
+  public ExchangeRateTypeCode getRateType() {
     return rateType;
   }
 

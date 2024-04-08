@@ -31,7 +31,7 @@ import de.adorsys.psd2.xs2a.service.mapper.MediaTypeMapper;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiErrorMapper;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiToXs2aLinksMapper;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiToXs2aTppMessageInformationMapper;
-import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiToXs2aTransactionMapper;
+import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiToXs2aTransactionStatusMapper;
 import de.adorsys.psd2.xs2a.service.payment.support.SpiPaymentFactoryImpl;
 import de.adorsys.psd2.xs2a.service.payment.support.TestSpiDataProvider;
 import de.adorsys.psd2.xs2a.service.spi.SpiAspspConsentDataProviderFactory;
@@ -96,7 +96,7 @@ class ReadSinglePaymentStatusServiceTest {
     @Mock
     private SpiToXs2aTppMessageInformationMapper tppMessageInformationMapper;
     @Mock
-    private SpiToXs2aTransactionMapper transactionMapper;
+    private SpiToXs2aTransactionStatusMapper spiToXs2aTransactionStatusMapper;
 
     private PisCommonPaymentResponse commonPaymentData;
 
@@ -117,7 +117,7 @@ class ReadSinglePaymentStatusServiceTest {
         when(mediaTypeMapper.mapToMediaType(JSON_MEDIA_TYPE))
             .thenReturn(MediaType.APPLICATION_JSON);
         when(tppMessageInformationMapper.toTppMessageInformationSet(null)).thenReturn(null);
-        when(transactionMapper.mapToTransactionStatus(SpiTransactionStatus.ACSP)).thenReturn(TRANSACTION_STATUS);
+        when(spiToXs2aTransactionStatusMapper.mapToXs2aTransactionStatus(SpiTransactionStatus.ACSP)).thenReturn(TRANSACTION_STATUS);
 
         // When
         ReadPaymentStatusResponse actualResponse = readSinglePaymentStatusService.readPaymentStatus(commonPaymentData, SPI_CONTEXT_DATA, SOME_ENCRYPTED_PAYMENT_ID, JSON_MEDIA_TYPE);

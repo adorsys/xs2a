@@ -85,7 +85,7 @@ class Xs2aToSpiPeriodicPaymentMapperTest {
     private static final String ULTIMATE_DEBTOR = "ultimate debtor";
     private static final String ULTIMATE_CREDITOR = "ultimate creditor";
     private static final PurposeCode PURPOSE_CODE = PurposeCode.fromValue("BKDF");
-    private static final SpiPisPurposeCode SPI_PURPOSE_CODE = SpiPisPurposeCode.fromValue("BKDF");
+    private static final SpiPurposeCode SPI_PURPOSE_CODE = SpiPurposeCode.fromValue("BKDF");
     private final Remittance REMITTANCE = getRemittance();
     private final SpiRemittance SPI_REMITTANCE = getSpiRemittance();
     private final String REFERENCE = "reference";
@@ -101,9 +101,16 @@ class Xs2aToSpiPeriodicPaymentMapperTest {
     @Mock
     private Xs2aToSpiAccountReferenceMapper xs2aToSpiAccountReferenceMapper;
     @Mock
-    private Xs2aToSpiPisMapper xs2aToSpiPisMapper;
+    private Xs2aToSpiPisExecutionRuleMapper xs2aToSpiPisExecutionRuleMapper;
     @Mock
-    private Xs2aToSpiTransactionMapper xs2aToSpiTransactionMapper;
+    private Xs2aToSpiTransactionStatusMapper xs2aToSpiTransactionStatusMapper;
+    @Mock
+    private Xs2aToSpiFrequencyCodeMapper xs2aToSpiFrequencyCodeMapper;
+    @Mock
+    private Xs2aToSpiPisDayOfExecutionMapper xs2aToSpiPisDayOfExecutionMapper;
+    @Mock
+    private Xs2aToSpiPurposeCodeMapper xs2aToSpiPurposeCodeMapper;
+
     @Spy
     private final RemittanceMapper remittanceMapper = Mappers.getMapper(RemittanceMapper.class);
 
@@ -121,12 +128,12 @@ class Xs2aToSpiPeriodicPaymentMapperTest {
             .thenReturn(buildSpiAmount(EUR_CURRENCY));
         when(xs2aToSpiAddressMapper.mapToSpiAddress(buildXs2aAddress()))
             .thenReturn(buildSpiAddress());
-        when(xs2aToSpiPisMapper.mapToSpiPisExecutionRule(PisExecutionRule.PRECEDING)).thenReturn(SpiPisExecutionRule.PRECEDING);
-        when(xs2aToSpiTransactionMapper.mapToSpiTransactionStatus(TRANSACTION_STATUS)).thenReturn(SPI_TRANSACTION_STATUS);
-        when(xs2aToSpiPisMapper.mapToSpiFrequencyCode(FrequencyCode.MONTHLY)).thenReturn(SpiFrequencyCode.MONTHLY);
-        when(xs2aToSpiPisMapper.mapToSpiPisDayOfExecution(PisDayOfExecution.DAY_13)).thenReturn(SpiPisDayOfExecution.DAY_13);
-        when(xs2aToSpiPisMapper.mapToSpiPisPurposeCode(PURPOSE_CODE)).thenReturn(SPI_PURPOSE_CODE);
-
+        when(xs2aToSpiTransactionStatusMapper.mapToSpiTransactionStatus(TRANSACTION_STATUS)).thenReturn(SPI_TRANSACTION_STATUS);
+        when(xs2aToSpiFrequencyCodeMapper.mapToSpiFrequencyCode(FrequencyCode.MONTHLY)).thenReturn(SpiFrequencyCode.MONTHLY);
+        when(xs2aToSpiPisDayOfExecutionMapper.mapToSpiPisDayOfExecution(PisDayOfExecution.DAY_13)).thenReturn(SpiPisDayOfExecution.DAY_13);
+        when(xs2aToSpiPurposeCodeMapper.mapToSpiPurposeCode(PURPOSE_CODE)).thenReturn(SPI_PURPOSE_CODE);
+        when(xs2aToSpiPisExecutionRuleMapper.mapToSpiPisExecutionRule(PisExecutionRule.PRECEDING))
+            .thenReturn(SpiPisExecutionRule.PRECEDING);
     }
 
     @Test

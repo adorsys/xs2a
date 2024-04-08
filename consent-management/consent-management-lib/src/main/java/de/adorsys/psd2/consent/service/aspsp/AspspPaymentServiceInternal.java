@@ -45,7 +45,7 @@ public class AspspPaymentServiceInternal implements AspspPaymentService {
         return paymentDataOptional
                    .map(pd -> commonPaymentDataService.updateStatusInPaymentData(pd, status))
                    .orElseGet(() -> {
-                       log.info("Payment ID [{}], Instance ID: [{}]. Update payment status failed, because PIS common payment data not found",
+                       log.info("Payment ID [{}], Instance ID: [{}]. Update payment status failed, PIS common payment data not found",
                                 paymentId, instanceId);
                        return false;
                    });

@@ -23,7 +23,6 @@ import de.adorsys.psd2.xs2a.payment.common.mapper.CommonPaymentSupportMapper;
 import de.adorsys.psd2.xs2a.service.mapper.payment.SpiPaymentFactory;
 import de.adorsys.psd2.xs2a.spi.service.SpiPayment;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
 import java.util.Optional;
@@ -31,7 +30,6 @@ import java.util.Optional;
 /**
  * Factory class to be used to get SpiPayment from common payment
  */
-@Slf4j
 @Component
 @RequiredArgsConstructor
 public class SpiCommonPaymentFactory implements SpiPaymentFactory {

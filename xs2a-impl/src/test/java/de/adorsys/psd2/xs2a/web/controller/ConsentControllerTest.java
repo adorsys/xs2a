@@ -32,10 +32,7 @@ import de.adorsys.psd2.xs2a.domain.HrefType;
 import de.adorsys.psd2.xs2a.domain.Links;
 import de.adorsys.psd2.xs2a.domain.ResponseObject;
 import de.adorsys.psd2.xs2a.domain.authorisation.AuthorisationResponse;
-import de.adorsys.psd2.xs2a.domain.consent.ConsentStatusResponse;
-import de.adorsys.psd2.xs2a.domain.consent.CreateConsentAuthorizationResponse;
-import de.adorsys.psd2.xs2a.domain.consent.CreateConsentResponse;
-import de.adorsys.psd2.xs2a.domain.consent.Xs2aScaStatusResponse;
+import de.adorsys.psd2.xs2a.domain.consent.*;
 import de.adorsys.psd2.xs2a.service.ConsentService;
 import de.adorsys.psd2.xs2a.service.NotificationSupportedModeService;
 import de.adorsys.psd2.xs2a.service.RequestProviderService;
@@ -245,6 +242,30 @@ class ConsentControllerTest {
         // Then
         assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.CREATED);
         assertThat(responseEntity.getBody()).isEqualTo(expectedResponse);
+    }
+
+    @Test
+    void updateConsentsPsuData_Success() {
+        // Given
+        UpdateConsentPsuDataResponse response = getUpdateConsentPsuDataResponse();
+        ResponseObject<UpdateConsentPsuDataResponse> responseObject = ResponseObject.<UpdateConsentPsuDataResponse>builder()
+                                                                          .body(response)
+                                                                          .build();
+
+        UpdatePsuAuthenticationResponse expected = new UpdatePsuAuthenticationResponse();
+        when(consentService.updateConsentPsuData(any())).thenReturn(responseObject);
+        doReturn(new ResponseEntity<>(new UpdatePsuAuthenticationResponse(), HttpStatus.OK))
+            .when(responseMapper).ok(any(), any(), any());
+
+        // When
+        ResponseEntity responseEntity = consentController.updateConsentsPsuData(null, CONSENT_ID, AUTHORISATION_ID,
+                                                                                null, null, null, null, null,
+                                                                                null, null, null, null, null, null,
+                                                                                null, null, null, null, null,
+                                                                                null, null);
+        // Then
+        assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(responseEntity.getBody()).isEqualTo(expected);
     }
 
     @Test
@@ -461,6 +482,10 @@ class ConsentControllerTest {
         response.setAuthorisationId(AUTHORISATION_ID);
         response.setScaStatus(ScaStatus.RECEIVED);
         return response;
+    }
+
+    private UpdateConsentPsuDataResponse getUpdateConsentPsuDataResponse() {
+        return new UpdateConsentPsuDataResponse(ScaStatus.RECEIVED, CONSENT_ID, AUTHORISATION_ID, PSU_ID_DATA);
     }
 
     private ScaStatusResponse buildReceivedScaStatusResponse() {

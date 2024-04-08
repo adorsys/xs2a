@@ -36,10 +36,10 @@ public class PisPaymentInfo {
     @Schema(description = "External Payment Id", example = "32454656712432")
     private String paymentId;
 
-    @Schema(description = "Payment product", required = true, example = "sepa-credit-transfers")
+    @Schema(description = "Payment product", requiredMode = Schema.RequiredMode.REQUIRED, example = "sepa-credit-transfers")
     private String paymentProduct;
 
-    @Schema(description = "Payment type: BULK, SINGLE or PERIODIC.", required = true, example = "SINGLE")
+    @Schema(description = "Payment type: BULK, SINGLE or PERIODIC.", requiredMode = Schema.RequiredMode.REQUIRED, example = "SINGLE")
     private PaymentType paymentType;
 
     @Schema(name = "transactionStatus", example = "ACCP")
@@ -51,10 +51,10 @@ public class PisPaymentInfo {
     @Schema(description = "Payment data")
     private byte[] paymentData;
 
-    @Schema(description = "Tpp information", required = true)
+    @Schema(description = "TPP information", requiredMode = Schema.RequiredMode.REQUIRED)
     private TppInfo tppInfo;
 
-    @Schema(description = "Corresponding PSU list", required = true)
+    @Schema(description = "Corresponding PSU list", requiredMode = Schema.RequiredMode.REQUIRED)
     private List<PsuIdData> psuDataList;
 
     @Schema(description = "Defines whether the payment requires multilevel SCA", example = "true")
@@ -66,7 +66,7 @@ public class PisPaymentInfo {
     @Schema(description = "Timestamp of the last payment transaction status changing")
     private OffsetDateTime statusChangeTimestamp;
 
-    @Schema(description = "Tpp redirect URI object'")
+    @Schema(description = "TPP redirect URI object'")
     private TppRedirectUri tppRedirectUri;
 
     @Schema(description = "Internal request ID")
@@ -75,16 +75,16 @@ public class PisPaymentInfo {
     @Schema(description = "Timestamp of the payment creation")
     private OffsetDateTime creationTimestamp;
 
-    @Schema(description = "Tpp notification URI")
+    @Schema(description = "TPP notification URI")
     private String tppNotificationUri;
 
-    @Schema(description = "List of notification modes. It could be values: SCA, PROCESS, LAST or NONE ")
+    @Schema(description = "List of notification modes. Possible values: SCA, PROCESS, LAST or NONE.")
     private List<NotificationSupportedMode> notificationSupportedModes;
 
     @Schema(description = "Response content type")
     private String contentType;
 
-    @Schema(description = "Tpp brand logging information")
+    @Schema(description = "TPP brand logging information")
     private String tppBrandLoggingInformation;
 
     @Schema(description = "Instance ID")

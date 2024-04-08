@@ -18,7 +18,6 @@
 
 package de.adorsys.psd2.xs2a.service.payment.support;
 
-import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import de.adorsys.psd2.xs2a.service.authorization.pis.PisCheckAuthorisationConfirmationService;
 import de.adorsys.psd2.xs2a.service.payment.support.mapper.spi.SpiPaymentMapper;
 import de.adorsys.psd2.xs2a.service.profile.StandardPaymentProductsResolver;
@@ -26,6 +25,7 @@ import de.adorsys.psd2.xs2a.spi.domain.SpiAspspConsentDataProvider;
 import de.adorsys.psd2.xs2a.spi.domain.SpiContextData;
 import de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiCheckConfirmationCodeRequest;
 import de.adorsys.psd2.xs2a.spi.domain.payment.SpiPaymentInfo;
+import de.adorsys.psd2.xs2a.spi.domain.payment.SpiPaymentType;
 import de.adorsys.psd2.xs2a.spi.domain.payment.response.SpiPaymentConfirmationCodeValidationResponse;
 import de.adorsys.psd2.xs2a.spi.domain.payment.response.SpiPaymentInitiationResponse;
 import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponse;
@@ -48,10 +48,10 @@ public class PisCheckAuthorisationConfirmationServiceSupportImpl implements PisC
         if (standardPaymentProductsResolver.isRawPaymentProduct(payment.getPaymentProduct())) {
             return checkConfirmationCode(commonPaymentSpi, contextData, spiCheckConfirmationCodeRequest, aspspConsentDataProvider);
         }
-        PaymentType paymentType = PaymentType.valueOf(payment.getPaymentType().name());
-        if (PaymentType.SINGLE == paymentType) {
+        SpiPaymentType paymentType = payment.getPaymentType();
+        if (SpiPaymentType.SINGLE == paymentType) {
             return checkConfirmationCode(singlePaymentSpi, contextData, spiCheckConfirmationCodeRequest, aspspConsentDataProvider);
-        } else if (PaymentType.PERIODIC == paymentType) {
+        } else if (SpiPaymentType.PERIODIC == paymentType) {
             return checkConfirmationCode(periodicPaymentSpi, contextData, spiCheckConfirmationCodeRequest, aspspConsentDataProvider);
         } else {
             return checkConfirmationCode(bulkPaymentSpi, contextData, spiCheckConfirmationCodeRequest, aspspConsentDataProvider);
@@ -63,10 +63,10 @@ public class PisCheckAuthorisationConfirmationServiceSupportImpl implements PisC
         if (standardPaymentProductsResolver.isRawPaymentProduct(payment.getPaymentProduct())) {
             return notifyConfirmationCodeValidation(commonPaymentSpi, (SpiPaymentInfo) payment, isCancellation, contextData, confirmationCodeValidationResult, aspspConsentDataProvider);
         }
-        PaymentType paymentType = PaymentType.valueOf(payment.getPaymentType().name());
-        if (PaymentType.SINGLE == paymentType) {
+        SpiPaymentType paymentType = payment.getPaymentType();
+        if (SpiPaymentType.SINGLE == paymentType) {
             return notifyConfirmationCodeValidation(singlePaymentSpi, spiPaymentMapper.mapToSpiSinglePayment(payment), isCancellation, contextData, confirmationCodeValidationResult, aspspConsentDataProvider);
-        } else if (PaymentType.PERIODIC == paymentType) {
+        } else if (SpiPaymentType.PERIODIC == paymentType) {
             return notifyConfirmationCodeValidation(periodicPaymentSpi, spiPaymentMapper.mapToSpiPeriodicPayment(payment), isCancellation, contextData, confirmationCodeValidationResult, aspspConsentDataProvider);
         } else {
             return notifyConfirmationCodeValidation(bulkPaymentSpi, spiPaymentMapper.mapToSpiBulkPayment(payment), isCancellation, contextData, confirmationCodeValidationResult, aspspConsentDataProvider);

@@ -72,9 +72,9 @@ public class CardAccountSpiMockImpl implements CardAccountSpi {
     public SpiResponse<SpiCardTransactionReport> requestCardTransactionsForAccount(@NotNull SpiContextData contextData, @NotNull SpiTransactionReportParameters spiCardTransactionReportParameters, @NotNull SpiAccountReference accountReference, @NotNull SpiAccountConsent accountConsent, @NotNull SpiAspspConsentDataProvider aspspConsentDataProvider) {
         log.info("CardAccountSpi#requestCardTransactionsForAccount: contextData {}, acceptMediaType {}, dateFrom {}, dateTo {}, bookingStatus {}, accountReference {}, accountConsent-id {}, aspspConsentData {}", contextData, spiCardTransactionReportParameters.getAcceptMediaType(), spiCardTransactionReportParameters.getDateFrom(), spiCardTransactionReportParameters.getDateTo(), spiCardTransactionReportParameters.getBookingStatus(), accountReference, accountConsent.getId(), aspspConsentDataProvider.loadAspspConsentData());
 
-        List<SpiCardTransaction> transactions = SpiBookingStatus.INFORMATION == spiCardTransactionReportParameters.getBookingStatus()
-                                                    ? buildSpiInformationTransactionList()
-                                                    : buildSpiTransactionList();
+        List<SpiCardTransaction> transactions = SpiBookingStatus.INFORMATION == spiCardTransactionReportParameters.getBookingStatus() ?
+                                                    buildSpiInformationTransactionList() :
+                                                    buildSpiTransactionList();
 
         return SpiResponse.<SpiCardTransactionReport>builder()
                    .payload(new SpiCardTransactionReport("dGVzdA==", transactions, Collections.singletonList(buildSpiAccountBalance()), "application/json", null))

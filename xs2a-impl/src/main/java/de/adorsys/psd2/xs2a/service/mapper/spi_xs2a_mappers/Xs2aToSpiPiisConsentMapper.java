@@ -28,6 +28,8 @@ import de.adorsys.psd2.xs2a.spi.domain.piis.SpiPiisConsent;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Optional;
 
 @Mapper(componentModel = "spring", uses = {Xs2aToSpiPsuDataMapper.class})
@@ -41,6 +43,7 @@ public interface Xs2aToSpiPiisConsentMapper {
     @Mapping(target = "registrationInformation", source = "consentData.registrationInformation")
     @Mapping(target = "requestDateTime", source = "creationTimestamp")
     @Mapping(target = "tppAuthorisationNumber", source = "consentTppInformation.tppInfo.authorisationNumber")
+    @Mapping(target = "lastActionDateTime", source = "lastActionDateTime")
     SpiPiisConsent mapToSpiPiisConsent(PiisConsent piisConsent);
 
     default SpiScaConfirmation toSpiScaConfirmation(CommonAuthorisationParameters request, PsuIdData psuData) {
@@ -62,5 +65,11 @@ public interface Xs2aToSpiPiisConsentMapper {
             account.getMsisdn(),
             account.getCurrency(),
             account.getOther());
+    }
+
+    default LocalDate convertToLocalDate(LocalDateTime localDateTime) {
+        return localDateTime == null
+                   ? null
+                   : localDateTime.toLocalDate();
     }
 }

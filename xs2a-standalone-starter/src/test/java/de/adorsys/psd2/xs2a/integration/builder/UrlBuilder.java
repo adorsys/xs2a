@@ -23,7 +23,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 public class UrlBuilder {
     public static String buildInitiatePaymentUrl(String paymentType, String paymentProduct) {
-        return "/v1/" + paymentType + "/" + paymentProduct + "/";
+        return "/v1/" + paymentType + "/" + paymentProduct;
     }
 
     public static String buildGetPaymentInitiationScaStatusUrl(String paymentType, String paymentProduct, String encrPaymentId, String authorisationId) {
@@ -51,7 +51,7 @@ public class UrlBuilder {
     }
 
     public static String buildConsentCreation() {
-        return "/v1/consents/";
+        return "/v1/consents";
     }
 
     public static String buildDeleteConsentUrl(String encryptedConsentId) {

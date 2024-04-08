@@ -54,7 +54,7 @@ public class CmsAspspTppServiceInternal implements CmsAspspTppService {
 
     @Transactional
     @Override
-    public boolean blockTpp(@NotNull String tppAuthorisationNumber, @NotNull String instanceId, @Nullable Duration lockPeriod) {
+    public boolean blockTpp(@NotNull String tppAuthorisationNumber, @NotNull String instanceId, @Nullable Duration lockPeriod, String updatedBy, String reason) {
         Optional<TppStopListEntity> stopListEntityOptional = stopListRepository.findByTppAuthorisationNumberAndInstanceId(tppAuthorisationNumber, instanceId);
 
         TppStopListEntity entityToBeBlocked = stopListEntityOptional
@@ -64,29 +64,35 @@ public class CmsAspspTppServiceInternal implements CmsAspspTppService {
                                                       entity.setInstanceId(instanceId);
                                                       return entity;
                                                   });
+        entityToBeBlocked.setUpdatedBy(updatedBy);
+        entityToBeBlocked.setReason(reason);
         entityToBeBlocked.block(lockPeriod);
-        if (stopListEntityOptional.isEmpty()) {
-            stopListRepository.save(entityToBeBlocked);
-        }
+        stopListRepository.save(entityToBeBlocked);
+
         return true;
     }
 
     @Transactional
     @Override
-    public boolean unblockTpp(@NotNull String tppAuthorisationNumber, @NotNull String instanceId) {
+    public boolean unblockTpp(@NotNull String tppAuthorisationNumber, @NotNull String instanceId, String updatedBy, String reason) {
         Optional<TppStopListEntity> stopListEntityOptional = stopListRepository.findByTppAuthorisationNumberAndInstanceId(tppAuthorisationNumber, instanceId);
 
-        if (stopListEntityOptional.isPresent()) {
-            TppStopListEntity entityToBeUnblocked = stopListEntityOptional.get();
-            entityToBeUnblocked.unblock();
+        if (stopListEntityOptional.isEmpty()) {
+            return false;
         }
+        TppStopListEntity entityToBeUnblocked = stopListEntityOptional.get();
+        entityToBeUnblocked.setUpdatedBy(updatedBy);
+        entityToBeUnblocked.setReason(reason);
+        entityToBeUnblocked.unblock();
+        stopListRepository.save(entityToBeUnblocked);
+
         return true;
     }
 
     @NotNull
     @Override
     public Optional<TppInfo> getTppInfo(@NotNull String tppAuthorisationNumber, @NotNull String instanceId) {
-        Optional<TppInfoEntity> tppInfoEntityOptional = tppInfoRepository.findFirstByAuthorisationNumberAndInstanceId(tppAuthorisationNumber, instanceId);
+        Optional<TppInfoEntity> tppInfoEntityOptional = tppInfoRepository.findByAuthorisationNumber(tppAuthorisationNumber);
         return tppInfoEntityOptional.map(tppInfoMapper::mapToTppInfo);
     }
 }

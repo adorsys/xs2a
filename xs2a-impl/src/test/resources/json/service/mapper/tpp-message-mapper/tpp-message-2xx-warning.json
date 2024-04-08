@@ -1,5 +1,5 @@
 {
   "category": "WARNING",
-  "code": "WARNING",
+  "code": "EXECUTION_DATE_INVALID",
   "path": "test path"
 }

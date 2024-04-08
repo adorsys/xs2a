@@ -32,7 +32,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import java.time.LocalDate;
 import java.util.Collections;
 import java.util.List;
 
@@ -91,7 +90,7 @@ class PiisConsentMapperTest {
         expected.setId(null);
         expected.getAspspAccountAccesses().get(0).setConsent(actual);
         expected.setRecurringIndicator(false);
-        expected.setLastActionDate(LocalDate.now());
+        expected.setLastActionDateTime(actual.getLastActionDateTime());
         expected.setStatusChangeTimestamp(null);
         expected.setExternalId(actual.getExternalId());
         expected.setRequestDateTime(actual.getRequestDateTime());
@@ -116,7 +115,7 @@ class PiisConsentMapperTest {
         expected.setId(null);
         expected.getAspspAccountAccesses().get(0).setConsent(expected);
         expected.setRecurringIndicator(false);
-        expected.setLastActionDate(LocalDate.now());
+        expected.setLastActionDateTime(actual.getLastActionDateTime());
         expected.setStatusChangeTimestamp(null);
         expected.setExternalId(actual.getExternalId());
         expected.setRequestDateTime(actual.getRequestDateTime());

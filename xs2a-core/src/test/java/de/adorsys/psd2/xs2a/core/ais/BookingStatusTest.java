@@ -36,6 +36,17 @@ class BookingStatusTest {
     }
 
     @Test
+    void forValue_withValidValue_shouldReturnEnum() {
+        BookingStatus actualValue = BookingStatus.forValue(BOOKING_STATUS_STRING);
+        assertEquals(BOOKING_STATUS, actualValue);
+    }
+
+    @Test
+    void forValue_withInvalidValue_shouldThrowException() {
+        assertThrows(IllegalArgumentException.class, () -> BookingStatus.forValue(BOOKING_STATUS_STRING + "111"));
+    }
+
+    @Test
     void getByValue_withInvalidValue_shouldReturnEmpty() {
         Optional<BookingStatus> actualValue = BookingStatus.getByValue("invalid value");
         assertFalse(actualValue.isPresent());

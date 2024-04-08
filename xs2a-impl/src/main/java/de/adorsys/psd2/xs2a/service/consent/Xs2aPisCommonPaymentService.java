@@ -39,7 +39,7 @@ public class Xs2aPisCommonPaymentService {
         CmsResponse<CreatePisCommonPaymentResponse> response = pisCommonPaymentServiceEncrypted.createCommonPayment(request);
 
         if (response.hasError()) {
-            log.info("Payment ID: [{}]. Pis common payment cannot be created, because can't save to cms DB",
+            log.info("Payment ID: [{}]. Pis common payment cannot be created, unable to save to CMS DB",
                      request.getPaymentId());
             return null;
         }

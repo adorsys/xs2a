@@ -20,19 +20,19 @@ package de.adorsys.psd2.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 import org.springframework.validation.annotation.Validated;
 
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
 import java.util.Map;
 import java.util.Objects;
 
 /**
- * JSON based account report. This account report contains transactions resulting from the query parameters.  &#x27;booked&#x27; shall be contained if bookingStatus parameter is set to \&quot;booked\&quot; or \&quot;both\&quot;.  &#x27;pending&#x27; is not contained if the bookingStatus parameter is set to \&quot;booked\&quot; or \&quot;information\&quot;.  &#x27;information&#x27; Only contained if the bookingStatus is set to \&quot;information\&quot; and if supported by ASPSP.
+ * JSON based account report. This account report contains transactions resulting from the query parameters.  &#x27;booked&#x27; shall be contained if bookingStatus parameter is set to \&quot;booked\&quot; or \&quot;both\&quot;.  &#x27;pending&#x27; is not contained if the bookingStatus parameter is set to \&quot;booked\&quot; or \&quot;information\&quot;.  &#x27;information&#x27; is used if and only if the bookingStatus entry equals \&quot;information\&quot;. Every active standing order related to the dedicated payment account result into one entry.
  */
-@Schema(description = "JSON based account report. This account report contains transactions resulting from the query parameters.  'booked' shall be contained if bookingStatus parameter is set to \"booked\" or \"both\".  'pending' is not contained if the bookingStatus parameter is set to \"booked\" or \"information\".  'information' Only contained if the bookingStatus is set to \"information\" and if supported by ASPSP. ")
+@Schema(description = "JSON based account report. This account report contains transactions resulting from the query parameters.  'booked' shall be contained if bookingStatus parameter is set to \"booked\" or \"both\".  'pending' is not contained if the bookingStatus parameter is set to \"booked\" or \"information\".  'information' is used if and only if the bookingStatus entry equals \"information\". Every active standing order related to the dedicated payment account result into one entry. ")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-10-26T13:16:54.081225+03:00[Europe/Kiev]")
+@jakarta.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-10-25T13:15:56.196839+03:00[Europe/Kiev]")
 
 
 public class AccountReport   {
@@ -53,18 +53,17 @@ public class AccountReport   {
     return this;
   }
 
-    /**
-     * Get booked
-     *
-     * @return booked
-     **/
-    @Schema(description = "")
-    @JsonProperty("booked")
+  /**
+   * Get booked
+   * @return booked
+   **/
+  @Schema(description = "")
+  @JsonProperty("booked")
 
-    @Valid
-    public TransactionList getBooked() {
-        return booked;
-    }
+  @Valid
+  public TransactionList getBooked() {
+    return booked;
+  }
 
   public void setBooked(TransactionList booked) {
     this.booked = booked;
@@ -75,17 +74,16 @@ public class AccountReport   {
     return this;
   }
 
-    /**
-     * Get pending
-     *
-     * @return pending
-     **/
-    @Schema(description = "")
-    @JsonProperty("pending")
+  /**
+   * Get pending
+   * @return pending
+   **/
+  @Schema(description = "")
+  @JsonProperty("pending")
 
-    @Valid
-    public TransactionList getPending() {
-        return pending;
+  @Valid
+  public TransactionList getPending() {
+    return pending;
   }
 
   public void setPending(TransactionList pending) {
@@ -94,42 +92,40 @@ public class AccountReport   {
 
   public AccountReport information(TransactionList information) {
     this.information = information;
-      return this;
+    return this;
   }
 
-    /**
-     * Get information
-     *
-     * @return information
-     **/
-    @Schema(description = "")
-    @JsonProperty("information")
+  /**
+   * Get information
+   * @return information
+   **/
+  @Schema(description = "")
+  @JsonProperty("information")
 
-    @Valid
-    public TransactionList getInformation() {
-        return information;
+  @Valid
+  public TransactionList getInformation() {
+    return information;
   }
 
   public void setInformation(TransactionList information) {
-      this.information = information;
+    this.information = information;
   }
 
-    public AccountReport _links(Map _links) {
-        this._links = _links;
-        return this;
-    }
+  public AccountReport _links(Map _links) {
+    this._links = _links;
+    return this;
+  }
 
-    /**
-     * Get _links
-     *
-     * @return _links
-     **/
-    @Schema(required = true, description = "")
-    @JsonProperty("_links")
+  /**
+   * Get _links
+   * @return _links
+   **/
+  @Schema(required = true, description = "")
+  @JsonProperty("_links")
     @NotNull
 
-    @Valid
-    public Map getLinks() {
+  @Valid
+  public Map getLinks() {
     return _links;
   }
 

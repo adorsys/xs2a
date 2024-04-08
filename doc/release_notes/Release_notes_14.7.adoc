@@ -2,12 +2,7 @@
 
 == Table of Contents
 
-* Updated postman tests
 * Bumped dependency versions
-
-== Updated postman tests
-
-XS2A Postman tests were updated.
 
 == Bumped dependency versions
 

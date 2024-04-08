@@ -55,10 +55,10 @@ import org.springframework.stereotype.Service;
 import java.util.EnumSet;
 import java.util.Optional;
 import java.util.Set;
-import java.util.UUID;
 
 import static de.adorsys.psd2.xs2a.core.domain.TppMessageInformation.of;
-import static de.adorsys.psd2.xs2a.core.error.ErrorType.*;
+import static de.adorsys.psd2.xs2a.core.error.ErrorType.PIS_403;
+import static de.adorsys.psd2.xs2a.core.error.ErrorType.PIS_404;
 import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.*;
 
 @Slf4j
@@ -80,6 +80,7 @@ public class PaymentAuthorisationServiceImpl implements PaymentAuthorisationServ
     private final EventTypeService eventTypeService;
     private final ScaApproachResolver scaApproachResolver;
     private final AuthorisationChainResponsibilityService authorisationChainResponsibilityService;
+    private final UuidGeneratorService uuidGeneratorService;
 
     /**
      * Creates pis authorisation for payment. In case when psu data and password came then second step will be update psu data in created authorisation
@@ -271,13 +272,13 @@ public class PaymentAuthorisationServiceImpl implements PaymentAuthorisationServ
                    .build();
     }
 
-    private ResponseObject<Xs2aCreatePisAuthorisationResponse> createPisAuthorisation(String paymentId, PaymentType paymentService,
+    private ResponseObject<Xs2aCreatePisAuthorisationResponse> createPisAuthorisation(String paymentId, PaymentType paymentType,
                                                                                       String paymentProduct, PsuIdData psuDataFromRequest) {
         xs2aEventService.recordPisTppRequest(paymentId, EventType.START_PAYMENT_AUTHORISATION_REQUEST_RECEIVED);
 
         Optional<PisCommonPaymentResponse> pisCommonPaymentResponseOptional = pisCommonPaymentService.getPisCommonPaymentById(paymentId);
         if (pisCommonPaymentResponseOptional.isEmpty()) {
-            log.info("Payment-ID [{}]. Create PIS Authorisation failed. PIS CommonPayment not found by id", paymentId);
+            log.info("Payment-ID [{}]. Create PIS Authorisation failed. Payment not found by ID.", paymentId);
             return ResponseObject.<Xs2aCreatePisAuthorisationResponse>builder()
                        .fail(PIS_404, of(RESOURCE_UNKNOWN_404_NO_PAYMENT))
                        .build();
@@ -285,7 +286,7 @@ public class PaymentAuthorisationServiceImpl implements PaymentAuthorisationServ
 
         PisCommonPaymentResponse pisCommonPayment = pisCommonPaymentResponseOptional.get();
 
-        ValidationResult validationResult = createPisAuthorisationValidator.validate(new CreatePisAuthorisationObject(pisCommonPayment, paymentService, paymentProduct, psuDataFromRequest));
+        ValidationResult validationResult = createPisAuthorisationValidator.validate(new CreatePisAuthorisationObject(pisCommonPayment, paymentType, paymentProduct, psuDataFromRequest));
 
         if (validationResult.isNotValid()) {
             log.info("Payment-ID [{}]. Create PIS Authorisation - validation failed: {}",
@@ -296,9 +297,9 @@ public class PaymentAuthorisationServiceImpl implements PaymentAuthorisationServ
         }
 
         PsuIdData psuIdData = getActualPsuData(psuDataFromRequest, paymentId, pisCommonPayment.isMultilevelScaRequired());
-        // TODO https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/-/issues/1629
+
         ScaStatus scaStatus = ScaStatus.STARTED;
-        String authorisationId = UUID.randomUUID().toString();
+        String authorisationId = uuidGeneratorService.generate();
         ScaApproach scaApproach = scaApproachResolver.resolveScaApproach();
         StartAuthorisationsParameters startAuthorisationsParameters = StartAuthorisationsParameters.builder()
                                                                           .psuData(psuIdData)
@@ -309,36 +310,25 @@ public class PaymentAuthorisationServiceImpl implements PaymentAuthorisationServ
 
         Authorisation authorisation = new Authorisation(authorisationId, psuIdData, paymentId, AuthorisationType.PIS_CREATION, scaStatus);
         PisAuthorisationProcessorRequest processorRequest = new PisAuthorisationProcessorRequest(scaApproach, scaStatus, startAuthorisationsParameters, authorisation);
+
+        loggingContextService.storeScaStatus(scaStatus);
+
         CreatePaymentAuthorisationProcessorResponse processorResponse =
             (CreatePaymentAuthorisationProcessorResponse) authorisationChainResponsibilityService.apply(processorRequest);
 
-        loggingContextService.storeScaStatus(processorResponse.getScaStatus());
+        Xs2aCreatePisAuthorisationResponse createPaymentAuthorisationResponse = new Xs2aCreatePisAuthorisationResponse(processorResponse.getAuthorisationId(),
+                                                                                                                       processorResponse.getScaStatus(),
+                                                                                                                       processorResponse.getScaApproach(),
+                                                                                                                       paymentType,
+                                                                                                                       processorResponse.getInternalRequestId(),
+                                                                                                                       processorResponse.getPsuData());
 
-        Xs2aCreateAuthorisationRequest createAuthorisationRequest = Xs2aCreateAuthorisationRequest.builder()
-                                                                        .psuData(psuIdData)
-                                                                        .paymentId(paymentId)
-                                                                        .authorisationId(authorisationId)
-                                                                        .scaStatus(processorResponse.getScaStatus())
-                                                                        .scaApproach(processorResponse.getScaApproach())
-                                                                        .build();
+        setPsuMessageAndTppMessages(createPaymentAuthorisationResponse, processorResponse.getPsuMessage(), processorResponse.getTppMessages());
 
-        PisScaAuthorisationService pisScaAuthorisationService = pisScaAuthorisationServiceResolver.getService();
-
-        Optional<Xs2aCreatePisAuthorisationResponse> commonPaymentAuthorisation =
-            pisScaAuthorisationService.createCommonPaymentAuthorisation(createAuthorisationRequest, paymentService);
-
-        if (commonPaymentAuthorisation.isEmpty()) {
-            return ResponseObject.<Xs2aCreatePisAuthorisationResponse>builder()
-                       .fail(PIS_400, of(PAYMENT_FAILED))
-                       .build();
-        }
-
-        Xs2aCreatePisAuthorisationResponse createAuthorisationResponse = commonPaymentAuthorisation.get();
-        setPsuMessageAndTppMessages(createAuthorisationResponse, processorResponse.getPsuMessage(), processorResponse.getTppMessages());
-        loggingContextService.storeTransactionAndScaStatus(pisCommonPayment.getTransactionStatus(), createAuthorisationResponse.getScaStatus());
+        loggingContextService.storeTransactionAndScaStatus(pisCommonPayment.getTransactionStatus(), createPaymentAuthorisationResponse.getScaStatus());
 
         return ResponseObject.<Xs2aCreatePisAuthorisationResponse>builder()
-                   .body(createAuthorisationResponse)
+                   .body(createPaymentAuthorisationResponse)
                    .build();
     }
 

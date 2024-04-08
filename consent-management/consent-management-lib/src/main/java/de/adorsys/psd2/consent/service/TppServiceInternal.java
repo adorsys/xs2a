@@ -47,7 +47,7 @@ public class TppServiceInternal implements TppService {
     @Override
     @Transactional
     public CmsResponse<Boolean> updateTppInfo(@NotNull TppInfo tppInfo) {
-        Optional<TppInfoEntity> tppInfoEntityOptional = tppInfoRepository.findFirstByAuthorisationNumberAndInstanceId(tppInfo.getAuthorisationNumber(), serviceInstanceId);
+        Optional<TppInfoEntity> tppInfoEntityOptional = tppInfoRepository.findByAuthorisationNumber(tppInfo.getAuthorisationNumber());
         if (tppInfoEntityOptional.isEmpty()) {
             return CmsResponse.<Boolean>builder()
                        .payload(false)

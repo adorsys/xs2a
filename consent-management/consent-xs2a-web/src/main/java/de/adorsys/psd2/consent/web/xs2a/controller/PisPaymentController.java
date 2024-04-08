@@ -59,7 +59,7 @@ public class PisPaymentController implements PisPaymentApi {
                 return new ResponseEntity<>(HttpStatus.OK);
             }
         } catch (IllegalArgumentException illegalArgumentException) {
-            log.error("Invalid transaction status: [{}] for payment-ID [{}]", status, paymentId);
+            log.error("Invalid transaction status: [{}] for payment ID: [{}]", status, paymentId);
         }
 
         return new ResponseEntity<>(HttpStatus.BAD_REQUEST);

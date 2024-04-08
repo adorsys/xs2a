@@ -78,7 +78,7 @@ public class AisConsentMapper {
             consent.getValidUntil(),
             consent.getExpireDate(),
             consent.getFrequencyPerDay(),
-            consent.getLastActionDate(),
+            consent.getLastActionDateTime(),
             consent.getConsentStatus(),
             aisConsent.isWithBalance(),
             tppInformation.isTppRedirectPreferred(),
@@ -110,7 +110,7 @@ public class AisConsentMapper {
                    .multilevelScaRequired(entity.isMultilevelScaRequired())
                    .validUntil(entity.getValidUntil())
                    .expireDate(entity.getExpireDate())
-                   .lastActionDate(entity.getLastActionDate())
+                   .lastActionDateTime(entity.getLastActionDateTime())
                    .creationTimestamp(entity.getCreationTimestamp())
                    .statusChangeTimestamp(entity.getStatusChangeTimestamp())
                    .consentTppInformation(consentTppInformationMapper.mapToConsentTppInformation(entity.getTppInformation()))

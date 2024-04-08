@@ -90,8 +90,8 @@ public class PisCommonPaymentServiceRemote implements PisCommonPaymentServiceEnc
     @Override
     public CmsResponse<Boolean> updateCommonPaymentStatusById(String paymentId, TransactionStatus status) {
         try {
-            HttpStatus statusCode = consentRestTemplate.exchange(remotePisCommonPaymentUrls.updatePisCommonPaymentStatus(), HttpMethod.PUT,
-                                                                 null, Void.class, paymentId, status.getTransactionStatus()).getStatusCode();
+            HttpStatus statusCode = (HttpStatus) consentRestTemplate.exchange(remotePisCommonPaymentUrls.updatePisCommonPaymentStatus(), HttpMethod.PUT,
+                                                                              null, Void.class, paymentId, status.getTransactionStatus()).getStatusCode();
 
             return CmsResponse.<Boolean>builder()
                        .payload(statusCode == HttpStatus.OK)

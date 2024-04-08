@@ -228,7 +228,7 @@ class SpiPaymentMapperTest {
         bulkPaymentPart.setRemittanceInformationUnstructuredArray(REMITTANCE_INFORMATION_UNSTRUCTURED_ARRAY);
         bulkPaymentPart.setUltimateDebtor("ultimateDebtor");
         bulkPaymentPart.setUltimateCreditor("ultimateCreditor");
-        bulkPaymentPart.setPurposeCode(SpiPisPurposeCode.CDQC);
+        bulkPaymentPart.setPurposeCode(SpiPurposeCode.CDQC);
         bulkPaymentPart.setRemittanceInformationStructuredArray(getRemittanceInfoStructuredArray());
 
         bulkPayment.setPayments(Collections.singletonList(bulkPaymentPart));

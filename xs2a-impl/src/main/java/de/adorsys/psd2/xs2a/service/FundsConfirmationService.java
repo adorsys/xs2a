@@ -261,7 +261,7 @@ public class FundsConfirmationService {
 
         if (fundsSufficientCheck.hasError()) {
             ErrorHolder error = spiErrorMapper.mapToErrorHolder(fundsSufficientCheck, ServiceType.PIIS);
-            log.info("Check availability of funds failed, because perform funds sufficient check failed. Msg error: {}",
+            log.info("Check availability of funds failed, funds sufficient check has failed. Msg error: {}",
                      error);
             return new FundsConfirmationResponse(error);
         }

@@ -32,41 +32,41 @@ import java.util.List;
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class TppInfo {
     @EqualsAndHashCode.Include
-    @Schema(description = "Authorization number", required = true, example = "12345987")
+    @Schema(description = "Authorization number", requiredMode = Schema.RequiredMode.REQUIRED, example = "12345987")
     private String authorisationNumber;
 
-    @Schema(description = "Tpp name", required = true, example = "Tpp company")
+    @Schema(description = "TPP name", requiredMode = Schema.RequiredMode.REQUIRED, example = "Tpp company")
     private String tppName;
 
-    @Schema(description = "Tpp role", required = true)
+    @Schema(description = "TPP role", requiredMode = Schema.RequiredMode.REQUIRED)
     private List<TppRole> tppRoles;
 
-    @Schema(description = "National competent authority id", required = true, example = "authority id")
+    @Schema(description = "National competent authority ID", requiredMode = Schema.RequiredMode.REQUIRED, example = "authority id")
     private String authorityId;
 
-    @Schema(description = "National competent authority name", required = true, example = "authority name")
+    @Schema(description = "National competent authority name", requiredMode = Schema.RequiredMode.REQUIRED, example = "authority name")
     private String authorityName;
 
-    @Schema(description = "Country", required = true, example = "Germany")
+    @Schema(description = "Country", requiredMode = Schema.RequiredMode.REQUIRED, example = "Germany")
     private String country;
 
-    @Schema(description = "Organisation", required = true, example = "Organisation")
+    @Schema(description = "Organisation", requiredMode = Schema.RequiredMode.REQUIRED, example = "Organisation")
     private String organisation;
 
-    @Schema(description = "Organisation unit", required = true, example = "Organisation unit")
+    @Schema(description = "Organisation unit", requiredMode = Schema.RequiredMode.REQUIRED, example = "Organisation unit")
     private String organisationUnit;
 
-    @Schema(description = "City", required = true, example = "Nuremberg")
+    @Schema(description = "City", requiredMode = Schema.RequiredMode.REQUIRED, example = "Nuremberg")
     private String city;
 
-    @Schema(description = "State", required = true, example = "Bayern")
+    @Schema(description = "State", requiredMode = Schema.RequiredMode.REQUIRED, example = "Bayern")
     private String state;
 
     @Nullable
     @Schema(description = "Cancel TPP redirect URIs")
     private TppRedirectUri cancelTppRedirectUri;
 
-    @Schema(description = "Issuer CN", required = true, example = "Authority CA Domain Name")
+    @Schema(description = "Issuer CN", requiredMode = Schema.RequiredMode.REQUIRED, example = "Authority CA Domain Name")
     private String issuerCN;
 
     @JsonIgnore

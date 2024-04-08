@@ -25,6 +25,8 @@ import org.jetbrains.annotations.NotNull;
 
 @Value
 public class SpiPaymentConfirmationCodeValidationResponse {
-    @NotNull private SpiScaStatus scaStatus;
-    @NotNull private SpiTransactionStatus transactionStatus;
+    @NotNull
+    private SpiScaStatus scaStatus;
+    @NotNull
+    private SpiTransactionStatus transactionStatus;
 }

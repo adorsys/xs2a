@@ -35,4 +35,5 @@ public class SubjectData {
     private Integer serialNumber;
     private Date startDate;
     private Date endDate;
+    private boolean ocspCheckNeeded;
 }

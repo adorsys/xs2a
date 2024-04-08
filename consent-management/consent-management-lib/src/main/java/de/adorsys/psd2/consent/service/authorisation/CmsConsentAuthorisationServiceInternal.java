@@ -55,7 +55,7 @@ public class CmsConsentAuthorisationServiceInternal {
         Optional<AuthorisationEntity> authorisation = authorisationRepository.findOne(authorisationSpecification.byExternalIdAndInstanceId(redirectId, instanceId));
 
         if (authorisation.isPresent() && !authorisation.get().isRedirectUrlNotExpired()) {
-            log.info("Authorisation ID [{}], Instance ID: [{}]. Check redirect URL and get consent failed, because authorisation is expired",
+            log.info("Authorisation ID [{}], Instance ID: [{}]. Check redirect URL and get consent failed, authorisation is expired",
                      redirectId, instanceId);
             authorisation.get().setScaStatus(ScaStatus.FAILED);
             throw new RedirectUrlIsExpiredException(authorisation.get().getTppNokRedirectUri());

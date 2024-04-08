@@ -72,7 +72,7 @@ class FundsConfirmationControllerTest {
         HttpStatus expectedStatusCode = HttpStatus.OK;
 
         //When:
-        ResponseEntity<?> actualResult = fundsConfirmationController.checkAvailabilityOfFunds(null, confirmationOfFunds, null, CONSENT_ID, null, null, null);
+        ResponseEntity<?> actualResult = fundsConfirmationController.checkAvailabilityOfFunds(null, confirmationOfFunds, CONSENT_ID, null, null, null);
         InlineResponse2003 fundsConfirmationResponse = (InlineResponse2003) actualResult.getBody();
 
         //Then:

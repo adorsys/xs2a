@@ -38,7 +38,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 
 import static de.adorsys.psd2.xs2a.core.domain.TppMessageInformation.of;
 import static org.assertj.core.api.Assertions.assertThat;

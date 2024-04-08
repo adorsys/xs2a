@@ -29,9 +29,7 @@ import de.adorsys.psd2.xs2a.domain.pis.CommonPayment;
 import de.adorsys.psd2.xs2a.domain.pis.CommonPaymentInitiationResponse;
 import de.adorsys.psd2.xs2a.domain.pis.PaymentInitiationResponse;
 import de.adorsys.psd2.xs2a.service.context.SpiContextDataProvider;
-import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiErrorMapper;
-import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiToXs2aPaymentMapper;
-import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.Xs2aToSpiPaymentInfoMapper;
+import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.*;
 import de.adorsys.psd2.xs2a.service.spi.InitialSpiAspspConsentDataProvider;
 import de.adorsys.psd2.xs2a.service.spi.SpiAspspConsentDataProviderFactory;
 import de.adorsys.psd2.xs2a.spi.domain.SpiContextData;
@@ -82,6 +80,10 @@ class CommonPaymentInitiationServiceTest {
     private InitialSpiAspspConsentDataProvider initialSpiAspspConsentDataProvider;
     @Mock
     private SpiAspspConsentDataProviderFactory aspspConsentDataProviderFactory;
+    @Mock
+    private Xs2aToSpiPaymentTypeMapper xs2aToSpiPaymentTypeMapper;
+    @Mock
+    private Xs2aToSpiTransactionStatusMapper xs2aToSpiTransactionStatusMapper;
 
     @InjectMocks
     private CommonPaymentInitiationService commonPaymentService;
@@ -95,6 +97,7 @@ class CommonPaymentInitiationServiceTest {
 
     @Test
     void createCommonPayment_success() {
+        // Given
         when(xs2aToSpiPaymentInfoMapper.mapToSpiPaymentInfo(COMMON_PAYMENT, PRODUCT))
             .thenReturn(SPI_PAYMENT_INFO);
         when(commonPaymentSpi.initiatePayment(SPI_CONTEXT_DATA, SPI_PAYMENT_INFO, initialSpiAspspConsentDataProvider))
@@ -136,7 +139,7 @@ class CommonPaymentInitiationServiceTest {
     private static CommonPayment buildCommonPayment() {
         CommonPayment request = new CommonPayment();
         request.setPaymentType(PaymentType.SINGLE);
-        request.setPaymentProduct("sepa-credit-transfers");
+        request.setPaymentProduct(PRODUCT);
         request.setPaymentData(new byte[16]);
         return request;
     }

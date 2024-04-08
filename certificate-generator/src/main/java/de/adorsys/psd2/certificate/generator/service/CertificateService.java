@@ -23,10 +23,8 @@ import de.adorsys.psd2.certificate.generator.model.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.bouncycastle.asn1.ASN1Encodable;
-import org.bouncycastle.asn1.ASN1ObjectIdentifier;
-import org.bouncycastle.asn1.DERSequence;
-import org.bouncycastle.asn1.DERUTF8String;
+import org.bouncycastle.asn1.*;
+import org.bouncycastle.asn1.ocsp.OCSPObjectIdentifiers;
 import org.bouncycastle.asn1.x500.X500NameBuilder;
 import org.bouncycastle.asn1.x500.style.BCStyle;
 import org.bouncycastle.asn1.x500.style.IETFUtils;
@@ -65,7 +63,7 @@ public class CertificateService {
 
     /**
      * Create a new base64 encoded X509 certificate for authentication at the XS2A API with the
-     * corresponding private key and meta data.
+     * corresponding private key and metadata.
      *
      * @param certificateRequest data needed for certificate generation
      * @return CertificateResponse base64 encoded cert + private key
@@ -101,7 +99,13 @@ public class CertificateService {
 
         try {
             contentSigner = builder.build(issuerData.getPrivateKey());
-            certGen.addExtension(Extension.qCStatements, false, statement);
+            certGen.addExtension(Extension.qCStatements, false, new DERSequence(new ASN1Encodable[]{statement}));
+
+            if(!subjectData.isOcspCheckNeeded()) {
+                Extension ocspExtension = new Extension(OCSPObjectIdentifiers.id_pkix_ocsp_nocheck, false, new DEROctetString(DERNull.INSTANCE));
+                certGen.addExtension(ocspExtension);
+            }
+
 
             X509CertificateHolder certHolder = certGen.build(contentSigner);
 
@@ -153,8 +157,8 @@ public class CertificateService {
         if (cerData.getOrganizationUnit() != null) {
             builder.addRDN(BCStyle.OU, cerData.getOrganizationUnit());
         }
-        if (cerData.getCountryName() != null) {
-            builder.addRDN(BCStyle.C, cerData.getCountryName());
+        if (cerData.getCountryCode() != null) {
+            builder.addRDN(BCStyle.C, cerData.getCountryCode());
         }
         if (cerData.getStateOrProvinceName() != null) {
             builder.addRDN(BCStyle.ST, cerData.getStateOrProvinceName());
@@ -173,8 +177,7 @@ public class CertificateService {
         Integer serialNumber = random.nextInt(Integer.MAX_VALUE);
         return new SubjectData(
             keyPairSubject.getPrivate(), keyPairSubject.getPublic(), builder.build(),
-            serialNumber, new Date(), expiration
-        );
+            serialNumber, new Date(), expiration, cerData.isOcspCheckNeeded());
     }
 
     private KeyPair generateKeyPair() {
@@ -205,6 +208,10 @@ public class CertificateService {
                 roles.add(RoleOfPsp.PSP_IC);
             }
 
+            if (requestRoles.contains(PspRole.ASPSP)) {
+                roles.add(RoleOfPsp.PSP_AS);
+            }
+
             return new RolesOfPsp(roles.toArray(new RoleOfPsp[]{}));
         }
 
@@ -221,6 +228,8 @@ public class CertificateService {
                                                       RoleOfPspName.PSP_AI);
         static final RoleOfPsp PSP_IC = new RoleOfPsp(RoleOfPspOid.ROLE_OF_PSP_OID,
                                                       RoleOfPspName.PSP_IC);
+        static final RoleOfPsp PSP_AS = new RoleOfPsp(RoleOfPspOid.ID_PSD_2_ROLE_PSP_AS,
+                                                      RoleOfPspName.PSP_AS);
 
         private RoleOfPsp(RoleOfPspOid roleOfPspOid, RoleOfPspName roleOfPspName) {
             super(new ASN1Encodable[]{roleOfPspOid, roleOfPspName});
@@ -231,6 +240,7 @@ public class CertificateService {
         static final RoleOfPspName PSP_PI = new RoleOfPspName("PSP_PI");
         static final RoleOfPspName PSP_AI = new RoleOfPspName("PSP_AI");
         static final RoleOfPspName PSP_IC = new RoleOfPspName("PSP_IC");
+        static final RoleOfPspName PSP_AS = new RoleOfPspName("PSP_AS");
 
         private RoleOfPspName(String string) {
             super(string);
@@ -241,6 +251,8 @@ public class CertificateService {
 
         static final ASN1ObjectIdentifier ETSI_PSD_2_ROLES = new ASN1ObjectIdentifier(
             "0.4.0.19495.1");
+        static final RoleOfPspOid ID_PSD_2_ROLE_PSP_AS = new RoleOfPspOid(
+            ETSI_PSD_2_ROLES.branch("1"));
         static final RoleOfPspOid ID_PSD_2_ROLE_PSP_PI = new RoleOfPspOid(
             ETSI_PSD_2_ROLES.branch("2"));
         static final RoleOfPspOid ID_PSD_2_ROLE_PSP_AI = new RoleOfPspOid(

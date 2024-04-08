@@ -58,7 +58,7 @@ public class AspspDataServiceInternal implements AspspDataService {
     @Transactional
     public boolean updateAspspConsentData(@NotNull AspspConsentData aspspConsentData) {
         if(aspspConsentData.isEmptyConsentData()){
-            log.info("Update Aspsp consent data failed, because aspsp Consent data is empty.");
+            log.info("Update ASPSP consent data has failed, ASPSP Consent data is empty.");
             return false;
         }
 
@@ -74,13 +74,13 @@ public class AspspDataServiceInternal implements AspspDataService {
 
         Optional<String> decryptConsentId = securityDataService.decryptId(encryptedConsentId);
         if (decryptConsentId.isEmpty()) {
-            log.info("Consent ID: [{}]. Update Aspsp consent data failed, because consent id cannot be decrypted.", encryptedConsentId);
+            log.info("Consent ID: [{}]. Update ASPSP consent data has failed, consent ID cannot be decrypted.", encryptedConsentId);
             return false;
         }
 
         Optional<EncryptedData> encryptedData = securityDataService.encryptConsentData(encryptedConsentId, data);
         if (encryptedData.isEmpty()) {
-            log.info("Consent ID: [{}]. Update Aspsp consent data failed, because aspsp consent data cannot be encrypted.", encryptedConsentId);
+            log.info("Consent ID: [{}]. Update ASPSP consent data has failed, ASPSP consent data cannot be encrypted.", encryptedConsentId);
             return false;
         }
 
@@ -97,7 +97,7 @@ public class AspspDataServiceInternal implements AspspDataService {
         return securityDataService.decryptId(externalId)
                    .map(this::deleteAspspConsentDataIfExist)
                    .orElseGet(() -> {
-                       log.info("External Consent ID: [{}]. Delete aspsp consent data failed, couldn't decrypt consent id",
+                       log.info("External Consent ID: [{}]. Delete ASPSP consent data has failed, couldn't decrypt consent ID",
                                 externalId);
                        return false;
                    });
@@ -108,7 +108,7 @@ public class AspspDataServiceInternal implements AspspDataService {
             aspspConsentDataRepository.deleteById(consentId);
             return true;
         }
-        log.info("Consent ID: [{}]. Delete Aspsp consent data failed, because aspsp consent data for this consent id does not exist.", consentId);
+        log.info("Consent ID: [{}]. Delete ASPSP consent data has failed, ASPSP consent data for this consent ID does not exist.", consentId);
         return false;
     }
 

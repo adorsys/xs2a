@@ -20,11 +20,11 @@ package de.adorsys.psd2.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import org.springframework.validation.annotation.Validated;
 
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -35,7 +35,7 @@ import java.util.Objects;
  */
 @Schema(description = "Body of the JSON response for a successful consent request.")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-10-26T13:16:54.081225+03:00[Europe/Kiev]")
+@jakarta.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-10-25T13:15:56.196839+03:00[Europe/Kiev]")
 
 
 public class ConsentsResponse201   {
@@ -72,19 +72,18 @@ public class ConsentsResponse201   {
     return this;
   }
 
-    /**
-     * Get consentStatus
-     *
-     * @return consentStatus
-     **/
-    @Schema(required = true, description = "")
-    @JsonProperty("consentStatus")
+  /**
+   * Get consentStatus
+   * @return consentStatus
+   **/
+  @Schema(required = true, description = "")
+  @JsonProperty("consentStatus")
     @NotNull
 
-    @Valid
-    public ConsentStatus getConsentStatus() {
-        return consentStatus;
-    }
+  @Valid
+  public ConsentStatus getConsentStatus() {
+    return consentStatus;
+  }
 
   public void setConsentStatus(ConsentStatus consentStatus) {
     this.consentStatus = consentStatus;
@@ -95,17 +94,16 @@ public class ConsentsResponse201   {
     return this;
   }
 
-    /**
-     * ID of the corresponding consent object as returned by an account information consent request.
-     *
-     * @return consentId
-     **/
-    @Schema(required = true, description = "ID of the corresponding consent object as returned by an account information consent request. ")
-    @JsonProperty("consentId")
+  /**
+   * ID of the corresponding consent object as returned by an account information consent request.
+   * @return consentId
+   **/
+  @Schema(required = true, description = "ID of the corresponding consent object as returned by an account information consent request. ")
+  @JsonProperty("consentId")
     @NotNull
 
-    public String getConsentId() {
-        return consentId;
+  public String getConsentId() {
+    return consentId;
   }
 
   public void setConsentId(String consentId) {
@@ -114,20 +112,19 @@ public class ConsentsResponse201   {
 
   public ConsentsResponse201 scaMethods(ScaMethods scaMethods) {
     this.scaMethods = scaMethods;
-      return this;
+    return this;
   }
 
-    /**
-     * Get scaMethods
-     *
-     * @return scaMethods
-     **/
-    @Schema(description = "")
-    @JsonProperty("scaMethods")
+  /**
+   * Get scaMethods
+   * @return scaMethods
+   **/
+  @Schema(description = "")
+  @JsonProperty("scaMethods")
 
-    @Valid
-    public ScaMethods getScaMethods() {
-        return scaMethods;
+  @Valid
+  public ScaMethods getScaMethods() {
+    return scaMethods;
   }
 
   public void setScaMethods(ScaMethods scaMethods) {
@@ -136,19 +133,18 @@ public class ConsentsResponse201   {
 
   public ConsentsResponse201 chosenScaMethod(ChosenScaMethod chosenScaMethod) {
     this.chosenScaMethod = chosenScaMethod;
-      return this;
+    return this;
   }
 
-    /**
-     * Get chosenScaMethod
-     *
-     * @return chosenScaMethod
-     **/
-    @Schema(description = "")
-    @JsonProperty("chosenScaMethod")
+  /**
+   * Get chosenScaMethod
+   * @return chosenScaMethod
+   **/
+  @Schema(description = "")
+  @JsonProperty("chosenScaMethod")
 
-    @Valid
-    public ChosenScaMethod getChosenScaMethod() {
+  @Valid
+  public ChosenScaMethod getChosenScaMethod() {
     return chosenScaMethod;
   }
 
@@ -158,19 +154,18 @@ public class ConsentsResponse201   {
 
   public ConsentsResponse201 challengeData(ChallengeData challengeData) {
     this.challengeData = challengeData;
-      return this;
+    return this;
   }
 
-    /**
-     * Get challengeData
-     *
-     * @return challengeData
-     **/
-    @Schema(description = "")
-    @JsonProperty("challengeData")
+  /**
+   * Get challengeData
+   * @return challengeData
+   **/
+  @Schema(description = "")
+  @JsonProperty("challengeData")
 
-    @Valid
-    public ChallengeData getChallengeData() {
+  @Valid
+  public ChallengeData getChallengeData() {
     return challengeData;
   }
 
@@ -179,22 +174,21 @@ public class ConsentsResponse201   {
   }
 
   public ConsentsResponse201 _links(Map _links) {
-      this._links = _links;
-      return this;
+    this._links = _links;
+    return this;
   }
 
-    /**
-     * Get _links
-     *
-     * @return _links
-     **/
-    @Schema(required = true, description = "")
-    @JsonProperty("_links")
+  /**
+   * Get _links
+   * @return _links
+   **/
+  @Schema(required = true, description = "")
+  @JsonProperty("_links")
     @NotNull
 
-    @Valid
-    public Map getLinks() {
-        return _links;
+  @Valid
+  public Map getLinks() {
+    return _links;
   }
 
   public void setLinks(Map _links) {
@@ -202,17 +196,16 @@ public class ConsentsResponse201   {
   }
 
   public ConsentsResponse201 psuMessage(String psuMessage) {
-      this.psuMessage = psuMessage;
-      return this;
+    this.psuMessage = psuMessage;
+    return this;
   }
 
-    /**
-     * Text to be displayed to the PSU.
-     *
-     * @return psuMessage
-     **/
-    @Schema(description = "Text to be displayed to the PSU.")
-    @JsonProperty("psuMessage")
+  /**
+   * Text to be displayed to the PSU.
+   * @return psuMessage
+   **/
+  @Schema(description = "Text to be displayed to the PSU.")
+  @JsonProperty("psuMessage")
 
 @Size(max=500)   public String getPsuMessage() {
     return psuMessage;
@@ -231,17 +224,16 @@ public class ConsentsResponse201   {
     if (this.tppMessages == null) {
       this.tppMessages = new ArrayList<>();
     }
-      this.tppMessages.add(tppMessagesItem);
-      return this;
+    this.tppMessages.add(tppMessagesItem);
+    return this;
   }
 
-    /**
-     * Get tppMessages
-     *
-     * @return tppMessages
-     **/
-    @Schema(description = "")
-    @JsonProperty("tppMessages")
+  /**
+   * Get tppMessages
+   * @return tppMessages
+   **/
+  @Schema(description = "")
+  @JsonProperty("tppMessages")
     @Valid
   public List<TppMessageGeneric> getTppMessages() {
     return tppMessages;
@@ -252,20 +244,19 @@ public class ConsentsResponse201   {
   }
 
   public ConsentsResponse201 scaStatus(ScaStatus scaStatus) {
-      this.scaStatus = scaStatus;
-      return this;
+    this.scaStatus = scaStatus;
+    return this;
   }
 
-    /**
-     * Get scaStatus
-     *
-     * @return scaStatus
-     **/
-    @Schema(description = "")
-    @JsonProperty("scaStatus")
+  /**
+   * Get scaStatus
+   * @return scaStatus
+   **/
+  @Schema(description = "")
+  @JsonProperty("scaStatus")
 
-    @Valid
-    public ScaStatus getScaStatus() {
+  @Valid
+  public ScaStatus getScaStatus() {
     return scaStatus;
   }
 

@@ -23,9 +23,9 @@ import de.adorsys.psd2.xs2a.domain.pis.PaymentInitiationParameters;
 import de.adorsys.psd2.xs2a.domain.pis.SinglePayment;
 import de.adorsys.psd2.xs2a.service.RequestProviderService;
 import de.adorsys.psd2.xs2a.service.ScaApproachResolver;
+import de.adorsys.psd2.xs2a.service.UuidGeneratorService;
 import de.adorsys.psd2.xs2a.service.authorization.AuthorisationChainResponsibilityService;
 import de.adorsys.psd2.xs2a.service.authorization.AuthorisationMethodDecider;
-import de.adorsys.psd2.xs2a.service.authorization.pis.PisScaAuthorisationServiceResolver;
 import de.adorsys.psd2.xs2a.service.consent.Xs2aPisCommonPaymentService;
 import de.adorsys.psd2.xs2a.service.mapper.cms_xs2a_mappers.Xs2aPisCommonPaymentMapper;
 import de.adorsys.psd2.xs2a.service.mapper.cms_xs2a_mappers.Xs2aToCmsPisCommonPaymentRequestMapper;
@@ -41,7 +41,6 @@ public class CreateSinglePaymentService extends AbstractCreatePaymentService<Sin
 
     @Autowired
     public CreateSinglePaymentService(Xs2aPisCommonPaymentService pisCommonPaymentService,
-                                      PisScaAuthorisationServiceResolver pisScaAuthorisationServiceResolver,
                                       AuthorisationMethodDecider authorisationMethodDecider,
                                       Xs2aPisCommonPaymentMapper xs2aPisCommonPaymentMapper,
                                       Xs2aToCmsPisCommonPaymentRequestMapper xs2aToCmsPisCommonPaymentRequestMapper,
@@ -50,10 +49,12 @@ public class CreateSinglePaymentService extends AbstractCreatePaymentService<Sin
                                       RawToXs2aPaymentMapper rawToXs2aPaymentMapper,
                                       LoggingContextService loggingContextService,
                                       AuthorisationChainResponsibilityService authorisationChainResponsibilityService,
-                                      ScaApproachResolver scaApproachResolver) {
-        super(pisCommonPaymentService, pisScaAuthorisationServiceResolver, authorisationMethodDecider,
+                                      ScaApproachResolver scaApproachResolver,
+                                      UuidGeneratorService uuidGeneratorService) {
+        super(pisCommonPaymentService, authorisationMethodDecider,
               xs2aPisCommonPaymentMapper, xs2aToCmsPisCommonPaymentRequestMapper, paymentInitiationService,
-              requestProviderService, loggingContextService, authorisationChainResponsibilityService, scaApproachResolver);
+              requestProviderService, loggingContextService, authorisationChainResponsibilityService, scaApproachResolver,
+              uuidGeneratorService);
         this.rawToXs2aPaymentMapper = rawToXs2aPaymentMapper;
     }
 

@@ -25,7 +25,7 @@ import com.fasterxml.jackson.annotation.JsonValue;
  * ExternalPurpose1Code from ISO 20022.  Values from ISO 20022 External Code List ExternalCodeSets_1Q2018 June 2018.
  */
 public enum PurposeCode {
-    BKDF("BKDF"),
+  BKDF("BKDF"),
     BKFE("BKFE"),
     BKFM("BKFM"),
     BKIP("BKIP"),
@@ -312,15 +312,15 @@ public enum PurposeCode {
     UBIL("UBIL"),
     WTER("WTER");
 
-    private String value;
+  private String value;
 
-    PurposeCode(String value) {
-        this.value = value;
-    }
+  PurposeCode(String value) {
+    this.value = value;
+  }
 
-    @Override
-    @JsonValue
-    public String toString() {
+  @Override
+  @JsonValue
+  public String toString() {
     return String.valueOf(value);
   }
 

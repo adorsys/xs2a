@@ -18,13 +18,13 @@
 
 package de.adorsys.psd2.stub.impl.service;
 
-import de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiAuthenticationObject;
 import de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiAuthorizationCodeResult;
 import de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiAvailableScaMethodsResponse;
+import de.adorsys.psd2.xs2a.spi.domain.common.SpiAuthenticationObject;
+import de.adorsys.psd2.xs2a.spi.domain.common.SpiChallengeData;
 import de.adorsys.psd2.xs2a.spi.domain.consent.SpiConsentConfirmationCodeValidationResponse;
 import de.adorsys.psd2.xs2a.spi.domain.consent.SpiConsentStatus;
 import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponse;
-import de.adorsys.psd2.xs2a.spi.domain.sca.SpiChallengeData;
 import de.adorsys.psd2.xs2a.spi.domain.sca.SpiScaStatus;
 import org.springframework.stereotype.Service;
 
@@ -66,12 +66,8 @@ public class AuthorisationServiceMock {
     }
 
     public SpiResponse<SpiConsentConfirmationCodeValidationResponse> notifyConfirmationCodeValidation(boolean confirmationCodeValidationResult) {
-        SpiScaStatus scaStatus = confirmationCodeValidationResult
-                                     ? SpiScaStatus.FINALISED
-                                     : SpiScaStatus.FAILED;
-        SpiConsentStatus consentStatus = confirmationCodeValidationResult
-                                             ? SpiConsentStatus.VALID
-                                             : SpiConsentStatus.REJECTED;
+        SpiScaStatus scaStatus = confirmationCodeValidationResult ? SpiScaStatus.FINALISED : SpiScaStatus.FAILED;
+        SpiConsentStatus consentStatus = confirmationCodeValidationResult ? SpiConsentStatus.VALID : SpiConsentStatus.REJECTED;
 
         SpiConsentConfirmationCodeValidationResponse response = new SpiConsentConfirmationCodeValidationResponse(scaStatus, consentStatus);
 

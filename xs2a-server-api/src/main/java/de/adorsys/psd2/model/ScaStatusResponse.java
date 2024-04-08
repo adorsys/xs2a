@@ -20,11 +20,11 @@ package de.adorsys.psd2.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import org.springframework.validation.annotation.Validated;
 
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -35,20 +35,23 @@ import java.util.Objects;
  */
 @Schema(description = "Body of the JSON response with SCA Status.")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-10-26T13:16:54.081225+03:00[Europe/Kiev]")
+@jakarta.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-10-25T13:15:56.196839+03:00[Europe/Kiev]")
 
 
-public class ScaStatusResponse {
-    @JsonProperty("scaStatus")
-    private ScaStatus scaStatus = null;
+public class ScaStatusResponse   {
+  @JsonProperty("scaStatus")
+  private ScaStatus scaStatus = null;
 
-    @JsonProperty("psuMessage")
-    private String psuMessage = null;
+  @JsonProperty("psuMessage")
+  private String psuMessage = null;
 
-    @JsonProperty("trustedBeneficiaryFlag")
-    private Boolean trustedBeneficiaryFlag = null;
+  @JsonProperty("psuName")
+  private String psuName = null;
 
-    @JsonProperty("_links")
+  @JsonProperty("trustedBeneficiaryFlag")
+  private Boolean trustedBeneficiaryFlag = null;
+
+  @JsonProperty("_links")
   private Map _links = null;
 
   @JsonProperty("tppMessages")
@@ -60,19 +63,18 @@ public class ScaStatusResponse {
     return this;
   }
 
-    /**
-     * Get scaStatus
-     *
-     * @return scaStatus
-     **/
-    @Schema(required = true, description = "")
-    @JsonProperty("scaStatus")
+  /**
+   * Get scaStatus
+   * @return scaStatus
+   **/
+  @Schema(required = true, description = "")
+  @JsonProperty("scaStatus")
     @NotNull
 
-    @Valid
-    public ScaStatus getScaStatus() {
-        return scaStatus;
-    }
+  @Valid
+  public ScaStatus getScaStatus() {
+    return scaStatus;
+  }
 
   public void setScaStatus(ScaStatus scaStatus) {
     this.scaStatus = scaStatus;
@@ -83,38 +85,55 @@ public class ScaStatusResponse {
     return this;
   }
 
-    /**
-     * Text to be displayed to the PSU.
-     *
-     * @return psuMessage
-     **/
-    @Schema(description = "Text to be displayed to the PSU.")
-    @JsonProperty("psuMessage")
+  /**
+   * Text to be displayed to the PSU.
+   * @return psuMessage
+   **/
+  @Schema(description = "Text to be displayed to the PSU.")
+  @JsonProperty("psuMessage")
 
-    @Size(max = 500)
-    public String getPsuMessage() {
-        return psuMessage;
+@Size(max=500)   public String getPsuMessage() {
+    return psuMessage;
   }
 
   public void setPsuMessage(String psuMessage) {
     this.psuMessage = psuMessage;
   }
 
-  public ScaStatusResponse trustedBeneficiaryFlag(Boolean trustedBeneficiaryFlag) {
-    this.trustedBeneficiaryFlag = trustedBeneficiaryFlag;
-      return this;
+  public ScaStatusResponse psuName(String psuName) {
+    this.psuName = psuName;
+    return this;
   }
 
-    /**
-     * Additional Service: Trusted Benificiaries Within this data element, the ASPSP might optionally communicate towards the TPP whether the creditor was part of the related trusted beneficiary list.  This attribute is only contained in case of a final scaStatus.
-     *
-     * @return trustedBeneficiaryFlag
-     **/
-    @Schema(example = "false", description = "Additional Service: Trusted Benificiaries Within this data element, the ASPSP might optionally communicate towards the TPP whether the creditor was part of the related trusted beneficiary list.  This attribute is only contained in case of a final scaStatus. ")
-    @JsonProperty("trustedBeneficiaryFlag")
+  /**
+   * Name of the PSU. In case of a corporate account, this might be the person acting on behalf of the corporate.
+   * @return psuName
+   **/
+  @Schema(description = "Name of the PSU. In case of a corporate account, this might be the person acting on behalf of the corporate. ")
+  @JsonProperty("psuName")
 
-    public Boolean isTrustedBeneficiaryFlag() {
-        return trustedBeneficiaryFlag;
+@Size(max=140)   public String getPsuName() {
+    return psuName;
+  }
+
+  public void setPsuName(String psuName) {
+    this.psuName = psuName;
+  }
+
+  public ScaStatusResponse trustedBeneficiaryFlag(Boolean trustedBeneficiaryFlag) {
+    this.trustedBeneficiaryFlag = trustedBeneficiaryFlag;
+    return this;
+  }
+
+  /**
+   * Additional Service: Trusted Beneficiaries Within this data element, the ASPSP might optionally communicate towards the TPP whether the creditor was part of the related trusted beneficiary list.  This attribute is only contained in case of a final scaStatus.
+   * @return trustedBeneficiaryFlag
+   **/
+  @Schema(example = "false", description = "Additional Service: Trusted Beneficiaries Within this data element, the ASPSP might optionally communicate towards the TPP whether the creditor was part of the related trusted beneficiary list.  This attribute is only contained in case of a final scaStatus. ")
+  @JsonProperty("trustedBeneficiaryFlag")
+
+  public Boolean isTrustedBeneficiaryFlag() {
+    return trustedBeneficiaryFlag;
   }
 
   public void setTrustedBeneficiaryFlag(Boolean trustedBeneficiaryFlag) {
@@ -123,23 +142,22 @@ public class ScaStatusResponse {
 
   public ScaStatusResponse _links(Map _links) {
     this._links = _links;
-      return this;
+    return this;
   }
 
-    /**
-     * Get _links
-     *
-     * @return _links
-     **/
-    @Schema(description = "")
-    @JsonProperty("_links")
+  /**
+   * Get _links
+   * @return _links
+   **/
+  @Schema(description = "")
+  @JsonProperty("_links")
 
-    @Valid
-    public Map getLinks() {
-        return _links;
-    }
+  @Valid
+  public Map getLinks() {
+    return _links;
+  }
 
-    public void setLinks(Map _links) {
+  public void setLinks(Map _links) {
     this._links = _links;
   }
 
@@ -153,18 +171,17 @@ public class ScaStatusResponse {
       this.tppMessages = new ArrayList<>();
     }
     this.tppMessages.add(tppMessagesItem);
-      return this;
+    return this;
   }
 
-    /**
-     * Messages to the TPP on operational issues.
-     *
-     * @return tppMessages
-     **/
-    @Schema(description = "Messages to the TPP on operational issues.")
-    @JsonProperty("tppMessages")
+  /**
+   * Messages to the TPP on operational issues.
+   * @return tppMessages
+   **/
+  @Schema(description = "Messages to the TPP on operational issues.")
+  @JsonProperty("tppMessages")
     @Valid
-    public List<TppMessageGeneric> getTppMessages() {
+  public List<TppMessageGeneric> getTppMessages() {
     return tppMessages;
   }
 
@@ -184,6 +201,7 @@ public class ScaStatusResponse {
     ScaStatusResponse scaStatusResponse = (ScaStatusResponse) o;
     return Objects.equals(this.scaStatus, scaStatusResponse.scaStatus) &&
         Objects.equals(this.psuMessage, scaStatusResponse.psuMessage) &&
+        Objects.equals(this.psuName, scaStatusResponse.psuName) &&
         Objects.equals(this.trustedBeneficiaryFlag, scaStatusResponse.trustedBeneficiaryFlag) &&
         Objects.equals(this._links, scaStatusResponse._links) &&
         Objects.equals(this.tppMessages, scaStatusResponse.tppMessages);
@@ -191,7 +209,7 @@ public class ScaStatusResponse {
 
   @Override
   public int hashCode() {
-    return Objects.hash(scaStatus, psuMessage, trustedBeneficiaryFlag, _links, tppMessages);
+    return Objects.hash(scaStatus, psuMessage, psuName, trustedBeneficiaryFlag, _links, tppMessages);
   }
 
   @Override
@@ -201,6 +219,7 @@ public class ScaStatusResponse {
 
     sb.append("    scaStatus: ").append(toIndentedString(scaStatus)).append("\n");
     sb.append("    psuMessage: ").append(toIndentedString(psuMessage)).append("\n");
+    sb.append("    psuName: ").append(toIndentedString(psuName)).append("\n");
     sb.append("    trustedBeneficiaryFlag: ").append(toIndentedString(trustedBeneficiaryFlag)).append("\n");
     sb.append("    _links: ").append(toIndentedString(_links)).append("\n");
     sb.append("    tppMessages: ").append(toIndentedString(tppMessages)).append("\n");

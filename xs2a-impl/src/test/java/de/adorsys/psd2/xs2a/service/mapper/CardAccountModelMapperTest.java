@@ -24,7 +24,11 @@ import de.adorsys.psd2.model.*;
 import de.adorsys.psd2.xs2a.domain.HrefType;
 import de.adorsys.psd2.xs2a.domain.Xs2aBalance;
 import de.adorsys.psd2.xs2a.domain.account.AccountStatus;
-import de.adorsys.psd2.xs2a.domain.account.*;
+import de.adorsys.psd2.xs2a.domain.account.Xs2aBalancesReport;
+import de.adorsys.psd2.xs2a.domain.account.Xs2aCardAccountDetails;
+import de.adorsys.psd2.xs2a.domain.account.Xs2aCardAccountDetailsHolder;
+import de.adorsys.psd2.xs2a.domain.account.Xs2aCardAccountListHolder;
+import de.adorsys.psd2.xs2a.domain.account.Xs2aCardTransactionsReport;
 import de.adorsys.psd2.xs2a.service.profile.AspspProfileServiceWrapper;
 import de.adorsys.psd2.xs2a.web.mapper.HrefLinkMapper;
 import de.adorsys.psd2.xs2a.web.mapper.PurposeCodeMapperImpl;
@@ -51,7 +55,9 @@ import java.util.Map;
 import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(SpringExtension.class)
@@ -94,17 +100,17 @@ class CardAccountModelMapperTest {
         Xs2aCardAccountDetailsHolder xs2aAccountDetailsHolder = jsonReader.getObjectFromFile("json/service/mapper/card-account-model-mapper/CardAccountModelMapper-xs2a-card-account-details-holder.json", Xs2aCardAccountDetailsHolder.class);
 
         // When
-        InlineResponse2002 actualInlineResponse2002 = mapper.mapToInlineResponse2002(xs2aAccountDetailsHolder);
-        actualInlineResponse2002.getCardAccount().getBalances().get(0).setLastChangeDateTime(OFFSET_DATE_TIME);
+        InlineResponse2002 inlineResponse2002 = mapper.mapToInlineResponse2002(xs2aAccountDetailsHolder);
+        inlineResponse2002.getCardAccount().getBalances().get(0).setLastChangeDateTime(OFFSET_DATE_TIME);
 
         CardAccountDetails expectedAccountDetails = jsonReader.getObjectFromFile("json/service/mapper/card-account-model-mapper/CardAccountModelMapper-card-account-details-expected.json", CardAccountDetails.class);
         expectedAccountDetails.getBalances().get(0).setLastChangeDateTime(OFFSET_DATE_TIME);
 
         // Then
-        assertLinks(expectedAccountDetails.getLinks(), actualInlineResponse2002.getCardAccount().getLinks());
+        assertLinks(expectedAccountDetails.getLinks(), inlineResponse2002.getCardAccount().getLinks());
 
-        expectedAccountDetails.setLinks(actualInlineResponse2002.getCardAccount().getLinks());
-        assertThat(actualInlineResponse2002.getCardAccount()).isEqualTo(expectedAccountDetails);
+        expectedAccountDetails.setLinks(inlineResponse2002.getCardAccount().getLinks());
+        assertThat(inlineResponse2002.getCardAccount()).isEqualTo(expectedAccountDetails);
     }
 
     @Test

@@ -6,9 +6,23 @@ For Versioning policy see xref:version_policy.adoc[Versioning, Release and Suppo
 
 For upcoming versions see our xref:roadmap.adoc[Roadmap].
 
+=== Mainline 17.x (Development. Planned to be released after 24.08.2024 as 18.0 Stable version)
+
+* xref:release_notes/Release_notes_17.3.adoc[Version 17.3 (release date: 19.02.2024)]
+* xref:release_notes/Release_notes_17.2.adoc[Version 17.2 (release date: 02.01.2024)]
+* xref:release_notes/Release_notes_17.1.adoc[Version 17.1 (release date: 08.11.2023)]
+* xref:release_notes/Release_notes_17.0.adoc[Version 17.0 (release date: 12.10.2023)]
+
+=== Mainline 16.x (Stable. Supported minimum till 24.08.2024)
+
+* xref:release_notes/Release_notes_16.3.adoc[Version 16.3 (release date: 14.02.2024)]
+* xref:release_notes/Release_notes_16.2.adoc[Version 16.2 (release date: 02.01.2024)]
+* xref:release_notes/Release_notes_16.1.adoc[Version 16.1 (release date: 08.11.2023)]
+* xref:release_notes/Release_notes_16.0.adoc[Version 16.0 (release date: 12.10.2023)]
+
 === Mainline 15.x (Development. Planned to be released after 31.12.2022 as 16.0 Stable version)
 
-* xref:release_notes/Release_notes_15.10.adoc[Version 15.10 (release date: xx.xx.2023)]
+* xref:release_notes/Release_notes_15.9.1.adoc[Version 15.9.1 (release date: 04.08.2023)]
 * xref:release_notes/Release_notes_15.9.adoc[Version 15.9 (release date: 10.07.2023)]
 * xref:release_notes/Release_notes_15.8.adoc[Version 15.8 (release date: 15.05.2023)]
 * xref:release_notes/Release_notes_15.7.adoc[Version 15.7 (release date: 13.04.2023)]
@@ -22,7 +36,6 @@ For upcoming versions see our xref:roadmap.adoc[Roadmap].
 
 === Mainline 14.x (Stable. Supported minimum till 31.12.2022)
 
-* xref:release_notes/Release_notes_14.10.adoc[Version 14.10 (release date: xx.xx.2023)]
 * xref:release_notes/Release_notes_14.9.adoc[Version 14.9 (release date: 10.07.2023)]
 * xref:release_notes/Release_notes_14.8.adoc[Version 14.8 (release date: 15.05.2023)]
 * xref:release_notes/Release_notes_14.7.adoc[Version 14.7 (release date: 13.04.2023)]

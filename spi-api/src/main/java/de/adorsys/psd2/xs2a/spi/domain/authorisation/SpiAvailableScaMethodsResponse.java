@@ -18,6 +18,7 @@
 
 package de.adorsys.psd2.xs2a.spi.domain.authorisation;
 
+import de.adorsys.psd2.xs2a.spi.domain.common.SpiAuthenticationObject;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Value;

@@ -52,7 +52,7 @@ public class AisConsentSpiMockImpl implements AisConsentSpi {
     @Override
     public SpiResponse<SpiStartAuthorisationResponse> startAuthorisation(@NotNull SpiContextData contextData, @NotNull SpiScaApproach scaApproach, @NotNull SpiScaStatus scaStatus, @NotNull String authorisationId, SpiAccountConsent businessObject, @NotNull SpiAspspConsentDataProvider aspspConsentDataProvider) {
         return SpiResponse.<SpiStartAuthorisationResponse>builder()
-                   .payload(new SpiStartAuthorisationResponse(scaApproach, scaStatus, SpiMockData.PSU_MESSAGE_START_AUTHORISATION, SpiMockData.TPP_MESSAGES_START_AUTHORISATION))
+                   .payload(new SpiStartAuthorisationResponse(SpiScaApproach.valueOf(scaApproach.name()), SpiScaStatus.valueOf(scaStatus.name()), SpiMockData.PSU_MESSAGE_START_AUTHORISATION, SpiMockData.TPP_MESSAGES_START_AUTHORISATION))
                    .build();
     }
 
@@ -157,7 +157,7 @@ public class AisConsentSpiMockImpl implements AisConsentSpi {
                                                           @NotNull SpiAccountConsent businessObject,
                                                           @NotNull SpiAspspConsentDataProvider aspspConsentDataProvider) {
         return SpiResponse.<SpiScaStatusResponse>builder()
-                   .payload(new SpiScaStatusResponse(scaStatus, true, PSU_MESSAGE,
+                   .payload(new SpiScaStatusResponse(SpiScaStatus.valueOf(scaStatus.name()), true, PSU_MESSAGE,
                                                      SpiMockData.SPI_LINKS,
                                                      SpiMockData.TPP_MESSAGES))
                    .build();

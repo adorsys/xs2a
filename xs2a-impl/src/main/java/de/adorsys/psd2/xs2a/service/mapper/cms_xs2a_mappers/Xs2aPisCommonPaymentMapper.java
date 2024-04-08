@@ -40,7 +40,7 @@ public class Xs2aPisCommonPaymentMapper {
 
     public Optional<Xs2aCreatePisAuthorisationResponse> mapToXsa2CreatePisAuthorisationResponse(CreateAuthorisationResponse response, PaymentType paymentType) {
         if (response != null) {
-            return Optional.of(new Xs2aCreatePisAuthorisationResponse(response.getAuthorizationId(), response.getScaStatus(), paymentType, response.getInternalRequestId(), response.getPsuIdData()));
+            return Optional.of(new Xs2aCreatePisAuthorisationResponse(response.getAuthorizationId(), response.getScaStatus(), response.getScaApproach(), paymentType, response.getInternalRequestId(), response.getPsuIdData()));
         }
 
         return Optional.empty();
@@ -48,7 +48,7 @@ public class Xs2aPisCommonPaymentMapper {
 
     public Optional<Xs2aCreatePisCancellationAuthorisationResponse> mapToXs2aCreatePisCancellationAuthorisationResponse(CreateAuthorisationResponse response, PaymentType paymentType) {
         if (response != null) {
-            return Optional.of(new Xs2aCreatePisCancellationAuthorisationResponse(response.getAuthorizationId(), response.getScaStatus(), paymentType, response.getInternalRequestId()));
+            return Optional.of(new Xs2aCreatePisCancellationAuthorisationResponse(response.getAuthorizationId(), response.getScaStatus(), response.getScaApproach(), paymentType, response.getInternalRequestId()));
         }
 
         return Optional.empty();

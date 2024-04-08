@@ -145,7 +145,7 @@ class SpiToXs2aBulkPaymentMapperTest {
                                                              .psuHttpMethod("")
                                                              .psuDeviceId(UUID.randomUUID())
                                                              .build()));
-        payment.setPurposeCode(SpiPisPurposeCode.CDQC);
+        payment.setPurposeCode(SpiPurposeCode.CDQC);
         payment.setStatusChangeTimestamp(OFFSET_DATE_TIME);
         payment.setUltimateCreditor("ultimateCreditor");
         payment.setUltimateDebtor("ultimateDebtor");

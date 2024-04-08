@@ -22,6 +22,7 @@ import de.adorsys.psd2.validator.certificate.util.URLDecodingUtil;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class URLDecodingUtilTest {
     public static final String URL_ENCODED_EXAMPLE = "http://example.com/query?q=random%20word%20500%20bank%20%24";
@@ -65,5 +66,11 @@ class URLDecodingUtilTest {
     void testStringDecode() {
         byte[] decoded = URLDecodingUtil.decode(URL_ENCODED_EXAMPLE.getBytes());
         assertArrayEquals(URL_DECODED_EXAMPLE.getBytes(), decoded);
+    }
+
+    @Test
+    void testStringDecode_fail() {
+        String actual = new String(URLDecodingUtil.decode(("#%$#%" + URL_ENCODED_EXAMPLE).getBytes()));
+        assertTrue(actual.isEmpty());
     }
 }

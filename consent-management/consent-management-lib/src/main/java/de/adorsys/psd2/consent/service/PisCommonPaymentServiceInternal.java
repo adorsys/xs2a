@@ -79,7 +79,7 @@ public class PisCommonPaymentServiceInternal implements PisCommonPaymentService 
         PisCommonPaymentData saved = pisCommonPaymentDataRepository.save(commonPaymentData);
 
         if (saved.getId() == null) {
-            log.info("Payment ID: [{}]. Pis common payment cannot be created, because when saving to DB got null PisCommonPaymentData ID",
+            log.info("Payment ID: [{}]. Pis common payment cannot be created, PisCommonPaymentData ID is null before saving to DB",
                      request.getPaymentId());
             return CmsResponse.<CreatePisCommonPaymentResponse>builder()
                        .error(TECHNICAL_ERROR)
@@ -110,7 +110,7 @@ public class PisCommonPaymentServiceInternal implements PisCommonPaymentService 
                        .build();
         }
 
-        log.info("Payment ID: [{}]. Get common payment status by ID failed, because payment was not found by the ID",
+        log.info("Payment ID: [{}]. Get common payment status by ID failed, payment was not found by the ID",
                  paymentId);
         return CmsResponse.<TransactionStatus>builder()
                    .error(LOGICAL_ERROR)
@@ -144,7 +144,7 @@ public class PisCommonPaymentServiceInternal implements PisCommonPaymentService 
             }
         }
 
-        log.info("Payment ID: [{}]. Get common payment by ID failed, because payment was not found by the ID",
+        log.info("Payment ID: [{}]. Get common payment by ID failed, payment was not found by the ID",
                  paymentId);
         return CmsResponse.<PisCommonPaymentResponse>builder()
                    .error(LOGICAL_ERROR)
@@ -188,7 +188,7 @@ public class PisCommonPaymentServiceInternal implements PisCommonPaymentService 
                        .build();
         }
 
-        log.info("Payment ID: [{}]. Update common payment by ID failed, because payment was not found by the ID",
+        log.info("Payment ID: [{}]. Update common payment by ID failed, payment was not found by the ID",
                  paymentId);
         return CmsResponse.<Boolean>builder()
                    .payload(false)
@@ -206,7 +206,7 @@ public class PisCommonPaymentServiceInternal implements PisCommonPaymentService 
     public CmsResponse<Boolean> updateMultilevelSca(String paymentId, boolean multilevelScaRequired) {
         Optional<PisCommonPaymentData> pisCommonPaymentDataOptional = pisCommonPaymentDataRepository.findByPaymentId(paymentId);
         if (pisCommonPaymentDataOptional.isEmpty()) {
-            log.info("Payment ID: [{}]. Update multilevel SCA required status failed, because payment is not found",
+            log.info("Payment ID: [{}]. Update multilevel SCA required status failed, payment is not found",
                      paymentId);
             return CmsResponse.<Boolean>builder()
                        .payload(false)
@@ -237,7 +237,7 @@ public class PisCommonPaymentServiceInternal implements PisCommonPaymentService 
                        .build();
         }
 
-        log.info("PaymentId ID: [{}]. Get PSU data list by payment ID failed, because payment is not found", paymentId);
+        log.info("PaymentId ID: [{}]. Get PSU data list by payment ID failed, payment is not found", paymentId);
         return CmsResponse.<List<PsuIdData>>builder()
                    .error(LOGICAL_ERROR)
                    .build();

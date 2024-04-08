@@ -29,13 +29,13 @@ import lombok.Data;
 @Schema(description = "Update authorisation request", name = "UpdateAuthorisationRequest")
 public class UpdateAuthorisationRequest {
 
-    @Schema(description = "CMS authorisation type", required = true)
+    @Schema(description = "CMS authorisation type", requiredMode = Schema.RequiredMode.AUTO)
     private AuthorisationType authorisationType;
 
-    @Schema(description = "Corresponding PSU", required = true)
+    @Schema(description = "Corresponding PSU", requiredMode = Schema.RequiredMode.AUTO)
     private PsuIdData psuData;
 
-    @Schema(description = "The following code values are permitted 'received', 'psuIdentified', 'psuAuthenticated', 'scaMethodSelected', 'started', 'finalised' 'failed' 'exempted'.", required = true, example = "STARTED")
+    @Schema(description = "The following code values are permitted: 'received', 'psuIdentified', 'psuAuthenticated', 'scaMethodSelected', 'started', 'finalised' 'failed' 'exempted'.", requiredMode = Schema.RequiredMode.AUTO, example = "STARTED")
     private ScaStatus scaStatus;
 
     @Schema(description = "An identification provided by the ASPSP for the later identification of the authentication method selection.")

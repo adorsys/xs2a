@@ -108,9 +108,9 @@ class PisAuthorisationConfirmationServiceTest {
     @Mock
     private SpiToXs2aCurrencyConversionInfoMapper spiToXs2aCurrencyConversionInfoMapper;
     @Mock
-    private SpiToXs2aTransactionMapper transactionMapper;
+    private SpiToXs2aTransactionStatusMapper spiToXs2aTransactionStatusMapper;
     @Mock
-    private SpiToXs2aAuthorizationMapper authorizationMapper;
+    private SpiToXs2aScaStatusMapper spiToXs2aScaStatusMapper;
 
     @Test
     void processAuthorisationConfirmation_success_checkOnSpi() {
@@ -154,8 +154,10 @@ class PisAuthorisationConfirmationServiceTest {
             .thenReturn(SpiResponse.<SpiCurrencyConversionInfo>builder()
                             .payload(spiCurrencyConversionInfo)
                             .build());
-        when(transactionMapper.mapToTransactionStatus(spiTransactionStatus)).thenReturn(transactionStatus);
-        when(authorizationMapper.mapToScaStatus(SpiScaStatus.FINALISED)).thenReturn(ScaStatus.FINALISED);
+        when(spiToXs2aScaStatusMapper.mapToXs2aScaStatus(SpiScaStatus.FINALISED))
+            .thenReturn(ScaStatus.FINALISED);
+        when(spiToXs2aTransactionStatusMapper.mapToXs2aTransactionStatus(SpiTransactionStatus.ACSP))
+            .thenReturn(TransactionStatus.ACSP);
 
         // when
         Xs2aUpdatePisCommonPaymentPsuDataResponse actualResult = pisAuthorisationConfirmationService.processAuthorisationConfirmation(request);
@@ -199,8 +201,10 @@ class PisAuthorisationConfirmationServiceTest {
             .thenReturn(SpiResponse.<SpiCurrencyConversionInfo>builder()
                             .payload(spiCurrencyConversionInfo)
                             .build());
-        when(transactionMapper.mapToTransactionStatus(SpiTransactionStatus.ACSP)).thenReturn(TransactionStatus.ACSP);
-        when(authorizationMapper.mapToScaStatus(SpiScaStatus.FINALISED)).thenReturn(ScaStatus.FINALISED);
+        when(spiToXs2aScaStatusMapper.mapToXs2aScaStatus(SpiScaStatus.FINALISED))
+            .thenReturn(ScaStatus.FINALISED);
+        when(spiToXs2aTransactionStatusMapper.mapToXs2aTransactionStatus(SpiTransactionStatus.ACSP))
+            .thenReturn(TransactionStatus.ACSP);
 
         // when
         Xs2aUpdatePisCommonPaymentPsuDataResponse actualResult = pisAuthorisationConfirmationService.processAuthorisationConfirmation(request);
@@ -299,7 +303,8 @@ class PisAuthorisationConfirmationServiceTest {
             .thenReturn(SpiResponse.<SpiCurrencyConversionInfo>builder()
                             .payload(spiCurrencyConversionInfo)
                             .build());
-        when(transactionMapper.mapToTransactionStatus(SpiTransactionStatus.RJCT)).thenReturn(TransactionStatus.RJCT);
+        when(spiToXs2aTransactionStatusMapper.mapToXs2aTransactionStatus(SpiTransactionStatus.RJCT))
+            .thenReturn(TransactionStatus.RJCT);
 
         // when
         Xs2aUpdatePisCommonPaymentPsuDataResponse actualResult = pisAuthorisationConfirmationService.processAuthorisationConfirmation(request);

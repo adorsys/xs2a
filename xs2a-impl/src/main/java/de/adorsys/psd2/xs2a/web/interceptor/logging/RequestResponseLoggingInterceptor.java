@@ -20,17 +20,16 @@ package de.adorsys.psd2.xs2a.web.interceptor.logging;
 
 import de.adorsys.psd2.xs2a.component.logger.request.RequestResponseLogMessage;
 import de.adorsys.psd2.xs2a.component.logger.request.RequestResponseLogger;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import org.springframework.web.servlet.HandlerInterceptor;
 
 /**
  * Interceptor for logging request and response information into the request-log
  */
 @RequiredArgsConstructor
-public class RequestResponseLoggingInterceptor extends HandlerInterceptorAdapter {
+public class RequestResponseLoggingInterceptor implements HandlerInterceptor {
     private final RequestResponseLogger requestResponseLogger;
 
     @Override

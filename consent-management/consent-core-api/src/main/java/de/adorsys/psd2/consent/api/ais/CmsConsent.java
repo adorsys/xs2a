@@ -29,6 +29,7 @@ import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import lombok.Data;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.Map;
@@ -49,7 +50,7 @@ public class CmsConsent {
     private List<PsuIdData> psuIdDataList;
     private boolean recurringIndicator;
     private boolean multilevelScaRequired;
-    private LocalDate lastActionDate;
+    private LocalDateTime lastActionDateTime;
     private LocalDate expireDate;
     private OffsetDateTime creationTimestamp;
     private OffsetDateTime statusChangeTimestamp;

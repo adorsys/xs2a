@@ -22,7 +22,7 @@ import de.adorsys.psd2.xs2a.core.tpp.TppStatus;
 import lombok.*;
 import org.jetbrains.annotations.Nullable;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 import java.time.Duration;
 import java.time.OffsetDateTime;
 import java.util.Optional;
@@ -51,8 +51,18 @@ public class TppStopListEntity extends InstanceDependableEntity {
     @Column(name = "expiration_timestamp")
     private OffsetDateTime blockingExpirationTimestamp;
 
+    @Column(name = "updated_by")
+    private String updatedBy;
+
+    @Column(name = "changed_at")
+    private OffsetDateTime changedAt;
+
+    @Column(name = "reason")
+    private String reason;
+
     public void block(@Nullable Duration lockPeriod) {
         this.status = TppStatus.BLOCKED;
+        this.changedAt = OffsetDateTime.now();
         this.blockingExpirationTimestamp = lockPeriod != null
                                                ? OffsetDateTime.now().plus(lockPeriod)
                                                : null;
@@ -60,6 +70,7 @@ public class TppStopListEntity extends InstanceDependableEntity {
 
     public void unblock() {
         this.status = TppStatus.ENABLED;
+        this.changedAt = OffsetDateTime.now();
         this.blockingExpirationTimestamp = null;
     }
 

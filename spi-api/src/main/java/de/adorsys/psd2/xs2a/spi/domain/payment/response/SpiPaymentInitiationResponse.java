@@ -18,11 +18,11 @@
 
 package de.adorsys.psd2.xs2a.spi.domain.payment.response;
 
-import de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiAuthenticationObject;
 import de.adorsys.psd2.xs2a.spi.domain.common.SpiAmount;
+import de.adorsys.psd2.xs2a.spi.domain.common.SpiAuthenticationObject;
+import de.adorsys.psd2.xs2a.spi.domain.common.SpiChallengeData;
 import de.adorsys.psd2.xs2a.spi.domain.payment.SpiTransactionStatus;
 import de.adorsys.psd2.xs2a.spi.domain.response.SpiTppMessageInformation;
-import de.adorsys.psd2.xs2a.spi.domain.sca.SpiChallengeData;
 import lombok.Data;
 
 import java.util.List;

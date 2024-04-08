@@ -20,10 +20,10 @@ package de.adorsys.psd2.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 import org.springframework.validation.annotation.Validated;
 
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
 import java.util.Objects;
 
 /**
@@ -31,31 +31,30 @@ import java.util.Objects;
  */
 @Schema(description = "Content of the body of a Update PSU authentication request  Password subfield is used. ")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-10-26T13:16:54.081225+03:00[Europe/Kiev]")
+@jakarta.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-10-25T13:15:56.196839+03:00[Europe/Kiev]")
 
 
-public class UpdatePsuAuthentication {
-    @JsonProperty("psuData")
-    private PsuData psuData = null;
+public class UpdatePsuAuthentication   {
+  @JsonProperty("psuData")
+  private PsuData psuData = null;
 
-    public UpdatePsuAuthentication psuData(PsuData psuData) {
-        this.psuData = psuData;
-        return this;
-    }
+  public UpdatePsuAuthentication psuData(PsuData psuData) {
+    this.psuData = psuData;
+    return this;
+  }
 
-    /**
-     * Get psuData
-     *
-     * @return psuData
-     **/
-    @Schema(required = true, description = "")
-    @JsonProperty("psuData")
+  /**
+   * Get psuData
+   * @return psuData
+   **/
+  @Schema(required = true, description = "")
+  @JsonProperty("psuData")
     @NotNull
 
-    @Valid
-    public PsuData getPsuData() {
-        return psuData;
-    }
+  @Valid
+  public PsuData getPsuData() {
+    return psuData;
+  }
 
   public void setPsuData(PsuData psuData) {
     this.psuData = psuData;

@@ -6,7 +6,4 @@
 
 == Changes in SPI level: authorisation methods
 
-From now on, `AuthorisationSpi` class has changed its method signatures. Models `ScaStatus` and `ScaApproach` are
-replaced with `SpiScaStatus` and `SpiScaApproach` correspondingly. Please pay attention, that in XS2A version 14.8
-`spi-api` module will have no dependencies on `xs2a-core` and `xs2a-core-payments` (all models fields from these
-modules will be changed with corresponding SPI models).
+From now on, `AuthorisationSpi` class has changed its method signatures. Models `ScaStatus` and `ScaApproach` are replaced with `SpiScaStatus` and `SpiScaApproach` correspondingly. Please pay attention, that in XS2A version 14.8 `spi-api` module will have no dependencies on `xs2a-core` and `xs2a-core-payments` (all models fields from these modules will be changed with corresponding SPI models).

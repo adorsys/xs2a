@@ -53,7 +53,7 @@ interface AuthorisationSpi<T> {
                                                                           @NotNull SpiScaStatus scaStatus, @NotNull String authorisationId,
                                                                           T businessObject, @NotNull SpiAspspConsentDataProvider aspspConsentDataProvider) {
         return SpiResponse.<SpiStartAuthorisationResponse>builder()
-                   .payload(new SpiStartAuthorisationResponse(scaApproach, scaStatus, null, null))
+                   .payload(new SpiStartAuthorisationResponse(SpiScaApproach.valueOf(scaApproach.name()), SpiScaStatus.valueOf(scaStatus.name()), null, null))
                    .build();
     }
 

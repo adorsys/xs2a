@@ -23,18 +23,18 @@ import de.adorsys.psd2.xs2a.component.logger.TppLogger;
 import de.adorsys.psd2.xs2a.service.RedirectIdService;
 import de.adorsys.psd2.xs2a.service.TppService;
 import de.adorsys.psd2.xs2a.web.PathParameterExtractor;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
-import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
+import org.springframework.web.servlet.HandlerInterceptor;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.util.Map;
 import java.util.Optional;
 
 @RequiredArgsConstructor
 @Component
-public class ConsentLoggingInterceptor extends HandlerInterceptorAdapter {
+public class ConsentLoggingInterceptor implements HandlerInterceptor {
     private static final String NOT_EXIST_IN_URI = "Not exist in URI";
     private final TppService tppService;
     private final RedirectIdService redirectIdService;

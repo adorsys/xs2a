@@ -24,7 +24,7 @@
 	<parent>
         <artifactId>psd2-validator</artifactId>
         <groupId>de.adorsys.psd2</groupId>
-        <version>14.10-SNAPSHOT</version>
+        <version>17.3</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
@@ -63,7 +63,7 @@
 		<dependency>
 		    <groupId>commons-io</groupId>
 		    <artifactId>commons-io</artifactId>
-		    <version>${commons-io.version}</version>
+		    <version>${commons.io.version}</version>
 		</dependency>
 
 		<dependency>

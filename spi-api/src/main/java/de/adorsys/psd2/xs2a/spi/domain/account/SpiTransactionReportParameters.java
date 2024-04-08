@@ -34,6 +34,8 @@ public class SpiTransactionReportParameters {
     @NotNull SpiBookingStatus bookingStatus;
     private String entryReferenceFrom;
     private Boolean deltaList;
-    @Nullable private Integer pageIndex;
-    @Nullable private Integer itemsPerPage;
+    @Nullable
+    private Integer pageIndex;
+    @Nullable
+    private Integer itemsPerPage;
 }

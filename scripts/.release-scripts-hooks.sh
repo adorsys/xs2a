@@ -1,5 +1,4 @@
 #!/usr/bin/env bash
-
 # ********************** INFO *********************
 # This file is used to override default settings.
 # Therefore only the functions that deviate from
@@ -33,9 +32,9 @@ function get_remote_repo_name {
 # Hook method to define the develop branch name
 # Returns the develop branch name as text
 function get_develop_branch_name {
-  if [[ "$1" =~ ^14\..* ]]
+  if [[ "$1" =~ ^16\..* ]]
   then
-    echo "support-14.x"
+    echo "support-16.x"
   else
     echo "develop"
   fi
@@ -44,9 +43,9 @@ function get_develop_branch_name {
 # Hook method to define the master branch name
 # Returns the master branch name as text
 function get_master_branch_name {
-  if [[ "$1"  =~ ^14\..* ]]
+  if [[ "$1"  =~ ^16\..* ]]
   then
-    echo "master-14.x"
+    echo "master-16.x"
   else
     echo "master"
   fi

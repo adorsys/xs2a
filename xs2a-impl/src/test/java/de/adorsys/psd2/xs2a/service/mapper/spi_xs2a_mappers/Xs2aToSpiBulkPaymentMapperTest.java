@@ -75,7 +75,7 @@ class Xs2aToSpiBulkPaymentMapperTest {
     @Mock
     private Xs2aToSpiAccountReferenceMapper xs2aToSpiAccountReferenceMapper;
     @Mock
-    private Xs2aToSpiTransactionMapper xs2aToSpiTransactionMapper;
+    private Xs2aToSpiTransactionStatusMapper xs2aToSpiTransactionStatusMapper;
 
     @BeforeEach
     void setUp() {
@@ -85,7 +85,7 @@ class Xs2aToSpiBulkPaymentMapperTest {
             .thenReturn(spiPsuDataList);
         when(xs2aToSpiAccountReferenceMapper.mapToSpiAccountReference(buildAccountReference(DEB_ACCOUNT_ID)))
             .thenReturn(buildSpiAccountReference());
-        when(xs2aToSpiTransactionMapper.mapToSpiTransactionStatus(TRANSACTION_STATUS)).thenReturn(SPI_TRANSACTION_STATUS);
+        when(xs2aToSpiTransactionStatusMapper.mapToSpiTransactionStatus(TRANSACTION_STATUS)).thenReturn(SPI_TRANSACTION_STATUS);
     }
 
     @Test

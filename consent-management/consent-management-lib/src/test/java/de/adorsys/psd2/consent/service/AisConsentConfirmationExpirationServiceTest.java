@@ -26,12 +26,14 @@ import de.adorsys.psd2.consent.domain.consent.ConsentEntity;
 import de.adorsys.psd2.consent.repository.AuthorisationRepository;
 import de.adorsys.psd2.consent.repository.ConsentJpaRepository;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.test.util.ReflectionTestUtils;
 
 import java.time.LocalDate;
 import java.time.OffsetDateTime;
@@ -58,6 +60,11 @@ class AisConsentConfirmationExpirationServiceTest {
     @Mock
     private AspspProfileService aspspProfileService;
 
+    @BeforeEach
+    void setUp() {
+        ReflectionTestUtils.setField(expirationService, "maxChunkSize", 1000);
+    }
+
     @Test
     void expireConsent() {
         // Given
@@ -70,7 +77,7 @@ class AisConsentConfirmationExpirationServiceTest {
         ConsentEntity consent = aisConsentCaptor.getValue();
         assertEquals(ConsentStatus.EXPIRED, consent.getConsentStatus());
         assertEquals(TODAY, consent.getExpireDate());
-        assertEquals(TODAY, consent.getLastActionDate());
+        assertEquals(TODAY, consent.getLastActionDateTime().toLocalDate());
     }
 
     @Test

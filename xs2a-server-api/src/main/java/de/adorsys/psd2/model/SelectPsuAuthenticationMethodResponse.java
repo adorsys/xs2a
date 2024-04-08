@@ -20,11 +20,11 @@ package de.adorsys.psd2.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import org.springframework.validation.annotation.Validated;
 
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
 import java.util.Map;
 import java.util.Objects;
 
@@ -33,20 +33,20 @@ import java.util.Objects;
  */
 @Schema(description = "Body of the JSON response for a successful select PSU authentication method request.")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-10-26T13:16:54.081225+03:00[Europe/Kiev]")
+@jakarta.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-10-25T13:15:56.196839+03:00[Europe/Kiev]")
 
 
-public class SelectPsuAuthenticationMethodResponse {
-    @JsonProperty("transactionFees")
-    private Amount transactionFees = null;
+public class SelectPsuAuthenticationMethodResponse   {
+  @JsonProperty("transactionFees")
+  private Amount transactionFees = null;
 
-    @JsonProperty("currencyConversionFees")
-    private Amount currencyConversionFees = null;
+  @JsonProperty("currencyConversionFees")
+  private Amount currencyConversionFees = null;
 
-    @JsonProperty("estimatedTotalAmount")
-    private Amount estimatedTotalAmount = null;
+  @JsonProperty("estimatedTotalAmount")
+  private Amount estimatedTotalAmount = null;
 
-    @JsonProperty("estimatedInterbankSettlementAmount")
+  @JsonProperty("estimatedInterbankSettlementAmount")
   private Amount estimatedInterbankSettlementAmount = null;
 
   @JsonProperty("chosenScaMethod")
@@ -69,18 +69,17 @@ public class SelectPsuAuthenticationMethodResponse {
     return this;
   }
 
-    /**
-     * Get transactionFees
-     *
-     * @return transactionFees
-     **/
-    @Schema(description = "")
-    @JsonProperty("transactionFees")
+  /**
+   * Get transactionFees
+   * @return transactionFees
+   **/
+  @Schema(description = "")
+  @JsonProperty("transactionFees")
 
-    @Valid
-    public Amount getTransactionFees() {
-        return transactionFees;
-    }
+  @Valid
+  public Amount getTransactionFees() {
+    return transactionFees;
+  }
 
   public void setTransactionFees(Amount transactionFees) {
     this.transactionFees = transactionFees;
@@ -91,17 +90,16 @@ public class SelectPsuAuthenticationMethodResponse {
     return this;
   }
 
-    /**
-     * Get currencyConversionFees
-     *
-     * @return currencyConversionFees
-     **/
-    @Schema(description = "")
-    @JsonProperty("currencyConversionFees")
+  /**
+   * Get currencyConversionFees
+   * @return currencyConversionFees
+   **/
+  @Schema(description = "")
+  @JsonProperty("currencyConversionFees")
 
-    @Valid
-    public Amount getCurrencyConversionFees() {
-        return currencyConversionFees;
+  @Valid
+  public Amount getCurrencyConversionFees() {
+    return currencyConversionFees;
   }
 
   public void setCurrencyConversionFees(Amount currencyConversionFees) {
@@ -110,20 +108,19 @@ public class SelectPsuAuthenticationMethodResponse {
 
   public SelectPsuAuthenticationMethodResponse estimatedTotalAmount(Amount estimatedTotalAmount) {
     this.estimatedTotalAmount = estimatedTotalAmount;
-      return this;
+    return this;
   }
 
-    /**
-     * Get estimatedTotalAmount
-     *
-     * @return estimatedTotalAmount
-     **/
-    @Schema(description = "")
-    @JsonProperty("estimatedTotalAmount")
+  /**
+   * Get estimatedTotalAmount
+   * @return estimatedTotalAmount
+   **/
+  @Schema(description = "")
+  @JsonProperty("estimatedTotalAmount")
 
-    @Valid
-    public Amount getEstimatedTotalAmount() {
-        return estimatedTotalAmount;
+  @Valid
+  public Amount getEstimatedTotalAmount() {
+    return estimatedTotalAmount;
   }
 
   public void setEstimatedTotalAmount(Amount estimatedTotalAmount) {
@@ -132,20 +129,19 @@ public class SelectPsuAuthenticationMethodResponse {
 
   public SelectPsuAuthenticationMethodResponse estimatedInterbankSettlementAmount(Amount estimatedInterbankSettlementAmount) {
     this.estimatedInterbankSettlementAmount = estimatedInterbankSettlementAmount;
-      return this;
+    return this;
   }
 
-    /**
-     * Get estimatedInterbankSettlementAmount
-     *
-     * @return estimatedInterbankSettlementAmount
-     **/
-    @Schema(description = "")
-    @JsonProperty("estimatedInterbankSettlementAmount")
+  /**
+   * Get estimatedInterbankSettlementAmount
+   * @return estimatedInterbankSettlementAmount
+   **/
+  @Schema(description = "")
+  @JsonProperty("estimatedInterbankSettlementAmount")
 
-    @Valid
-    public Amount getEstimatedInterbankSettlementAmount() {
-        return estimatedInterbankSettlementAmount;
+  @Valid
+  public Amount getEstimatedInterbankSettlementAmount() {
+    return estimatedInterbankSettlementAmount;
   }
 
   public void setEstimatedInterbankSettlementAmount(Amount estimatedInterbankSettlementAmount) {
@@ -154,19 +150,18 @@ public class SelectPsuAuthenticationMethodResponse {
 
   public SelectPsuAuthenticationMethodResponse chosenScaMethod(ChosenScaMethod chosenScaMethod) {
     this.chosenScaMethod = chosenScaMethod;
-      return this;
+    return this;
   }
 
-    /**
-     * Get chosenScaMethod
-     *
-     * @return chosenScaMethod
-     **/
-    @Schema(description = "")
-    @JsonProperty("chosenScaMethod")
+  /**
+   * Get chosenScaMethod
+   * @return chosenScaMethod
+   **/
+  @Schema(description = "")
+  @JsonProperty("chosenScaMethod")
 
-    @Valid
-    public ChosenScaMethod getChosenScaMethod() {
+  @Valid
+  public ChosenScaMethod getChosenScaMethod() {
     return chosenScaMethod;
   }
 
@@ -175,42 +170,40 @@ public class SelectPsuAuthenticationMethodResponse {
   }
 
   public SelectPsuAuthenticationMethodResponse challengeData(ChallengeData challengeData) {
-      this.challengeData = challengeData;
-      return this;
+    this.challengeData = challengeData;
+    return this;
   }
 
-    /**
-     * Get challengeData
-     *
-     * @return challengeData
-     **/
-    @Schema(description = "")
-    @JsonProperty("challengeData")
+  /**
+   * Get challengeData
+   * @return challengeData
+   **/
+  @Schema(description = "")
+  @JsonProperty("challengeData")
 
-    @Valid
-    public ChallengeData getChallengeData() {
+  @Valid
+  public ChallengeData getChallengeData() {
     return challengeData;
   }
 
   public void setChallengeData(ChallengeData challengeData) {
-      this.challengeData = challengeData;
+    this.challengeData = challengeData;
   }
 
-    public SelectPsuAuthenticationMethodResponse _links(Map _links) {
-        this._links = _links;
-        return this;
-    }
+  public SelectPsuAuthenticationMethodResponse _links(Map _links) {
+    this._links = _links;
+    return this;
+  }
 
-    /**
-     * Get _links
-     *
-     * @return _links
-     **/
-    @Schema(description = "")
-    @JsonProperty("_links")
+  /**
+   * Get _links
+   * @return _links
+   **/
+  @Schema(description = "")
+  @JsonProperty("_links")
 
-    @Valid
-    public Map getLinks() {
+  @Valid
+  public Map getLinks() {
     return _links;
   }
 
@@ -219,17 +212,16 @@ public class SelectPsuAuthenticationMethodResponse {
   }
 
   public SelectPsuAuthenticationMethodResponse scaStatus(ScaStatus scaStatus) {
-      this.scaStatus = scaStatus;
-      return this;
+    this.scaStatus = scaStatus;
+    return this;
   }
 
-    /**
-     * Get scaStatus
-     *
-     * @return scaStatus
-     **/
-    @Schema(required = true, description = "")
-    @JsonProperty("scaStatus")
+  /**
+   * Get scaStatus
+   * @return scaStatus
+   **/
+  @Schema(required = true, description = "")
+  @JsonProperty("scaStatus")
     @NotNull
 
   @Valid
@@ -242,17 +234,16 @@ public class SelectPsuAuthenticationMethodResponse {
   }
 
   public SelectPsuAuthenticationMethodResponse psuMessage(String psuMessage) {
-      this.psuMessage = psuMessage;
-      return this;
+    this.psuMessage = psuMessage;
+    return this;
   }
 
-    /**
-     * Text to be displayed to the PSU.
-     *
-     * @return psuMessage
-     **/
-    @Schema(description = "Text to be displayed to the PSU.")
-    @JsonProperty("psuMessage")
+  /**
+   * Text to be displayed to the PSU.
+   * @return psuMessage
+   **/
+  @Schema(description = "Text to be displayed to the PSU.")
+  @JsonProperty("psuMessage")
 
 @Size(max=500)   public String getPsuMessage() {
     return psuMessage;

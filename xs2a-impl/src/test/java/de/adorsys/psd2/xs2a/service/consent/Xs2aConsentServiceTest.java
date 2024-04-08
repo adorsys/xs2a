@@ -25,9 +25,7 @@ import de.adorsys.psd2.xs2a.core.authorisation.AuthorisationType;
 import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
-import de.adorsys.psd2.xs2a.service.RequestProviderService;
 import de.adorsys.psd2.xs2a.service.authorization.Xs2aAuthorisationService;
-import de.adorsys.psd2.xs2a.service.mapper.cms_xs2a_mappers.Xs2aConsentAuthorisationMapper;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -43,9 +41,6 @@ import static org.mockito.Mockito.*;
 class Xs2aConsentServiceTest {
     private static final String CONSENT_ID = "f2c43cad-6811-4cb6-bfce-31050095ed5d";
     private static final String AUTHORISATION_ID = "a01562ea-19ff-4b5a-8188-c45d85bfa20a";
-    private static final String REDIRECT_URI = "request/redirect_uri";
-    private static final String NOK_REDIRECT_URI = "request/nok_redirect_uri";
-    private static final ScaStatus SCA_STATUS = ScaStatus.RECEIVED;
     private static final ScaApproach SCA_APPROACH = ScaApproach.DECOUPLED;
     private static final PsuIdData PSU_DATA = new PsuIdData("psuId", "psuIdType", "psuCorporateId", "psuCorporateIdType", "psuIpAddress");
     private static final CreateAuthorisationRequest AIS_CONSENT_AUTHORISATION_REQUEST = buildAisConsentAuthorisationRequest();
@@ -55,10 +50,6 @@ class Xs2aConsentServiceTest {
 
     @Mock
     private Xs2aAuthorisationService authorisationService;
-    @Mock
-    private Xs2aConsentAuthorisationMapper aisConsentAuthorisationMapper;
-    @Mock
-    private RequestProviderService requestProviderService;
 
     @Test
     void createAisConsentAuthorization_success() {

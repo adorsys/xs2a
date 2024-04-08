@@ -31,19 +31,19 @@ import java.util.List;
 @Data
 @Schema(description = "Pis payment initialisation consent request", name = "PisCommonPaymentRequest")
 public class PisCommonPaymentRequest {
-    @Schema(description = "Payment data", required = true)
+    @Schema(description = "Payment data", requiredMode = Schema.RequiredMode.REQUIRED)
     private List<PisPayment> payments;
 
-    @Schema(description = "Payment product", required = true, example = "sepa-credit-transfers")
+    @Schema(description = "Payment product", requiredMode = Schema.RequiredMode.REQUIRED, example = "sepa-credit-transfers")
     private String paymentProduct;
 
-    @Schema(description = "Payment type: BULK, SINGLE or PERIODIC.", required = true, example = "SINGLE")
+    @Schema(description = "Payment type: BULK, SINGLE or PERIODIC.", requiredMode = Schema.RequiredMode.REQUIRED, example = "SINGLE")
     private PaymentType paymentType;
 
-    @Schema(description = "Tpp information", required = true)
+    @Schema(description = "TPP information", requiredMode = Schema.RequiredMode.REQUIRED)
     private TppInfo tppInfo;
 
-    @Schema(description = "Corresponding PSU", required = true)
+    @Schema(description = "Corresponding PSU", requiredMode = Schema.RequiredMode.REQUIRED)
     private List<PsuIdData> psuData;
 
     @Schema(description = "External Payment Id", example = "32454656712432")

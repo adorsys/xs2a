@@ -19,7 +19,7 @@
 package de.adorsys.psd2.consent.web.aspsp.config;
 
 import lombok.RequiredArgsConstructor;
-import org.springdoc.core.GroupedOpenApi;
+import org.springdoc.core.models.GroupedOpenApi;
 import org.springframework.context.annotation.Bean;
 
 @RequiredArgsConstructor

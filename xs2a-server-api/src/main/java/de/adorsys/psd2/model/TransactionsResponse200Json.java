@@ -20,9 +20,9 @@ package de.adorsys.psd2.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.Valid;
 import org.springframework.validation.annotation.Validated;
 
-import javax.validation.Valid;
 import java.util.Map;
 import java.util.Objects;
 
@@ -31,7 +31,7 @@ import java.util.Objects;
  */
 @Schema(description = "Body of the JSON response for a successful read transaction list request. This account report contains transactions resulting from the query parameters. ")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-10-26T13:16:54.081225+03:00[Europe/Kiev]")
+@jakarta.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-10-25T13:15:56.196839+03:00[Europe/Kiev]")
 
 
 public class TransactionsResponse200Json   {
@@ -52,18 +52,17 @@ public class TransactionsResponse200Json   {
     return this;
   }
 
-    /**
-     * Get account
-     *
-     * @return account
-     **/
-    @Schema(description = "")
-    @JsonProperty("account")
+  /**
+   * Get account
+   * @return account
+   **/
+  @Schema(description = "")
+  @JsonProperty("account")
 
-    @Valid
-    public AccountReference getAccount() {
-        return account;
-    }
+  @Valid
+  public AccountReference getAccount() {
+    return account;
+  }
 
   public void setAccount(AccountReference account) {
     this.account = account;
@@ -74,17 +73,16 @@ public class TransactionsResponse200Json   {
     return this;
   }
 
-    /**
-     * Get transactions
-     *
-     * @return transactions
-     **/
-    @Schema(description = "")
-    @JsonProperty("transactions")
+  /**
+   * Get transactions
+   * @return transactions
+   **/
+  @Schema(description = "")
+  @JsonProperty("transactions")
 
-    @Valid
-    public AccountReport getTransactions() {
-        return transactions;
+  @Valid
+  public AccountReport getTransactions() {
+    return transactions;
   }
 
   public void setTransactions(AccountReport transactions) {
@@ -93,41 +91,39 @@ public class TransactionsResponse200Json   {
 
   public TransactionsResponse200Json balances(BalanceList balances) {
     this.balances = balances;
-      return this;
+    return this;
   }
 
-    /**
-     * Get balances
-     *
-     * @return balances
-     **/
-    @Schema(description = "")
-    @JsonProperty("balances")
+  /**
+   * Get balances
+   * @return balances
+   **/
+  @Schema(description = "")
+  @JsonProperty("balances")
 
-    @Valid
-    public BalanceList getBalances() {
+  @Valid
+  public BalanceList getBalances() {
     return balances;
   }
 
   public void setBalances(BalanceList balances) {
-      this.balances = balances;
+    this.balances = balances;
   }
 
-    public TransactionsResponse200Json _links(Map _links) {
-        this._links = _links;
-        return this;
-    }
+  public TransactionsResponse200Json _links(Map _links) {
+    this._links = _links;
+    return this;
+  }
 
-    /**
-     * Get _links
-     *
-     * @return _links
-     **/
-    @Schema(description = "")
-    @JsonProperty("_links")
+  /**
+   * Get _links
+   * @return _links
+   **/
+  @Schema(description = "")
+  @JsonProperty("_links")
 
-    @Valid
-    public Map getLinks() {
+  @Valid
+  public Map getLinks() {
     return _links;
   }
 

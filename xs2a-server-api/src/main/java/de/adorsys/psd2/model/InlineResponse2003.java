@@ -20,9 +20,9 @@ package de.adorsys.psd2.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.constraints.NotNull;
 import org.springframework.validation.annotation.Validated;
 
-import javax.validation.constraints.NotNull;
 import java.util.Objects;
 
 /**
@@ -30,51 +30,50 @@ import java.util.Objects;
  */
 @Schema(description = "Equals \"true\" if sufficient funds are available at the time of the request,  \"false\" otherwise. ")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-10-26T13:16:54.081225+03:00[Europe/Kiev]")
+@jakarta.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-10-25T13:15:56.196839+03:00[Europe/Kiev]")
 
 
-public class InlineResponse2003 {
-    @JsonProperty("fundsAvailable")
-    private Boolean fundsAvailable = null;
+public class InlineResponse2003   {
+  @JsonProperty("fundsAvailable")
+  private Boolean fundsAvailable = null;
 
-    public InlineResponse2003 fundsAvailable(Boolean fundsAvailable) {
-        this.fundsAvailable = fundsAvailable;
-        return this;
-    }
+  public InlineResponse2003 fundsAvailable(Boolean fundsAvailable) {
+    this.fundsAvailable = fundsAvailable;
+    return this;
+  }
 
-    /**
-     * Equals true if sufficient funds are available at the time of the request, false otherwise.  This datalemenet is allways contained in a confirmation of funds response.  This data element is contained in a payment status response,  if supported by the ASPSP, if a funds check has been performed and  if the transactionStatus is \"ACTC\", \"ACWC\" or \"ACCP\".
-     *
-     * @return fundsAvailable
-     **/
-    @Schema(required = true, description = "Equals true if sufficient funds are available at the time of the request, false otherwise.  This datalemenet is allways contained in a confirmation of funds response.  This data element is contained in a payment status response,  if supported by the ASPSP, if a funds check has been performed and  if the transactionStatus is \"ACTC\", \"ACWC\" or \"ACCP\". ")
-    @JsonProperty("fundsAvailable")
+  /**
+   * Equals true if sufficient funds are available at the time of the request, false otherwise.  This data element is allways contained in a confirmation of funds response.  This data element is contained in a payment status response,  if supported by the ASPSP, if a funds check has been performed and  if the transactionStatus is \"ACTC\", \"ACWC\" or \"ACCP\".
+   * @return fundsAvailable
+   **/
+  @Schema(required = true, description = "Equals true if sufficient funds are available at the time of the request, false otherwise.  This data element is allways contained in a confirmation of funds response.  This data element is contained in a payment status response,  if supported by the ASPSP, if a funds check has been performed and  if the transactionStatus is \"ACTC\", \"ACWC\" or \"ACCP\". ")
+  @JsonProperty("fundsAvailable")
     @NotNull
 
-    public Boolean isFundsAvailable() {
-        return fundsAvailable;
+  public Boolean isFundsAvailable() {
+    return fundsAvailable;
+  }
+
+  public void setFundsAvailable(Boolean fundsAvailable) {
+    this.fundsAvailable = fundsAvailable;
+  }
+
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) {
+      return true;
     }
-
-    public void setFundsAvailable(Boolean fundsAvailable) {
-        this.fundsAvailable = fundsAvailable;
-    }
-
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (o == null || getClass() != o.getClass()) {
-            return false;
+    if (o == null || getClass() != o.getClass()) {
+      return false;
     }
     InlineResponse2003 inlineResponse2003 = (InlineResponse2003) o;
-        return Objects.equals(this.fundsAvailable, inlineResponse2003.fundsAvailable);
+    return Objects.equals(this.fundsAvailable, inlineResponse2003.fundsAvailable);
   }
 
   @Override
   public int hashCode() {
-      return Objects.hash(fundsAvailable);
+    return Objects.hash(fundsAvailable);
   }
 
   @Override
@@ -82,8 +81,8 @@ public class InlineResponse2003 {
     StringBuilder sb = new StringBuilder();
     sb.append("class InlineResponse2003 {\n");
 
-      sb.append("    fundsAvailable: ").append(toIndentedString(fundsAvailable)).append("\n");
-      sb.append("}");
+    sb.append("    fundsAvailable: ").append(toIndentedString(fundsAvailable)).append("\n");
+    sb.append("}");
     return sb.toString();
   }
 

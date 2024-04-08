@@ -37,4 +37,13 @@ public class TppStopListRecord {
 
     @Schema(description = "Service instance id", example = "instance id")
     private String instanceId;
+
+    @Schema(description = "Updated by user", example = "ADMIN")
+    private String updatedBy;
+
+    @Schema(description = "Last status change datetime", example = "2020-01-01T15:30:35.035Z")
+    private OffsetDateTime changedAt;
+
+    @Schema(description = "Status change reason", example = "Fraud")
+    private String reason;
 }

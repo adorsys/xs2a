@@ -18,7 +18,8 @@
 
 package de.adorsys.psd2.xs2a.spi.domain.authorisation;
 
-import de.adorsys.psd2.xs2a.spi.domain.sca.SpiChallengeData;
+import de.adorsys.psd2.xs2a.spi.domain.common.SpiAuthenticationObject;
+import de.adorsys.psd2.xs2a.spi.domain.common.SpiChallengeData;
 import de.adorsys.psd2.xs2a.spi.domain.sca.SpiScaStatus;
 import lombok.Data;
 import lombok.EqualsAndHashCode;

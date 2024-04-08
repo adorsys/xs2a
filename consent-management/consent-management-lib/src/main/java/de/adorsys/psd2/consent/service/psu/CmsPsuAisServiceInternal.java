@@ -70,6 +70,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
@@ -82,6 +83,7 @@ import static de.adorsys.psd2.xs2a.core.consent.ConsentStatus.*;
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
+@SuppressWarnings("PMD.GodClass")
 public class CmsPsuAisServiceInternal implements CmsPsuAisService {
     private final ConsentJpaRepository consentJpaRepository;
     private final AisConsentVerifyingRepository aisConsentRepository;
@@ -109,7 +111,7 @@ public class CmsPsuAisServiceInternal implements CmsPsuAisService {
         return getAuthorisationByExternalId(authorisationId, instanceId)
                    .map(auth -> cmsPsuConsentServiceInternal.updatePsuData(auth, psuIdData))
                    .orElseGet(() -> {
-                       log.info("Authorisation ID [{}], Instance ID: [{}]. Update PSU  in consent failed, because authorisation not found",
+                       log.info("Authorisation ID [{}], Instance ID: [{}]. Update PSU  in consent failed, authorisation not found",
                                 authorisationId, instanceId);
                        return false;
                    });
@@ -127,7 +129,7 @@ public class CmsPsuAisServiceInternal implements CmsPsuAisService {
             AuthorisationEntity authorisation = optionalAuthorisation.get();
 
             if (!authorisation.isRedirectUrlNotExpired()) {
-                log.info("Authorisation ID [{}], Instance ID: [{}]. Check redirect URL and get consent failed, because authorisation is expired",
+                log.info("Authorisation ID [{}], Instance ID: [{}]. Check redirect URL and get consent failed, authorisation is expired",
                          redirectId, instanceId);
                 authorisation.setScaStatus(ScaStatus.FAILED);
 
@@ -136,7 +138,7 @@ public class CmsPsuAisServiceInternal implements CmsPsuAisService {
             return createCmsAisConsentResponseFromAuthorisation(authorisation, redirectId);
         }
 
-        log.info("Authorisation ID [{}], Instance ID: [{}]. Check redirect URL and get consent failed, because authorisation not found or has finalised status",
+        log.info("Authorisation ID [{}], Instance ID: [{}]. Check redirect URL and get consent failed, authorisation not found or has finalised status",
                  redirectId, instanceId);
         return Optional.empty();
     }
@@ -159,7 +161,7 @@ public class CmsPsuAisServiceInternal implements CmsPsuAisService {
             return Optional.of(cmsPsuAuthorisationMapper.mapToCmsPsuAuthorisation(authorisation));
         }
 
-        log.info("Authorisation ID: [{}], Instance ID: [{}]. Get authorisation failed, because authorisation not found",
+        log.info("Authorisation ID: [{}], Instance ID: [{}]. Get authorisation failed, authorisation not found",
                  authorisationId, instanceId);
 
         return Optional.empty();
@@ -174,14 +176,14 @@ public class CmsPsuAisServiceInternal implements CmsPsuAisService {
         Optional<ConsentEntity> actualAisConsent = getActualAisConsent(consentId, instanceId);
 
         if (actualAisConsent.isEmpty()) {
-            log.info("Consent ID: [{}], Instance ID: [{}]. Update of authorisation status failed, because consent either has finalised status or not found", consentId, instanceId);
+            log.info("Consent ID: [{}], Instance ID: [{}]. Update of authorisation status failed, consent has finalised status or not found", consentId, instanceId);
             return false;
         }
 
         return consentAuthorisationService.getAuthorisationByAuthorisationId(authorisationId, instanceId)
                    .map(authorisation -> consentAuthorisationService.updateScaStatusAndAuthenticationData(status, authorisation, authenticationDataHolder))
                    .orElseGet(() -> {
-                       log.info("Authorisation ID [{}], Instance ID: [{}]. Update authorisation status failed, because authorisation not found",
+                       log.info("Authorisation ID [{}], Instance ID: [{}]. Update authorisation status failed, authorisation not found",
                                 authorisationId, instanceId);
                        return false;
                    });
@@ -243,7 +245,7 @@ public class CmsPsuAisServiceInternal implements CmsPsuAisService {
         if (aisConsentOptional.isPresent()) {
             return updateAccountAccessInConsent(aisConsentOptional.get(), accountAccessRequest);
         }
-        log.info("Consent ID [{}], Instance ID: [{}]. Update account access in consent failed, because consent not found or has finalised status",
+        log.info("Consent ID [{}], Instance ID: [{}]. Update account access in consent failed, consent not found or has finalised status",
                  consentId, instanceId);
         return false;
     }
@@ -281,7 +283,7 @@ public class CmsPsuAisServiceInternal implements CmsPsuAisService {
 
     private boolean updateAccountAccessInConsent(ConsentEntity consent, CmsAisConsentAccessRequest request) {
         if (consent.getConsentStatus() == VALID) {
-            log.info("Consent ID [{}]. Can't execute updateAccountAccessInConsent, because AIS consent has already VALID status.",
+            log.info("Consent ID [{}]. Can't execute updateAccountAccessInConsent, AIS consent has already VALID status.",
                      consent.getExternalId());
             return false;
         }
@@ -294,7 +296,7 @@ public class CmsPsuAisServiceInternal implements CmsPsuAisService {
 
         AisAccountAccess requestedAisAccountAccess = request.getAccountAccess();
         if (requestedAisAccountAccess == null) {
-            log.info("Consent ID [{}]. Update account access in consent failed, because AIS Account Access is null",
+            log.info("Consent ID [{}]. Update account access in consent failed, AIS Account Access is null",
                      consent.getExternalId());
             return false;
         }
@@ -339,7 +341,7 @@ public class CmsPsuAisServiceInternal implements CmsPsuAisService {
             return updateConsentStatus(aisConsentOptional.get(), status);
         }
 
-        log.info("Consent ID [{}], Instance ID: [{}]. Change consent status failed, because AIS consent not found",
+        log.info("Consent ID [{}], Instance ID: [{}]. Change consent status failed, AIS consent not found",
                  consentId, instanceId);
         return false;
     }
@@ -359,14 +361,14 @@ public class CmsPsuAisServiceInternal implements CmsPsuAisService {
 
     private boolean updateConsentStatus(ConsentEntity consent, ConsentStatus status) throws WrongChecksumException {
         if (consent.getConsentStatus().isFinalisedStatus()) {
-            log.info("Consent ID: [{}], Consent status: [{}]. Confirmation of consent failed in updateConsentStatus method, because consent has finalised status",
+            log.info("Consent ID: [{}], Consent status: [{}]. Confirmation of consent failed in updateConsentStatus method, consent has finalised status",
                      consent.getExternalId(), consent.getConsentStatus().getValue());
             return false;
         }
         if (status == PARTIALLY_AUTHORISED) {
             consent.setMultilevelScaRequired(true);
         }
-        consent.setLastActionDate(LocalDate.now());
+        consent.setLastActionDateTime(LocalDateTime.now());
         consent.setConsentStatus(status);
 
         return aisConsentRepository.verifyAndSave(consent) != null;
@@ -375,7 +377,7 @@ public class CmsPsuAisServiceInternal implements CmsPsuAisService {
     private Optional<CmsAisConsentResponse> createCmsAisConsentResponseFromAuthorisation(AuthorisationEntity authorisation, String redirectId) {
         Optional<ConsentEntity> aisConsentOptional = consentJpaRepository.findByExternalId(authorisation.getParentExternalId());
         if (aisConsentOptional.isEmpty()) {
-            log.info("Authorisation ID [{}]. Check redirect URL and get consent failed in createCmsAisConsentResponseFromAisConsent method, because AIS consent is null",
+            log.info("Authorisation ID [{}]. Check redirect URL and get consent failed in createCmsAisConsentResponseFromAisConsent method, AIS consent is null",
                      redirectId);
             return Optional.empty();
         }

@@ -20,11 +20,11 @@ package de.adorsys.psd2.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import org.springframework.validation.annotation.Validated;
 
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
 import java.util.Objects;
 
 /**
@@ -32,7 +32,7 @@ import java.util.Objects;
  */
 @Schema(description = "Body of the JSON response for a successful get status request for a consent.")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-10-26T13:16:54.081225+03:00[Europe/Kiev]")
+@jakarta.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-10-25T13:15:56.196839+03:00[Europe/Kiev]")
 
 
 public class ConsentStatusResponse200   {
@@ -47,19 +47,18 @@ public class ConsentStatusResponse200   {
     return this;
   }
 
-    /**
-     * Get consentStatus
-     *
-     * @return consentStatus
-     **/
-    @Schema(required = true, description = "")
-    @JsonProperty("consentStatus")
+  /**
+   * Get consentStatus
+   * @return consentStatus
+   **/
+  @Schema(required = true, description = "")
+  @JsonProperty("consentStatus")
     @NotNull
 
-    @Valid
-    public ConsentStatus getConsentStatus() {
-        return consentStatus;
-    }
+  @Valid
+  public ConsentStatus getConsentStatus() {
+    return consentStatus;
+  }
 
   public void setConsentStatus(ConsentStatus consentStatus) {
     this.consentStatus = consentStatus;
@@ -70,17 +69,15 @@ public class ConsentStatusResponse200   {
     return this;
   }
 
-    /**
-     * Text to be displayed to the PSU.
-     *
-     * @return psuMessage
-     **/
-    @Schema(description = "Text to be displayed to the PSU.")
-    @JsonProperty("psuMessage")
+  /**
+   * Text to be displayed to the PSU.
+   * @return psuMessage
+   **/
+  @Schema(description = "Text to be displayed to the PSU.")
+  @JsonProperty("psuMessage")
 
-    @Size(max = 500)
-    public String getPsuMessage() {
-        return psuMessage;
+@Size(max=500)   public String getPsuMessage() {
+    return psuMessage;
   }
 
   public void setPsuMessage(String psuMessage) {

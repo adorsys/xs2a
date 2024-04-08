@@ -47,11 +47,14 @@ class PsuIdentifiedAuthorisationProcessorTest {
 
     @Test
     void execute() {
+        // Given
         AisAuthorisationProcessorRequest request = new AisAuthorisationProcessorRequest(null, null, null, null);
         when(processorService.doScaPsuIdentified(request)).thenReturn(new AuthorisationProcessorResponse());
 
+        // When
         processor.execute(request, processorService);
 
+        // Then
         verify(processorService, times(1)).doScaPsuIdentified(request);
     }
 }

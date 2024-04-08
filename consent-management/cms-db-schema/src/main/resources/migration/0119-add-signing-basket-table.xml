@@ -20,15 +20,15 @@
                    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.4.xsd">
     <changeSet author="ske@adorsys.de" id="2020-09-11-1">
+        <validCheckSum>8:21360d172969b06e2256219f9842bab6</validCheckSum>
         <comment>Create sequence for singing_basket_id</comment>
         <createSequence sequenceName="signing_basket_id_seq"/>
-        <sql dbms="mariadb">CREATE SEQUENCE signing_basket_id_seq</sql>
     </changeSet>
 
     <changeSet author="ske@adorsys.de" id="2020-09-11-2">
+        <validCheckSum>8:6414a8f568a3c76828c95ff0c9b885a3</validCheckSum>
         <comment>Create sequence for sb_tpp_information</comment>
         <createSequence sequenceName="sb_tpp_information_id_seq"/>
-        <sql dbms="mariadb">CREATE SEQUENCE sb_tpp_information_id_seq</sql>
     </changeSet>
 
     <changeSet author="ske@adorsys.de" id="2020-09-11-3">

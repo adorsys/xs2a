@@ -29,7 +29,7 @@ import java.util.Objects;
  */
 @Schema(description = "PSU Data for Update PSU authentication.")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-10-26T13:16:54.081225+03:00[Europe/Kiev]")
+@jakarta.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-10-25T13:15:56.196839+03:00[Europe/Kiev]")
 
 
 public class PsuData   {
@@ -50,17 +50,16 @@ public class PsuData   {
     return this;
   }
 
-    /**
-     * Password.
-     *
-     * @return password
-     **/
-    @Schema(description = "Password.")
-    @JsonProperty("password")
+  /**
+   * Password.
+   * @return password
+   **/
+  @Schema(description = "Password.")
+  @JsonProperty("password")
 
-    public String getPassword() {
-        return password;
-    }
+  public String getPassword() {
+    return password;
+  }
 
   public void setPassword(String password) {
     this.password = password;
@@ -71,16 +70,15 @@ public class PsuData   {
     return this;
   }
 
-    /**
-     * Encrypted password.
-     *
-     * @return encryptedPassword
-     **/
-    @Schema(description = "Encrypted password.")
-    @JsonProperty("encryptedPassword")
+  /**
+   * Encrypted password.
+   * @return encryptedPassword
+   **/
+  @Schema(description = "Encrypted password.")
+  @JsonProperty("encryptedPassword")
 
-    public String getEncryptedPassword() {
-        return encryptedPassword;
+  public String getEncryptedPassword() {
+    return encryptedPassword;
   }
 
   public void setEncryptedPassword(String encryptedPassword) {
@@ -89,19 +87,18 @@ public class PsuData   {
 
   public PsuData additionalPassword(String additionalPassword) {
     this.additionalPassword = additionalPassword;
-      return this;
+    return this;
   }
 
-    /**
-     * Additional password in plaintext.
-     *
-     * @return additionalPassword
-     **/
-    @Schema(description = "Additional password in plaintext.")
-    @JsonProperty("additionalPassword")
+  /**
+   * Additional password in plaintext.
+   * @return additionalPassword
+   **/
+  @Schema(description = "Additional password in plaintext.")
+  @JsonProperty("additionalPassword")
 
-    public String getAdditionalPassword() {
-        return additionalPassword;
+  public String getAdditionalPassword() {
+    return additionalPassword;
   }
 
   public void setAdditionalPassword(String additionalPassword) {
@@ -110,19 +107,18 @@ public class PsuData   {
 
   public PsuData additionalEncryptedPassword(String additionalEncryptedPassword) {
     this.additionalEncryptedPassword = additionalEncryptedPassword;
-      return this;
+    return this;
   }
 
-    /**
-     * Additional encrypted password.
-     *
-     * @return additionalEncryptedPassword
-     **/
-    @Schema(description = "Additional encrypted password.")
-    @JsonProperty("additionalEncryptedPassword")
+  /**
+   * Additional encrypted password.
+   * @return additionalEncryptedPassword
+   **/
+  @Schema(description = "Additional encrypted password.")
+  @JsonProperty("additionalEncryptedPassword")
 
-    public String getAdditionalEncryptedPassword() {
-        return additionalEncryptedPassword;
+  public String getAdditionalEncryptedPassword() {
+    return additionalEncryptedPassword;
   }
 
   public void setAdditionalEncryptedPassword(String additionalEncryptedPassword) {

@@ -29,7 +29,7 @@ import de.adorsys.psd2.xs2a.domain.consent.ConsentAuthorisationsParameters;
 import de.adorsys.psd2.xs2a.domain.consent.UpdateConsentPsuDataResponse;
 import de.adorsys.psd2.xs2a.service.context.SpiContextDataProvider;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiErrorMapper;
-import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiToXs2aAuthorizationMapper;
+import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiToXs2aScaStatusMapper;
 import de.adorsys.psd2.xs2a.service.spi.SpiAspspConsentDataProviderFactory;
 import de.adorsys.psd2.xs2a.spi.domain.SpiAspspConsentDataProvider;
 import de.adorsys.psd2.xs2a.spi.domain.SpiContextData;
@@ -86,7 +86,7 @@ class CommonDecoupledPiisServiceTest {
     @Mock
     private SpiAspspConsentDataProvider spiAspspConsentDataProvider;
     @Mock
-    private SpiToXs2aAuthorizationMapper spiToXs2aAuthorizationMapper;
+    private SpiToXs2aScaStatusMapper spiToXs2aScaStatusMapper;
 
     @BeforeEach
     void setUp() {
@@ -94,7 +94,6 @@ class CommonDecoupledPiisServiceTest {
             .thenReturn(SPI_CONTEXT_DATA);
 
         when(aspspConsentDataProviderFactory.getSpiAspspDataProviderFor(CONSENT_ID)).thenReturn(spiAspspConsentDataProvider);
-
     }
 
     @Test
@@ -102,7 +101,7 @@ class CommonDecoupledPiisServiceTest {
         // Given
         when(piisConsentSpi.startScaDecoupled(SPI_CONTEXT_DATA, AUTHORISATION_ID, AUTHENTICATION_METHOD_ID, spiPiisConsent, spiAspspConsentDataProvider))
             .thenReturn(buildSuccessSpiResponse(new SpiAuthorisationDecoupledScaResponse(SpiScaStatus.SCAMETHODSELECTED, PSU_SUCCESS_MESSAGE)));
-        when(spiToXs2aAuthorizationMapper.mapToScaStatus(SpiScaStatus.SCAMETHODSELECTED)).thenReturn(ScaStatus.SCAMETHODSELECTED);
+        when(spiToXs2aScaStatusMapper.mapToXs2aScaStatus(SpiScaStatus.SCAMETHODSELECTED)).thenReturn(ScaStatus.SCAMETHODSELECTED);
 
         // When
         UpdateConsentPsuDataResponse actualResponse = commonDecoupledPiisService.proceedDecoupledApproach(CONSENT_ID, AUTHORISATION_ID, spiPiisConsent, AUTHENTICATION_METHOD_ID, PSU_ID_DATA);

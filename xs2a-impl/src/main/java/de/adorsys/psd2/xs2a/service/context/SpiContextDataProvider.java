@@ -26,6 +26,7 @@ import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.Xs2aToSpiPsuDataMapp
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.Xs2aToSpiTppInfoMapper;
 import de.adorsys.psd2.xs2a.spi.domain.SpiContextData;
 import de.adorsys.psd2.xs2a.spi.domain.psu.SpiPsuData;
+import de.adorsys.psd2.xs2a.spi.domain.tpp.SpiTppInfo;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -36,7 +37,7 @@ public class SpiContextDataProvider {
     private final TppService tppService;
     private final RequestProviderService requestProviderService;
     private final Xs2aToSpiPsuDataMapper psuDataMapper;
-    private final Xs2aToSpiTppInfoMapper spiTppInfoMapper;
+    private final Xs2aToSpiTppInfoMapper xs2aToSpiTppInfoMapper;
 
     public SpiContextData provide() {
         return provideWithPsuIdData(requestProviderService.getPsuIdData());
@@ -49,7 +50,9 @@ public class SpiContextDataProvider {
 
     public SpiContextData provide(PsuIdData psuIdData, TppInfo tppInfo) {
         SpiPsuData spiPsuData = psuDataMapper.mapToSpiPsuData(psuIdData);
-        return new SpiContextData(spiPsuData, spiTppInfoMapper.mapToSpiTppInfo(tppInfo), requestProviderService.getRequestId(),
+        SpiTppInfo spiTppInfo = xs2aToSpiTppInfoMapper.mapToSpiTppInfo(tppInfo);
+
+        return new SpiContextData(spiPsuData, spiTppInfo, requestProviderService.getRequestId(),
                                   requestProviderService.getInternalRequestId(), requestProviderService.getOAuth2Token(),
                                   requestProviderService.getTppBrandLoggingInformationHeader(),
                                   requestProviderService.getTppRejectionNoFundsPreferred(),

@@ -9,7 +9,7 @@
   "creationTimestamp": "2020-04-08T14:09:27.496839+03:00",
   "validUntil": "2025-12-31",
   "expireDate": "2030-12-31",
-  "lastActionDate": "2020-04-08",
+  "lastActionDateTime": "2020-04-08T15:30:35.035",
   "statusChangeTimestamp": "2020-04-08T14:09:27.496839+03:00",
   "internalRequestId": "643e4ea3-0401-4bc8-b9bc-a9df51ec848e",
   "authorisationTemplate": {
@@ -22,7 +22,6 @@
   "tppInformation": {
     "tppRedirectPreferred": true,
     "tppInfo": {
-      "instanceId": "UNDEFINED",
       "authorisationNumber": "TPP_AUTHORISATION_NUMBER",
       "tppRoles": [
         "AISP",

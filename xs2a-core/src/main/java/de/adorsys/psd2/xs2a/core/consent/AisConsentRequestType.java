@@ -20,7 +20,7 @@ package de.adorsys.psd2.xs2a.core.consent;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 
-@Schema(description = "Type of the ais consent request")
+@Schema(description = "Type of the AIS consent request")
 public enum AisConsentRequestType {
     GLOBAL,
     ALL_AVAILABLE_ACCOUNTS,

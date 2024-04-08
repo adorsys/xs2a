@@ -33,6 +33,7 @@ import java.time.LocalDate;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -68,6 +69,21 @@ class PeriodicPaymentJsonPartConverterTest {
         // Given
         when(xs2aObjectMapper.readValue(MALFORMED_SERIALISED_BODY, PeriodicPaymentInitiationXmlPart2StandingorderTypeJson.class))
             .thenReturn(null);
+
+        // When
+        PeriodicPaymentInitiationXmlPart2StandingorderTypeJson actualResult = periodicPaymentJsonPartConverter.convert(MALFORMED_SERIALISED_BODY);
+
+        // Then
+        assertNull(actualResult);
+    }
+
+    @Test
+    void convert_withException_shouldReturnNull() throws JsonProcessingException {
+        // Given
+        given(xs2aObjectMapper.readValue(MALFORMED_SERIALISED_BODY, PeriodicPaymentInitiationXmlPart2StandingorderTypeJson.class))
+            .willAnswer(invocation -> {
+                throw new IOException();
+            });
 
         // When
         PeriodicPaymentInitiationXmlPart2StandingorderTypeJson actualResult = periodicPaymentJsonPartConverter.convert(MALFORMED_SERIALISED_BODY);

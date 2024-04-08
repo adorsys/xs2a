@@ -21,13 +21,13 @@ package de.adorsys.psd2.xs2a.core.pis;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
-import javax.validation.constraints.Size;
+import jakarta.validation.constraints.Size;
 
 @Data
 @Schema(description = "Remittance")
 public class Remittance {
 
-    @Schema(description = "the actual reference", required = true, example = "Ref Number Merchant")
+    @Schema(description = "the actual reference", requiredMode = Schema.RequiredMode.REQUIRED, example = "Ref Number Merchant")
     @Size(max = 35)
     private String reference;
 

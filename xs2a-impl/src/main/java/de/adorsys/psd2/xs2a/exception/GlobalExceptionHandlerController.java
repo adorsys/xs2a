@@ -39,7 +39,7 @@ import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
-import javax.validation.ValidationException;
+import jakarta.validation.ValidationException;
 
 import static de.adorsys.psd2.xs2a.core.domain.TppMessageInformation.buildWithCustomError;
 import static de.adorsys.psd2.xs2a.core.domain.TppMessageInformation.of;
@@ -135,7 +135,7 @@ public class GlobalExceptionHandlerController {
 
     @ExceptionHandler(value = CertificateException.class)
     public ResponseEntity getTppIdException(CertificateException ex, HandlerMethod handlerMethod) {
-        log.warn("Can't find tpp id in SecurityContextHolder in: {}, message: {}",
+        log.warn("Can't find TPP ID in SecurityContextHolder in: {}, message: {}",
             handlerMethod.getMethod().getDeclaringClass().getSimpleName(), ex.getMessage());
         log.debug(STACKTRACE_LOG, ex.toString());
         return responseErrorMapper.generateErrorResponse(createMessageError(CERTIFICATE_INVALID));

@@ -37,7 +37,7 @@ import org.springframework.web.bind.annotation.*;
 @Tag(name = InternalCmsXs2aApiTagName.PIS_COMMON_PAYMENT, description = "Provides access to common payment system for PIS")
 public interface PisCommonPaymentApi {
 
-    @PostMapping(path = "/")
+    @PostMapping
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "OK", content = @Content(schema = @Schema(implementation = CreatePisCommonPaymentResponse.class))),
         @ApiResponse(responseCode = "400", description = "Bad request")})
@@ -80,7 +80,7 @@ public interface PisCommonPaymentApi {
         @PathVariable("payment-id") String paymentId,
         @Schema(description = "The following code values are permitted 'ACCC', 'ACCP', 'ACSC', 'ACSP', 'ACTC', 'ACWC', 'ACWP', 'PDNG', 'RJCT', 'RCVD', 'CANC', 'ACFC', 'PATC'. These values might be extended by ASPSP by more values.",
             allowableValues = "AcceptedSettlementCompletedCreditor, AcceptedCustomerProfile, AcceptedSettlementCompleted, AcceptedSettlementInProcess, AcceptedTechnicalValidation, AcceptedWithChange, AcceptedWithoutPosting, Received, Pending, Rejected, Canceled, AcceptedFundsChecked, PartiallyAcceptedTechnicalCorrect",
-            required = true)
+            requiredMode = Schema.RequiredMode.REQUIRED)
         @PathVariable("status") String status);
 
     @PutMapping(path = "/{payment-id}/multilevel-sca")

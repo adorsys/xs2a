@@ -70,26 +70,29 @@ class ConfirmationOfFundsConsentSpecificationIT extends BaseTest {
         tppInfo = tppInfoRepository.save(
             jsonReader.getObjectFromFile("json/specification/tpp-info-entity.json", TppInfoEntity.class));
 
-        ConsentEntity consentEntity = jsonReader.getObjectFromFile("json/specification/consent-entity.json", ConsentEntity.class);
-        consentEntity.getTppInformation().setTppInfo(tppInfo);
+        ConsentEntity piisAspspConsent = jsonReader.getObjectFromFile("json/specification/consent-entity.json", ConsentEntity.class);
+        piisAspspConsent.getTppInformation().setTppInfo(tppInfo);
 
-        consentEntity.setId(1L);
-        consentEntity.setExternalId(UUID.randomUUID().toString());
-        consentEntity.setConsentType(ConsentType.PIIS_ASPSP.getName());
-        consentEntity.getAspspAccountAccesses().get(0).setConsent(consentEntity);
+        piisAspspConsent.setId(1L);
+        piisAspspConsent.setExternalId(UUID.randomUUID().toString());
+        piisAspspConsent.setConsentType(ConsentType.PIIS_ASPSP.getName());
+        piisAspspConsent.getAspspAccountAccesses().get(0).setConsent(piisAspspConsent);
 
-        piisAspspConsent = consentJpaRepository.save(consentEntity);
+        this.piisAspspConsent = consentJpaRepository.save(piisAspspConsent);
 
-        consentEntity.setId(2L);
-        consentEntity.setExternalId(UUID.randomUUID().toString());
-        consentEntity.setConsentType(ConsentType.PIIS_TPP.getName());
-        consentEntity.getAspspAccountAccesses().get(0).setConsent(consentEntity);
-        piisTppConsent = consentJpaRepository.save(consentEntity);
+        ConsentEntity piisTppConsent = jsonReader.getObjectFromFile("json/specification/consent-entity.json", ConsentEntity.class);
+        piisTppConsent.getTppInformation().setTppInfo(tppInfo);
+
+        piisTppConsent.setId(2L);
+        piisTppConsent.setExternalId(UUID.randomUUID().toString());
+        piisTppConsent.setConsentType(ConsentType.PIIS_TPP.getName());
+        piisTppConsent.getAspspAccountAccesses().get(0).setConsent(piisTppConsent);
+        this.piisTppConsent = consentJpaRepository.save(piisTppConsent);
     }
 
     @Test
     void byConsentIdAndInstanceId() {
-        //piis aspsp consent
+        // PIIS ASPSP consent
         Optional<ConsentEntity> actual = consentJpaRepository.findOne(
             confirmationOfFundsConsentSpecification.byConsentIdAndInstanceId(piisAspspConsent.getExternalId(), INSTANCE_ID));
 
@@ -98,7 +101,7 @@ class ConfirmationOfFundsConsentSpecificationIT extends BaseTest {
         assertEquals(INSTANCE_ID, actual.get().getInstanceId());
         assertEquals(ConsentType.PIIS_ASPSP.name(), actual.get().getConsentType());
 
-        //piis tpp consent
+        // PIIS TPP consent
         actual = consentJpaRepository.findOne(
             confirmationOfFundsConsentSpecification.byConsentIdAndInstanceId(piisTppConsent.getExternalId(), INSTANCE_ID));
 

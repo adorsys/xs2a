@@ -23,7 +23,7 @@
     <parent>
         <artifactId>consent-management</artifactId>
         <groupId>de.adorsys.psd2</groupId>
-        <version>14.10-SNAPSHOT</version>
+        <version>17.3</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
     <modelVersion>4.0.0</modelVersion>
@@ -141,7 +141,7 @@ Use it manually to generate javadocs. Don't commit it
 
             <plugin>
                 <artifactId>maven-source-plugin</artifactId>
-                <version>2.1.1</version>
+                <version>${maven-source-plugin.version}</version>
                 <executions>
                     <execution>
                         <id>bundle-sources</id>

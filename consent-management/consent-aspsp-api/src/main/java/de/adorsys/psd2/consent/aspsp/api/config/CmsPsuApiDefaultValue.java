@@ -20,6 +20,8 @@ package de.adorsys.psd2.consent.aspsp.api.config;
 
 public class CmsPsuApiDefaultValue {
     public static final String DEFAULT_SERVICE_INSTANCE_ID = "UNDEFINED";
+    public static final String DEFAULT_UPDATEDBY = "UNDEFINED";
+    public static final String DEFAULT_REASON = "UNDEFINED";
 
     private CmsPsuApiDefaultValue() {
         // This class is default static value container, it'll never be instantiated

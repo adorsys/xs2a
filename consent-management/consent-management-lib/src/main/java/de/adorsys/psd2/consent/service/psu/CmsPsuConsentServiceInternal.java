@@ -46,7 +46,7 @@ class CmsPsuConsentServiceInternal {
         PsuData newPsuData = psuDataMapper.mapToPsuData(psuIdData, authorisation.getInstanceId());
 
         if (newPsuData == null || StringUtils.isBlank(newPsuData.getPsuId())) {
-            log.info("Authorisation ID : [{}]. Update PSU data in consent failed in updatePsuData method, because newPsuData or psuId in newPsuData is empty or null.",
+            log.info("Authorisation ID : [{}]. Update PSU data in consent failed in updatePsuData method,  newPsuData or psuId in newPsuData is empty or null.",
                      authorisation.getExternalId());
             return false;
         }

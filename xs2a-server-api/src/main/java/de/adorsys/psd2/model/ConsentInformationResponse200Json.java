@@ -20,11 +20,11 @@ package de.adorsys.psd2.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotNull;
 import org.springframework.validation.annotation.Validated;
 
-import javax.validation.Valid;
-import javax.validation.constraints.Min;
-import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
 import java.util.Map;
 import java.util.Objects;
@@ -34,7 +34,7 @@ import java.util.Objects;
  */
 @Schema(description = "Body of the JSON response for a successfull get consent request.")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-10-26T13:16:54.081225+03:00[Europe/Kiev]")
+@jakarta.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-10-25T13:15:56.196839+03:00[Europe/Kiev]")
 
 
 public class ConsentInformationResponse200Json   {
@@ -64,19 +64,18 @@ public class ConsentInformationResponse200Json   {
     return this;
   }
 
-    /**
-     * Get access
-     *
-     * @return access
-     **/
-    @Schema(required = true, description = "")
-    @JsonProperty("access")
+  /**
+   * Get access
+   * @return access
+   **/
+  @Schema(required = true, description = "")
+  @JsonProperty("access")
     @NotNull
 
-    @Valid
-    public AccountAccess getAccess() {
-        return access;
-    }
+  @Valid
+  public AccountAccess getAccess() {
+    return access;
+  }
 
   public void setAccess(AccountAccess access) {
     this.access = access;
@@ -87,17 +86,16 @@ public class ConsentInformationResponse200Json   {
     return this;
   }
 
-    /**
-     * \"true\", if the consent is for recurring access to the account data.  \"false\", if the consent is for one access to the account data.
-     *
-     * @return recurringIndicator
-     **/
-    @Schema(example = "false", required = true, description = "\"true\", if the consent is for recurring access to the account data.  \"false\", if the consent is for one access to the account data. ")
-    @JsonProperty("recurringIndicator")
+  /**
+   * \"true\", if the consent is for recurring access to the account data.  \"false\", if the consent is for one access to the account data.
+   * @return recurringIndicator
+   **/
+  @Schema(example = "false", required = true, description = "\"true\", if the consent is for recurring access to the account data.  \"false\", if the consent is for one access to the account data. ")
+  @JsonProperty("recurringIndicator")
     @NotNull
 
-    public Boolean isRecurringIndicator() {
-        return recurringIndicator;
+  public Boolean isRecurringIndicator() {
+    return recurringIndicator;
   }
 
   public void setRecurringIndicator(Boolean recurringIndicator) {
@@ -106,21 +104,20 @@ public class ConsentInformationResponse200Json   {
 
   public ConsentInformationResponse200Json validUntil(LocalDate validUntil) {
     this.validUntil = validUntil;
-      return this;
+    return this;
   }
 
-    /**
-     * This parameter is defining a valid until date (including the mentioned date) for the requested consent.  The content is the local ASPSP date in ISO-Date format, e.g. 2017-10-30.  Future dates might get adjusted by ASPSP.   If a maximal available date is requested, a date in far future is to be used: \"9999-12-31\".   In both cases the consent object to be retrieved by the get consent request will contain the adjusted date.
-     *
-     * @return validUntil
-     **/
-    @Schema(required = true, description = "This parameter is defining a valid until date (including the mentioned date) for the requested consent.  The content is the local ASPSP date in ISO-Date format, e.g. 2017-10-30.  Future dates might get adjusted by ASPSP.   If a maximal available date is requested, a date in far future is to be used: \"9999-12-31\".   In both cases the consent object to be retrieved by the get consent request will contain the adjusted date. ")
-    @JsonProperty("validUntil")
+  /**
+   * This parameter is defining a valid until date (including the mentioned date) for the requested consent.  The content is the local ASPSP date in ISO-Date format, e.g. 2017-10-30.  Future dates might get adjusted by ASPSP.   If a maximal available date is requested, a date in far future is to be used: \"9999-12-31\".   In both cases the consent object to be retrieved by the get consent request will contain the adjusted date.
+   * @return validUntil
+   **/
+  @Schema(required = true, description = "This parameter is defining a valid until date (including the mentioned date) for the requested consent.  The content is the local ASPSP date in ISO-Date format, e.g. 2017-10-30.  Future dates might get adjusted by ASPSP.   If a maximal available date is requested, a date in far future is to be used: \"9999-12-31\".   In both cases the consent object to be retrieved by the get consent request will contain the adjusted date. ")
+  @JsonProperty("validUntil")
     @NotNull
 
-    @Valid
-    public LocalDate getValidUntil() {
-        return validUntil;
+  @Valid
+  public LocalDate getValidUntil() {
+    return validUntil;
   }
 
   public void setValidUntil(LocalDate validUntil) {
@@ -129,21 +126,19 @@ public class ConsentInformationResponse200Json   {
 
   public ConsentInformationResponse200Json frequencyPerDay(Integer frequencyPerDay) {
     this.frequencyPerDay = frequencyPerDay;
-      return this;
+    return this;
   }
 
-    /**
-     * This field indicates the requested maximum frequency for an access without PSU involvement per day. For a one-off access, this attribute is set to \"1\".  The frequency needs to be greater equal to one.   If not otherwise agreed bilaterally between TPP and ASPSP, the frequency is less equal to 4.
-     * minimum: 1
-     *
-     * @return frequencyPerDay
-     **/
-    @Schema(example = "4", required = true, description = "This field indicates the requested maximum frequency for an access without PSU involvement per day. For a one-off access, this attribute is set to \"1\".  The frequency needs to be greater equal to one.   If not otherwise agreed bilaterally between TPP and ASPSP, the frequency is less equal to 4. ")
-    @JsonProperty("frequencyPerDay")
+  /**
+   * This field indicates the requested maximum frequency for an access without PSU involvement per day. For a one-off access, this attribute is set to \"1\".  The frequency needs to be greater equal to one.   If not otherwise agreed bilaterally between TPP and ASPSP, the frequency is less equal to 4.
+   * minimum: 1
+   * @return frequencyPerDay
+   **/
+  @Schema(example = "4", required = true, description = "This field indicates the requested maximum frequency for an access without PSU involvement per day. For a one-off access, this attribute is set to \"1\".  The frequency needs to be greater equal to one.   If not otherwise agreed bilaterally between TPP and ASPSP, the frequency is less equal to 4. ")
+  @JsonProperty("frequencyPerDay")
     @NotNull
 
-    @Min(1)
-    public Integer getFrequencyPerDay() {
+@Min(1)  public Integer getFrequencyPerDay() {
     return frequencyPerDay;
   }
 
@@ -153,20 +148,19 @@ public class ConsentInformationResponse200Json   {
 
   public ConsentInformationResponse200Json lastActionDate(LocalDate lastActionDate) {
     this.lastActionDate = lastActionDate;
-      return this;
+    return this;
   }
 
-    /**
-     * This date is containing the date of the last action on the consent object either through  the XS2A interface or the PSU/ASPSP interface having an impact on the status.
-     *
-     * @return lastActionDate
-     **/
-    @Schema(required = true, description = "This date is containing the date of the last action on the consent object either through  the XS2A interface or the PSU/ASPSP interface having an impact on the status. ")
-    @JsonProperty("lastActionDate")
+  /**
+   * This date is containing the date of the last action on the consent object either through  the XS2A interface or the PSU/ASPSP interface having an impact on the status.
+   * @return lastActionDate
+   **/
+  @Schema(required = true, description = "This date is containing the date of the last action on the consent object either through  the XS2A interface or the PSU/ASPSP interface having an impact on the status. ")
+  @JsonProperty("lastActionDate")
     @NotNull
 
-    @Valid
-    public LocalDate getLastActionDate() {
+  @Valid
+  public LocalDate getLastActionDate() {
     return lastActionDate;
   }
 
@@ -175,43 +169,41 @@ public class ConsentInformationResponse200Json   {
   }
 
   public ConsentInformationResponse200Json consentStatus(ConsentStatus consentStatus) {
-      this.consentStatus = consentStatus;
-      return this;
+    this.consentStatus = consentStatus;
+    return this;
   }
 
-    /**
-     * Get consentStatus
-     *
-     * @return consentStatus
-     **/
-    @Schema(required = true, description = "")
-    @JsonProperty("consentStatus")
+  /**
+   * Get consentStatus
+   * @return consentStatus
+   **/
+  @Schema(required = true, description = "")
+  @JsonProperty("consentStatus")
     @NotNull
 
-    @Valid
-    public ConsentStatus getConsentStatus() {
+  @Valid
+  public ConsentStatus getConsentStatus() {
     return consentStatus;
   }
 
   public void setConsentStatus(ConsentStatus consentStatus) {
-      this.consentStatus = consentStatus;
+    this.consentStatus = consentStatus;
   }
 
-    public ConsentInformationResponse200Json _links(Map _links) {
-        this._links = _links;
-        return this;
-    }
+  public ConsentInformationResponse200Json _links(Map _links) {
+    this._links = _links;
+    return this;
+  }
 
-    /**
-     * Get _links
-     *
-     * @return _links
-     **/
-    @Schema(description = "")
-    @JsonProperty("_links")
+  /**
+   * Get _links
+   * @return _links
+   **/
+  @Schema(description = "")
+  @JsonProperty("_links")
 
-    @Valid
-    public Map getLinks() {
+  @Valid
+  public Map getLinks() {
     return _links;
   }
 

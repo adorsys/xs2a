@@ -29,9 +29,7 @@ import org.springframework.stereotype.Service;
 public class PaymentServiceMock {
 
     public SpiResponse<SpiPaymentConfirmationCodeValidationResponse> notifyConfirmationCodeValidation(boolean confirmationCodeValidationResult, SpiPayment payment, boolean isCancellation) {
-        SpiScaStatus scaStatus = confirmationCodeValidationResult
-                                     ? SpiScaStatus.FINALISED
-                                     : SpiScaStatus.FAILED;
+        SpiScaStatus scaStatus = confirmationCodeValidationResult ? SpiScaStatus.FINALISED : SpiScaStatus.FAILED;
         SpiTransactionStatus transactionStatus = isCancellation
                                                      ? getCancellationTransactionStatus(confirmationCodeValidationResult, payment)
                                                      : getTransactionStatus(confirmationCodeValidationResult);
@@ -44,14 +42,10 @@ public class PaymentServiceMock {
     }
 
     private SpiTransactionStatus getCancellationTransactionStatus(boolean confirmationCodeValidationResult, SpiPayment payment) {
-        return confirmationCodeValidationResult
-                   ? SpiTransactionStatus.CANC
-                   : payment.getPaymentStatus();
+        return confirmationCodeValidationResult ? SpiTransactionStatus.CANC : payment.getPaymentStatus();
     }
 
     private SpiTransactionStatus getTransactionStatus(boolean confirmationCodeValidationResult) {
-        return confirmationCodeValidationResult
-                   ? SpiTransactionStatus.ACSP
-                   : SpiTransactionStatus.RJCT;
+        return confirmationCodeValidationResult ? SpiTransactionStatus.ACSP : SpiTransactionStatus.RJCT;
     }
 }

@@ -34,7 +34,7 @@ public class SpiPaymentCancellationResponse extends SpiPaymentResponse {
     private boolean cancellationAuthorisationMandated;
     /**
      * Provides a possibility to update status to an actual one. If not provided status will not be updated.
-     * If TransactionStatus.CANC is returned, payment will be cancelled immediately without further processing.
+     * If SpiTransactionStatus.CANC is returned, payment will be cancelled immediately without further processing.
      */
     private SpiTransactionStatus transactionStatus;
 }

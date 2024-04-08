@@ -2,7 +2,7 @@
   "id": 123,
   "externalId": "b9643e87-f666-483b-baf1-1ab3880253fa",
   "recurringIndicator": true,
-  "lastActionDate": "2020-01-01",
+  "lastActionDateTime": "2020-01-01T15:30:35.035",
   "validUntil": "2030-01-20",
   "psuDataList": [
     {

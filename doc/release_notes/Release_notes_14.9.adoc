@@ -4,8 +4,6 @@
 
 * Bumped dependency versions
 
-== Bumped dependency versions
-
 Versions of dependencies were updated:
 
 - snakeyaml was bumped up to 2.0;

@@ -35,37 +35,37 @@ import java.util.Optional;
 @Data
 @Schema(description = "Pis payment initialisation common payment response", name = "PisCommonPaymentResponse")
 public class PisCommonPaymentResponse implements CommonPaymentData {
-    @Schema(description = "Payment data", required = true)
+    @Schema(description = "Payment data", requiredMode = Schema.RequiredMode.REQUIRED)
     private List<PisPayment> payments;
 
-    @Schema(description = "Payment product", required = true, example = "sepa-credit-transfers")
+    @Schema(description = "Payment product", requiredMode = Schema.RequiredMode.REQUIRED, example = "sepa-credit-transfers")
     private String paymentProduct;
 
-    @Schema(description = "Payment type: BULK, SINGLE or PERIODIC.", required = true, example = "SINGLE")
+    @Schema(description = "Payment type: BULK, SINGLE or PERIODIC.", requiredMode = Schema.RequiredMode.REQUIRED, example = "SINGLE")
     private PaymentType paymentType;
 
-    @Schema(description = "Tpp information", required = true)
+    @Schema(description = "TPP information", requiredMode = Schema.RequiredMode.REQUIRED)
     private TppInfo tppInfo;
 
-    @Schema(description = "An external exposed identification of the created common payment", required = true, example = "bf489af6-a2cb-4b75-b71d-d66d58b934d7")
+    @Schema(description = "An external exposed identification of the created common payment", requiredMode = Schema.RequiredMode.REQUIRED, example = "bf489af6-a2cb-4b75-b71d-d66d58b934d7")
     private String externalId;
 
-    @Schema(description = "List of corresponding PSU", required = true)
+    @Schema(description = "List of corresponding PSU", requiredMode = Schema.RequiredMode.REQUIRED)
     private List<PsuIdData> psuData;
 
     @Schema(description = "Payment info")
     private byte[] paymentData;
 
-    @Schema(description = "Transaction status", required = true)
+    @Schema(description = "Transaction status", requiredMode = Schema.RequiredMode.REQUIRED)
     private TransactionStatus transactionStatus;
 
-    @Schema(description = "Internal payment status", required = true)
+    @Schema(description = "Internal payment status", requiredMode = Schema.RequiredMode.REQUIRED)
     private InternalPaymentStatus internalPaymentStatus;
 
     @Schema(description = "Timestamp of the last payment transaction status changing")
     private OffsetDateTime statusChangeTimestamp;
 
-    @Schema(description = "List of corresponding PSU", required = true)
+    @Schema(description = "List of corresponding PSU", requiredMode = Schema.RequiredMode.REQUIRED)
     private List<Authorisation> authorisations = new ArrayList<>();
 
     @Schema(description = "Defines whether the payment requires multilevel SCA", example = "true")
@@ -77,7 +77,7 @@ public class PisCommonPaymentResponse implements CommonPaymentData {
     @Schema(description = "Response content type")
     private String contentType;
 
-    @Schema(description = "Response instance id")
+    @Schema(description = "Response instance ID")
     private String instanceId;
 
     @Schema(description = "Signing basket blocked")

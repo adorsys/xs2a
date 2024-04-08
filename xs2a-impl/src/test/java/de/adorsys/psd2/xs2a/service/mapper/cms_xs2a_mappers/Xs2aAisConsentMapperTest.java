@@ -51,7 +51,7 @@ import static org.mockito.Mockito.when;
 
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = {Xs2aAisConsentMapper.class, Xs2aToSpiPsuDataMapper.class, Xs2aToSpiAccountAccessMapper.class,
-    Xs2aToSpiAccountReferenceMapper.class, ConsentDataMapper.class, Xs2aAccountConsentAuthorizationMapper.class, Xs2aToSpiTppInfoMapperImpl.class, Xs2aToSpiConsentMapperImpl.class})
+    Xs2aToSpiAccountReferenceMapper.class, ConsentDataMapper.class, Xs2aAccountConsentAuthorizationMapper.class, Xs2aToSpiTppInfoMapperImpl.class, Xs2aToSpiAccountAccessTypeMapperImpl.class, Xs2aToSpiConsentStatusMapperImpl.class, Xs2aToSpiAisConsentRequestTypeMapperImpl.class, Xs2aToSpiAisConsentRequestTypeMapperImpl.class, Xs2aToSpiConsentTypeMapperImpl.class})
 class Xs2aAisConsentMapperTest {
     private static final String CONSENT_ID = "c966f143-f6a2-41db-9036-8abaeeef3af7";
     private static final String INTERNAL_REQUEST_ID = "5c2d5564-367f-4e03-a621-6bef76fa4208";
@@ -151,7 +151,7 @@ class Xs2aAisConsentMapperTest {
         assertEquals(aisConsent.getValidUntil(), cmsConsent.getValidUntil());
         assertEquals(aisConsent.getExpireDate(), cmsConsent.getExpireDate());
         assertEquals(aisConsent.getFrequencyPerDay(), cmsConsent.getFrequencyPerDay());
-        assertEquals(aisConsent.getLastActionDate(), cmsConsent.getLastActionDate());
+        assertEquals(aisConsent.getLastActionDateTime(), cmsConsent.getLastActionDateTime());
         assertEquals(aisConsent.getConsentStatus(), cmsConsent.getConsentStatus());
         assertEquals(aisConsent.getAuthorisationTemplate(), cmsConsent.getAuthorisationTemplate());
         assertEquals(aisConsent.getPsuIdDataList(), cmsConsent.getPsuIdDataList());
@@ -181,7 +181,7 @@ class Xs2aAisConsentMapperTest {
         assertEquals(aisConsent.getValidUntil(), cmsConsent.getValidUntil());
         assertEquals(aisConsent.getExpireDate(), cmsConsent.getExpireDate());
         assertEquals(aisConsent.getFrequencyPerDay(), cmsConsent.getFrequencyPerDay());
-        assertEquals(aisConsent.getLastActionDate(), cmsConsent.getLastActionDate());
+        assertEquals(aisConsent.getLastActionDateTime(), cmsConsent.getLastActionDateTime());
         assertEquals(aisConsent.getConsentStatus(), cmsConsent.getConsentStatus());
         assertEquals(aisConsent.getAuthorisationTemplate(), cmsConsent.getAuthorisationTemplate());
         assertEquals(aisConsent.getPsuIdDataList(), cmsConsent.getPsuIdDataList());

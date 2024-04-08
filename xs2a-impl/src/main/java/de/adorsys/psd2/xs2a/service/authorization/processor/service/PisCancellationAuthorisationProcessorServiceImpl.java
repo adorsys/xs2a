@@ -31,11 +31,15 @@ import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
+import de.adorsys.psd2.xs2a.domain.consent.CreatePaymentAuthorisationProcessorResponse;
+import de.adorsys.psd2.xs2a.domain.consent.Xs2aCreateAuthorisationRequest;
+import de.adorsys.psd2.xs2a.domain.consent.Xs2aCreatePisCancellationAuthorisationResponse;
 import de.adorsys.psd2.xs2a.domain.consent.pis.PaymentAuthorisationParameters;
 import de.adorsys.psd2.xs2a.domain.consent.pis.Xs2aUpdatePisCommonPaymentPsuDataResponse;
 import de.adorsys.psd2.xs2a.service.authorization.Xs2aAuthorisationService;
 import de.adorsys.psd2.xs2a.service.authorization.pis.PisCommonDecoupledService;
 import de.adorsys.psd2.xs2a.service.authorization.pis.PisScaAuthorisationService;
+import de.adorsys.psd2.xs2a.service.authorization.pis.PisScaAuthorisationServiceResolver;
 import de.adorsys.psd2.xs2a.service.authorization.processor.model.AuthorisationProcessorRequest;
 import de.adorsys.psd2.xs2a.service.authorization.processor.model.AuthorisationProcessorResponse;
 import de.adorsys.psd2.xs2a.service.consent.PisAspspDataService;
@@ -52,16 +56,23 @@ import de.adorsys.psd2.xs2a.spi.domain.authorisation.*;
 import de.adorsys.psd2.xs2a.spi.domain.payment.response.SpiPaymentExecutionResponse;
 import de.adorsys.psd2.xs2a.spi.domain.psu.SpiPsuData;
 import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponse;
+import de.adorsys.psd2.xs2a.spi.domain.sca.SpiScaApproach;
+import de.adorsys.psd2.xs2a.spi.domain.sca.SpiScaStatus;
 import de.adorsys.psd2.xs2a.spi.service.PaymentCancellationSpi;
 import de.adorsys.psd2.xs2a.spi.service.SpiPayment;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
+import java.util.Set;
+
+import static de.adorsys.psd2.xs2a.core.error.ErrorType.PIS_400;
 
 @Service
 @Slf4j
 public class PisCancellationAuthorisationProcessorServiceImpl extends PaymentBaseAuthorisationProcessorService {
+    private static final String AUTHORISATION_FOR_PAYMENT_HAS_FAILED = "Start cancellation authorisation for payment has failed.";
 
     private final PaymentCancellationSpi paymentCancellationSpi;
     private final SpiErrorMapper spiErrorMapper;
@@ -69,7 +80,6 @@ public class PisCancellationAuthorisationProcessorServiceImpl extends PaymentBas
     private final Xs2aUpdatePaymentAfterSpiService updatePaymentAfterSpiService;
     private final PisCommonDecoupledService pisCommonDecoupledService;
     private final PisPsuDataService pisPsuDataService;
-    private final Xs2aToSpiAuthorizationMapper xs2aToSpiAuthorizationMapper;
 
     public PisCancellationAuthorisationProcessorServiceImpl(List<PisScaAuthorisationService> services,
                                                             Xs2aToSpiPaymentMapper xs2aToSpiPaymentMapper, PaymentCancellationSpi paymentCancellationSpi,
@@ -82,24 +92,57 @@ public class PisCancellationAuthorisationProcessorServiceImpl extends PaymentBas
                                                             PisCommonDecoupledService pisCommonDecoupledService,
                                                             PisPsuDataService pisPsuDataService,
                                                             Xs2aToSpiPsuDataMapper xs2aToSpiPsuDataMapper,
-                                                            SpiToXs2aChallengeDataMapper challengeDataMapper,
-                                                            SpiToXs2aTppMessageInformationMapper tppMessageInformationMapper,
-                                                            SpiToXs2aAuthenticationObjectMapper authenticationObjectMapper,
-                                                            SpiToXs2aAuthorizationMapper spiToXs2aAuthorizationMapper,
-                                                            SpiToXs2aPisMapper spiToXs2aPisMapper,
-                                                            Xs2aToSpiAuthorizationMapper xs2aToSpiAuthorizationMapper) {
+                                                            SpiToXs2aAuthenticationObjectMapper spiToXs2aAuthenticationObjectMapper,
+                                                            SpiToXs2aChallengeDataMapper spiToXs2aChallengeDataMapper,
+                                                            SpiToXs2aScaStatusMapper spiToXs2aScaStatusMapper,
+                                                            SpiToXs2aScaApproachMapper spiToXs2aScaApproachMapper,
+                                                            SpiToXs2aTppMessageInformationMapper spiToXs2aTppMessageInformationMapper,
+                                                            SpiToXs2aPaymentTypeMapper spiToXs2aPaymentTypeMapper,
+                                                            PisScaAuthorisationServiceResolver pisScaAuthorisationServiceResolver) {
         super(services, xs2aAuthorisationService, xs2aPisCommonPaymentService, xs2aToSpiPaymentMapper,
               spiContextDataProvider, aspspConsentDataProviderFactory, spiErrorMapper,
-              pisAspspDataService, xs2aPisCommonPaymentMapper, xs2aToSpiPsuDataMapper,
-              challengeDataMapper, tppMessageInformationMapper,authenticationObjectMapper,
-              spiToXs2aAuthorizationMapper,spiToXs2aPisMapper );
+              pisAspspDataService, xs2aPisCommonPaymentMapper, xs2aToSpiPsuDataMapper, spiToXs2aAuthenticationObjectMapper,
+              spiToXs2aChallengeDataMapper, spiToXs2aScaStatusMapper, spiToXs2aScaApproachMapper,
+              spiToXs2aTppMessageInformationMapper, spiToXs2aPaymentTypeMapper, pisScaAuthorisationServiceResolver);
         this.paymentCancellationSpi = paymentCancellationSpi;
         this.spiErrorMapper = spiErrorMapper;
         this.aspspConsentDataProviderFactory = aspspConsentDataProviderFactory;
         this.updatePaymentAfterSpiService = updatePaymentAfterSpiService;
         this.pisCommonDecoupledService = pisCommonDecoupledService;
         this.pisPsuDataService = pisPsuDataService;
-        this.xs2aToSpiAuthorizationMapper = xs2aToSpiAuthorizationMapper;
+    }
+
+    @Override
+    public AuthorisationProcessorResponse proceedAuthorisation(Xs2aCreateAuthorisationRequest xs2aCreateAuthorisationRequest,
+                                                               PisScaAuthorisationService pisScaAuthorisationService,
+                                                               PaymentType paymentType,
+                                                               SpiStartAuthorisationResponse startAuthorisationResponse) {
+        PsuIdData psuIdData = xs2aCreateAuthorisationRequest.getPsuData();
+        String paymentId = xs2aCreateAuthorisationRequest.getPaymentId();
+        ScaApproach scaApproach = xs2aCreateAuthorisationRequest.getScaApproach();
+
+        Optional<Xs2aCreatePisCancellationAuthorisationResponse> paymentCancellationAuthorisationResponse =
+            pisScaAuthorisationService.createCommonPaymentCancellationAuthorisation(xs2aCreateAuthorisationRequest, paymentType);
+
+        if (paymentCancellationAuthorisationResponse.isEmpty()) {
+            ErrorHolder errorHolder = ErrorHolder.builder(PIS_400)
+                                          .tppMessages(TppMessageInformation.of(MessageErrorCode.PAYMENT_FAILED))
+                                          .build();
+            writeErrorLog(xs2aCreateAuthorisationRequest, errorHolder, AUTHORISATION_FOR_PAYMENT_HAS_FAILED);
+            return new CreatePaymentAuthorisationProcessorResponse(errorHolder, scaApproach, paymentId, psuIdData);
+        }
+
+        Xs2aCreatePisCancellationAuthorisationResponse createPaymentCancellationAuthorisationResponse = paymentCancellationAuthorisationResponse.get();
+
+        Set<TppMessageInformation> tppMessages = spiToXs2aTppMessageInformationMapper.toTppMessageInformationSet(startAuthorisationResponse.getTppMessages());
+        String psuMessage = startAuthorisationResponse.getPsuMessage();
+
+        return new CreatePaymentAuthorisationProcessorResponse(createPaymentCancellationAuthorisationResponse.getScaStatus(),
+                                                               createPaymentCancellationAuthorisationResponse.getScaApproach(),
+                                                               psuMessage, tppMessages,
+                                                               paymentId, xs2aCreateAuthorisationRequest.getAuthorisationId(),
+                                                               createPaymentCancellationAuthorisationResponse.getInternalRequestId(),
+                                                               psuIdData);
     }
 
     @Override
@@ -119,8 +162,8 @@ public class PisCancellationAuthorisationProcessorServiceImpl extends PaymentBas
 
     @Override
     SpiResponse<SpiPaymentExecutionResponse> verifyScaAuthorisationAndExecutePayment(Authorisation authorisation,
-                                                                            SpiPayment payment, SpiScaConfirmation spiScaConfirmation,
-                                                                            SpiContextData contextData, SpiAspspConsentDataProvider spiAspspConsentDataProvider) {
+                                                                                     SpiPayment payment, SpiScaConfirmation spiScaConfirmation,
+                                                                                     SpiContextData contextData, SpiAspspConsentDataProvider spiAspspConsentDataProvider) {
         return paymentCancellationSpi.verifyScaAuthorisationAndCancelPaymentWithResponse(contextData, spiScaConfirmation, payment, spiAspspConsentDataProvider);
     }
 
@@ -173,7 +216,7 @@ public class PisCancellationAuthorisationProcessorServiceImpl extends PaymentBas
 
     @Override
     protected SpiResponse<SpiStartAuthorisationResponse> getSpiStartAuthorisationResponse(SpiContextData spiContextData, ScaApproach scaApproach, ScaStatus scaStatus, String authorisationId, SpiPayment spiPayment, SpiAspspConsentDataProvider spiAspspDataProviderFor) {
-        return paymentCancellationSpi.startAuthorisation(spiContextData, xs2aToSpiAuthorizationMapper.mapToSpiScaApproach(scaApproach), xs2aToSpiAuthorizationMapper.mapToSpiScaStatus(scaStatus), authorisationId, spiPayment, spiAspspDataProviderFor);
+        return paymentCancellationSpi.startAuthorisation(spiContextData, SpiScaApproach.valueOf(scaApproach.name()), SpiScaStatus.valueOf(scaStatus.name()), authorisationId, spiPayment, spiAspspDataProviderFor);
     }
 
     @Override
@@ -216,24 +259,5 @@ public class PisCancellationAuthorisationProcessorServiceImpl extends PaymentBas
 
         return psuIdDataList.stream()
                    .anyMatch(psu -> psu.contentEquals(psuData));
-    }
-
-    private void writeErrorLog(AuthorisationProcessorRequest request, PsuIdData psuData, ErrorHolder errorHolder, String message) {
-        String messageToLog = String.format("Payment-ID [{}], Authorisation-ID [{}], PSU-ID [{}], SCA Approach [{}]. %s Error msg: [{}]", message);
-        log.warn(messageToLog,
-                 request.getUpdateAuthorisationRequest().getBusinessObjectId(),
-                 request.getUpdateAuthorisationRequest().getAuthorisationId(),
-                 psuData != null ? psuData.getPsuId() : "-",
-                 request.getScaApproach(),
-                 errorHolder);
-    }
-
-    private void writeInfoLog(AuthorisationProcessorRequest request, PsuIdData psuData, String message) {
-        String messageToLog = String.format("Payment-ID [{}], Authorisation-ID [{}], PSU-ID [{}], SCA Approach [{}]. %s", message);
-        log.info(messageToLog,
-                 request.getUpdateAuthorisationRequest().getBusinessObjectId(),
-                 request.getUpdateAuthorisationRequest().getAuthorisationId(),
-                 psuData != null ? psuData.getPsuId() : "-",
-                 request.getScaApproach());
     }
 }

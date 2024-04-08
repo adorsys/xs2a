@@ -48,7 +48,7 @@ import de.adorsys.psd2.xs2a.service.mapper.cms_xs2a_mappers.Xs2aAisConsentMapper
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiCardTransactionListToXs2aAccountReportMapper;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiErrorMapper;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiToXs2aBalanceMapper;
-import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.Xs2aToSpiConsentMapper;
+import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.Xs2aToSpiBookingStatusMapper;
 import de.adorsys.psd2.xs2a.service.profile.AspspProfileServiceWrapper;
 import de.adorsys.psd2.xs2a.service.spi.SpiAspspConsentDataProviderFactory;
 import de.adorsys.psd2.xs2a.service.validator.ais.account.GetCardTransactionsReportValidator;
@@ -158,7 +158,7 @@ class CardTransactionServiceTest {
     @Mock
     private CardAccountHandler cardAccountHandler;
     @Mock
-    private Xs2aToSpiConsentMapper xs2aToSpiConsentMapper;
+    private Xs2aToSpiBookingStatusMapper xs2aToSpiBookingStatusMapper;
 
     @BeforeEach
     void setUp() {
@@ -168,7 +168,6 @@ class CardTransactionServiceTest {
         spiAspspConsentDataProvider = spiAspspConsentDataProviderFactory.getSpiAspspDataProviderFor(CONSENT_ID);
         when(aisConsentService.getAccountConsentById(CONSENT_ID))
             .thenReturn(Optional.of(accountConsent));
-
     }
 
     @Test
@@ -210,7 +209,7 @@ class CardTransactionServiceTest {
             .thenReturn(SPI_ACCOUNT_CONSENT);
         when(cardAccountSpi.requestCardTransactionsForAccount(SPI_CONTEXT_DATA, buildSpiTransactionReportParameters(), spiAccountReference, SPI_ACCOUNT_CONSENT, spiAspspConsentDataProvider))
             .thenReturn(buildErrorSpiResponse(SPI_CARD_TRANSACTION_REPORT));
-        when(xs2aToSpiConsentMapper.mapToSpiBookingStatus(BOOKING_STATUS)).thenReturn(SPI_BOOKING_STATUS);
+        when(xs2aToSpiBookingStatusMapper.mapToSpiBookingStatus(BOOKING_STATUS)).thenReturn(SPI_BOOKING_STATUS);
         when(spiErrorMapper.mapToErrorHolder(buildErrorSpiResponse(SPI_CARD_TRANSACTION_REPORT), ServiceType.AIS))
             .thenReturn(ErrorHolder
                             .builder(AIS_400)
@@ -250,7 +249,7 @@ class CardTransactionServiceTest {
             .thenReturn(SPI_CONTEXT_DATA);
         when(cardAccountSpi.requestCardTransactionsForAccount(SPI_CONTEXT_DATA, buildSpiTransactionReportParameters(), spiAccountReference, SPI_ACCOUNT_CONSENT, spiAspspConsentDataProvider))
             .thenReturn(buildErrorServiceNotSupportedSpiResponse());
-        when(xs2aToSpiConsentMapper.mapToSpiBookingStatus(BOOKING_STATUS)).thenReturn(SPI_BOOKING_STATUS);
+        when(xs2aToSpiBookingStatusMapper.mapToSpiBookingStatus(BOOKING_STATUS)).thenReturn(SPI_BOOKING_STATUS);
         when(consentMapper.mapToSpiAccountConsent(any()))
             .thenReturn(SPI_ACCOUNT_CONSENT);
 
@@ -272,7 +271,7 @@ class CardTransactionServiceTest {
             .thenReturn(SPI_CONTEXT_DATA);
         when(cardAccountSpi.requestCardTransactionsForAccount(SPI_CONTEXT_DATA, buildSpiTransactionReportParameters(), spiAccountReference, SPI_ACCOUNT_CONSENT, spiAspspConsentDataProvider))
             .thenReturn(buildSuccessSpiResponse(SPI_CARD_TRANSACTION_REPORT));
-        when(xs2aToSpiConsentMapper.mapToSpiBookingStatus(BOOKING_STATUS)).thenReturn(SPI_BOOKING_STATUS);
+        when(xs2aToSpiBookingStatusMapper.mapToSpiBookingStatus(BOOKING_STATUS)).thenReturn(SPI_BOOKING_STATUS);
 
         Xs2aCardAccountReport xs2aAccountReport = new Xs2aCardAccountReport(Collections.emptyList(), Collections.emptyList(), Collections.emptyList(), null);
 
@@ -318,7 +317,7 @@ class CardTransactionServiceTest {
             .thenReturn(Optional.of(aisConsent));
         when(cardAccountSpi.requestCardTransactionsForAccount(SPI_CONTEXT_DATA, buildSpiTransactionReportParameters(), SPI_ACCOUNT_REFERENCE_GLOBAL, SPI_ACCOUNT_CONSENT, spiAspspConsentDataProvider))
             .thenReturn(buildSuccessSpiResponse(SPI_CARD_TRANSACTION_REPORT));
-        when(xs2aToSpiConsentMapper.mapToSpiBookingStatus(BOOKING_STATUS)).thenReturn(SPI_BOOKING_STATUS);
+        when(xs2aToSpiBookingStatusMapper.mapToSpiBookingStatus(BOOKING_STATUS)).thenReturn(SPI_BOOKING_STATUS);
 
         Xs2aCardAccountReport xs2aAccountReport = new Xs2aCardAccountReport(Collections.emptyList(), Collections.emptyList(), Collections.emptyList(), null);
 
@@ -361,7 +360,7 @@ class CardTransactionServiceTest {
             .thenReturn(Optional.of(aisConsent));
         when(cardAccountSpi.requestCardTransactionsForAccount(SPI_CONTEXT_DATA, buildSpiTransactionReportParameters(), SPI_ACCOUNT_REFERENCE_GLOBAL, SPI_ACCOUNT_CONSENT, spiAspspConsentDataProvider))
             .thenReturn(buildSuccessSpiResponse(SPI_CARD_TRANSACTION_REPORT));
-        when(xs2aToSpiConsentMapper.mapToSpiBookingStatus(BOOKING_STATUS)).thenReturn(SPI_BOOKING_STATUS);
+        when(xs2aToSpiBookingStatusMapper.mapToSpiBookingStatus(BOOKING_STATUS)).thenReturn(SPI_BOOKING_STATUS);
 
         Xs2aCardAccountReport xs2aAccountReport = new Xs2aCardAccountReport(Collections.emptyList(), Collections.emptyList(), Collections.emptyList(), null);
 
@@ -404,7 +403,7 @@ class CardTransactionServiceTest {
             .thenReturn(Collections.emptyList());
         when(consentMapper.mapToSpiAccountConsent(any()))
             .thenReturn(SPI_ACCOUNT_CONSENT);
-        when(xs2aToSpiConsentMapper.mapToSpiBookingStatus(BOOKING_STATUS)).thenReturn(SPI_BOOKING_STATUS);
+        when(xs2aToSpiBookingStatusMapper.mapToSpiBookingStatus(BOOKING_STATUS)).thenReturn(SPI_BOOKING_STATUS);
         ArgumentCaptor<EventType> argumentCaptor = ArgumentCaptor.forClass(EventType.class);
 
         // When
@@ -447,7 +446,7 @@ class CardTransactionServiceTest {
             .thenReturn(Collections.emptyList());
         when(consentMapper.mapToSpiAccountConsent(any()))
             .thenReturn(SPI_ACCOUNT_CONSENT);
-        when(xs2aToSpiConsentMapper.mapToSpiBookingStatus(BOOKING_STATUS)).thenReturn(SPI_BOOKING_STATUS);
+        when(xs2aToSpiBookingStatusMapper.mapToSpiBookingStatus(BOOKING_STATUS)).thenReturn(SPI_BOOKING_STATUS);
         ArgumentCaptor<ConsentStatus> argumentCaptor = ArgumentCaptor.forClass(ConsentStatus.class);
 
         // When

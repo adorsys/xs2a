@@ -72,7 +72,7 @@ public class AuthorisationServiceInternal implements AuthorisationService {
         Optional<Authorisable> parentOptional = authService.getNotFinalisedAuthorisationParent(parentId);
 
         if (parentOptional.isEmpty()) {
-            log.info("Authorisation type: [{}], Parent ID: [{}]. Create authorisation has failed, because authorisation's parent couldn't be found",
+            log.info("Authorisation type: [{}], Parent ID: [{}]. Create authorisation has failed, authorisation's parent couldn't be found",
                      authorisationType, parentId);
             return CmsResponse.<CreateAuthorisationResponse>builder()
                        .error(LOGICAL_ERROR)
@@ -101,7 +101,7 @@ public class AuthorisationServiceInternal implements AuthorisationService {
         Optional<AuthorisationEntity> authorisationOptional = getAuthorisation(authorisationId);
 
         if (authorisationOptional.isEmpty()) {
-            log.info("Authorisation ID: [{}]. Get authorisation has failed, because authorisation could not found",
+            log.info("Authorisation ID: [{}]. Get authorisation has failed, authorisation could not found",
                      authorisationId);
 
             return CmsResponse.<Authorisation>builder()
@@ -121,7 +121,7 @@ public class AuthorisationServiceInternal implements AuthorisationService {
         Optional<AuthorisationEntity> authorisationOptional = getAuthorisation(authorisationId);
 
         if (authorisationOptional.isEmpty()) {
-            log.info("Authorisation ID: [{}]. Update authorisation has failed, because authorisation couldn't be found",
+            log.info("Authorisation ID: [{}]. Update authorisation has failed, authorisation couldn't be found",
                      authorisationId);
             return CmsResponse.<Authorisation>builder()
                        .error(LOGICAL_ERROR)
@@ -133,7 +133,7 @@ public class AuthorisationServiceInternal implements AuthorisationService {
         authorisationClosingService.closePreviousAuthorisationsByAuthorisation(authorisation, psuDataFromRequest);
 
         if (authorisation.getScaStatus().isFinalisedStatus()) {
-            log.info("Authorisation ID: [{}], SCA status: [{}]. Update authorisation has failed, because authorisation has finalised status",
+            log.info("Authorisation ID: [{}], SCA status: [{}]. Update authorisation has failed, authorisation has finalised status",
                      authorisationId, authorisation.getScaStatus().getValue());
             return CmsResponse.<Authorisation>builder()
                        .error(LOGICAL_ERROR)
@@ -153,7 +153,7 @@ public class AuthorisationServiceInternal implements AuthorisationService {
         Optional<AuthorisationEntity> authorisationOptional = getAuthorisation(authorisationId);
 
         if (authorisationOptional.isEmpty()) {
-            log.info("Authorisation ID: [{}]. Update authorisation status has failed, because authorisation couldn't be found by id",
+            log.info("Authorisation ID: [{}]. Update authorisation status has failed, authorisation couldn't be found by ID",
                      authorisationId);
             return CmsResponse.<Boolean>builder()
                        .payload(false)
@@ -175,7 +175,7 @@ public class AuthorisationServiceInternal implements AuthorisationService {
 
         Optional<Authorisable> authorisationParentOptional = authService.getAuthorisationParent(parentHolder.getParentId());
         if (authorisationParentOptional.isEmpty()) {
-            log.info("Parent ID: [{}]. Get the list of authorisation IDs has failed, because parent couldn't be found",
+            log.info("Parent ID: [{}]. Get the list of authorisation IDs has failed, parent couldn't be found",
                      parentHolder.getParentId());
             return CmsResponse.<List<String>>builder()
                        .error(LOGICAL_ERROR)
@@ -201,7 +201,7 @@ public class AuthorisationServiceInternal implements AuthorisationService {
         AuthService authService = authServiceResolver.getAuthService(parentHolder.getAuthorisationType());
         Optional<Authorisable> parentOptional = authService.getAuthorisationParent(parentHolder.getParentId());
         if (parentOptional.isEmpty()) {
-            log.info("Parent ID: [{}], Authorisation ID: [{}]. Get authorisation SCA status has failed, because parent couldn't be found",
+            log.info("Parent ID: [{}], Authorisation ID: [{}]. Get authorisation SCA status has failed, parent couldn't be found",
                      parentHolder.getParentId(), authorisationId);
             return CmsResponse.<ScaStatus>builder()
                        .error(LOGICAL_ERROR)
@@ -211,7 +211,7 @@ public class AuthorisationServiceInternal implements AuthorisationService {
         Authorisable parent = parentOptional.get();
         if (authService.isConfirmationExpired(parent)) {
             authService.updateOnConfirmationExpiration(parent);
-            log.info("Parent ID: [{}], Authorisation ID: [{}]. Get authorisation SCA status has failed, because parent is expired",
+            log.info("Parent ID: [{}], Authorisation ID: [{}]. Get authorisation SCA status has failed, parent is expired",
                      parentHolder.getParentId(), authorisationId);
             return CmsResponse.<ScaStatus>builder()
                        .payload(ScaStatus.FAILED)
@@ -244,7 +244,7 @@ public class AuthorisationServiceInternal implements AuthorisationService {
                        .build();
         }
 
-        log.info("Authorisation ID: [{}]. Check whether authentication method is decoupled has failed, because authorisation with such method couldn't be found",
+        log.info("Authorisation ID: [{}]. Check whether authentication method is Decoupled has failed, authorisation with such method couldn't be found",
                  authorisationId);
         return CmsResponse.<Boolean>builder()
                    .payload(false)
@@ -257,7 +257,7 @@ public class AuthorisationServiceInternal implements AuthorisationService {
         Optional<AuthorisationEntity> authorisationOptional = getAuthorisation(authorisationId);
 
         if (authorisationOptional.isEmpty()) {
-            log.info("Authorisation ID: [{}]. Save authentication methods has failed, because authorisation couldn't be found", authorisationId);
+            log.info("Authorisation ID: [{}]. Save authentication methods has failed, authorisation couldn't be found", authorisationId);
             return CmsResponse.<Boolean>builder()
                        .payload(false)
                        .build();
@@ -279,7 +279,7 @@ public class AuthorisationServiceInternal implements AuthorisationService {
         Optional<AuthorisationEntity> authorisationOptional = getAuthorisation(authorisationId);
 
         if (authorisationOptional.isEmpty()) {
-            log.info("Authorisation ID: [{}]. Update SCA approach has failed, because authorisation couldn't be found",
+            log.info("Authorisation ID: [{}]. Update SCA approach has failed, authorisation couldn't be found",
                      authorisationId);
             return CmsResponse.<Boolean>builder()
                        .payload(false)
@@ -306,7 +306,7 @@ public class AuthorisationServiceInternal implements AuthorisationService {
                        .build();
         }
 
-        log.info("Authorisation ID: [{}]. Get SCA approach has failed, because authorisation couldn't be found",
+        log.info("Authorisation ID: [{}]. Get SCA approach has failed, authorisation couldn't be found",
                  authorisationId);
 
         return CmsResponse.<AuthorisationScaApproachResponse>builder()

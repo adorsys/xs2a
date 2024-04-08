@@ -31,7 +31,7 @@ import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.UUID;
@@ -58,7 +58,7 @@ public class PiisConsentMapper {
         return new CmsPiisConsent(consentEntity.getExternalId(),
                                   consentEntity.isRecurringIndicator(),
                                   consentEntity.getRequestDateTime(),
-                                  consentEntity.getLastActionDate(),
+                                  consentEntity.getLastActionDateTime(),
                                   consentEntity.getValidUntil(),
                                   psuDataMapper.mapToPsuIdData(consentEntity.getPsuDataList().get(0)),
                                   consentEntity.getConsentStatus(),
@@ -80,7 +80,7 @@ public class PiisConsentMapper {
         consent.setConsentStatus(VALID);
         consent.setRequestDateTime(OffsetDateTime.now());
         consent.setValidUntil(request.getValidUntil());
-        consent.setLastActionDate(LocalDate.now());
+        consent.setLastActionDateTime(LocalDateTime.now());
         consent.getPsuDataList().add(psuDataMapper.mapToPsuData(psuIdData, instanceId));
         consent.getAspspAccountAccesses().add(accessMapper.mapToAspspAccountAccess(consent, request.getAccount()));
         consent.getTppInformation().setTppInfo(tppInfoEntity);

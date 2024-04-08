@@ -85,7 +85,7 @@ class Xs2aToSpiSinglePaymentMapperTest {
     private static final String ULTIMATE_DEBTOR = "ultimate debtor";
     private static final String ULTIMATE_CREDITOR = "ultimate creditor";
     private static final PurposeCode PURPOSE_CODE = PurposeCode.fromValue("BKDF");
-    private static final SpiPisPurposeCode SPI_PURPOSE_CODE = SpiPisPurposeCode.fromValue("BKDF");
+    private static final SpiPurposeCode SPI_PURPOSE_CODE = SpiPurposeCode.fromValue("BKDF");
     private final Remittance REMITTANCE = getRemittance();
     private final SpiRemittance SPI_REMITTANCE = getSpiRemittance();
     private final String REFERENCE = "reference";
@@ -101,9 +101,10 @@ class Xs2aToSpiSinglePaymentMapperTest {
     @Mock
     private Xs2aToSpiPsuDataMapper xs2aToSpiPsuDataMapper;
     @Mock
-    private Xs2aToSpiPisMapper xs2aToSpiPisMapper;
+    private Xs2aToSpiTransactionStatusMapper xs2aToSpiTransactionStatusMapper;
     @Mock
-    private Xs2aToSpiTransactionMapper xs2aToSpiTransactionMapper;
+    private Xs2aToSpiPurposeCodeMapper xs2aToSpiPurposeCodeMapper;
+
     @Spy
     private final RemittanceMapper remittanceMapper = Mappers.getMapper(RemittanceMapper.class);
 
@@ -121,15 +122,15 @@ class Xs2aToSpiSinglePaymentMapperTest {
             .thenReturn(buildSpiAmount(EUR_CURRENCY));
         when(xs2aToSpiAddressMapper.mapToSpiAddress(buildXs2aAddress()))
             .thenReturn(buildSpiAddress());
-        when(xs2aToSpiTransactionMapper.mapToSpiTransactionStatus(TRANSACTION_STATUS)).thenReturn(SPI_TRANSACTION_STATUS);
-        when(xs2aToSpiPisMapper.mapToSpiPisPurposeCode(PURPOSE_CODE)).thenReturn(SPI_PURPOSE_CODE);
-
+        when(xs2aToSpiTransactionStatusMapper.mapToSpiTransactionStatus(TRANSACTION_STATUS)).thenReturn(SPI_TRANSACTION_STATUS);
     }
 
     @Test
     void mapToSpiSinglePaymentSuccess() {
         //Given
         SinglePayment singlePayment = buildSinglePayment();
+        when(xs2aToSpiPurposeCodeMapper.mapToSpiPurposeCode(PURPOSE_CODE))
+            .thenReturn(SPI_PURPOSE_CODE);
         //When
         SpiSinglePayment spiSinglePayment = xs2aToSpiSinglePaymentMapper.mapToSpiSinglePayment(singlePayment, PAYMENT_PRODUCT);
         //Then

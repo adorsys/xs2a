@@ -20,9 +20,9 @@ package de.adorsys.psd2.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.Valid;
 import org.springframework.validation.annotation.Validated;
 
-import javax.validation.Valid;
 import java.util.Objects;
 
 /**
@@ -30,7 +30,7 @@ import java.util.Objects;
  */
 @Schema(description = "A list of hyperlinks to be recognised by the TPP. The actual hyperlinks used in the  response depend on the dynamical decisions of the ASPSP when processing the request.  Remark: All links can be relative or full links, to be decided by the ASPSP. Type of links admitted in this response, (further links might be added for ASPSP defined  extensions):    * 'scaRedirect':      In case of an SCA Redirect Approach, the ASPSP is transmitting the link to      which to redirect the PSU browser.   * 'scaOAuth':      In case of a SCA OAuth2 Approach, the ASPSP is transmitting the URI where the configuration of      the Authorisation Server can be retrieved. The configuration follows the      OAuth 2.0 Authorisation Server Metadata specification.   * 'startAuthorisation':      In case, where an explicit start of the transaction authorisation is needed,      but no more data needs to be updated (no authentication method to be selected,      no PSU identification nor PSU authentication data to be uploaded).   * 'startAuthorisationWithPsuIdentification':      The link to the authorisation end-point, where the authorisation sub-resource      has to be generated while uploading the PSU identification data.   * 'startAuthorisationWithPsuAuthentication':     The link to the authorisation end-point, where the authorisation sub-resource      has to be generated while uploading the PSU authentication data.   * 'startAuthorisationWithEncryptedPsuAuthentication':     The link to the authorisation end-point, where the authorisation sub-resource has      to be generated while uploading the encrypted PSU authentication data.   * 'startAuthorisationWithAuthenticationMethodSelection':     The link to the authorisation end-point, where the authorisation sub-resource      has to be generated while selecting the authentication method.      This link is contained under exactly the same conditions as the data element 'scaMethods'    * 'startAuthorisationWithTransactionAuthorisation':     The link to the authorisation end-point, where the authorisation sub-resource      has to be generated while authorising the transaction e.g. by uploading an      OTP received by SMS.   * 'self':      The link to the payment initiation resource created by this request.      This link can be used to retrieve the resource data.    * 'status':      The link to retrieve the transaction status of the payment initiation.   * 'scaStatus':      The link to retrieve the scaStatus of the corresponding authorisation sub-resource.      This link is only contained, if an authorisation sub-resource has been already created. ")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-10-26T13:16:54.081225+03:00[Europe/Kiev]")
+@jakarta.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-10-25T13:15:56.196839+03:00[Europe/Kiev]")
 
 
 public class LinksSigningBasket   {
@@ -72,18 +72,17 @@ public class LinksSigningBasket   {
     return this;
   }
 
-    /**
-     * Get scaRedirect
-     *
-     * @return scaRedirect
-     **/
-    @Schema(description = "")
-    @JsonProperty("scaRedirect")
+  /**
+   * Get scaRedirect
+   * @return scaRedirect
+   **/
+  @Schema(description = "")
+  @JsonProperty("scaRedirect")
 
-    @Valid
-    public HrefType getScaRedirect() {
-        return scaRedirect;
-    }
+  @Valid
+  public HrefType getScaRedirect() {
+    return scaRedirect;
+  }
 
   public void setScaRedirect(HrefType scaRedirect) {
     this.scaRedirect = scaRedirect;
@@ -94,17 +93,16 @@ public class LinksSigningBasket   {
     return this;
   }
 
-    /**
-     * Get scaOAuth
-     *
-     * @return scaOAuth
-     **/
-    @Schema(description = "")
-    @JsonProperty("scaOAuth")
+  /**
+   * Get scaOAuth
+   * @return scaOAuth
+   **/
+  @Schema(description = "")
+  @JsonProperty("scaOAuth")
 
-    @Valid
-    public HrefType getScaOAuth() {
-        return scaOAuth;
+  @Valid
+  public HrefType getScaOAuth() {
+    return scaOAuth;
   }
 
   public void setScaOAuth(HrefType scaOAuth) {
@@ -113,20 +111,19 @@ public class LinksSigningBasket   {
 
   public LinksSigningBasket startAuthorisation(HrefType startAuthorisation) {
     this.startAuthorisation = startAuthorisation;
-      return this;
+    return this;
   }
 
-    /**
-     * Get startAuthorisation
-     *
-     * @return startAuthorisation
-     **/
-    @Schema(description = "")
-    @JsonProperty("startAuthorisation")
+  /**
+   * Get startAuthorisation
+   * @return startAuthorisation
+   **/
+  @Schema(description = "")
+  @JsonProperty("startAuthorisation")
 
-    @Valid
-    public HrefType getStartAuthorisation() {
-        return startAuthorisation;
+  @Valid
+  public HrefType getStartAuthorisation() {
+    return startAuthorisation;
   }
 
   public void setStartAuthorisation(HrefType startAuthorisation) {
@@ -135,20 +132,19 @@ public class LinksSigningBasket   {
 
   public LinksSigningBasket startAuthorisationWithPsuIdentification(HrefType startAuthorisationWithPsuIdentification) {
     this.startAuthorisationWithPsuIdentification = startAuthorisationWithPsuIdentification;
-      return this;
+    return this;
   }
 
-    /**
-     * Get startAuthorisationWithPsuIdentification
-     *
-     * @return startAuthorisationWithPsuIdentification
-     **/
-    @Schema(description = "")
-    @JsonProperty("startAuthorisationWithPsuIdentification")
+  /**
+   * Get startAuthorisationWithPsuIdentification
+   * @return startAuthorisationWithPsuIdentification
+   **/
+  @Schema(description = "")
+  @JsonProperty("startAuthorisationWithPsuIdentification")
 
-    @Valid
-    public HrefType getStartAuthorisationWithPsuIdentification() {
-        return startAuthorisationWithPsuIdentification;
+  @Valid
+  public HrefType getStartAuthorisationWithPsuIdentification() {
+    return startAuthorisationWithPsuIdentification;
   }
 
   public void setStartAuthorisationWithPsuIdentification(HrefType startAuthorisationWithPsuIdentification) {
@@ -157,20 +153,19 @@ public class LinksSigningBasket   {
 
   public LinksSigningBasket startAuthorisationWithPsuAuthentication(HrefType startAuthorisationWithPsuAuthentication) {
     this.startAuthorisationWithPsuAuthentication = startAuthorisationWithPsuAuthentication;
-      return this;
+    return this;
   }
 
-    /**
-     * Get startAuthorisationWithPsuAuthentication
-     *
-     * @return startAuthorisationWithPsuAuthentication
-     **/
-    @Schema(description = "")
-    @JsonProperty("startAuthorisationWithPsuAuthentication")
+  /**
+   * Get startAuthorisationWithPsuAuthentication
+   * @return startAuthorisationWithPsuAuthentication
+   **/
+  @Schema(description = "")
+  @JsonProperty("startAuthorisationWithPsuAuthentication")
 
-    @Valid
-    public HrefType getStartAuthorisationWithPsuAuthentication() {
-        return startAuthorisationWithPsuAuthentication;
+  @Valid
+  public HrefType getStartAuthorisationWithPsuAuthentication() {
+    return startAuthorisationWithPsuAuthentication;
   }
 
   public void setStartAuthorisationWithPsuAuthentication(HrefType startAuthorisationWithPsuAuthentication) {
@@ -179,19 +174,18 @@ public class LinksSigningBasket   {
 
   public LinksSigningBasket startAuthorisationWithEncryptedPsuAuthentication(HrefType startAuthorisationWithEncryptedPsuAuthentication) {
     this.startAuthorisationWithEncryptedPsuAuthentication = startAuthorisationWithEncryptedPsuAuthentication;
-      return this;
+    return this;
   }
 
-    /**
-     * Get startAuthorisationWithEncryptedPsuAuthentication
-     *
-     * @return startAuthorisationWithEncryptedPsuAuthentication
-     **/
-    @Schema(description = "")
-    @JsonProperty("startAuthorisationWithEncryptedPsuAuthentication")
+  /**
+   * Get startAuthorisationWithEncryptedPsuAuthentication
+   * @return startAuthorisationWithEncryptedPsuAuthentication
+   **/
+  @Schema(description = "")
+  @JsonProperty("startAuthorisationWithEncryptedPsuAuthentication")
 
-    @Valid
-    public HrefType getStartAuthorisationWithEncryptedPsuAuthentication() {
+  @Valid
+  public HrefType getStartAuthorisationWithEncryptedPsuAuthentication() {
     return startAuthorisationWithEncryptedPsuAuthentication;
   }
 
@@ -201,19 +195,18 @@ public class LinksSigningBasket   {
 
   public LinksSigningBasket startAuthorisationWithAuthenticationMethodSelection(HrefType startAuthorisationWithAuthenticationMethodSelection) {
     this.startAuthorisationWithAuthenticationMethodSelection = startAuthorisationWithAuthenticationMethodSelection;
-      return this;
+    return this;
   }
 
-    /**
-     * Get startAuthorisationWithAuthenticationMethodSelection
-     *
-     * @return startAuthorisationWithAuthenticationMethodSelection
-     **/
-    @Schema(description = "")
-    @JsonProperty("startAuthorisationWithAuthenticationMethodSelection")
+  /**
+   * Get startAuthorisationWithAuthenticationMethodSelection
+   * @return startAuthorisationWithAuthenticationMethodSelection
+   **/
+  @Schema(description = "")
+  @JsonProperty("startAuthorisationWithAuthenticationMethodSelection")
 
-    @Valid
-    public HrefType getStartAuthorisationWithAuthenticationMethodSelection() {
+  @Valid
+  public HrefType getStartAuthorisationWithAuthenticationMethodSelection() {
     return startAuthorisationWithAuthenticationMethodSelection;
   }
 
@@ -223,19 +216,18 @@ public class LinksSigningBasket   {
 
   public LinksSigningBasket startAuthorisationWithTransactionAuthorisation(HrefType startAuthorisationWithTransactionAuthorisation) {
     this.startAuthorisationWithTransactionAuthorisation = startAuthorisationWithTransactionAuthorisation;
-      return this;
+    return this;
   }
 
-    /**
-     * Get startAuthorisationWithTransactionAuthorisation
-     *
-     * @return startAuthorisationWithTransactionAuthorisation
-     **/
-    @Schema(description = "")
-    @JsonProperty("startAuthorisationWithTransactionAuthorisation")
+  /**
+   * Get startAuthorisationWithTransactionAuthorisation
+   * @return startAuthorisationWithTransactionAuthorisation
+   **/
+  @Schema(description = "")
+  @JsonProperty("startAuthorisationWithTransactionAuthorisation")
 
-    @Valid
-    public HrefType getStartAuthorisationWithTransactionAuthorisation() {
+  @Valid
+  public HrefType getStartAuthorisationWithTransactionAuthorisation() {
     return startAuthorisationWithTransactionAuthorisation;
   }
 
@@ -243,21 +235,20 @@ public class LinksSigningBasket   {
     this.startAuthorisationWithTransactionAuthorisation = startAuthorisationWithTransactionAuthorisation;
   }
 
-    public LinksSigningBasket self(HrefType self) {
-        this.self = self;
-        return this;
-    }
+  public LinksSigningBasket self(HrefType self) {
+    this.self = self;
+    return this;
+  }
 
-    /**
-     * Get self
-     *
-     * @return self
-     **/
-    @Schema(description = "")
-    @JsonProperty("self")
+  /**
+   * Get self
+   * @return self
+   **/
+  @Schema(description = "")
+  @JsonProperty("self")
 
-    @Valid
-    public HrefType getSelf() {
+  @Valid
+  public HrefType getSelf() {
     return self;
   }
 
@@ -265,17 +256,16 @@ public class LinksSigningBasket   {
     this.self = self;
   }
 
-    public LinksSigningBasket status(HrefType status) {
-        this.status = status;
-        return this;
-    }
+  public LinksSigningBasket status(HrefType status) {
+    this.status = status;
+    return this;
+  }
 
-    /**
-     * Get status
-     *
-     * @return status
-     **/
-    @Schema(description = "")
+  /**
+   * Get status
+   * @return status
+   **/
+  @Schema(description = "")
   @JsonProperty("status")
 
   @Valid
@@ -287,15 +277,15 @@ public class LinksSigningBasket   {
     this.status = status;
   }
 
-    public LinksSigningBasket scaStatus(HrefType scaStatus) {
-        this.scaStatus = scaStatus;
-        return this;
-    }
+  public LinksSigningBasket scaStatus(HrefType scaStatus) {
+    this.scaStatus = scaStatus;
+    return this;
+  }
 
-    /**
-     * Get scaStatus
-     * @return scaStatus
-     **/
+  /**
+   * Get scaStatus
+   * @return scaStatus
+   **/
   @Schema(description = "")
   @JsonProperty("scaStatus")
 

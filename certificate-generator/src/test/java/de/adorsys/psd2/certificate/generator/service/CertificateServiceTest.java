@@ -26,7 +26,9 @@ import org.junit.jupiter.api.Test;
 import org.springframework.test.util.ReflectionTestUtils;
 
 import java.security.PrivateKey;
+import java.util.List;
 
+import static de.adorsys.psd2.certificate.generator.model.PspRole.*;
 import static de.adorsys.psd2.certificate.generator.service.ExportUtil.exportToString;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -48,11 +50,17 @@ class CertificateServiceTest {
     @Test
     void newCertificateCreatesCertAndKey() {
         CertificateRequest certificateRequest = CertificateRequest.builder()
-                                                    .authorizationNumber("12345")
-                                                    .countryName("Germany")
-                                                    .organizationName("adorsys")
-                                                    .commonName("XS2A Sandbox")
-                                                    .build();
+                                                        .authorizationNumber("12345")
+                                                        .roles(List.of(PISP, AISP, PIISP, ASPSP))
+                                                        .organizationName("adorsys")
+                                                        .organizationUnit("adorsys GMBH")
+                                                        .domainComponent("domainComponent")
+                                                        .localityName("localityName")
+                                                        .stateOrProvinceName("Bayern")
+                                                        .countryCode("DE")
+                                                        .commonName("XS2A Sandbox")
+                                                        .ocspCheckNeeded(false)
+                                                        .build();
         CertificateResponse certificateResponse = certificateService.newCertificate(certificateRequest);
         assertNotNull(certificateResponse.getPrivateKey());
         assertNotNull(certificateResponse.getEncodedCert());

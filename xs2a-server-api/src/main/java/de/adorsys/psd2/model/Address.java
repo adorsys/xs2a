@@ -20,18 +20,18 @@ package de.adorsys.psd2.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.Size;
 import org.springframework.validation.annotation.Validated;
 
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Pattern;
-import javax.validation.constraints.Size;
 import java.util.Objects;
 
 /**
  * Address
  */
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-10-26T13:16:54.081225+03:00[Europe/Kiev]")
+@jakarta.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-10-25T13:15:56.196839+03:00[Europe/Kiev]")
 
 
 public class Address   {
@@ -55,18 +55,16 @@ public class Address   {
     return this;
   }
 
-    /**
-     * Get streetName
-     *
-     * @return streetName
-     **/
-    @Schema(description = "")
-    @JsonProperty("streetName")
+  /**
+   * Get streetName
+   * @return streetName
+   **/
+  @Schema(description = "")
+  @JsonProperty("streetName")
 
-    @Size(max = 70)
-    public String getStreetName() {
-        return streetName;
-    }
+@Size(max=70)   public String getStreetName() {
+    return streetName;
+  }
 
   public void setStreetName(String streetName) {
     this.streetName = streetName;
@@ -77,16 +75,15 @@ public class Address   {
     return this;
   }
 
-    /**
-     * Get buildingNumber
-     *
-     * @return buildingNumber
-     **/
-    @Schema(description = "")
-    @JsonProperty("buildingNumber")
+  /**
+   * Get buildingNumber
+   * @return buildingNumber
+   **/
+  @Schema(description = "")
+  @JsonProperty("buildingNumber")
 
-    public String getBuildingNumber() {
-        return buildingNumber;
+  public String getBuildingNumber() {
+    return buildingNumber;
   }
 
   public void setBuildingNumber(String buildingNumber) {
@@ -95,18 +92,17 @@ public class Address   {
 
   public Address townName(String townName) {
     this.townName = townName;
-      return this;
+    return this;
   }
 
-    /**
-     * Get townName
-     *
-     * @return townName
-     **/
-    @Schema(description = "")
-    @JsonProperty("townName")
+  /**
+   * Get townName
+   * @return townName
+   **/
+  @Schema(description = "")
+  @JsonProperty("townName")
 
-    public String getTownName() {
+  public String getTownName() {
     return townName;
   }
 
@@ -116,18 +112,17 @@ public class Address   {
 
   public Address postCode(String postCode) {
     this.postCode = postCode;
-      return this;
+    return this;
   }
 
-    /**
-     * Get postCode
-     *
-     * @return postCode
-     **/
-    @Schema(description = "")
-    @JsonProperty("postCode")
+  /**
+   * Get postCode
+   * @return postCode
+   **/
+  @Schema(description = "")
+  @JsonProperty("postCode")
 
-    public String getPostCode() {
+  public String getPostCode() {
     return postCode;
   }
 
@@ -136,21 +131,19 @@ public class Address   {
   }
 
   public Address country(String country) {
-      this.country = country;
-      return this;
+    this.country = country;
+    return this;
   }
 
-    /**
-     * ISO 3166 ALPHA2 country code.
-     *
-     * @return country
-     **/
-    @Schema(example = "SE", required = true, description = "ISO 3166 ALPHA2 country code.")
-    @JsonProperty("country")
+  /**
+   * ISO 3166 ALPHA2 country code.
+   * @return country
+   **/
+  @Schema(example = "SE", required = true, description = "ISO 3166 ALPHA2 country code.")
+  @JsonProperty("country")
     @NotNull
 
-    @Pattern(regexp = "[A-Z]{2}")
-    public String getCountry() {
+@Pattern(regexp="[A-Z]{2}")   public String getCountry() {
     return country;
   }
 

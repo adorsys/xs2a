@@ -47,7 +47,7 @@ public class PaymentAuthorisationSpiMockImpl implements PaymentAuthorisationSpi 
     @Override
     public SpiResponse<SpiStartAuthorisationResponse> startAuthorisation(@NotNull SpiContextData contextData, @NotNull SpiScaApproach scaApproach, @NotNull SpiScaStatus scaStatus, @NotNull String authorisationId, SpiPayment businessObject, @NotNull SpiAspspConsentDataProvider aspspConsentDataProvider) {
         return SpiResponse.<SpiStartAuthorisationResponse>builder()
-                   .payload(new SpiStartAuthorisationResponse(scaApproach, scaStatus, SpiMockData.PSU_MESSAGE_START_AUTHORISATION, SpiMockData.TPP_MESSAGES_START_AUTHORISATION))
+                   .payload(new SpiStartAuthorisationResponse(SpiScaApproach.valueOf(scaApproach.name()), SpiScaStatus.valueOf(scaStatus.name()), SpiMockData.PSU_MESSAGE_START_AUTHORISATION, SpiMockData.TPP_MESSAGES_START_AUTHORISATION))
                    .build();
     }
 
@@ -56,7 +56,7 @@ public class PaymentAuthorisationSpiMockImpl implements PaymentAuthorisationSpi 
         log.info("PaymentAuthorisationSpi#authorisePsu: contextData {}, psuLoginData {}, password {}, businessObject {}", contextData, psuLoginData, password, businessObject);
 
         return SpiResponse.<SpiPsuAuthorisationResponse>builder()
-                   .payload(new SpiPsuAuthorisationResponse( false, SpiAuthorisationStatus.SUCCESS))
+                   .payload(new SpiPsuAuthorisationResponse(false, SpiAuthorisationStatus.SUCCESS))
                    .build();
     }
 
@@ -89,7 +89,7 @@ public class PaymentAuthorisationSpiMockImpl implements PaymentAuthorisationSpi 
                                                           @NotNull SpiPayment businessObject,
                                                           @NotNull SpiAspspConsentDataProvider aspspConsentDataProvider) {
         return SpiResponse.<SpiScaStatusResponse>builder()
-                   .payload(new SpiScaStatusResponse(scaStatus, true, PSU_MESSAGE,
+                   .payload(new SpiScaStatusResponse(SpiScaStatus.valueOf(scaStatus.name()), true, PSU_MESSAGE,
                                                      SpiMockData.SPI_LINKS,
                                                      SpiMockData.TPP_MESSAGES))
                    .build();

@@ -20,9 +20,9 @@ package de.adorsys.psd2.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.Valid;
 import org.springframework.validation.annotation.Validated;
 
-import javax.validation.Valid;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -33,7 +33,7 @@ import java.util.Objects;
  */
 @Schema(description = "NextGenPSD2 specific definition of reporting error information in case of a HTTP error code 404. ")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-10-26T13:16:54.081225+03:00[Europe/Kiev]")
+@jakarta.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-10-25T13:15:56.196839+03:00[Europe/Kiev]")
 
 
 public class Error404NGPIIS   {
@@ -41,8 +41,8 @@ public class Error404NGPIIS   {
   @Valid
   private List<TppMessage404PIIS> tppMessages = null;
 
-    @JsonProperty("_links")
-    private Map _links = null;
+  @JsonProperty("_links")
+  private Map _links = null;
 
   public Error404NGPIIS tppMessages(List<TppMessage404PIIS> tppMessages) {
     this.tppMessages = tppMessages;
@@ -57,42 +57,40 @@ public class Error404NGPIIS   {
     return this;
   }
 
-    /**
-     * Get tppMessages
-     *
-     * @return tppMessages
-     **/
-    @Schema(description = "")
-    @JsonProperty("tppMessages")
+  /**
+   * Get tppMessages
+   * @return tppMessages
+   **/
+  @Schema(description = "")
+  @JsonProperty("tppMessages")
     @Valid
-    public List<TppMessage404PIIS> getTppMessages() {
-        return tppMessages;
-    }
+  public List<TppMessage404PIIS> getTppMessages() {
+    return tppMessages;
+  }
 
   public void setTppMessages(List<TppMessage404PIIS> tppMessages) {
     this.tppMessages = tppMessages;
   }
 
-    public Error404NGPIIS _links(Map _links) {
-        this._links = _links;
-        return this;
-    }
+  public Error404NGPIIS _links(Map _links) {
+    this._links = _links;
+    return this;
+  }
 
-    /**
-     * Get _links
-     *
-     * @return _links
-     **/
-    @Schema(description = "")
-    @JsonProperty("_links")
+  /**
+   * Get _links
+   * @return _links
+   **/
+  @Schema(description = "")
+  @JsonProperty("_links")
 
-    @Valid
-    public Map getLinks() {
-        return _links;
-    }
+  @Valid
+  public Map getLinks() {
+    return _links;
+  }
 
-    public void setLinks(Map _links) {
-        this._links = _links;
+  public void setLinks(Map _links) {
+    this._links = _links;
   }
 
 

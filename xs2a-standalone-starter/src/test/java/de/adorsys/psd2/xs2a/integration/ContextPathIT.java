@@ -48,6 +48,7 @@ import de.adorsys.psd2.xs2a.integration.builder.TppInfoBuilder;
 import de.adorsys.psd2.xs2a.integration.builder.UrlBuilder;
 import de.adorsys.psd2.xs2a.integration.builder.ais.AisConsentAuthorizationResponseBuilder;
 import de.adorsys.psd2.xs2a.integration.builder.ais.CmsConsentBuilder;
+import de.adorsys.psd2.xs2a.service.UuidGeneratorService;
 import de.adorsys.psd2.xs2a.service.authorization.AuthorisationChainResponsibilityService;
 import de.adorsys.psd2.xs2a.service.authorization.processor.model.AisAuthorisationProcessorRequest;
 import org.apache.commons.io.IOUtils;
@@ -131,6 +132,8 @@ class ContextPathIT {
     private AuthorisationChainResponsibilityService authorisationChainResponsibilityService;
     @MockBean
     private BuildProperties buildProperties;
+    @MockBean
+    private UuidGeneratorService uuidGeneratorService;
 
     @BeforeEach
     void init() {
@@ -143,7 +146,6 @@ class ContextPathIT {
         httpHeadersImplicit.add("PSU-IP-Address", "1.1.1.1");
         httpHeadersImplicit.add("TPP-Implicit-Authorisation-Preferred", "false");
         httpHeadersImplicit.add("TPP-Redirect-URI", "ok.uri");
-
 
         given(aspspProfileService.getAspspSettings(null))
             .willReturn(AspspSettingsBuilder.buildAspspSettings());
@@ -203,9 +205,11 @@ class ContextPathIT {
                             .build());
         CreateConsentAuthorisationProcessorResponse processorResponse =
             new CreateConsentAuthorisationProcessorResponse(ScaStatus.STARTED, SCA_APPROACH, TEST_PSU_MESSAGE,
-                                                            Collections.emptySet(), ENCRYPT_CONSENT_ID, null);
+                                                            Collections.emptySet(), ENCRYPT_CONSENT_ID, AUTHORISATION_ID,
+                                                            null, null);
         given(authorisationChainResponsibilityService.apply(any(AisAuthorisationProcessorRequest.class)))
             .willReturn(processorResponse);
+        when(uuidGeneratorService.generate()).thenReturn(AUTHORISATION_ID);
 
         String requestUrl = CONTEXT_PATH + UrlBuilder.buildConsentCreation();
         MockHttpServletRequestBuilder requestBuilder = post(requestUrl);

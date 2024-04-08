@@ -24,8 +24,8 @@ import lombok.NoArgsConstructor;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class Xs2aEndpointPathConstant {
-    public static final String PREFIX_V1 = "/v1";
-    public static final String PREFIX_V2 = "/v2";
+    public static final String PREFIX_V1 = "/**/v1";
+    public static final String PREFIX_V2 = "/**/v2";
     // v1
     public static final String ACCOUNTS_PATH = PREFIX_V1 + "/accounts/**";
     public static final String BENEFICIARIES_PATH = PREFIX_V1 + "/trusted-beneficiaries";

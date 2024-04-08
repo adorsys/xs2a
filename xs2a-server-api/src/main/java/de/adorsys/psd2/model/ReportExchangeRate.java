@@ -20,12 +20,12 @@ package de.adorsys.psd2.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.Size;
 import org.springframework.validation.annotation.Validated;
 
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Pattern;
-import javax.validation.constraints.Size;
 import java.time.LocalDate;
 import java.util.Objects;
 
@@ -34,7 +34,7 @@ import java.util.Objects;
  */
 @Schema(description = "Exchange Rate.")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-10-26T13:16:54.081225+03:00[Europe/Kiev]")
+@jakarta.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-10-25T13:15:56.196839+03:00[Europe/Kiev]")
 
 
 public class ReportExchangeRate   {
@@ -61,19 +61,17 @@ public class ReportExchangeRate   {
     return this;
   }
 
-    /**
-     * ISO 4217 Alpha 3 currency code.
-     *
-     * @return sourceCurrency
-     **/
-    @Schema(example = "EUR", required = true, description = "ISO 4217 Alpha 3 currency code. ")
-    @JsonProperty("sourceCurrency")
+  /**
+   * ISO 4217 Alpha 3 currency code.
+   * @return sourceCurrency
+   **/
+  @Schema(example = "EUR", required = true, description = "ISO 4217 Alpha 3 currency code. ")
+  @JsonProperty("sourceCurrency")
     @NotNull
 
-    @Pattern(regexp = "[A-Z]{3}")
-    public String getSourceCurrency() {
-        return sourceCurrency;
-    }
+@Pattern(regexp="[A-Z]{3}")   public String getSourceCurrency() {
+    return sourceCurrency;
+  }
 
   public void setSourceCurrency(String sourceCurrency) {
     this.sourceCurrency = sourceCurrency;
@@ -84,17 +82,16 @@ public class ReportExchangeRate   {
     return this;
   }
 
-    /**
-     * Get exchangeRate
-     *
-     * @return exchangeRate
-     **/
-    @Schema(required = true, description = "")
-    @JsonProperty("exchangeRate")
+  /**
+   * Get exchangeRate
+   * @return exchangeRate
+   **/
+  @Schema(required = true, description = "")
+  @JsonProperty("exchangeRate")
     @NotNull
 
-    public String getExchangeRate() {
-        return exchangeRate;
+  public String getExchangeRate() {
+    return exchangeRate;
   }
 
   public void setExchangeRate(String exchangeRate) {
@@ -103,21 +100,19 @@ public class ReportExchangeRate   {
 
   public ReportExchangeRate unitCurrency(String unitCurrency) {
     this.unitCurrency = unitCurrency;
-      return this;
+    return this;
   }
 
-    /**
-     * ISO 4217 Alpha 3 currency code.
-     *
-     * @return unitCurrency
-     **/
-    @Schema(example = "EUR", required = true, description = "ISO 4217 Alpha 3 currency code. ")
-    @JsonProperty("unitCurrency")
+  /**
+   * ISO 4217 Alpha 3 currency code.
+   * @return unitCurrency
+   **/
+  @Schema(example = "EUR", required = true, description = "ISO 4217 Alpha 3 currency code. ")
+  @JsonProperty("unitCurrency")
     @NotNull
 
-    @Pattern(regexp = "[A-Z]{3}")
-    public String getUnitCurrency() {
-        return unitCurrency;
+@Pattern(regexp="[A-Z]{3}")   public String getUnitCurrency() {
+    return unitCurrency;
   }
 
   public void setUnitCurrency(String unitCurrency) {
@@ -126,20 +121,18 @@ public class ReportExchangeRate   {
 
   public ReportExchangeRate targetCurrency(String targetCurrency) {
     this.targetCurrency = targetCurrency;
-      return this;
+    return this;
   }
 
-    /**
-     * ISO 4217 Alpha 3 currency code.
-     *
-     * @return targetCurrency
-     **/
-    @Schema(example = "EUR", required = true, description = "ISO 4217 Alpha 3 currency code. ")
-    @JsonProperty("targetCurrency")
+  /**
+   * ISO 4217 Alpha 3 currency code.
+   * @return targetCurrency
+   **/
+  @Schema(example = "EUR", required = true, description = "ISO 4217 Alpha 3 currency code. ")
+  @JsonProperty("targetCurrency")
     @NotNull
 
-    @Pattern(regexp = "[A-Z]{3}")
-    public String getTargetCurrency() {
+@Pattern(regexp="[A-Z]{3}")   public String getTargetCurrency() {
     return targetCurrency;
   }
 
@@ -149,20 +142,19 @@ public class ReportExchangeRate   {
 
   public ReportExchangeRate quotationDate(LocalDate quotationDate) {
     this.quotationDate = quotationDate;
-      return this;
+    return this;
   }
 
-    /**
-     * Get quotationDate
-     *
-     * @return quotationDate
-     **/
-    @Schema(required = true, description = "")
-    @JsonProperty("quotationDate")
+  /**
+   * Get quotationDate
+   * @return quotationDate
+   **/
+  @Schema(required = true, description = "")
+  @JsonProperty("quotationDate")
     @NotNull
 
-    @Valid
-    public LocalDate getQuotationDate() {
+  @Valid
+  public LocalDate getQuotationDate() {
     return quotationDate;
   }
 
@@ -172,19 +164,17 @@ public class ReportExchangeRate   {
 
   public ReportExchangeRate contractIdentification(String contractIdentification) {
     this.contractIdentification = contractIdentification;
-      return this;
+    return this;
   }
 
-    /**
-     * Get contractIdentification
-     *
-     * @return contractIdentification
-     **/
-    @Schema(description = "")
-    @JsonProperty("contractIdentification")
+  /**
+   * Get contractIdentification
+   * @return contractIdentification
+   **/
+  @Schema(description = "")
+  @JsonProperty("contractIdentification")
 
-    @Size(max = 35)
-    public String getContractIdentification() {
+@Size(max=35)   public String getContractIdentification() {
     return contractIdentification;
   }
 

@@ -23,7 +23,6 @@ package de.adorsys.psd2.xs2a.integration;
 import de.adorsys.psd2.aspsp.profile.service.AspspProfileService;
 import de.adorsys.psd2.consent.api.CmsResponse;
 import de.adorsys.psd2.consent.api.service.AuthorisationServiceEncrypted;
-import de.adorsys.psd2.consent.api.service.PisCommonPaymentServiceEncrypted;
 import de.adorsys.psd2.consent.api.service.TppService;
 import de.adorsys.psd2.consent.api.service.TppStopListService;
 import de.adorsys.psd2.starter.Xs2aStandaloneStarter;
@@ -104,8 +103,6 @@ class InitiatePaymentsNotSuccessfulIT {
     private TppService tppService;
     @MockBean
     private TppStopListService tppStopListService;
-    @MockBean
-    private PisCommonPaymentServiceEncrypted pisCommonPaymentServiceEncrypted;
     @MockBean
     private AuthorisationServiceEncrypted authorisationServiceEncrypted;
     @MockBean

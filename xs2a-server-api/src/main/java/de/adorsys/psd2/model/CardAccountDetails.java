@@ -22,12 +22,12 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonValue;
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.Size;
 import org.springframework.validation.annotation.Validated;
 
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Pattern;
-import javax.validation.constraints.Size;
 import java.util.Map;
 import java.util.Objects;
 
@@ -36,7 +36,7 @@ import java.util.Objects;
  */
 @Schema(description = "Card account details. ")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-10-26T13:16:54.081225+03:00[Europe/Kiev]")
+@jakarta.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-10-25T13:15:56.196839+03:00[Europe/Kiev]")
 
 
 public class CardAccountDetails   {
@@ -117,17 +117,16 @@ public class CardAccountDetails   {
     return this;
   }
 
-    /**
-     * This is the data element to be used in the path when retrieving data from a dedicated account. This shall be filled, if addressable resource are created by the ASPSP on the /card-accounts endpoint.
-     *
-     * @return resourceId
-     **/
-    @Schema(description = "This is the data element to be used in the path when retrieving data from a dedicated account. This shall be filled, if addressable resource are created by the ASPSP on the /card-accounts endpoint. ")
-    @JsonProperty("resourceId")
+  /**
+   * This is the data element to be used in the path when retrieving data from a dedicated account. This shall be filled, if addressable resource are created by the ASPSP on the /card-accounts endpoint.
+   * @return resourceId
+   **/
+  @Schema(description = "This is the data element to be used in the path when retrieving data from a dedicated account. This shall be filled, if addressable resource are created by the ASPSP on the /card-accounts endpoint. ")
+  @JsonProperty("resourceId")
 
-    public String getResourceId() {
-        return resourceId;
-    }
+  public String getResourceId() {
+    return resourceId;
+  }
 
   public void setResourceId(String resourceId) {
     this.resourceId = resourceId;
@@ -138,18 +137,16 @@ public class CardAccountDetails   {
     return this;
   }
 
-    /**
-     * Masked Primary Account Number.
-     *
-     * @return maskedPan
-     **/
-    @Schema(example = "123456xxxxxx1234", required = true, description = "Masked Primary Account Number. ")
-    @JsonProperty("maskedPan")
+  /**
+   * Masked Primary Account Number.
+   * @return maskedPan
+   **/
+  @Schema(example = "123456xxxxxx1234", required = true, description = "Masked Primary Account Number. ")
+  @JsonProperty("maskedPan")
     @NotNull
 
-    @Size(max = 35)
-    public String getMaskedPan() {
-        return maskedPan;
+@Size(max=35)   public String getMaskedPan() {
+    return maskedPan;
   }
 
   public void setMaskedPan(String maskedPan) {
@@ -158,20 +155,18 @@ public class CardAccountDetails   {
 
   public CardAccountDetails currency(String currency) {
     this.currency = currency;
-      return this;
+    return this;
   }
 
-    /**
-     * ISO 4217 Alpha 3 currency code.
-     *
-     * @return currency
-     **/
-    @Schema(example = "EUR", required = true, description = "ISO 4217 Alpha 3 currency code. ")
-    @JsonProperty("currency")
+  /**
+   * ISO 4217 Alpha 3 currency code.
+   * @return currency
+   **/
+  @Schema(example = "EUR", required = true, description = "ISO 4217 Alpha 3 currency code. ")
+  @JsonProperty("currency")
     @NotNull
 
-    @Pattern(regexp = "[A-Z]{3}")
-    public String getCurrency() {
+@Pattern(regexp="[A-Z]{3}")   public String getCurrency() {
     return currency;
   }
 
@@ -181,19 +176,17 @@ public class CardAccountDetails   {
 
   public CardAccountDetails ownerName(String ownerName) {
     this.ownerName = ownerName;
-      return this;
+    return this;
   }
 
-    /**
-     * Name of the legal account owner.  If there is more than one owner, then e.g. two names might be noted here.  For a corporate account, the corporate name is used for this attribute. Even if supported by the ASPSP, the provision of this field might depend on the fact whether an explicit consent to this specific additional account information has been given by the PSU.
-     *
-     * @return ownerName
-     **/
-    @Schema(example = "John Doe", description = "Name of the legal account owner.  If there is more than one owner, then e.g. two names might be noted here.  For a corporate account, the corporate name is used for this attribute. Even if supported by the ASPSP, the provision of this field might depend on the fact whether an explicit consent to this specific additional account information has been given by the PSU. ")
-    @JsonProperty("ownerName")
+  /**
+   * Name of the legal account owner.  If there is more than one owner, then e.g. two names might be noted here.  For a corporate account, the corporate name is used for this attribute. Even if supported by the ASPSP, the provision of this field might depend on the fact whether an explicit consent to this specific additional account information has been given by the PSU.
+   * @return ownerName
+   **/
+  @Schema(example = "John Doe", description = "Name of the legal account owner.  If there is more than one owner, then e.g. two names might be noted here.  For a corporate account, the corporate name is used for this attribute. Even if supported by the ASPSP, the provision of this field might depend on the fact whether an explicit consent to this specific additional account information has been given by the PSU. ")
+  @JsonProperty("ownerName")
 
-    @Size(max = 140)
-    public String getOwnerName() {
+@Size(max=140)   public String getOwnerName() {
     return ownerName;
   }
 
@@ -202,19 +195,18 @@ public class CardAccountDetails   {
   }
 
   public CardAccountDetails name(String name) {
-      this.name = name;
-      return this;
+    this.name = name;
+    return this;
   }
 
-    /**
-     * Name of the account, as assigned by the ASPSP,  in agreement with the account owner in order to provide an additional means of identification of the account.
-     *
-     * @return name
-     **/
-    @Schema(description = "Name of the account, as assigned by the ASPSP,  in agreement with the account owner in order to provide an additional means of identification of the account. ")
-    @JsonProperty("name")
+  /**
+   * Name of the account, as assigned by the ASPSP,  in agreement with the account owner in order to provide an additional means of identification of the account.
+   * @return name
+   **/
+  @Schema(description = "Name of the account, as assigned by the ASPSP,  in agreement with the account owner in order to provide an additional means of identification of the account. ")
+  @JsonProperty("name")
 
-    @Size(max =70)   public String getName() {
+@Size(max=70)   public String getName() {
     return name;
   }
 
@@ -223,19 +215,18 @@ public class CardAccountDetails   {
   }
 
   public CardAccountDetails displayName(String displayName) {
-      this.displayName = displayName;
-      return this;
+    this.displayName = displayName;
+    return this;
   }
 
-    /**
-     * Name of the account as defined by the PSU within online channels.
-     *
-     * @return displayName
-     **/
-    @Schema(description = "Name of the account as defined by the PSU within online channels. ")
-    @JsonProperty("displayName")
+  /**
+   * Name of the account as defined by the PSU within online channels.
+   * @return displayName
+   **/
+  @Schema(description = "Name of the account as defined by the PSU within online channels. ")
+  @JsonProperty("displayName")
 
-    @Size(max = 70)   public String getDisplayName() {
+@Size(max=70)   public String getDisplayName() {
     return displayName;
   }
 
@@ -244,17 +235,16 @@ public class CardAccountDetails   {
   }
 
   public CardAccountDetails product(String product) {
-      this.product = product;
-      return this;
+    this.product = product;
+    return this;
   }
 
-    /**
-     * Product Name of the Bank for this account, proprietary definition.
-     *
-     * @return product
-     **/
-    @Schema(description = "Product Name of the Bank for this account, proprietary definition. ")
-    @JsonProperty("product")
+  /**
+   * Product Name of the Bank for this account, proprietary definition.
+   * @return product
+   **/
+  @Schema(description = "Product Name of the Bank for this account, proprietary definition. ")
+  @JsonProperty("product")
 
 @Size(max=35)   public String getProduct() {
     return product;
@@ -265,17 +255,16 @@ public class CardAccountDetails   {
   }
 
   public CardAccountDetails debitAccounting(Boolean debitAccounting) {
-      this.debitAccounting = debitAccounting;
-      return this;
+    this.debitAccounting = debitAccounting;
+    return this;
   }
 
-    /**
-     * If true, the amounts of debits on the reports are quoted positive with the related consequence for balances. If false, the amount of debits on the reports are quoted negative.
-     *
-     * @return debitAccounting
-     **/
-    @Schema(description = "If true, the amounts of debits on the reports are quoted positive with the related consequence for balances. If false, the amount of debits on the reports are quoted negative. ")
-    @JsonProperty("debitAccounting")
+  /**
+   * If true, the amounts of debits on the reports are quoted positive with the related consequence for balances. If false, the amount of debits on the reports are quoted negative.
+   * @return debitAccounting
+   **/
+  @Schema(description = "If true, the amounts of debits on the reports are quoted positive with the related consequence for balances. If false, the amount of debits on the reports are quoted negative. ")
+  @JsonProperty("debitAccounting")
 
   public Boolean isDebitAccounting() {
     return debitAccounting;
@@ -286,20 +275,19 @@ public class CardAccountDetails   {
   }
 
   public CardAccountDetails status(AccountStatus status) {
-      this.status = status;
-      return this;
+    this.status = status;
+    return this;
   }
 
-    /**
-     * Get status
-     *
-     * @return status
-     **/
-    @Schema(description = "")
-    @JsonProperty("status")
+  /**
+   * Get status
+   * @return status
+   **/
+  @Schema(description = "")
+  @JsonProperty("status")
 
-    @Valid
-    public AccountStatus getStatus() {
+  @Valid
+  public AccountStatus getStatus() {
     return status;
   }
 
@@ -307,17 +295,16 @@ public class CardAccountDetails   {
     this.status = status;
   }
 
-    public CardAccountDetails usage(UsageEnum usage) {
-        this.usage = usage;
-        return this;
-    }
+  public CardAccountDetails usage(UsageEnum usage) {
+    this.usage = usage;
+    return this;
+  }
 
-    /**
-     * Specifies the usage of the account:   * PRIV: private personal account   * ORGA: professional account
-     *
-     * @return usage
-     **/
-    @Schema(description = "Specifies the usage of the account:   * PRIV: private personal account   * ORGA: professional account ")
+  /**
+   * Specifies the usage of the account:   * PRIV: private personal account   * ORGA: professional account
+   * @return usage
+   **/
+  @Schema(description = "Specifies the usage of the account:   * PRIV: private personal account   * ORGA: professional account ")
   @JsonProperty("usage")
 
 @Size(max=4)   public UsageEnum getUsage() {
@@ -328,17 +315,16 @@ public class CardAccountDetails   {
     this.usage = usage;
   }
 
-    public CardAccountDetails details(String details) {
-        this.details = details;
-        return this;
-    }
+  public CardAccountDetails details(String details) {
+    this.details = details;
+    return this;
+  }
 
-    /**
-     * Specifications that might be provided by the ASPSP:   - characteristics of the account   - characteristics of the relevant card
-     *
-     * @return details
-     **/
-    @Schema(description = "Specifications that might be provided by the ASPSP:   - characteristics of the account   - characteristics of the relevant card ")
+  /**
+   * Specifications that might be provided by the ASPSP:   - characteristics of the account   - characteristics of the relevant card
+   * @return details
+   **/
+  @Schema(description = "Specifications that might be provided by the ASPSP:   - characteristics of the account   - characteristics of the relevant card ")
   @JsonProperty("details")
 
 @Size(max=1000)   public String getDetails() {
@@ -349,14 +335,14 @@ public class CardAccountDetails   {
     this.details = details;
   }
 
-    public CardAccountDetails creditLimit(Amount creditLimit) {
-        this.creditLimit = creditLimit;
-        return this;
-    }
+  public CardAccountDetails creditLimit(Amount creditLimit) {
+    this.creditLimit = creditLimit;
+    return this;
+  }
 
-    /**
-     * Get creditLimit
-     * @return creditLimit
+  /**
+   * Get creditLimit
+   * @return creditLimit
    **/
   @Schema(description = "")
   @JsonProperty("creditLimit")
@@ -370,14 +356,14 @@ public class CardAccountDetails   {
     this.creditLimit = creditLimit;
   }
 
-    public CardAccountDetails balances(BalanceList balances) {
-        this.balances = balances;
-        return this;
-    }
+  public CardAccountDetails balances(BalanceList balances) {
+    this.balances = balances;
+    return this;
+  }
 
-    /**
-     * Get balances
-     * @return balances
+  /**
+   * Get balances
+   * @return balances
    **/
   @Schema(description = "")
   @JsonProperty("balances")
@@ -388,16 +374,16 @@ public class CardAccountDetails   {
   }
 
   public void setBalances(BalanceList balances) {
-      this.balances = balances;
+    this.balances = balances;
   }
 
-    public CardAccountDetails _links(Map _links) {
-        this._links = _links;
-        return this;
-    }
+  public CardAccountDetails _links(Map _links) {
+    this._links = _links;
+    return this;
+  }
 
-    /**
-     * Get _links
+  /**
+   * Get _links
    * @return _links
    **/
   @Schema(description = "")

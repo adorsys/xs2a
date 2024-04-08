@@ -25,8 +25,8 @@ import lombok.Value;
 @Schema(description = "ASPSP Consent data", name = "CmsAspspConsentDataBase64")
 public class CmsAspspConsentDataBase64 {
 
-    @Schema(description = "Consent ID", required = true, example = "d2796b05-418e-49bc-84ce-c6728a1b2018")
+    @Schema(description = "Consent ID", requiredMode = Schema.RequiredMode.REQUIRED, example = "d2796b05-418e-49bc-84ce-c6728a1b2018")
     private String consentId;
-    @Schema(description = "ASPSP consent data Base64", required = true, example = "zdxcvvzzzxcvzzzz")
+    @Schema(description = "ASPSP consent data Base64", requiredMode = Schema.RequiredMode.REQUIRED, example = "zdxcvvzzzxcvzzzz")
     private String aspspConsentDataBase64;
 }

@@ -1,7 +1,7 @@
 {
 	"info": {
-		"_postman_id": "36028e9d-7e9b-4d0a-afc6-ca34da40ac4a",
-		"name": "XS2A requests 14x",
+		"_postman_id": "0fe68b29-e7c2-40db-82e7-6f2f20561b43",
+		"name": "XS2A requests 17x",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
 		"_exporter_id": "6572081"
 	},
@@ -11561,7 +11561,7 @@
 													"       pm.expect(jsonData).to.have.property('tppMessages');",
 													"       pm.expect(jsonData._links.account.href).to.be.eq('Mocked account link from SPI');",
 													"       pm.expect(jsonData.tppMessages[0].category).to.be.eq('WARNING');",
-													"       pm.expect(jsonData.tppMessages[0].code).to.be.eq('WARNING');",
+													"       pm.expect(jsonData.tppMessages[0].code).to.be.eq('FORMAT_ERROR');",
 													"       pm.expect(jsonData.tppMessages[0].text).to.be.eq('Mocked tpp message from SPI');",
 													"});"
 												],
@@ -19687,7 +19687,7 @@
 															"raw": ""
 														},
 														"url": {
-															"raw": "{{protocol}}://{{url_cms}}/psu-api/v1/ais/consent/authorisation/{{authorisation_id}}/",
+															"raw": "{{protocol}}://{{url_cms}}/psu-api/v1/ais/consent/authorisation/{{authorisation_id}}",
 															"protocol": "{{protocol}}",
 															"host": [
 																"{{url_cms}}"
@@ -19698,8 +19698,7 @@
 																"ais",
 																"consent",
 																"authorisation",
-																"{{authorisation_id}}",
-																""
+																"{{authorisation_id}}"
 															]
 														}
 													},
@@ -20098,7 +20097,7 @@
 															"raw": ""
 														},
 														"url": {
-															"raw": "{{protocol}}://{{url_cms}}/psu-api/v1/ais/consent/authorisation/{{authorisation_id}}/",
+															"raw": "{{protocol}}://{{url_cms}}/psu-api/v1/ais/consent/authorisation/{{authorisation_id}}",
 															"protocol": "{{protocol}}",
 															"host": [
 																"{{url_cms}}"
@@ -20109,8 +20108,7 @@
 																"ais",
 																"consent",
 																"authorisation",
-																"{{authorisation_id}}",
-																""
+																"{{authorisation_id}}"
 															]
 														}
 													},
@@ -20573,7 +20571,7 @@
 															"raw": ""
 														},
 														"url": {
-															"raw": "{{protocol}}://{{url_cms}}/psu-api/v1/ais/consent/authorisation/{{authorisation_id}}/",
+															"raw": "{{protocol}}://{{url_cms}}/psu-api/v1/ais/consent/authorisation/{{authorisation_id}}",
 															"protocol": "{{protocol}}",
 															"host": [
 																"{{url_cms}}"
@@ -20584,8 +20582,7 @@
 																"ais",
 																"consent",
 																"authorisation",
-																"{{authorisation_id}}",
-																""
+																"{{authorisation_id}}"
 															]
 														}
 													},
@@ -20923,7 +20920,7 @@
 															"raw": ""
 														},
 														"url": {
-															"raw": "{{protocol}}://{{url_cms}}/psu-api/v1/ais/consent/authorisation/{{authorisation_id}}/",
+															"raw": "{{protocol}}://{{url_cms}}/psu-api/v1/ais/consent/authorisation/{{authorisation_id}}",
 															"protocol": "{{protocol}}",
 															"host": [
 																"{{url_cms}}"
@@ -20934,8 +20931,7 @@
 																"ais",
 																"consent",
 																"authorisation",
-																"{{authorisation_id}}",
-																""
+																"{{authorisation_id}}"
 															]
 														}
 													},
@@ -21269,7 +21265,7 @@
 															"raw": ""
 														},
 														"url": {
-															"raw": "{{protocol}}://{{url_cms}}/psu-api/v1/ais/consent/authorisation/{{authorisation_id}}/",
+															"raw": "{{protocol}}://{{url_cms}}/psu-api/v1/ais/consent/authorisation/{{authorisation_id}}",
 															"protocol": "{{protocol}}",
 															"host": [
 																"{{url_cms}}"
@@ -21280,8 +21276,7 @@
 																"ais",
 																"consent",
 																"authorisation",
-																"{{authorisation_id}}",
-																""
+																"{{authorisation_id}}"
 															]
 														}
 													},
@@ -22413,7 +22408,7 @@
 															"raw": ""
 														},
 														"url": {
-															"raw": "{{protocol}}://{{url_cms}}/psu-api/v1/ais/consent/authorisation/{{authorisation_id}}/",
+															"raw": "{{protocol}}://{{url_cms}}/psu-api/v1/ais/consent/authorisation/{{authorisation_id}}",
 															"protocol": "{{protocol}}",
 															"host": [
 																"{{url_cms}}"
@@ -22424,8 +22419,7 @@
 																"ais",
 																"consent",
 																"authorisation",
-																"{{authorisation_id}}",
-																""
+																"{{authorisation_id}}"
 															]
 														}
 													},
@@ -28640,7 +28634,7 @@
 													"       pm.expect(jsonData).to.have.property('tppMessages');",
 													"       pm.expect(jsonData._links.account.href).to.be.eq('Mocked account link from SPI');",
 													"       pm.expect(jsonData.tppMessages[0].category).to.be.eq('WARNING');",
-													"       pm.expect(jsonData.tppMessages[0].code).to.be.eq('WARNING');",
+													"       pm.expect(jsonData.tppMessages[0].code).to.be.eq('FORMAT_ERROR');",
 													"       pm.expect(jsonData.tppMessages[0].text).to.be.eq('Mocked tpp message from SPI');",
 													"});"
 												],
@@ -29456,7 +29450,7 @@
 													"    pm.expect(jsonData).to.have.property('recurringIndicator');",
 													"    pm.expect(jsonData).to.have.property('validUntil');",
 													"    pm.expect(jsonData).to.have.property('frequencyPerDay');",
-													"    pm.expect(jsonData).to.have.property('lastActionDate');",
+													"    pm.expect(jsonData).to.have.property('lastActionDateTime');",
 													"    pm.expect(jsonData).to.have.property('consentStatus');",
 													"    pm.expect(jsonData).to.have.property('withBalance');",
 													"    pm.expect(jsonData).to.have.property('tppRedirectPreferred');",
@@ -30384,7 +30378,7 @@
 													"    pm.expect(jsonData).to.have.property('recurringIndicator');",
 													"    pm.expect(jsonData).to.have.property('validUntil');",
 													"    pm.expect(jsonData).to.have.property('frequencyPerDay');",
-													"    pm.expect(jsonData).to.have.property('lastActionDate');",
+													"    pm.expect(jsonData).to.have.property('lastActionDateTime');",
 													"    pm.expect(jsonData).to.have.property('consentStatus');",
 													"    pm.expect(jsonData).to.have.property('withBalance');",
 													"    pm.expect(jsonData).to.have.property('tppRedirectPreferred');",
@@ -31266,7 +31260,7 @@
 													"    pm.expect(jsonData).to.have.property('recurringIndicator');",
 													"    pm.expect(jsonData).to.have.property('validUntil');",
 													"    pm.expect(jsonData).to.have.property('frequencyPerDay');",
-													"    pm.expect(jsonData).to.have.property('lastActionDate');",
+													"    pm.expect(jsonData).to.have.property('lastActionDateTime');",
 													"    pm.expect(jsonData).to.have.property('consentStatus');",
 													"    pm.expect(jsonData).to.have.property('withBalance');",
 													"    pm.expect(jsonData).to.have.property('tppRedirectPreferred');",
@@ -32151,7 +32145,7 @@
 													"    pm.expect(jsonData).to.have.property('recurringIndicator');",
 													"    pm.expect(jsonData).to.have.property('validUntil');",
 													"    pm.expect(jsonData).to.have.property('frequencyPerDay');",
-													"    pm.expect(jsonData).to.have.property('lastActionDate');",
+													"    pm.expect(jsonData).to.have.property('lastActionDateTime');",
 													"    pm.expect(jsonData).to.have.property('consentStatus');",
 													"    pm.expect(jsonData).to.have.property('withBalance');",
 													"    pm.expect(jsonData).to.have.property('tppRedirectPreferred');",
@@ -68248,7 +68242,7 @@
 															"       pm.expect(jsonData).to.have.property('tppMessages');",
 															"       pm.expect(jsonData._links.account.href).to.be.eq('Mocked account link from SPI');",
 															"       pm.expect(jsonData.tppMessages[0].category).to.be.eq('WARNING');",
-															"       pm.expect(jsonData.tppMessages[0].code).to.be.eq('WARNING');",
+															"       pm.expect(jsonData.tppMessages[0].code).to.be.eq('FORMAT_ERROR');",
 															"       pm.expect(jsonData.tppMessages[0].text).to.be.eq('Mocked tpp message from SPI');",
 															"});"
 														],
@@ -79762,7 +79756,7 @@
 															"raw": ""
 														},
 														"url": {
-															"raw": "{{protocol}}://{{url_cms}}/psu-api/v1/payment/authorisation/{{authorisation_id}}/",
+															"raw": "{{protocol}}://{{url_cms}}/psu-api/v1/payment/authorisation/{{authorisation_id}}",
 															"protocol": "{{protocol}}",
 															"host": [
 																"{{url_cms}}"
@@ -79772,8 +79766,7 @@
 																"v1",
 																"payment",
 																"authorisation",
-																"{{authorisation_id}}",
-																""
+																"{{authorisation_id}}"
 															]
 														}
 													},
@@ -80190,7 +80183,7 @@
 															"raw": ""
 														},
 														"url": {
-															"raw": "{{protocol}}://{{url_cms}}/psu-api/v1/payment/authorisation/{{authorisation_id}}/",
+															"raw": "{{protocol}}://{{url_cms}}/psu-api/v1/payment/authorisation/{{authorisation_id}}",
 															"protocol": "{{protocol}}",
 															"host": [
 																"{{url_cms}}"
@@ -80200,8 +80193,7 @@
 																"v1",
 																"payment",
 																"authorisation",
-																"{{authorisation_id}}",
-																""
+																"{{authorisation_id}}"
 															]
 														}
 													},
@@ -80683,7 +80675,7 @@
 															"raw": ""
 														},
 														"url": {
-															"raw": "{{protocol}}://{{url_cms}}/psu-api/v1/payment/authorisation/{{authorisation_id}}/",
+															"raw": "{{protocol}}://{{url_cms}}/psu-api/v1/payment/authorisation/{{authorisation_id}}",
 															"protocol": "{{protocol}}",
 															"host": [
 																"{{url_cms}}"
@@ -80693,8 +80685,7 @@
 																"v1",
 																"payment",
 																"authorisation",
-																"{{authorisation_id}}",
-																""
+																"{{authorisation_id}}"
 															]
 														}
 													},
@@ -85324,7 +85315,7 @@
 															"raw": ""
 														},
 														"url": {
-															"raw": "{{protocol}}://{{url_cms}}/psu-api/v1/payment/authorisation/{{authorisation_id}}/",
+															"raw": "{{protocol}}://{{url_cms}}/psu-api/v1/payment/authorisation/{{authorisation_id}}",
 															"protocol": "{{protocol}}",
 															"host": [
 																"{{url_cms}}"
@@ -85334,8 +85325,7 @@
 																"v1",
 																"payment",
 																"authorisation",
-																"{{authorisation_id}}",
-																""
+																"{{authorisation_id}}"
 															]
 														}
 													},
@@ -85662,7 +85652,7 @@
 															"raw": ""
 														},
 														"url": {
-															"raw": "{{protocol}}://{{url_cms}}/psu-api/v1/payment/authorisation/{{authorisation_id}}/",
+															"raw": "{{protocol}}://{{url_cms}}/psu-api/v1/payment/authorisation/{{authorisation_id}}",
 															"protocol": "{{protocol}}",
 															"host": [
 																"{{url_cms}}"
@@ -85672,8 +85662,7 @@
 																"v1",
 																"payment",
 																"authorisation",
-																"{{authorisation_id}}",
-																""
+																"{{authorisation_id}}"
 															]
 														}
 													},
@@ -86718,7 +86707,7 @@
 															"raw": ""
 														},
 														"url": {
-															"raw": "{{protocol}}://{{url_cms}}/psu-api/v1/payment/authorisation/{{authorisation_id}}/",
+															"raw": "{{protocol}}://{{url_cms}}/psu-api/v1/payment/authorisation/{{authorisation_id}}",
 															"protocol": "{{protocol}}",
 															"host": [
 																"{{url_cms}}"
@@ -86728,8 +86717,7 @@
 																"v1",
 																"payment",
 																"authorisation",
-																"{{authorisation_id}}",
-																""
+																"{{authorisation_id}}"
 															]
 														}
 													},
@@ -88861,7 +88849,7 @@
 													"       pm.expect(jsonData).to.have.property('tppMessages');",
 													"       pm.expect(jsonData._links.account.href).to.be.eq('Mocked account link from SPI');",
 													"       pm.expect(jsonData.tppMessages[0].category).to.be.eq('WARNING');",
-													"       pm.expect(jsonData.tppMessages[0].code).to.be.eq('WARNING');",
+													"       pm.expect(jsonData.tppMessages[0].code).to.be.eq('FORMAT_ERROR');",
 													"       pm.expect(jsonData.tppMessages[0].text).to.be.eq('Mocked tpp message from SPI');",
 													"});"
 												],
@@ -89380,7 +89368,7 @@
 													"       pm.expect(jsonData).to.have.property('tppMessages');",
 													"       pm.expect(jsonData._links.account.href).to.be.eq('Mocked account link from SPI');",
 													"       pm.expect(jsonData.tppMessages[0].category).to.be.eq('WARNING');",
-													"       pm.expect(jsonData.tppMessages[0].code).to.be.eq('WARNING');",
+													"       pm.expect(jsonData.tppMessages[0].code).to.be.eq('FORMAT_ERROR');",
 													"       pm.expect(jsonData.tppMessages[0].text).to.be.eq('Mocked tpp message from SPI');",
 													"});"
 												],
@@ -89889,7 +89877,7 @@
 													"       pm.expect(jsonData).to.have.property('tppMessages');",
 													"       pm.expect(jsonData._links.account.href).to.be.eq('Mocked account link from SPI');",
 													"       pm.expect(jsonData.tppMessages[0].category).to.be.eq('WARNING');",
-													"       pm.expect(jsonData.tppMessages[0].code).to.be.eq('WARNING');",
+													"       pm.expect(jsonData.tppMessages[0].code).to.be.eq('FORMAT_ERROR');",
 													"       pm.expect(jsonData.tppMessages[0].text).to.be.eq('Mocked tpp message from SPI');",
 													"});"
 												],
@@ -90271,7 +90259,7 @@
 											"       pm.expect(jsonData).to.have.property('tppMessages');",
 											"       pm.expect(jsonData._links.account.href).to.be.eq('Mocked account link from SPI');",
 											"       pm.expect(jsonData.tppMessages[0].category).to.be.eq('WARNING');",
-											"       pm.expect(jsonData.tppMessages[0].code).to.be.eq('WARNING');",
+											"       pm.expect(jsonData.tppMessages[0].code).to.be.eq('FORMAT_ERROR');",
 											"       pm.expect(jsonData.tppMessages[0].text).to.be.eq('Mocked tpp message from SPI');",
 											"});"
 										],
@@ -99843,7 +99831,7 @@
 													"raw": "{\n  \"account\": {\n    \"aspspAccountId\": \"125-DEDE89370400440532013000-EUR\",\n    \"currency\": \"EUR\",\n    \"iban\": \"{{iban_multiple}}\"\n  },\n  \"cardExpiryDate\": \"2025-12-31\",\n  \"cardInformation\": \"MyMerchant Loyalty Card\",\n  \"cardNumber\": 1234567891234,\n  \"registrationInformation\": \"Your contract Number 1234 with MyMerchant is completed with the registration with your bank.\",\n  \"tppAuthorisationNumber\": \"PSDDE-FAKENCA-87B2AC\",\n  \"validUntil\": \"2025-10-10\"\n}"
 												},
 												"url": {
-													"raw": "{{protocol}}://{{url_cms}}/aspsp-api/v1/piis/consents/",
+													"raw": "{{protocol}}://{{url_cms}}/aspsp-api/v1/piis/consents",
 													"protocol": "{{protocol}}",
 													"host": [
 														"{{url_cms}}"
@@ -99852,8 +99840,7 @@
 														"aspsp-api",
 														"v1",
 														"piis",
-														"consents",
-														""
+														"consents"
 													]
 												},
 												"description": "This method is used to initiate a payment at the ASPSP.  ## Variants of Payment Initiation Requests  This method to initiate a payment initiation at the ASPSP can be sent with either a JSON body or an pain.001 body depending on the payment product in the path.  There are the following **payment products**:    - Payment products with payment information in *JSON* format:     - ***sepa-credit-transfers***     - ***instant-sepa-credit-transfers***     - ***target-2-payments***     - ***cross-border-credit-transfers***   - Payment products with payment information in *pain.001* XML format:     - ***pain.001-sepa-credit-transfers***     - ***pain.001-instant-sepa-credit-transfers***     - ***pain.001-target-2-payments***     - ***pain.001-cross-border-credit-transfers***  Furthermore the request body depends on the **payment-service**   * ***payments***: A single payment initiation request.   * ***bulk-payments***: A collection of several payment iniatiation requests.        In case of a *pain.001* message there are more than one payments contained in the *pain.001 message.          In case of a *JSON* there are several JSON payment blocks contained in a joining list.   * ***periodic-payments***:      Create a standing order initiation resource for recurrent i.e. periodic payments addressable under {paymentId}       with all data relevant for the corresponding payment product and the execution of the standing order contained in a JSON body.   This is the first step in the API to initiate the related recurring/periodic payment.    ## Single and mulitilevel SCA Processes  The Payment Initiation Requests are independent from the need of one ore multilevel  SCA processing, i.e. independent from the number of authorisations needed for the execution of payments.   But the response messages are specific to either one SCA processing or multilevel SCA processing.   For payment initiation with multilevel SCA, this specification requires an explicit start of the authorisation,  i.e. links directly associated with SCA processing like 'scaRedirect' or 'scaOAuth' cannot be contained in the  response message of a Payment Initation Request for a payment, where multiple authorisations are needed.  Also if any data is needed for the next action, like selecting an SCA method is not supported in the response,  since all starts of the multiple authorisations are fully equal.  In these cases, first an authorisation sub-resource has to be generated following the 'startAuthorisation' link. "
@@ -100198,7 +100185,7 @@
 													"raw": "{\n  \"account\": {\n    \"iban\": \"{{iban_none}}\",\n    \"currency\": \"EUR\"\n  },\n  \"tppAuthorisationNumber\": \"PSDDE-FAKENCA-87B2AC\",\n  \"validUntil\": \"2025-10-10\"\n}"
 												},
 												"url": {
-													"raw": "{{protocol}}://{{url_cms}}/aspsp-api/v1/piis/consents/",
+													"raw": "{{protocol}}://{{url_cms}}/aspsp-api/v1/piis/consents",
 													"protocol": "{{protocol}}",
 													"host": [
 														"{{url_cms}}"
@@ -100207,8 +100194,7 @@
 														"aspsp-api",
 														"v1",
 														"piis",
-														"consents",
-														""
+														"consents"
 													]
 												}
 											},
@@ -100444,7 +100430,7 @@
 													"raw": "{\n  \"account\": {\n    \"iban\": \"{{iban_none}}\",\n    \"currency\": \"EUR\"\n  },\n  \"tppAuthorisationNumber\": \"PSDDE-FAKENCA-87B2AD\",\n  \"validUntil\": \"2025-10-10\"\n}"
 												},
 												"url": {
-													"raw": "{{protocol}}://{{url_cms}}/aspsp-api/v1/piis/consents/",
+													"raw": "{{protocol}}://{{url_cms}}/aspsp-api/v1/piis/consents",
 													"protocol": "{{protocol}}",
 													"host": [
 														"{{url_cms}}"
@@ -100453,8 +100439,7 @@
 														"aspsp-api",
 														"v1",
 														"piis",
-														"consents",
-														""
+														"consents"
 													]
 												}
 											},
@@ -100749,7 +100734,7 @@
 											"raw": "{\n  \"account\": {\n    \"iban\": \"{{iban_none}}\",\n    \"currency\": \"EUR\"\n  },\n  \"tppAuthorisationNumber\": \"PSDDE-FAKENCA-87B2AC\",\n  \"validUntil\": \"2025-10-10\"\n}"
 										},
 										"url": {
-											"raw": "{{protocol}}://{{url_cms}}/aspsp-api/v1/piis/consents/",
+											"raw": "{{protocol}}://{{url_cms}}/aspsp-api/v1/piis/consents",
 											"protocol": "{{protocol}}",
 											"host": [
 												"{{url_cms}}"
@@ -100758,8 +100743,7 @@
 												"aspsp-api",
 												"v1",
 												"piis",
-												"consents",
-												""
+												"consents"
 											]
 										}
 									},
@@ -101317,7 +101301,7 @@
 											"raw": "{\n  \"account\": {\n    \"iban\": \"{{iban_none}}\",\n    \"currency\": \"EUR\"\n  },\n  \"tppAuthorisationNumber\": \"PSDDE-FAKENCA-87B2AC\",\n  \"validUntil\": \"2025-10-10\"\n}"
 										},
 										"url": {
-											"raw": "{{protocol}}://{{url_cms}}/aspsp-api/v1/piis/consents/",
+											"raw": "{{protocol}}://{{url_cms}}/aspsp-api/v1/piis/consents",
 											"protocol": "{{protocol}}",
 											"host": [
 												"{{url_cms}}"
@@ -101326,8 +101310,7 @@
 												"aspsp-api",
 												"v1",
 												"piis",
-												"consents",
-												""
+												"consents"
 											]
 										}
 									},
@@ -109041,7 +109024,7 @@
 														],
 														"body": {
 															"mode": "raw",
-															"raw": "{\n  \"account\": {\n    \"iban\": \"{{iban_multiaccount_1}}\",\n    \"currency\": \"EUR\"\n  },\n  \"cardNumber\": \"cardNumber\",\n  \"cardExpiryDate\": \"2030-10-10\",\n  \"cardInformation\": \"cardInformation\",\n  \"registrationInformation\": \"registrationInformation\"\n\n}"
+															"raw": "{\n  \"account\": {\n    \"iban\": \"{{iban_multiacccount_1}}\",\n    \"currency\": \"EUR\"\n  },\n  \"cardNumber\": \"cardNumber\",\n  \"cardExpiryDate\": \"2030-10-10\",\n  \"cardInformation\": \"cardInformation\",\n  \"registrationInformation\": \"registrationInformation\"\n\n}"
 														},
 														"url": {
 															"raw": "{{protocol}}://{{url_xs2a}}/v2/consents/confirmation-of-funds",
@@ -109496,7 +109479,7 @@
 														],
 														"body": {
 															"mode": "raw",
-															"raw": "{\n  \"account\": {\n    \"iban\": \"{{iban_multiaccount_1}}\",\n    \"currency\": \"EUR\"\n  },\n  \"instructedAmount\": {\n    \"amount\": \"100.00\",\n    \"currency\": \"EUR\"\n  },\n  \"payee\": \"Check24\"\n}"
+															"raw": "{\n  \"account\": {\n    \"iban\": \"{{iban_multiacccount_1}}\",\n    \"currency\": \"EUR\"\n  },\n  \"instructedAmount\": {\n    \"amount\": \"100.00\",\n    \"currency\": \"EUR\"\n  },\n  \"payee\": \"Check24\"\n}"
 														},
 														"url": {
 															"raw": "{{protocol}}://{{url_xs2a}}/v1/funds-confirmations",
@@ -109557,7 +109540,7 @@
 														],
 														"body": {
 															"mode": "raw",
-															"raw": "{\n  \"account\": {\n    \"iban\": \"{{iban_multiaccount_2}}\",\n    \"currency\": \"EUR\"\n  },\n  \"instructedAmount\": {\n    \"amount\": \"100.00\",\n    \"currency\": \"EUR\"\n  },\n  \"payee\": \"Check24\"\n}"
+															"raw": "{\n  \"account\": {\n    \"iban\": \"{{iban_multiacccount_2}}\",\n    \"currency\": \"EUR\"\n  },\n  \"instructedAmount\": {\n    \"amount\": \"100.00\",\n    \"currency\": \"EUR\"\n  },\n  \"payee\": \"Check24\"\n}"
 														},
 														"url": {
 															"raw": "{{protocol}}://{{url_xs2a}}/v1/funds-confirmations",
@@ -114141,7 +114124,7 @@
 													"raw": "{\n  \"account\": \n    {\n      \"currency\": \"EUR\",\n      \"iban\": \"LU280019400644750000\",\n      \"aspspAccountId\": \"{{aspsp_account_id}}\"\n    },\n  \"tppAuthorisationNumber\": \"{{tpp_id}}\",\n  \"validUntil\": \"2025-10-10\"\n}"
 												},
 												"url": {
-													"raw": "{{protocol}}://{{url_cms}}/aspsp-api/v1/piis/consents/",
+													"raw": "{{protocol}}://{{url_cms}}/aspsp-api/v1/piis/consents",
 													"protocol": "{{protocol}}",
 													"host": [
 														"{{url_cms}}"
@@ -114150,8 +114133,7 @@
 														"aspsp-api",
 														"v1",
 														"piis",
-														"consents",
-														""
+														"consents"
 													]
 												}
 											},
@@ -114832,7 +114814,7 @@
 													"raw": "{\n    \"account\": {\n        \"currency\": \"EUR\",\n        \"iban\": \"{{iban_none}}\",\n        \"aspspAccountId\": \"{{aspsp_account_id}}\"\n    },\n    \"tppAuthorisationNumber\": \"{{tpp_id}}\",\n    \"validUntil\": \"2025-10-10\"\n}"
 												},
 												"url": {
-													"raw": "{{protocol}}://{{url_cms}}/aspsp-api/v1/piis/consents/",
+													"raw": "{{protocol}}://{{url_cms}}/aspsp-api/v1/piis/consents",
 													"protocol": "{{protocol}}",
 													"host": [
 														"{{url_cms}}"
@@ -114841,8 +114823,7 @@
 														"aspsp-api",
 														"v1",
 														"piis",
-														"consents",
-														""
+														"consents"
 													]
 												}
 											},
@@ -114948,7 +114929,7 @@
 													"raw": "{\n    \"account\": {\n        \"currency\": \"EUR\",\n        \"iban\": \"{{iban_none}}\",\n        \"aspspAccountId\": \"{{aspsp_account_id}}\"\n    },\n    \"tppAuthorisationNumber\": \"{{tpp_id}}\",\n    \"validUntil\": \"2025-10-10\"\n}"
 												},
 												"url": {
-													"raw": "{{protocol}}://{{url_cms}}/aspsp-api/v1/piis/consents/",
+													"raw": "{{protocol}}://{{url_cms}}/aspsp-api/v1/piis/consents",
 													"protocol": "{{protocol}}",
 													"host": [
 														"{{url_cms}}"
@@ -114957,8 +114938,7 @@
 														"aspsp-api",
 														"v1",
 														"piis",
-														"consents",
-														""
+														"consents"
 													]
 												}
 											},
@@ -115091,7 +115071,7 @@
 													"raw": "{\n    \"account\": {\n        \"currency\": \"EUR\",\n        \"iban\": \"{{iban_none}}\",\n        \"aspspAccountId\": \"{{aspsp_account_id}}\"\n    },\n    \"tppAuthorisationNumber\": \"{{tpp_id}}\",\n    \"validUntil\": \"2025-10-10\"\n}"
 												},
 												"url": {
-													"raw": "{{protocol}}://{{url_cms}}/aspsp-api/v1/piis/consents/",
+													"raw": "{{protocol}}://{{url_cms}}/aspsp-api/v1/piis/consents",
 													"protocol": "{{protocol}}",
 													"host": [
 														"{{url_cms}}"
@@ -115100,8 +115080,7 @@
 														"aspsp-api",
 														"v1",
 														"piis",
-														"consents",
-														""
+														"consents"
 													]
 												}
 											},
@@ -115443,7 +115422,7 @@
 													"raw": "{\n    \"account\": {\n        \"currency\": \"EUR\",\n        \"iban\": \"{{iban_none}}\",\n        \"aspspAccountId\": \"{{aspsp_account_id}}\"\n    },\n    \"tppAuthorisationNumber\": \"{{tpp_id}}\",\n    \"validUntil\": \"2025-10-10\"\n}"
 												},
 												"url": {
-													"raw": "{{protocol}}://{{url_cms}}/aspsp-api/v1/piis/consents/",
+													"raw": "{{protocol}}://{{url_cms}}/aspsp-api/v1/piis/consents",
 													"protocol": "{{protocol}}",
 													"host": [
 														"{{url_cms}}"
@@ -115452,8 +115431,7 @@
 														"aspsp-api",
 														"v1",
 														"piis",
-														"consents",
-														""
+														"consents"
 													]
 												}
 											},
@@ -118042,6 +118020,9 @@
 													"   pm.expect(jsonData).to.have.property('status');",
 													"   pm.expect(jsonData).to.have.property('blockingExpirationTimestamp');",
 													"   pm.expect(jsonData).to.have.property('instanceId');",
+													"   pm.expect(jsonData).to.have.property('updatedBy');",
+													"   pm.expect(jsonData).to.have.property('changedAt');",
+													"   pm.expect(jsonData).to.have.property('reason');",
 													"});",
 													"",
 													"pm.test(\"Tpp is blocked\", () => {",
@@ -118129,11 +118110,6 @@
 												"key": "instance-id",
 												"value": "UNDEFINED",
 												"type": "text"
-											},
-											{
-												"key": "lock-period",
-												"value": "86400000",
-												"type": "text"
 											}
 										],
 										"body": {
@@ -118175,6 +118151,9 @@
 													"   pm.expect(jsonData).to.have.property('status');",
 													"   pm.expect(jsonData).to.not.have.property('blockingExpirationTimestamp');",
 													"   pm.expect(jsonData).to.have.property('instanceId');",
+													"   pm.expect(jsonData).to.have.property('updatedBy');",
+													"   pm.expect(jsonData).to.have.property('changedAt');",
+													"   pm.expect(jsonData).to.have.property('reason');",
 													"});",
 													"",
 													"pm.test(\"Tpp is unblocked\", () => {",
@@ -118224,6 +118203,68 @@
 												"v1",
 												"tpp",
 												"stop-list"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "5. Unblock non-existing TPP",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"pm.test(\"Status code is 200\", () => {",
+													"    pm.response.to.have.status(200);",
+													"});",
+													"",
+													"const jsonData = pm.response.text();",
+													"",
+													"pm.test(\"Tpp is not unblocked\", () => {",
+													"   pm.expect(jsonData).to.be.eq('false');",
+													"});"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"method": "DELETE",
+										"header": [
+											{
+												"key": "Content-Type",
+												"name": "Content-Type",
+												"value": "application/json",
+												"type": "text"
+											},
+											{
+												"key": "tpp-authorisation-number",
+												"value": "PSDDE-FAKENCA-87B2AD111",
+												"type": "text"
+											},
+											{
+												"key": "instance-id",
+												"value": "UNDEFINED",
+												"type": "text"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": ""
+										},
+										"url": {
+											"raw": "{{protocol}}://{{url_cms}}/aspsp-api/v1/tpp/stop-list/unblock",
+											"protocol": "{{protocol}}",
+											"host": [
+												"{{url_cms}}"
+											],
+											"path": [
+												"aspsp-api",
+												"v1",
+												"tpp",
+												"stop-list",
+												"unblock"
 											]
 										}
 									},
@@ -123960,7 +124001,7 @@
 															"raw": "{\n  \"account\": \n    {\n      \"currency\": \"EUR\",\n      \"iban\": \"LU280019400644750000\",\n      \"aspspAccountId\": \"{{aspsp_account_id}}\"\n    },\n  \"tppAuthorisationNumber\": \"{{tpp_id}}\",\n  \"validUntil\": \"2025-10-10\"\n}"
 														},
 														"url": {
-															"raw": "{{protocol}}://{{url_cms}}/aspsp-api/v1/piis/consents/",
+															"raw": "{{protocol}}://{{url_cms}}/aspsp-api/v1/piis/consents",
 															"protocol": "{{protocol}}",
 															"host": [
 																"{{url_cms}}"
@@ -123969,8 +124010,7 @@
 																"aspsp-api",
 																"v1",
 																"piis",
-																"consents",
-																""
+																"consents"
 															]
 														}
 													},
@@ -124075,7 +124115,7 @@
 															"raw": "{\n    \"account\": {\n        \"currency\": \"EUR\",\n        \"iban\": \"{{iban_none}}\",\n        \"aspspAccountId\": \"{{aspsp_account_id}}\"\n    },\n    \"tppAuthorisationNumber\": \"{{tpp_id}}\",\n    \"validUntil\": \"2025-10-10\"\n}"
 														},
 														"url": {
-															"raw": "{{protocol}}://{{url_cms}}/aspsp-api/v1/piis/consents/",
+															"raw": "{{protocol}}://{{url_cms}}/aspsp-api/v1/piis/consents",
 															"protocol": "{{protocol}}",
 															"host": [
 																"{{url_cms}}"
@@ -124084,8 +124124,7 @@
 																"aspsp-api",
 																"v1",
 																"piis",
-																"consents",
-																""
+																"consents"
 															]
 														}
 													},
@@ -125249,7 +125288,7 @@
 									}
 								],
 								"url": {
-									"raw": "{{protocol}}://{{url_aspsp_profile}}/api/v1/aspsp-profile/",
+									"raw": "{{protocol}}://{{url_aspsp_profile}}/api/v1/aspsp-profile",
 									"protocol": "{{protocol}}",
 									"host": [
 										"{{url_aspsp_profile}}"
@@ -125257,8 +125296,7 @@
 									"path": [
 										"api",
 										"v1",
-										"aspsp-profile",
-										""
+										"aspsp-profile"
 									]
 								}
 							},

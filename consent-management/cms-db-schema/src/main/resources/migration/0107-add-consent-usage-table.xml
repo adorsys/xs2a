@@ -21,9 +21,9 @@
                    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.4.xsd">
 
     <changeSet id="2020-04-13-4" author="iku@adorsys.com.ua">
+        <validCheckSum>8:fb10bfba7e0baf951b168d09abce1b82</validCheckSum>
         <comment>Create sequence for consent_usage table.</comment>
         <createSequence sequenceName="consent_usage_id_seq"/>
-        <sql dbms="mariadb">CREATE SEQUENCE consent_usage_id_seq</sql>
     </changeSet>
 
     <changeSet id="2020-04-13-5" author="iku@adorsys.com.ua">

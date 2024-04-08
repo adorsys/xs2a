@@ -23,15 +23,15 @@
     <include relativeToChangelogFile="true" file="_typedef.xml"/>
 
     <changeSet author="ske@adorsys.de" id="2020-02-06-1">
+        <validCheckSum>8:8cb578483b4e2a8426977b2933640a84</validCheckSum>
         <comment>Create sequence for consent id</comment>
         <createSequence sequenceName="consent_id_seq"/>
-        <sql dbms="mariadb">CREATE SEQUENCE consent_id_seq</sql>
     </changeSet>
 
     <changeSet author="ske@adorsys.de" id="2020-02-06-2">
+        <validCheckSum>8:7c04b9b8066d7979c2f9585e37c50786</validCheckSum>
         <comment>Create sequence for consent_tpp_information</comment>
         <createSequence sequenceName="consent_tpp_info_id_seq"/>
-        <sql dbms="mariadb">CREATE SEQUENCE consent_tpp_info_id_seq</sql>
     </changeSet>
 
     <changeSet author="ske@adorsys.de" id="2020-02-06-3">

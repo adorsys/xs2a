@@ -21,9 +21,9 @@ package de.adorsys.psd2.xs2a.service.payment.cancel;
 import de.adorsys.psd2.consent.api.pis.PisCommonPaymentResponse;
 import de.adorsys.psd2.consent.api.pis.proto.PisPaymentCancellationRequest;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.Xs2aToSpiPaymentInfoMapper;
-import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.Xs2aToSpiPisMapperImpl;
+import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.Xs2aToSpiPaymentTypeMapperImpl;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.Xs2aToSpiPsuDataMapper;
-import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.Xs2aToSpiTransactionMapperImpl;
+import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.Xs2aToSpiTransactionStatusMapperImpl;
 import de.adorsys.psd2.xs2a.service.payment.CancelPaymentService;
 import de.adorsys.psd2.xs2a.spi.domain.payment.SpiPaymentInfo;
 import de.adorsys.xs2a.reader.JsonReader;
@@ -48,7 +48,7 @@ class CancelCommonPaymentServiceTest {
     @Mock
     private CancelPaymentService cancelPaymentService;
     @Spy
-    private final Xs2aToSpiPaymentInfoMapper xs2aToSpiPaymentInfoMapper = new Xs2aToSpiPaymentInfoMapper(new Xs2aToSpiPsuDataMapper(), new Xs2aToSpiPisMapperImpl(), new Xs2aToSpiTransactionMapperImpl());
+    private final Xs2aToSpiPaymentInfoMapper xs2aToSpiPaymentInfoMapper = new Xs2aToSpiPaymentInfoMapper(new Xs2aToSpiPsuDataMapper(), new Xs2aToSpiPaymentTypeMapperImpl(), new Xs2aToSpiTransactionStatusMapperImpl());
 
     @Captor
     private ArgumentCaptor<SpiPaymentInfo> spiPaymentInfoCaptor;

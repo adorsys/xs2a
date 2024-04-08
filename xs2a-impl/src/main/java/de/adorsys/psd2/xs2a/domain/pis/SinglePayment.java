@@ -19,8 +19,8 @@
 package de.adorsys.psd2.xs2a.domain.pis;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import de.adorsys.psd2.core.payment.model.ChargeBearer;
 import de.adorsys.psd2.core.payment.model.PurposeCode;
+import de.adorsys.psd2.core.payment.model.ChargeBearer;
 import de.adorsys.psd2.xs2a.core.domain.address.Xs2aAddress;
 import de.adorsys.psd2.xs2a.core.pis.Remittance;
 import de.adorsys.psd2.xs2a.core.pis.Xs2aAmount;
@@ -31,9 +31,9 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import java.time.LocalDate;
 import java.time.OffsetDateTime;
 import java.util.Arrays;

@@ -52,7 +52,7 @@ public class CmsConfirmationOfFundsMapper {
             getAccountReference(consent),
             consent.getValidUntil(),
             consent.getExpireDate(),
-            consent.getLastActionDate(),
+            consent.getLastActionDateTime(),
             consent.getConsentStatus(),
             tppInformation.isTppRedirectPreferred(),
             psuDataMapper.mapToPsuIdDataList(consent.getPsuDataList()),

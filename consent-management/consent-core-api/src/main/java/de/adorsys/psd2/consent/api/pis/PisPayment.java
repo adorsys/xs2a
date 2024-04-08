@@ -47,25 +47,25 @@ public class PisPayment {
     @Schema(description = "Instruction identification", example = "ABC/4562/2020-01-10")
     private String instructionIdentification;
 
-    @Schema(description = "Debtor account", required = true)
+    @Schema(description = "Debtor account", requiredMode = Schema.RequiredMode.REQUIRED)
     private AccountReference debtorAccount;
 
-    @Schema(description = "Name of the ultimate debtor", required = true, example = "Mueller")
+    @Schema(description = "Name of the ultimate debtor", requiredMode = Schema.RequiredMode.REQUIRED, example = "Mueller")
     private String ultimateDebtor;
 
-    @Schema(description = "Iso currency code", required = true, example = "EUR")
+    @Schema(description = "ISO currency code", requiredMode = Schema.RequiredMode.REQUIRED, example = "EUR")
     private Currency currency;
 
-    @Schema(description = "Payment amount", required = true, example = "1000")
+    @Schema(description = "Payment amount", requiredMode = Schema.RequiredMode.REQUIRED, example = "1000")
     private BigDecimal amount;
 
-    @Schema(description = "Creditor account", required = true)
+    @Schema(description = "Creditor account", requiredMode = Schema.RequiredMode.REQUIRED)
     private AccountReference creditorAccount;
 
     @Schema(description = "Creditor agent", example = "Telekom")
     private String creditorAgent;
 
-    @Schema(description = "Name of the creditor", required = true, example = "Telekom")
+    @Schema(description = "Name of the creditor", requiredMode = Schema.RequiredMode.REQUIRED, example = "Telekom")
     private String creditorName;
 
     @Schema(description = "Creditor Address")
@@ -95,7 +95,7 @@ public class PisPayment {
     @Schema(description = "Purpose code", example = "BCENECEQ")
     private String purposeCode;
 
-    @Schema(name = "transactionStatus", example = "ACCP", required = true)
+    @Schema(name = "transactionStatus", example = "ACCP", requiredMode = Schema.RequiredMode.REQUIRED)
     private TransactionStatus transactionStatus;
 
     /**

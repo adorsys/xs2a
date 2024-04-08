@@ -20,10 +20,10 @@ package de.adorsys.psd2.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import org.springframework.validation.annotation.Validated;
 
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
 import java.util.Objects;
 
 /**
@@ -31,7 +31,7 @@ import java.util.Objects;
  */
 @Schema(description = "Structured remittance information Max ")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-10-26T13:16:54.081225+03:00[Europe/Kiev]")
+@jakarta.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-10-25T13:15:56.196839+03:00[Europe/Kiev]")
 
 
 public class RemittanceInformationStructuredMax140   {
@@ -49,19 +49,17 @@ public class RemittanceInformationStructuredMax140   {
     return this;
   }
 
-    /**
-     * Get reference
-     *
-     * @return reference
-     **/
-    @Schema(required = true, description = "")
-    @JsonProperty("reference")
+  /**
+   * Get reference
+   * @return reference
+   **/
+  @Schema(required = true, description = "")
+  @JsonProperty("reference")
     @NotNull
 
-    @Size(max = 140)
-    public String getReference() {
-        return reference;
-    }
+@Size(max=140)   public String getReference() {
+    return reference;
+  }
 
   public void setReference(String reference) {
     this.reference = reference;
@@ -72,17 +70,15 @@ public class RemittanceInformationStructuredMax140   {
     return this;
   }
 
-    /**
-     * Get referenceType
-     *
-     * @return referenceType
-     **/
-    @Schema(description = "")
-    @JsonProperty("referenceType")
+  /**
+   * Get referenceType
+   * @return referenceType
+   **/
+  @Schema(description = "")
+  @JsonProperty("referenceType")
 
-    @Size(max = 140)
-    public String getReferenceType() {
-        return referenceType;
+@Size(max=140)   public String getReferenceType() {
+    return referenceType;
   }
 
   public void setReferenceType(String referenceType) {
@@ -91,20 +87,18 @@ public class RemittanceInformationStructuredMax140   {
 
   public RemittanceInformationStructuredMax140 referenceIssuer(String referenceIssuer) {
     this.referenceIssuer = referenceIssuer;
-      return this;
+    return this;
   }
 
-    /**
-     * Get referenceIssuer
-     *
-     * @return referenceIssuer
-     **/
-    @Schema(description = "")
-    @JsonProperty("referenceIssuer")
+  /**
+   * Get referenceIssuer
+   * @return referenceIssuer
+   **/
+  @Schema(description = "")
+  @JsonProperty("referenceIssuer")
 
-    @Size(max = 140)
-    public String getReferenceIssuer() {
-        return referenceIssuer;
+@Size(max=140)   public String getReferenceIssuer() {
+    return referenceIssuer;
   }
 
   public void setReferenceIssuer(String referenceIssuer) {

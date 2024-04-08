@@ -22,7 +22,7 @@
     <parent>
         <artifactId>xs2a</artifactId>
         <groupId>de.adorsys.psd2</groupId>
-        <version>14.10-SNAPSHOT</version>
+        <version>17.3</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
@@ -41,8 +41,6 @@
     </properties>
 
     <dependencies>
-
-        <!-- project dependencies -->
 
         <!-- other dependencies -->
 
@@ -87,6 +85,16 @@
     </dependencies>
 
     <build>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.projectlombok</groupId>
+                    <artifactId>lombok-maven-plugin</artifactId>
+                    <version>${lombok-maven-plugin.version}</version>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -134,7 +142,6 @@
                     <plugin>
                         <groupId>org.projectlombok</groupId>
                         <artifactId>lombok-maven-plugin</artifactId>
-                        <version>1.18.4.0</version>
                         <executions>
                             <execution>
                                 <phase>generate-sources</phase>

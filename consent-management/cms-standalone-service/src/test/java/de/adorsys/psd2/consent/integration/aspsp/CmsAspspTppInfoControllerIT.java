@@ -77,7 +77,7 @@ class CmsAspspTppInfoControllerIT {
     @Test
     void getTppInfo() throws Exception {
         TppInfoEntity tppInfoEntity = jsonReader.getObjectFromFile("json/consent/integration/aspsp/tpp-info-entity.json", TppInfoEntity.class);
-        given(tppInfoRepository.findFirstByAuthorisationNumberAndInstanceId(TPP_AUTHORISATION_NUMBER, INSTANCE_ID))
+        given(tppInfoRepository.findByAuthorisationNumber(TPP_AUTHORISATION_NUMBER))
             .willReturn(Optional.of(tppInfoEntity));
 
         MockHttpServletRequestBuilder requestBuilder = get(UrlBuilder.getTppInfoUrl());

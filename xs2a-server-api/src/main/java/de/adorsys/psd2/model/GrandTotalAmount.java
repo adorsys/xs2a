@@ -20,10 +20,10 @@ package de.adorsys.psd2.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
 import org.springframework.validation.annotation.Validated;
 
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Pattern;
 import java.util.Objects;
 
 /**
@@ -31,7 +31,7 @@ import java.util.Objects;
  */
 @Schema(description = "Total amount of the instalment including charges, insurance and taxes in addition to the funded amount. ")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-10-26T13:16:54.081225+03:00[Europe/Kiev]")
+@jakarta.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-10-25T13:15:56.196839+03:00[Europe/Kiev]")
 
 
 public class GrandTotalAmount   {
@@ -46,19 +46,17 @@ public class GrandTotalAmount   {
     return this;
   }
 
-    /**
-     * ISO 4217 Alpha 3 currency code.
-     *
-     * @return currency
-     **/
-    @Schema(example = "EUR", required = true, description = "ISO 4217 Alpha 3 currency code. ")
-    @JsonProperty("currency")
+  /**
+   * ISO 4217 Alpha 3 currency code.
+   * @return currency
+   **/
+  @Schema(example = "EUR", required = true, description = "ISO 4217 Alpha 3 currency code. ")
+  @JsonProperty("currency")
     @NotNull
 
-    @Pattern(regexp = "[A-Z]{3}")
-    public String getCurrency() {
-        return currency;
-    }
+@Pattern(regexp="[A-Z]{3}")   public String getCurrency() {
+    return currency;
+  }
 
   public void setCurrency(String currency) {
     this.currency = currency;
@@ -69,18 +67,16 @@ public class GrandTotalAmount   {
     return this;
   }
 
-    /**
-     * The amount given with fractional digits, where fractions must be compliant to the currency definition. Up to 14 significant figures. Negative amounts are signed by minus. The decimal separator is a dot.  **Example:** Valid representations for EUR with up to two decimals are:    * 1056   * 5768.2   * -1.50   * 5877.78
-     *
-     * @return amount
-     **/
-    @Schema(example = "5877.78", required = true, description = "The amount given with fractional digits, where fractions must be compliant to the currency definition. Up to 14 significant figures. Negative amounts are signed by minus. The decimal separator is a dot.  **Example:** Valid representations for EUR with up to two decimals are:    * 1056   * 5768.2   * -1.50   * 5877.78 ")
-    @JsonProperty("amount")
+  /**
+   * The amount given with fractional digits, where fractions must be compliant to the currency definition. Up to 14 significant figures. Negative amounts are signed by minus. The decimal separator is a dot.  **Example:** Valid representations for EUR with up to two decimals are:    * 1056   * 5768.2   * -1.50   * 5877.78
+   * @return amount
+   **/
+  @Schema(example = "5877.78", required = true, description = "The amount given with fractional digits, where fractions must be compliant to the currency definition. Up to 14 significant figures. Negative amounts are signed by minus. The decimal separator is a dot.  **Example:** Valid representations for EUR with up to two decimals are:    * 1056   * 5768.2   * -1.50   * 5877.78 ")
+  @JsonProperty("amount")
     @NotNull
 
-    @Pattern(regexp = "-?[0-9]{1,14}(\\.[0-9]{1,3})?")
-    public String getAmount() {
-        return amount;
+@Pattern(regexp="-?[0-9]{1,14}(\\.[0-9]{1,3})?")   public String getAmount() {
+    return amount;
   }
 
   public void setAmount(String amount) {
