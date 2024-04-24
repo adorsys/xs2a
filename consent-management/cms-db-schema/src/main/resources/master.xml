@@ -160,4 +160,5 @@
     <include relativeToChangelogFile="true" file="migration/0130-remove-instance-id-from-tpp-info.xml"/>
     <include relativeToChangelogFile="true" file="migration/0131-change-column-date-to-datetime-in-consent-table.xml"/>
     <include relativeToChangelogFile="true" file="migration/0132-change-column-date-to-datetime-in-consent-table.xml"/>
+    <include relativeToChangelogFile="true" file="migration/0133-increase-length-of-tppNtfcUri-column.xml"/>
 </databaseChangeLog>
