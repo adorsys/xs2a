@@ -4,8 +4,14 @@
 
 * Updated dependencies
 
+* Updated the size of a column
+
 == Updated dependencies
 
 Libraries were updated:
 
 - postgresql - to 42.3.10.
+
+== Updated the size of the column
+
+The size of the "tpp_ntfc" column, which corresponds to the "tpp notification uri" header, has been changed from 100 to 255.
