@@ -11,7 +11,8 @@
 Libraries were updated:
 
 - postgresql - to 42.3.10.
-- spring - to 6.1.6
+- spring - to 6.1.9.
+- spring boot - 3.2.7.
 
 == Updated the size of a column
 

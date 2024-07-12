@@ -217,7 +217,7 @@
         <maven-javadoc-plugin.version>3.6.0</maven-javadoc-plugin.version>
         <lombok-maven-plugin.version>1.18.4.0</lombok-maven-plugin.version>
 
-        <spring.version>6.1.6</spring.version>
+        <spring.version>6.1.9</spring.version>
         <spring-test.version>${spring.version}</spring-test.version>
         <spring-web.version>${spring.version}</spring-web.version>
         <spring-context.version>${spring.version}</spring-context.version>
@@ -227,7 +227,7 @@
         <spring-webmvc.version>${spring.version}</spring-webmvc.version>
         <spring-core.version>${spring.version}</spring-core.version>
         <spring-data-jpa.version>3.2.2</spring-data-jpa.version>
-        <spring-boot.version>3.2.0</spring-boot.version>
+        <spring-boot.version>3.2.7</spring-boot.version>
         <spring-boot-starter-web.version>3.2.0</spring-boot-starter-web.version>
 
         <junit-jupiter.version>5.10.0</junit-jupiter.version>
