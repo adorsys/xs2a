@@ -13,6 +13,9 @@ Libraries were updated:
 - postgresql - to 42.3.10.
 - spring - to 6.1.9.
 - spring boot - 3.2.7.
+- spring boot starter web - 3.3.2.
+- commons validator - 1.9.0.
+- nimbus jose jwt - 9.39.3.
 
 == Updated the size of a column
 
