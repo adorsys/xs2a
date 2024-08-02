@@ -48,7 +48,7 @@ import java.util.stream.Collectors;
 @Slf4j
 public class CertificateExtractorUtil {
     private static final String LDAP_COMMON_NAME = "CN";
-    private static final String ORGANIZATION_IDENTIFIER = "2.5.4.97";
+    private static final String ORGANIZATION_IDENTIFIER = "2.5.4.97";//NOPMD
 
     private CertificateExtractorUtil() {
     }
