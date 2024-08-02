@@ -84,7 +84,7 @@ public class CertificateExtractorUtil {
         try {
             X500Name x500name = new JcaX509CertificateHolder(cert).getSubject();
 
-            tppCertData.setPspAuthorisationNumber(getValueFromX500Name(x500name, BCStyle.ORGANIZATION_IDENTIFIER));
+            tppCertData.setPspAuthorisationNumber(getValueFromX500Name(x500name, new ASN1ObjectIdentifier("2.5.4.97").intern()));
             tppCertData.setOrganisation(getValueFromX500Name(x500name, BCStyle.O));
             tppCertData.setOrganisationUnit(getValueFromX500Name(x500name, BCStyle.OU));
             tppCertData.setCity(getValueFromX500Name(x500name, BCStyle.L));
