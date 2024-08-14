@@ -4,8 +4,19 @@
 
 * Updated dependencies
 
+* Updated the size of a column
+
 == Updated dependencies
 
 Libraries were updated:
 
 - postgresql - to 42.3.10.
+- spring - to 6.1.9.
+- spring boot - 3.2.7.
+- spring boot starter web - 3.3.2.
+- commons validator - 1.9.0.
+- nimbus jose jwt - 9.39.3.
+
+== Updated the size of a column
+
+The size of the "tpp_ntfc" column, which corresponds to the "tpp notification uri" header, has been changed from 100 to 255 in the tables "consent_tpp_information","signing_basket_tpp_information","pis_common_payment" from the database.
