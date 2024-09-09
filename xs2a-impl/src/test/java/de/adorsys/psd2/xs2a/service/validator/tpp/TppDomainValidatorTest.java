@@ -336,6 +336,22 @@ class TppDomainValidatorTest {
         assertEquals(TPP_MESSAGE_INFORMATION, validate.iterator().next());
     }
 
+    @Test
+    void httpsInDomain() {
+        //Given
+        when(aspspProfileServiceWrapper.isCheckUriComplianceToDomainSupported()).thenReturn(true);
+        when(scaApproachResolver.resolveScaApproach()).thenReturn(ScaApproach.REDIRECT);
+        TppInfo tppInfo = new TppInfo();
+        tppInfo.setTppName("fino.group");
+        tppInfo.setDnsList(List.of("openbanking.noda.live", "https.link"));
+        when(tppService.getTppInfo()).thenReturn(tppInfo);
+        when(aspspProfileServiceWrapper.getTppUriComplianceResponse()).thenReturn(TppUriCompliance.REJECT);
+
+        ValidationResult validationResult = tppDomainValidator.validate("https://https.link/auth/consent-result?state=48285e7c" +
+            "-1b2b-4b11-8d0b-a7a52b61a713");
+        assertTrue(validationResult.isValid());
+    }
+
     private TppInfo buildTppInfo(String name, String dns) {
         TppInfo tppInfo = new TppInfo();
         tppInfo.setTppName(name);

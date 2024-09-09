@@ -141,8 +141,8 @@ public class TppDomainValidator implements BusinessValidator<String> {
                    .collect(Collectors.toList());
     }
 
-    private String getDomainWithProtocol(String domain) {
-        return domain.startsWith("http")
+    private static String getDomainWithProtocol(String domain) {
+        return (domain.startsWith("http://") || domain.startsWith("https://"))
                    ? domain
                    : "http://" + domain;
     }
