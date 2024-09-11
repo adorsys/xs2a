@@ -12,3 +12,8 @@ Libraries were updated:
 - spring - to 5.3.37.
 - org.apache.commons.lang3 - to 3.15.0.
 - org.apache.commons.commons-collections4 - to 4.5.0-M2.
+
+== bugfix on http and https
+
+- http and https as a valid domain name starter eg: http.link
+

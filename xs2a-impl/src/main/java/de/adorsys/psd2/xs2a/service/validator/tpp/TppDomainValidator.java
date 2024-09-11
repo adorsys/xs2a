@@ -142,7 +142,7 @@ public class TppDomainValidator implements BusinessValidator<String> {
     }
 
     private String getDomainWithProtocol(String domain) {
-        return domain.startsWith("http")
+        return domain.startsWith("http://") || domain.startsWith("https://")
                    ? domain
                    : "http://" + domain;
     }
