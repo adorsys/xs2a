@@ -20,3 +20,7 @@ Libraries were updated:
 == Updated the size of a column
 
 The size of the "tpp_ntfc" column, which corresponds to the "tpp notification uri" header, has been changed from 100 to 255 in the tables "consent_tpp_information","signing_basket_tpp_information","pis_common_payment" from the database.
+
+== bugfix on http and https
+
+- http and https as a valid domain name starter eg: http.link
