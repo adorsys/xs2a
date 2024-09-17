@@ -39,7 +39,7 @@ import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
-import javax.validation.ValidationException;
+import jakarta.validation.ValidationException;
 
 import static de.adorsys.psd2.xs2a.core.domain.TppMessageInformation.buildWithCustomError;
 import static de.adorsys.psd2.xs2a.core.domain.TppMessageInformation.of;

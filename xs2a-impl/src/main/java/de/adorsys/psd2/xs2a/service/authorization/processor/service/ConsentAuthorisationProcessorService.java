@@ -52,7 +52,7 @@ import org.apache.commons.lang3.ObjectUtils;
 import java.util.List;
 import java.util.Optional;
 
-@SuppressWarnings("PMD.TooManyMethods")
+@SuppressWarnings({"PMD.TooManyMethods", "PMD.GodClass"})
 @Slf4j
 public abstract class ConsentAuthorisationProcessorService<T extends Consent> extends BaseAuthorisationProcessorService {
     protected static final String AUTHORISATION_FOR_CONSENT_HAS_FAILED = "Start authorisation for consent has failed.";

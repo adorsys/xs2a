@@ -23,7 +23,7 @@ import de.adorsys.psd2.consent.domain.consent.ConsentEntity;
 import org.springframework.data.jpa.repository.Lock;
 import org.springframework.data.repository.CrudRepository;
 
-import javax.persistence.LockModeType;
+import jakarta.persistence.LockModeType;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;

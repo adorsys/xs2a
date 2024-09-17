@@ -21,7 +21,7 @@ package de.adorsys.psd2.consent.domain.account;
 import de.adorsys.psd2.consent.api.ActionStatus;
 import lombok.Data;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 import java.time.LocalDate;
 
 @Data

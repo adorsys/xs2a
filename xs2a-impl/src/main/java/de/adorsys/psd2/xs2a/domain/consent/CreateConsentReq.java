@@ -29,7 +29,7 @@ import de.adorsys.psd2.xs2a.domain.AccountReferenceCollector;
 import lombok.Data;
 import org.jetbrains.annotations.Nullable;
 
-import javax.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotNull;
 import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;

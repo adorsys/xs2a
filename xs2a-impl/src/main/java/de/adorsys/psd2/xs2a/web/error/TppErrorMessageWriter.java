@@ -26,13 +26,14 @@ import de.adorsys.psd2.xs2a.core.error.MessageErrorCode;
 import de.adorsys.psd2.xs2a.service.discovery.ServiceTypeDiscoveryService;
 import de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorMapperContainer;
 import de.adorsys.psd2.xs2a.web.filter.TppErrorMessage;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 
-import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 @Slf4j
@@ -59,7 +60,7 @@ public class TppErrorMessageWriter {
         xs2aObjectMapper.writeValue(response.getWriter(), errorMapperContainer.getErrorBody(messageError).getBody());
     }
 
-    public void writeServiceUnavailableError(HttpServletResponse response, String message) {
+    public void writeServiceUnavailableError(@NotNull HttpServletResponse response, String message) {
         try {
             log.warn("ResourceAccessException handled with message: {}", message);
             response.setStatus(HttpStatus.SERVICE_UNAVAILABLE.value());

@@ -22,7 +22,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
 import org.springframework.validation.annotation.Validated;
 
-import javax.validation.Valid;
+import jakarta.validation.Valid;
 import java.util.HashMap;
 import java.util.Objects;
 
@@ -31,7 +31,7 @@ import java.util.Objects;
  */
 @Schema(description = "A list of hyperlinks to be recognised by the TPP. Type of links admitted in this response (which might be extended by single ASPSPs as indicated in its XS2A documentation):  - 'scaRedirect':   In case of an SCA Redirect Approach, the ASPSP is transmitting the link to which to   redirect the PSU browser. - 'scaOAuth':   In case of a SCA OAuth2 Approach, the ASPSP is transmitting the URI where the configuration of the Authorisation Server can be retrieved. The configuration follows the OAuth 2.0 Authorisation Server Metadata specification. - 'startAuthorisation':   In case, where an explicit start of the transaction authorisation is needed, but no more data needs to be updated (no authentication method to be selected, no PSU identification nor PSU authentication data to be uploaded). - 'startAuthorisationWithPsuIdentification':   The link to the authorisation end-point, where the authorisation sub-resource has to be generated while uploading the PSU identification data. - 'startAuthorisationWithPsuAuthentication':   The link to the authorisation or cancellation authorisation sub-resource,   where PSU authentication data needs to be uploaded. - 'startAuthorisationWithEncryptedPsuAuthentication':   The link to the authorisation end-point, where the authorisation sub-resource has to be generated while uploading the encrypted PSU authentication data. - 'startAuthorisationWithAuthentication MethodSelection':   The link to the authorisation end-point, where the authorisation sub-resource has to be generated while selecting the authentication method.   This link is contained under exactly the same conditions as the data element \"scaMethods\". - 'startAuthorisationWithTransactionAuthorisation':   The link to the authorisation end-point, where the authorisation sub-resource has to be generated while authorising the transaction e.g. by uploading an OTP received by SMS. - 'self':   The link to the Establish Account Information Consent resource created by this request.   This link can be used to retrieve the resource data. - 'status':   The link to retrieve the transaction status of the payment initiation. - 'scaStatus':   The link to retrieve the scaStatus of the corresponding authorisation sub-resource. ")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-05-06T13:00:06.283258+03:00[Europe/Kiev]")
+@jakarta.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-05-06T13:00:06.283258+03:00[Europe/Kiev]")
 
 
 public class LinksStartScaProcessSingleSca extends HashMap<String, HrefType>  {

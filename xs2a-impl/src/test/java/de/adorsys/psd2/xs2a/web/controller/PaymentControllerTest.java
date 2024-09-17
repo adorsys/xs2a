@@ -227,7 +227,7 @@ class PaymentControllerTest {
                 null);
 
         // Then
-        HttpStatus actualHttpStatus = actualResponse.getStatusCode();
+        HttpStatus actualHttpStatus = (HttpStatus) actualResponse.getStatusCode();
         assertThat(actualHttpStatus).isEqualTo(OK);
         assertThat(actualResponse.getBody()).isEqualTo(expectedBody);
     }
@@ -251,7 +251,7 @@ class PaymentControllerTest {
             null, null);
 
         // Then
-        HttpStatus actualHttpStatus = actualResponse.getStatusCode();
+        HttpStatus actualHttpStatus = (HttpStatus) actualResponse.getStatusCode();
         assertThat(actualHttpStatus).isEqualTo(OK);
         assertThat(actualResponse.getBody()).isEqualTo(rawPaymentStatus);
     }
