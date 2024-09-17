@@ -21,7 +21,7 @@ package de.adorsys.psd2.xs2a.component.logger;
 import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
 import org.apache.commons.lang3.StringUtils;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 
 public class TppRequestLogBuilder extends TppLogger.TppLogBuilder<TppRequestLogBuilder> {
     private static final String TPP_ID = "TPP ID";

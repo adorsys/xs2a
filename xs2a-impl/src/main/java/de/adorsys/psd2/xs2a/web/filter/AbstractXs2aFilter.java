@@ -21,7 +21,7 @@ package de.adorsys.psd2.xs2a.web.filter;
 import de.adorsys.psd2.xs2a.web.Xs2aEndpointChecker;
 import de.adorsys.psd2.xs2a.web.error.TppErrorMessageWriter;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 
 /**
  * Abstract filter that will be executed only once and will be applied only to XS2A endpoints.

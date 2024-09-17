@@ -31,10 +31,11 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.springframework.web.method.HandlerMethod;
-import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.web.servlet.HandlerInterceptor;
+
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Map;
@@ -53,7 +54,7 @@ import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.PARAMETER_NOT_SUP
 @Component
 @Slf4j
 @RequiredArgsConstructor
-public class PaymentParametersValidationInterceptor extends HandlerInterceptorAdapter {
+public class PaymentParametersValidationInterceptor implements HandlerInterceptor {
 
     private static final String PAYMENT_SERVICE = "payment-service";
     private static final String PAYMENT_PRODUCT = "payment-product";

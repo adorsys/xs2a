@@ -22,14 +22,14 @@ import de.adorsys.psd2.xs2a.component.logger.TppLogger;
 import de.adorsys.psd2.xs2a.service.TppService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
-import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
+import org.springframework.web.servlet.HandlerInterceptor;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 @RequiredArgsConstructor
 @Component
-public class FundsConfirmationLoggingInterceptor extends HandlerInterceptorAdapter {
+public class FundsConfirmationLoggingInterceptor implements HandlerInterceptor {
     private final TppService tppService;
 
     @Override

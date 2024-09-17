@@ -26,7 +26,7 @@ import de.adorsys.psd2.xs2a.core.pis.PisExecutionRule;
 import lombok.Data;
 import lombok.ToString;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.OffsetDateTime;

@@ -21,7 +21,7 @@ package de.adorsys.psd2.consent.domain.payment;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 
 @Data
 @Entity(name = "pis_remittance")

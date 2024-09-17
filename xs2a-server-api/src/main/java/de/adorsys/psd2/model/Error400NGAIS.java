@@ -22,7 +22,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
 import org.springframework.validation.annotation.Validated;
 
-import javax.validation.Valid;
+import jakarta.validation.Valid;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -33,7 +33,7 @@ import java.util.Objects;
  */
 @Schema(description = "NextGenPSD2 specific definition of reporting error information in case of a HTTP error code 400. ")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-10-25T13:15:56.196839+03:00[Europe/Kiev]")
+@jakarta.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-10-25T13:15:56.196839+03:00[Europe/Kiev]")
 
 
 public class Error400NGAIS   {
