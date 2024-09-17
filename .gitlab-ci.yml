@@ -214,7 +214,7 @@ Test (IT):
   except:
     - schedules
   script:
-#    - jabba use ${JAVA_VERSION}
+    #    - jabba use ${JAVA_VERSION}
     - echo "DOCKER_HOST=${DOCKER_HOST}"
     - java -XX:+PrintFlagsFinal -version | grep -Ei "maxheapsize|maxram"
     - mvn -ntp failsafe:integration-test failsafe:verify
