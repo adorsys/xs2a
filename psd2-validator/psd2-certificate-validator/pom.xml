@@ -18,65 +18,65 @@
   -->
 
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-	<modelVersion>4.0.0</modelVersion>
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
 
-	<parent>
+    <parent>
         <artifactId>psd2-validator</artifactId>
         <groupId>de.adorsys.psd2</groupId>
         <version>16.4-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
-	<artifactId>psd2-certificate-validator</artifactId>
+    <artifactId>psd2-certificate-validator</artifactId>
 
     <properties>
         <ruleset.basedir>../..</ruleset.basedir>
     </properties>
 
-	<dependencies>
+    <dependencies>
 
-		<dependency>
-			<groupId>org.tomitribe</groupId>
-			<artifactId>tomitribe-http-signatures</artifactId>
-			<version>${tomitribe-http-signatures.version}</version>
-		</dependency>
+        <dependency>
+            <groupId>org.tomitribe</groupId>
+            <artifactId>tomitribe-http-signatures</artifactId>
+            <version>${tomitribe-http-signatures.version}</version>
+        </dependency>
 
-		<dependency>
-		    <groupId>com.nimbusds</groupId>
-		    <artifactId>nimbus-jose-jwt</artifactId>
-		    <version>${nimbus-jose-jwt.version}</version>
-		</dependency>
+        <dependency>
+            <groupId>com.nimbusds</groupId>
+            <artifactId>nimbus-jose-jwt</artifactId>
+            <version>${nimbus-jose-jwt.version}</version>
+        </dependency>
 
-		<dependency>
-		    <groupId>org.apache.commons</groupId>
-		    <artifactId>commons-lang3</artifactId>
-		    <version>${apache.commons-lang3.version}</version>
-		</dependency>
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-lang3</artifactId>
+            <version>${apache.commons-lang3.version}</version>
+        </dependency>
 
-		<dependency>
-		    <groupId>no.difi.commons</groupId>
-		    <artifactId>commons-certvalidator</artifactId>
-		    <version>${commons-certvalidator.version}</version>
-		</dependency>
+        <dependency>
+            <groupId>no.difi.commons</groupId>
+            <artifactId>commons-certvalidator</artifactId>
+            <version>${commons-certvalidator.version}</version>
+        </dependency>
 
-		<dependency>
-		    <groupId>commons-io</groupId>
-		    <artifactId>commons-io</artifactId>
-		    <version>${commons.io.version}</version>
-		</dependency>
+        <dependency>
+            <groupId>commons-io</groupId>
+            <artifactId>commons-io</artifactId>
+            <version>${commons.io.version}</version>
+        </dependency>
 
-		<dependency>
-		    <groupId>org.bouncycastle</groupId>
-		    <artifactId>bcpkix-jdk15on</artifactId>
-		    <version>${bcpkix-jdk15on.version}</version>
-		</dependency>
+        <dependency>
+            <groupId>org.bouncycastle</groupId>
+            <artifactId>bcpkix-jdk18on</artifactId>
+            <version>${bcpkix-jdk18on.version}</version>
+        </dependency>
 
-		<dependency>
-		    <groupId>org.slf4j</groupId>
-		    <artifactId>slf4j-api</artifactId>
-		    <version>${slf4j-api.version}</version>
-		</dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>${slf4j-api.version}</version>
+        </dependency>
 
         <dependency>
             <groupId>org.projectlombok</groupId>
