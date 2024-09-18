@@ -69,12 +69,6 @@
             <artifactId>slf4j-api</artifactId>
         </dependency>
 
-        <dependency>
-            <groupId>jakarta.xml.bind</groupId>
-            <artifactId>jakarta.xml.bind-api</artifactId>
-            <version>3.0.0</version>
-        </dependency>
-
         <!-- Test dependencies-->
         <dependency>
             <groupId>org.junit.jupiter</groupId>
