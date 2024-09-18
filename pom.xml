@@ -227,7 +227,7 @@
         <spring-core.version>${spring.version}</spring-core.version>
         <spring-data-jpa.version>3.2.2</spring-data-jpa.version>
         <spring-boot.version>3.2.7</spring-boot.version>
-        <spring-boot-starter-web.version>3.3.2</spring-boot-starter-web.version>
+        <spring-boot-starter-web.version>3.2.7</spring-boot-starter-web.version>
 
         <junit-jupiter.version>5.10.0</junit-jupiter.version>
         <mockito.version>5.2.0</mockito.version>
