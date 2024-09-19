@@ -232,18 +232,18 @@
             <version>${project.version}</version>
             <scope>test</scope>
         </dependency>
-    </dependencies>
+	</dependencies>
 
-    <build>
-        <finalName>consent-management</finalName>
-        <plugins>
-            <plugin>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-maven-plugin</artifactId>
-                <version>${spring-boot.version}</version>
-                <configuration>
-                    <includeSystemScope>true</includeSystemScope>
-                </configuration>
+	<build>
+		<finalName>consent-management</finalName>
+		<plugins>
+			<plugin>
+				<groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot-maven-plugin</artifactId>
+				<version>${spring-boot.version}</version>
+				<configuration>
+					<includeSystemScope>true</includeSystemScope>
+				</configuration>
                 <executions>
                     <execution>
                         <goals>

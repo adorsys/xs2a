@@ -79,10 +79,10 @@
         </dependency>
 
         <dependency>
-            <groupId>de.adorsys.psd2</groupId>
-            <artifactId>psd2-certificate-validator</artifactId>
-            <version>${project.version}</version>
-        </dependency>
+			<groupId>de.adorsys.psd2</groupId>
+			<artifactId>psd2-certificate-validator</artifactId>
+			<version>${project.version}</version>
+		</dependency>
 
         <dependency>
             <groupId>de.adorsys.psd2</groupId>
@@ -278,6 +278,10 @@
             <groupId>org.skyscreamer</groupId>
             <artifactId>jsonassert</artifactId>
             <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.springdoc</groupId>
+            <artifactId>springdoc-openapi-starter-common</artifactId>
         </dependency>
         <dependency>
             <groupId>org.springdoc</groupId>
