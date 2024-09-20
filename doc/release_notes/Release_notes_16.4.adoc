@@ -9,9 +9,13 @@
 Libraries were updated:
 
 - postgresql - to 42.3.10.
-- spring - to 5.3.37.
-- org.apache.commons.lang3 - to 3.15.0.
-- org.apache.commons.commons-collections4 - to 4.5.0-M2.
+- spring - to 6.1.9.
+- spring boot - 3.2.7.
+- spring boot starter web - 3.3.2.
+- commons validator - 1.9.0.
+- nimbus jose jwt - 9.39.3.
+- Java 17.
+- org.apache.commons.lang3 - to 3.7
 
 == bugfix on http and https
 
