@@ -32,7 +32,7 @@ public class PisCommonPaymentRemoteUrls {
      * @return String
      */
     public String createPisCommonPayment() {
-        return commonPaymentServiceBaseUrl + "/pis/common-payments/";
+        return commonPaymentServiceBaseUrl + "/pis/common-payments";
     }
 
     /**
