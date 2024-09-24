@@ -106,6 +106,9 @@ public abstract class CmsAuthorisationService<T extends Authorisable> implements
                 authorisationParent.setPsuDataList(psuService.enrichPsuData(psuData, authorisationParent.getPsuDataList()));
                 authorisationEntity.setPsuData(psuData);
                 updateAuthorisable(authorisationParent);
+
+                // This case covers business object initiation without 'PSU-ID' header.
+                psuService.savePsuData(psuData);
             }
         } else {
             boolean isPsuCorrect = Objects.nonNull(authorisationEntity.getPsuData())
