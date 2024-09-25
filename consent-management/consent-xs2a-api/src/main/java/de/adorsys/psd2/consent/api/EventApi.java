@@ -33,7 +33,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @Tag(name = InternalCmsXs2aApiTagName.EVENTS, description = "Provides access to the consent management system for Events")
 public interface EventApi {
 
-    @PostMapping(path = "/")
+    @PostMapping
     @Operation(description = "Creates new event")
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "OK"),
