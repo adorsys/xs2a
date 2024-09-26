@@ -8,7 +8,7 @@ The component consists of 4 modules:
 * xref:aspsp-profile-api/README.md[aspsp-profile-api] - an API of profile, that is used by other components of the system;
 * xref:aspsp-profile-lib/README.md[aspsp-profile-lib] - a service implementation that is used on the server side and may be used as well in embedded approach;
 * xref:aspsp-profile-remote/README.md[aspsp-profile-remote] - a service implementation that uses remotely deployed service (by aspsp-profile-server) via HTTP;
-* xref:aspsp-profile-server/README.md[aspsp-profile-server] - a Spring Boot application that serves ASPSP Profile via HTTP endpoints.
+* xref:aspsp-profile-server/README.md[aspsp-profile-server] - a spring-boot application that serves ASPSP Profile via HTTP endpoints.
 
 == Usage
 
