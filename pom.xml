@@ -155,6 +155,31 @@
             <organization>LLC Golden Dimension</organization>
             <organizationUrl>https://adorsys.com.ua/</organizationUrl>
         </developer>
+        <developer>
+            <name>Esum Brandon</name>
+            <email>ebr@adorsys.com.ua</email>
+            <organization>adorsys</organization>
+            <organizationUrl>https://adorsys.com.ua/</organizationUrl>
+        </developer>
+        <developer>
+            <name>Borelli Fotso</name>
+            <email>bfo@adorsys.com.ua</email>
+            <organization>adorsys</organization>
+            <organizationUrl>https://adorsys.com.ua/</organizationUrl>
+        </developer>
+        <developer>
+            <name>Ndoum Said</name>
+            <email>nsd@adorsys.com.ua</email>
+            <organization>adorsys</organization>
+            <organizationUrl>https://adorsys.com.ua/</organizationUrl>
+        </developer>
+        <developer>
+            <name>Volodymyr Stepanenko</name>
+            <email>vst@adorsys.com.ua</email>
+            <organization>LLC Golden Dimension</organization>
+            <organizationUrl>https://adorsys.com.ua/</organizationUrl>
+        </developer>
+
     </developers>
 
     <properties>
