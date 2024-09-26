@@ -31,7 +31,7 @@ import java.io.InputStream;
 public class ConsentRestErrorHandler extends DefaultResponseErrorHandler {
     @Override
     public void handleError(ClientHttpResponse response) throws IOException {
-        HttpStatus statusCode = response.getStatusCode();
+        HttpStatus statusCode = (HttpStatus) response.getStatusCode();
 
         byte[] textInBytes = new byte[]{};
 

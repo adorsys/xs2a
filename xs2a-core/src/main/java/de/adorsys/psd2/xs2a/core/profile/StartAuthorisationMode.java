@@ -38,7 +38,7 @@ public enum StartAuthorisationMode {
         return value;
     }
 
-    @JsonCreator
+    @JsonCreator(mode = JsonCreator.Mode.DELEGATING)
     public static StartAuthorisationMode getByValue(String value) {
         return Arrays.stream(values()).filter(mode -> mode.getValue().equalsIgnoreCase(value)).findFirst().orElse(null);
     }

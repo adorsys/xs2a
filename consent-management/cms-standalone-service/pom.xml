@@ -128,7 +128,7 @@
                     <artifactId>hibernate-entitymanager</artifactId>
                 </exclusion>
 				<exclusion>
-					<groupId>org.hibernate</groupId>
+					<groupId>org.hibernate.orm</groupId>
 					<artifactId>hibernate-core</artifactId>
 				</exclusion>
 			</exclusions>
@@ -147,7 +147,6 @@
         <dependency>
             <groupId>jakarta.persistence</groupId>
             <artifactId>jakarta.persistence-api</artifactId>
-            <version>${jakarta.persistence-api.version}</version>
         </dependency>
 
         <dependency>
@@ -182,11 +181,6 @@
 			<scope>runtime</scope>
 			<optional>true</optional>
 		</dependency>
-
-        <dependency>
-            <groupId>javax.xml.bind</groupId>
-            <artifactId>jaxb-api</artifactId>
-        </dependency>
 
         <dependency>
 			<groupId>org.projectlombok</groupId>

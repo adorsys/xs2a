@@ -158,67 +158,65 @@
     </developers>
 
     <properties>
-        <java.version>11</java.version>
+        <java.version>17</java.version>
         <maven.compiler.source>${java.version}</maven.compiler.source>
         <maven.compiler.target>${java.version}</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <springdoc.version>1.8.0</springdoc.version>
-        <lombok.version>1.18.6</lombok.version>
+        <dependency.locations.enabled>false</dependency.locations.enabled>
+        <ruleset.basedir>${project.basedir}</ruleset.basedir>
+
+        <lombok.version>1.18.30</lombok.version>
+        <org.mapstruct.version>1.5.5.Final</org.mapstruct.version>
+        <lombok-mapstruct-binding.version>0.2.0</lombok-mapstruct-binding.version>
+        <springdoc.version>2.3.0</springdoc.version>
+        <swagger.annotations.version>2.2.15</swagger.annotations.version>
         <gson.version>2.8.9</gson.version>
-        <fongo.version>2.0.5</fongo.version>
-        <apache.commons-lang3.version>3.15.0</apache.commons-lang3.version>
-        <commons-collections4.version>4.5.0-M2</commons-collections4.version>
-        <hibernate.version>5.6.8.Final</hibernate.version>
-        <hibernate.validator.version>6.0.20.Final</hibernate.validator.version>
-        <javax.validation.api.version>2.0.1.Final</javax.validation.api.version>
-        <jakarta.persistence-api.version>3.1.0</jakarta.persistence-api.version>
+        <apache.commons-lang3.version>3.7</apache.commons-lang3.version>
+        <commons-collections4.version>4.4</commons-collections4.version>
+        <apache.httpcomponents.version>4.5.6</apache.httpcomponents.version>
+        <hibernate.version>6.4.3.Final</hibernate.version>
+        <hibernate.validator.version>8.0.1.Final</hibernate.validator.version>
         <jsr311.pi.version>1.1.1</jsr311.pi.version>
         <commons.io.version>2.8.0</commons.io.version>
-        <com.auth0.java-jwt.version>3.3.0</com.auth0.java-jwt.version>
         <tomitribe-http-signatures.version>1.3</tomitribe-http-signatures.version>
-        <nimbus-jose-jwt.version>7.9</nimbus-jose-jwt.version>
+        <nimbus-jose-jwt.version>9.39.3</nimbus-jose-jwt.version>
         <commons-certvalidator.version>2.1.1</commons-certvalidator.version>
-        <bcpkix-jdk15on.version>1.70</bcpkix-jdk15on.version>
-        <slf4j-api.version>1.7.36</slf4j-api.version>
+        <bcpkix-jdk18on.version>1.78.1</bcpkix-jdk18on.version>
         <freemarker.version>2.3.28</freemarker.version>
-        <liquibase-core.version>4.22.0</liquibase-core.version>
-        <commons-validator.version>1.7</commons-validator.version>
-        <swagger.annotations.version>2.2.15</swagger.annotations.version>
+        <liquibase-core.version>4.25.1</liquibase-core.version>
+        <commons-validator.version>1.9.0</commons-validator.version>
         <jetbrains.annotations.version>15.0</jetbrains.annotations.version>
-        <archunit-junit4.version>0.13.1</archunit-junit4.version>
-        <jsonassert.version>1.5.0</jsonassert.version>
-        <assertj.version>3.13.2</assertj.version>
         <aspectj.version>1.9.2</aspectj.version>
-        <hamcrest.version>1.3</hamcrest.version>
         <postgresql.version>42.3.10</postgresql.version>
         <mariadb.version>2.3.0</mariadb.version>
         <h2.version>2.2.220</h2.version>
         <ojdbc11.version>23.2.0.0</ojdbc11.version>
         <snakeyaml.version>2.0</snakeyaml.version>
         <byte-buddy.version>1.12.10</byte-buddy.version>
-        <javax.servlet-api.version>4.0.1</javax.servlet-api.version>
-        <javax.annotation-api.version>1.3.2</javax.annotation-api.version>
-        <javax.el.version>3.0.1-b09</javax.el.version>
-        <javax.el-api.version>3.0.0</javax.el-api.version>
-        <jaxb-api.version>2.3.0</jaxb-api.version>
-        <classmate.version>1.4.0</classmate.version>
-        <jackson.version>2.15.3</jackson.version>
+        <logback-classic.version>1.4.14</logback-classic.version>
+        <slf4j-api.version>2.0.9</slf4j-api.version>
+        <jackson.version>2.16.1</jackson.version>
 
-        <!--Maven plugins-->
-        <maven-pmd-plugin.version>3.12.0</maven-pmd-plugin.version>
-        <maven-enforcer-plugin.version>3.0.0-M3</maven-enforcer-plugin.version>
-        <maven-surefire-plugin.version>3.0.0-M6</maven-surefire-plugin.version>
-        <maven-failsafe-plugin.version>3.0.0-M6</maven-failsafe-plugin.version>
-        <maven-compiler-plugin.version>3.10.1</maven-compiler-plugin.version>
-        <maven-source-plugin.version>3.2.1</maven-source-plugin.version>
+        <jakarta.servlet-api.version>6.0.0</jakarta.servlet-api.version>
+        <jakarta.annotation-api.version>2.1.1</jakarta.annotation-api.version>
+        <jakarta.validation-api.version>3.0.2</jakarta.validation-api.version>
+        <jakarta.persistence-api.version>3.1.0</jakarta.persistence-api.version>
+        <jakarta.el.version>5.0.0-M1</jakarta.el.version>
+
+        <maven-pmd-plugin.version>3.21.0</maven-pmd-plugin.version>
+        <maven-enforcer-plugin.version>3.4.1</maven-enforcer-plugin.version>
+        <maven-surefire-plugin.version>3.2.5</maven-surefire-plugin.version>
+        <maven-failsafe-plugin.version>3.2.5</maven-failsafe-plugin.version>
+        <maven-compiler-plugin.version>3.12.1</maven-compiler-plugin.version>
+        <maven-source-plugin.version>3.3.0</maven-source-plugin.version>
         <maven-gpg-plugin.version>3.0.1</maven-gpg-plugin.version>
-        <jacoco-maven-plugin.version>0.8.5</jacoco-maven-plugin.version>
+        <jacoco-maven-plugin.version>0.8.11</jacoco-maven-plugin.version>
         <sonar-maven-plugin.version>3.7.0.1746</sonar-maven-plugin.version>
         <maven-javadoc-plugin.version>3.6.0</maven-javadoc-plugin.version>
         <lombok-maven-plugin.version>1.18.4.0</lombok-maven-plugin.version>
 
-        <spring.version>5.3.37</spring.version>
+        <spring.version>6.1.9</spring.version>
         <spring-test.version>${spring.version}</spring-test.version>
         <spring-web.version>${spring.version}</spring-web.version>
         <spring-context.version>${spring.version}</spring-context.version>
@@ -227,20 +225,18 @@
         <spring-aop.version>${spring.version}</spring-aop.version>
         <spring-webmvc.version>${spring.version}</spring-webmvc.version>
         <spring-core.version>${spring.version}</spring-core.version>
-        <spring-data-jpa.version>2.7.18</spring-data-jpa.version>
-        <spring-boot.version>2.7.18</spring-boot.version>
-        <spring-boot-starter-web.version>2.7.18</spring-boot-starter-web.version>
+        <spring-data-jpa.version>3.2.2</spring-data-jpa.version>
+        <spring-boot.version>3.2.7</spring-boot.version>
+        <spring-boot-starter-web.version>3.3.2</spring-boot-starter-web.version>
 
-        <dependency.locations.enabled>false</dependency.locations.enabled>
-        <ruleset.basedir>${project.basedir}</ruleset.basedir>
-        <archunit.version>0.13.1</archunit.version>
-
-        <org.mapstruct.version>1.5.3.Final</org.mapstruct.version>
-        <logback-classic.version>1.2.13</logback-classic.version>
-
-        <junit-jupiter.version>5.5.2</junit-jupiter.version>
-        <mockito.version>3.11.2</mockito.version>
+        <junit-jupiter.version>5.10.0</junit-jupiter.version>
+        <mockito.version>5.2.0</mockito.version>
         <testcontainers.version>1.17.3</testcontainers.version>
+        <hamcrest.version>1.3</hamcrest.version>
+        <archunit-junit4.version>0.23.1</archunit-junit4.version>
+        <jsonassert.version>1.5.1</jsonassert.version>
+        <assertj.version>3.13.2</assertj.version>
+        <archunit.version>0.13.1</archunit.version>
 
         <!--Sonar -->
         <sonar.core.coveragePlugin>jacoco</sonar.core.coveragePlugin>
@@ -290,12 +286,11 @@
         <repository>
             <id>spring-milestones</id>
             <name>Spring Milestones</name>
-            <url>https://repo.spring.io/milestone</url>
+            <url>https://repo.spring.io/milestone/</url>
             <snapshots>
                 <enabled>false</enabled>
             </snapshots>
         </repository>
-
         <repository>
             <id>gitlab-maven</id>
             <url>https://git.adorsys.de/api/v4/groups/49/-/packages/maven</url>
@@ -504,37 +499,37 @@
             </dependency>
 
             <dependency>
-                <groupId>javax.servlet</groupId>
-                <artifactId>javax.servlet-api</artifactId>
-                <version>${javax.servlet-api.version}</version>
+                <groupId>jakarta.servlet</groupId>
+                <artifactId>jakarta.servlet-api</artifactId>
+                <version>${jakarta.servlet-api.version}</version>
             </dependency>
 
             <dependency>
-                <groupId>javax.annotation</groupId>
-                <artifactId>javax.annotation-api</artifactId>
-                <version>${javax.annotation-api.version}</version>
+                <groupId>jakarta.annotation</groupId>
+                <artifactId>jakarta.annotation-api</artifactId>
+                <version>${jakarta.annotation-api.version}</version>
             </dependency>
 
             <dependency>
-                <groupId>com.fasterxml</groupId>
-                <artifactId>classmate</artifactId>
-                <version>${classmate.version}</version>
+                <groupId>jakarta.validation</groupId>
+                <artifactId>jakarta.validation-api</artifactId>
+                <version>${jakarta.validation-api.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>jakarta.persistence</groupId>
+                <artifactId>jakarta.persistence-api</artifactId>
+                <version>${jakarta.persistence-api.version}</version>
             </dependency>
 
             <dependency>
                 <groupId>org.glassfish</groupId>
-                <artifactId>javax.el</artifactId>
-                <version>${javax.el.version}</version>
+                <artifactId>jakarta.el</artifactId>
+                <version>${jakarta.el.version}</version>
             </dependency>
 
             <dependency>
-                <groupId>javax.el</groupId>
-                <artifactId>javax.el-api</artifactId>
-                <version>${javax.el-api.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>org.hibernate</groupId>
+                <groupId>org.hibernate.orm</groupId>
                 <artifactId>hibernate-core</artifactId>
                 <version>${hibernate.version}</version>
             </dependency>
@@ -543,12 +538,6 @@
                 <groupId>org.hibernate.validator</groupId>
                 <artifactId>hibernate-validator</artifactId>
                 <version>${hibernate.validator.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>javax.validation</groupId>
-                <artifactId>validation-api</artifactId>
-                <version>${javax.validation.api.version}</version>
             </dependency>
 
             <dependency>
@@ -565,7 +554,7 @@
 
             <dependency>
                 <groupId>org.springdoc</groupId>
-                <artifactId>springdoc-openapi-ui</artifactId>
+                <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
                 <version>${springdoc.version}</version>
             </dependency>
 
@@ -576,7 +565,7 @@
             </dependency>
 
             <dependency>
-                <groupId>javax.ws.rs</groupId>
+                <groupId>jakarta.ws.rs</groupId>
                 <artifactId>jsr311-api</artifactId>
                 <version>${jsr311.pi.version}</version>
             </dependency>
@@ -632,27 +621,9 @@
             </dependency>
 
             <dependency>
-                <groupId>org.hibernate</groupId>
-                <artifactId>hibernate-java8</artifactId>
-                <version>${hibernate.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>org.hibernate</groupId>
-                <artifactId>hibernate-entitymanager</artifactId>
-                <version>${hibernate.version}</version>
-            </dependency>
-
-            <dependency>
                 <groupId>org.slf4j</groupId>
                 <artifactId>slf4j-api</artifactId>
                 <version>${slf4j-api.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>javax.xml.bind</groupId>
-                <artifactId>jaxb-api</artifactId>
-                <version>${jaxb-api.version}</version>
             </dependency>
 
             <dependency>
@@ -709,14 +680,14 @@
 
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-source-plugin</artifactId>
-                    <version>${maven-source-plugin.version}</version>
+                    <artifactId>maven-javadoc-plugin</artifactId>
+                    <version>${maven-javadoc-plugin.version}</version>
                 </plugin>
 
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-javadoc-plugin</artifactId>
-                    <version>${maven-javadoc-plugin.version}</version>
+                    <artifactId>maven-source-plugin</artifactId>
+                    <version>${maven-source-plugin.version}</version>
                 </plugin>
 
                 <plugin>
@@ -726,59 +697,30 @@
                 </plugin>
             </plugins>
         </pluginManagement>
-        <!--
-        This tricky hack forces java to use sources generated by lombok, also for javadocs
-        See https://github.com/awhitford/lombok.maven/issues/17 for details
-        Use it manually to generate javadocs. Don't commit it
-        -->
-        <!--<sourceDirectory>target/generated-sources/delombok</sourceDirectory>-->
         <plugins>
-<!--
-This tricky hack forces java to use sources generated by lombok, also for javadocs
-See https://github.com/awhitford/lombok.maven/issues/17 for details
-Use it manually to generate javadocs. Don't commit it
--->
-<!--
-            <plugin>
-                <artifactId>maven-javadoc-plugin</artifactId>
-                <version>3.0.1</version>
-                <executions>
-                    <execution>
-                        <id>javadoc-jar</id>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>aggregate-jar</goal>
-                        </goals>
-                        <configuration>
-                            &lt;!&ndash; switch on dependency-driven aggregation &ndash;&gt;
-                            <includeDependencySources>true</includeDependencySources>
-                            <dependencySourceIncludes>
-                                <dependencySourceInclude>de.adorsys.psd2:xs2a-core</dependencySourceInclude>
-                                <dependencySourceInclude>de.adorsys.psd2:consent-core-api</dependencySourceInclude>
-                                <dependencySourceInclude>de.adorsys.psd2:consent-psu-api</dependencySourceInclude>
-                                <dependencySourceInclude>de.adorsys.psd2:consent-core-api</dependencySourceInclude>
-                            </dependencySourceIncludes>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
--->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>${maven-compiler-plugin.version}</version>
                 <configuration>
+
+                    <parameters>true</parameters>
+
                     <annotationProcessorPaths>
                         <path>
                             <groupId>org.mapstruct</groupId>
                             <artifactId>mapstruct-processor</artifactId>
                             <version>${org.mapstruct.version}</version>
                         </path>
-
                         <path>
                             <groupId>org.projectlombok</groupId>
                             <artifactId>lombok</artifactId>
                             <version>${lombok.version}</version>
+                        </path>
+                        <path>
+                            <groupId>org.projectlombok</groupId>
+                            <artifactId>lombok-mapstruct-binding</artifactId>
+                            <version>${lombok-mapstruct-binding.version}</version>
                         </path>
                     </annotationProcessorPaths>
                 </configuration>
@@ -817,9 +759,7 @@ Use it manually to generate javadocs. Don't commit it
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-pmd-plugin</artifactId>
                 <version>${maven-pmd-plugin.version}</version>
-
                 <configuration>
-                    <sourceEncoding>${project.build.sourceEncoding}</sourceEncoding>
                     <minimumTokens>100</minimumTokens>
                     <targetJdk>${java.version}</targetJdk>
                     <analysisCache>true</analysisCache>
@@ -851,7 +791,6 @@ Use it manually to generate javadocs. Don't commit it
                         <!-- This is autogenerated code -->
                         <exclude>xs2a-server-api/**</exclude>
                     </excludes>
-
                 </configuration>
                 <executions>
                     <execution>
@@ -919,6 +858,8 @@ Use it manually to generate javadocs. Don't commit it
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-gpg-plugin</artifactId>
+                        <configuration>
+                        </configuration>
                         <executions>
                             <execution>
                                 <id>sign-artifacts</id>
@@ -993,7 +934,6 @@ Use it manually to generate javadocs. Don't commit it
                     </plugin>
                 </plugins>
             </build>
-
             <distributionManagement>
                 <repository>
                     <id>gitlab-maven</id>

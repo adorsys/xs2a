@@ -20,8 +20,8 @@ package de.adorsys.psd2.consent.domain;
 
 import lombok.Data;
 
-import javax.persistence.Column;
-import javax.persistence.Embeddable;
+import jakarta.persistence.Column;
+import jakarta.persistence.Embeddable;
 
 @Data
 @Embeddable

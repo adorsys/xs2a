@@ -82,6 +82,7 @@ import static de.adorsys.psd2.xs2a.core.consent.ConsentStatus.*;
 @Slf4j
 @Service
 @RequiredArgsConstructor
+@SuppressWarnings({"PMD.ExcessivePublicCount", "PMD.GodClass"})
 @Transactional(readOnly = true)
 public class CmsPsuAisServiceInternal implements CmsPsuAisService {
     private final ConsentJpaRepository consentJpaRepository;

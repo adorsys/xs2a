@@ -30,7 +30,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Optional;
 import java.util.Set;
@@ -50,7 +50,7 @@ public class ErrorBuildingService implements ErrorMessageBuilder {
      * Builds and inserts text representation of MessageError with HTTP code 400 into HTTP response. Used in request
      * validation chain and handles a list of errors.
      *
-     * @param response     {@link javax.servlet.http.HttpServletRequest} the response to be enriched
+     * @param response     {@link jakarta.servlet.http.HttpServletRequest} the response to be enriched
      * @param messageError {@link MessageError} instance with text messages
      * @throws IOException in case IO operations error
      */
@@ -70,7 +70,7 @@ public class ErrorBuildingService implements ErrorMessageBuilder {
      * Builds and inserts text representation of MessageError with definite HTTP code into HTTP response. Should only
      * be used for PIS services error handling.
      *
-     * @param response     {@link javax.servlet.http.HttpServletRequest} the response to be enriched
+     * @param response     {@link jakarta.servlet.http.HttpServletRequest} the response to be enriched
      * @param messageError {@link MessageError} instance with text messag
      * @throws IOException in case IO operations error
      */

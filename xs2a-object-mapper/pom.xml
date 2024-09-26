@@ -69,11 +69,6 @@
             <artifactId>slf4j-api</artifactId>
         </dependency>
 
-        <dependency>
-            <groupId>javax.xml.bind</groupId>
-            <artifactId>jaxb-api</artifactId>
-        </dependency>
-
         <!-- Test dependencies-->
         <dependency>
             <groupId>org.junit.jupiter</groupId>

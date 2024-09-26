@@ -22,7 +22,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
 import org.springframework.validation.annotation.Validated;
 
-import javax.validation.Valid;
+import jakarta.validation.Valid;
 import java.util.HashMap;
 import java.util.Objects;
 
@@ -31,7 +31,7 @@ import java.util.Objects;
  */
 @Schema(description = "- 'startAuthorisation':   In case, where an explicit start of the transaction authorisation is needed,   but no more data needs to be updated (no authentication method to be selected,   no PSU identification nor PSU authentication data to be uploaded). - 'startAuthorisationWithPsuIdentification':   The link to the authorisation end-point, where the authorisation sub-resource   has to be generated while uploading the PSU identification data. - 'startAuthorisationWithPsuAuthentication':   The link to the authorisation end-point, where an authorisation sub-resource   has to be generated while uploading the PSU authentication data. - 'startAuthorisationWithEncryptedPsuAuthentication':   The link to the authorisation end-point, where an authorisation sub-resource   has to be generated while uploading the encrypted PSU authentication data. - 'self':   The link to the consent resource created by this request.   This link can be used to retrieve the resource data. - 'status':   The link to retrieve the status of the consent. ")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-05-06T13:00:06.283258+03:00[Europe/Kiev]")
+@jakarta.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-05-06T13:00:06.283258+03:00[Europe/Kiev]")
 
 
 public class LinksStartScaProcessMultilevelSca extends HashMap<String, HrefType>  {

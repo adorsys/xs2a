@@ -53,7 +53,7 @@ public interface ConsentJpaRepository extends CrudRepository<ConsentEntity, Long
 
     @Query(
         "UPDATE consent " +
-            "SET consentStatus = 'EXPIRED', expireDate = CURRENT_TIMESTAMP " +
+            "SET consentStatus = de.adorsys.psd2.xs2a.core.consent.ConsentStatus.EXPIRED, expireDate = CURRENT_DATE " +
             "WHERE consentStatus IN :consentStatuses AND validUntil < CURRENT_DATE"
     )
     @Modifying
@@ -61,7 +61,7 @@ public interface ConsentJpaRepository extends CrudRepository<ConsentEntity, Long
 
     @Query(
         "UPDATE consent " +
-            "SET consentStatus = 'REJECTED', lastActionDateTime = CURRENT_TIMESTAMP " +
+            "SET consentStatus = de.adorsys.psd2.xs2a.core.consent.ConsentStatus.REJECTED, lastActionDateTime = CURRENT_TIMESTAMP " +
             "WHERE externalId IN :ids"
     )
     @Modifying
@@ -84,7 +84,7 @@ public interface ConsentJpaRepository extends CrudRepository<ConsentEntity, Long
 
     @Query(
         "UPDATE consent " +
-            "SET consentStatus = 'EXPIRED', expireDate = CURRENT_TIMESTAMP " +
+            "SET consentStatus = de.adorsys.psd2.xs2a.core.consent.ConsentStatus.EXPIRED, expireDate = CURRENT_DATE " +
             "WHERE recurringIndicator = false " +
             "AND consentStatus IN :consentStatuses " +
             "AND id IN (SELECT cu.consent.id FROM consent_usage cu WHERE cu.usageDate < CURRENT_DATE)"

@@ -20,7 +20,7 @@ package de.adorsys.psd2.xs2a.component;
 
 import org.springframework.web.util.ContentCachingResponseWrapper;
 
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletResponse;
 
 /**
  * HttpServletResponse wrapper that allows response content to be stored and retrieved

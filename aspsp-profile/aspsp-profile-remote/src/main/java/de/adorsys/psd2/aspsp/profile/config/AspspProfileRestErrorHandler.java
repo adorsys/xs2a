@@ -19,7 +19,6 @@
 package de.adorsys.psd2.aspsp.profile.config;
 
 import de.adorsys.psd2.aspsp.profile.exception.AspspProfileRestException;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.client.ClientHttpResponse;
 import org.springframework.web.client.DefaultResponseErrorHandler;
 
@@ -29,7 +28,6 @@ public class AspspProfileRestErrorHandler extends DefaultResponseErrorHandler {
 
     @Override
     public void handleError(ClientHttpResponse response) throws IOException {
-        HttpStatus statusCode = response.getStatusCode();
-        throw new AspspProfileRestException(statusCode.value(), statusCode.getReasonPhrase());
+        throw new AspspProfileRestException(response.getStatusCode().value(), response.getStatusText());
     }
 }

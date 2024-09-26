@@ -34,7 +34,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
-@SuppressWarnings("PMD.ExcessivePublicCount")
+@SuppressWarnings({"PMD.ExcessivePublicCount", "PMD.GodClass"})
 @RequiredArgsConstructor
 public class AspspProfileServiceWrapper {
     private final AspspProfileService aspspProfileService;
@@ -102,8 +102,8 @@ public class AspspProfileServiceWrapper {
     public List<SupportedAccountReferenceField> getSupportedAccountReferenceFields() {
         List<de.adorsys.psd2.aspsp.profile.domain.SupportedAccountReferenceField> supportedAccountReferenceFields = readAspspSettings().getCommon().getSupportedAccountReferenceFields();
         return supportedAccountReferenceFields.stream()
-                   .map(reference -> SupportedAccountReferenceField.valueOf(reference.name()))
-                   .collect(Collectors.toList());
+            .map(reference -> SupportedAccountReferenceField.valueOf(reference.name()))
+            .collect(Collectors.toList());
     }
 
     /**
@@ -367,7 +367,7 @@ public class AspspProfileServiceWrapper {
      * @return MulticurrencyAccountLevel object
      */
     public MulticurrencyAccountLevel getMulticurrencyAccountLevel() {
-     return readAspspSettings().getCommon().getMulticurrencyAccountLevelSupported();
+        return readAspspSettings().getCommon().getMulticurrencyAccountLevelSupported();
     }
 
     /**
@@ -461,3 +461,4 @@ public class AspspProfileServiceWrapper {
         return readAspspSettings().getPis().isDebtorAccountOptionalInInitialRequest();
     }
 }
+

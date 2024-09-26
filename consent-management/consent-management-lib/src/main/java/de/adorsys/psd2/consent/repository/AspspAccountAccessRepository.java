@@ -26,7 +26,7 @@ import org.springframework.data.repository.query.Param;
 
 public interface AspspAccountAccessRepository extends CrudRepository<AspspAccountAccess, Long> {
 
-    @Query("DELETE FROM aspsp_account_access WHERE consent_id=:consentId")
+    @Query("DELETE FROM aspsp_account_access WHERE consent.id=:consentId")
     @Modifying
     void deleteByConsentId(@Param("consentId")Long consentId);
 }

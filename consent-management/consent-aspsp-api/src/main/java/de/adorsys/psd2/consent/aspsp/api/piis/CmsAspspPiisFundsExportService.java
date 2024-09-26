@@ -31,6 +31,7 @@ import java.util.Collection;
 
 
 @NotNull
+
 public interface CmsAspspPiisFundsExportService {
     /**
      * Returns list of consents by given criteria.

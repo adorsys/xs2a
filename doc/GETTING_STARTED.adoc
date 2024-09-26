@@ -4,8 +4,8 @@
 
 == Prerequisites
 
-- Java JDK version 11.x or later, Maven 3.x;
-- Relational database for consent-management-system. PostgreSQL, Oracle and MariaDB are supported out of the box, the list can be extended. Application was tested with PostgreSQL 9.5, Oracle 18.0, MariaDB 10.4 or later.
+- Java JDK version 17.x or later, Maven 3.x;
+- Relational database for consent-management-system. PostgreSQL, Oracle and MariaDB are supported out of the box, the list can be extended. Application was tested with PostgreSQL 16.3, Oracle 18.0, MariaDB 10.4 or later.
 - Docker (Optional).
 
 
