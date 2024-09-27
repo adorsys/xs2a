@@ -21,8 +21,8 @@ No backward compatibility with 16.x is guaranteed. Will be released as Stable ve
 
 | | All fixes and updates from v.15.x  | Moving project to Java 17, Spring Boot 3.x and Spring 6.x |
 
-
-|*For future development*|  *18.x*| *19.x*| *XS2A extentions (commercial)*
+|27.09.2024|  *18.0*| *19.0*|
+|*For future development*|  *20.x*| *21.x*| *XS2A extentions (commercial)*
 
 | | | |AIS - current & savings accounts plugin
 

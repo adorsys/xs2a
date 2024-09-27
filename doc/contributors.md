@@ -7,6 +7,9 @@ Here is a list of contributors to this project:
 * [Maisoora Bichoo](mailto:mbi@adorsys.de) ([adorsys GmbH & Co KG](http://www.adorsys.de))
 * [Denys Golubiev](https://github.com/DG0lden) ([adorsys GmbH & Co KG](http://www.adorsys.de))
 * [Adriana Rottach](mailto:aro@adorsys.de) ([adorsys GmbH & Co KG](http://www.adorsys.de))
+* [Borelli Fotso](mailto:bfo@adorsys.com) ([adorsys GmbH & Co KG](http://www.adorsys.de))
+* [Esum Brandon](mailto:ebr@adorsys.com) ([adorsys GmbH & Co KG](http://www.adorsys.de))
+* [Said Ndoum](mailto:snd@adorsys.com) ([adorsys GmbH & Co KG](http://www.adorsys.de))
 * [Roman Yelizarov](https://github.com/elroman), LLC Golden Dimension
 * [Clovis Gakam](https://github.com/clovisgakam) ([adorsys GmbH & Co KG](http://www.adorsys.de))
 * [Guy Moyo](https://github.com/guymoyo) ([adorsys GmbH & Co KG](http://www.adorsys.de))

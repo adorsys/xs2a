@@ -2,12 +2,14 @@
 
 ## Supported Versions
 
-| Versions | Branch        | Supported          | End of support |
-| -------- | ------------- | ------------------ | -------------- |
-| 17.x     | develop       | :white_check_mark: | 01.06.2024     |
-| 16.x     | support-16.x  | :white_check_mark: | 31.12.2024     | 
-| 14.x     | support-14.x  | :x:                | 31.12.2022     |
-| 12.x     | support-12.x  | :x:                | 01.08.2022     |
+| Versions | Branch       | Supported          | End of support |
+|--------| ------------ | ------------------ | -------------- |
+ |  19.x  |    develop   | :white_check_mark:|  01.04.2026  |
+| 18.x   | support-18.x | :white_check_mark: | 31.12.2026     |
+| 17.x   | develop      | :white_check_mark: | 01.06.2024     |
+| 16.x   | support-16.x | :white_check_mark: | 31.12.2024     | 
+| 14.x   | support-14.x | :x:                | 31.12.2022     |
+| 12.x   | support-12.x | :x:                | 01.08.2022     |
 
 For more details about the versions and updates please refer to our [Version Policy](doc/version_policy.adoc).
 
