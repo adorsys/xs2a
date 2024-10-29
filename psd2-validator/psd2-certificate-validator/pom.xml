@@ -58,6 +58,12 @@
 		    <groupId>no.difi.commons</groupId>
 		    <artifactId>commons-certvalidator</artifactId>
 		    <version>${commons-certvalidator.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>commons-collections</groupId>
+                    <artifactId>commons-collections</artifactId>
+                </exclusion>
+            </exclusions>
 		</dependency>
 
 		<dependency>
