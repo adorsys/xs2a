@@ -25,7 +25,7 @@ import de.adorsys.psd2.xs2a.core.pis.Remittance;
 import de.adorsys.psd2.xs2a.domain.pis.BulkPayment;
 import de.adorsys.psd2.xs2a.domain.pis.PeriodicPayment;
 import de.adorsys.psd2.xs2a.domain.pis.SinglePayment;
-import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections4.CollectionUtils;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 

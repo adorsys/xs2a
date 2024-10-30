@@ -60,7 +60,7 @@ import de.adorsys.psd2.xs2a.spi.domain.payment.SpiSinglePayment;
 import de.adorsys.psd2.xs2a.spi.service.BulkPaymentSpi;
 import de.adorsys.psd2.xs2a.spi.service.PeriodicPaymentSpi;
 import de.adorsys.psd2.xs2a.spi.service.SinglePaymentSpi;
-import org.apache.commons.collections.map.MultiKeyMap;
+import org.apache.commons.collections4.map.MultiKeyMap;
 import org.apache.commons.io.IOUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
