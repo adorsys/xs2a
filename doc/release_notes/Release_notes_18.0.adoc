@@ -4,6 +4,9 @@
 
 * Updated documentation
 
+* commons-collections -> to commons-collections4
+* spring and spring dependencies version: 6.1.13
+
 == Updated documentation
 
 Updated roadmap and release policy files.
