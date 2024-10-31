@@ -25,8 +25,12 @@ import de.adorsys.psd2.core.data.AccountAccess;
 import de.adorsys.psd2.xs2a.core.profile.AccountReference;
 import de.adorsys.xs2a.reader.JsonReader;
 import org.junit.jupiter.api.Test;
+import org.testcontainers.shaded.org.bouncycastle.math.ec.custom.sec.SecT113Field;
 
+import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -55,7 +59,8 @@ class AccessMapperTest {
     @Test
     void mapAspspAccessesToAccountAccess() {
         List<AspspAccountAccess> aspspAccountAccesses = jsonReader.getListFromFile("json/service/mapper/access-mapper/aspsp-account-accesses-additional-information.json", AspspAccountAccess.class);
-        AccountAccess actual = accessMapper.mapAspspAccessesToAccountAccess(aspspAccountAccesses, AdditionalAccountInformationType.DEDICATED_ACCOUNTS, AdditionalAccountInformationType.DEDICATED_ACCOUNTS);
+        Set<AspspAccountAccess> accountSet = new HashSet<>(aspspAccountAccesses);
+        AccountAccess actual = accessMapper.mapAspspAccessesToAccountAccess(accountSet, AdditionalAccountInformationType.DEDICATED_ACCOUNTS, AdditionalAccountInformationType.DEDICATED_ACCOUNTS);
 
         AccountAccess expected = jsonReader.getObjectFromFile("json/service/mapper/access-mapper/account-access-for-aspsp-additional-information.json", AccountAccess.class);
         assertEquals(expected, actual);
@@ -64,18 +69,20 @@ class AccessMapperTest {
     @Test
     void mapToAspspAccountAccess() {
         AccountAccess accountAccess = jsonReader.getObjectFromFile("json/service/mapper/access-mapper/account-access-for-aspsp.json", AccountAccess.class);
-        List<AspspAccountAccess> actual = accessMapper.mapToAspspAccountAccess(null, accountAccess);
+        Set<AspspAccountAccess> actual = accessMapper.mapToAspspAccountAccess(null, accountAccess);
 
-        List<AspspAccountAccess> expected = jsonReader.getListFromFile("json/service/mapper/access-mapper/aspsp-account-accesses.json", AspspAccountAccess.class);
+        List<AspspAccountAccess> expectedList = jsonReader.getListFromFile("json/service/mapper/access-mapper/aspsp-account-accesses.json", AspspAccountAccess.class);
+        Set<AspspAccountAccess> expected = new HashSet<>(expectedList);
         assertEquals(expected, actual);
     }
 
     @Test
     void mapToAspspAccountAccess_additionalInformation() {
         AccountAccess accountAccess = jsonReader.getObjectFromFile("json/service/mapper/access-mapper/account-access-for-aspsp-additional-information.json", AccountAccess.class);
-        List<AspspAccountAccess> actual = accessMapper.mapToAspspAccountAccess(null, accountAccess);
+        Set<AspspAccountAccess> actual = accessMapper.mapToAspspAccountAccess(null, accountAccess);
 
-        List<AspspAccountAccess> expected = jsonReader.getListFromFile("json/service/mapper/access-mapper/aspsp-account-accesses-additional-information.json", AspspAccountAccess.class);
+        List<AspspAccountAccess> expectedList = jsonReader.getListFromFile("json/service/mapper/access-mapper/aspsp-account-accesses-additional-information.json", AspspAccountAccess.class);
+        Set<AspspAccountAccess> expected = new HashSet<>(expectedList);
         assertEquals(expected, actual);
     }
 

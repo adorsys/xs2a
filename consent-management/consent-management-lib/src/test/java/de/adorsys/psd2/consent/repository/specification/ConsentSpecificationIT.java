@@ -36,6 +36,7 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
@@ -73,7 +74,7 @@ class ConsentSpecificationIT extends BaseTest {
         ConsentEntity consentEntity = jsonReader.getObjectFromFile("json/specification/consent-entity.json", ConsentEntity.class);
         consentEntity.setConsentType(ConsentType.AIS.getName());
         consentEntity.getTppInformation().setTppInfo(tppInfo);
-        consentEntity.getAspspAccountAccesses().get(0).setConsent(consentEntity);
+        consentEntity.getAspspAccountAccesses().iterator().next().setConsent(consentEntity);
 
         consentJpaRepository.save(consentEntity);
     }
@@ -92,7 +93,7 @@ class ConsentSpecificationIT extends BaseTest {
         assertTrue(CollectionUtils.isNotEmpty(actual));
         assertEquals(1, actual.size());
         ConsentEntity actualConsent = actual.get(0);
-        assertEquals(ASPSP_ACCOUNT_ID, actualConsent.getAspspAccountAccesses().get(0).getAspspAccountId());
+        assertEquals(ASPSP_ACCOUNT_ID, actualConsent.getAspspAccountAccesses().iterator().next().getAspspAccountId());
         assertEquals(PSU_ID_DATA.getPsuId(), actualConsent.getPsuDataList().get(0).getPsuId());
         assertEquals(INSTANCE_ID, actualConsent.getInstanceId());
     }
