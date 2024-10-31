@@ -78,7 +78,7 @@ class PiisConsentEntitySpecificationIT extends BaseTest {
         ConsentEntity consentEntity = jsonReader.getObjectFromFile("json/specification/consent-entity.json", ConsentEntity.class);
         consentEntity.setConsentType(ConsentType.PIIS_ASPSP.getName());
         consentEntity.getTppInformation().setTppInfo(tppInfo);
-        consentEntity.getAspspAccountAccesses().get(0).setConsent(consentEntity);
+        consentEntity.getAspspAccountAccesses().iterator().next().setConsent(consentEntity);
         consentJpaRepository.save(consentEntity);
 
         accountReference = new AccountReference();
@@ -118,9 +118,9 @@ class PiisConsentEntitySpecificationIT extends BaseTest {
         ConsentEntity actualConsent = actual.get(0);
         assertEquals(PSU_ID_DATA.getPsuId(), actualConsent.getPsuDataList().get(0).getPsuId());
         assertEquals(TPP_AUTHORISATION_NUMBER, actualConsent.getTppInformation().getTppInfo().getAuthorisationNumber());
-        assertEquals(accountReference.getIban(), actualConsent.getAspspAccountAccesses().get(0).getAccountIdentifier());
-        assertEquals(AccountReferenceType.IBAN, actualConsent.getAspspAccountAccesses().get(0).getAccountReferenceType());
-        assertEquals(accountReference.getCurrency(), actualConsent.getAspspAccountAccesses().get(0).getCurrency());
+        assertEquals(accountReference.getIban(), actualConsent.getAspspAccountAccesses().iterator().next().getAccountIdentifier());
+        assertEquals(AccountReferenceType.IBAN, actualConsent.getAspspAccountAccesses().iterator().next().getAccountReferenceType());
+        assertEquals(accountReference.getCurrency(), actualConsent.getAspspAccountAccesses().iterator().next().getCurrency());
         assertEquals(INSTANCE_ID, actualConsent.getInstanceId());
     }
 
@@ -136,9 +136,9 @@ class PiisConsentEntitySpecificationIT extends BaseTest {
         assertTrue(CollectionUtils.isNotEmpty(actual));
         assertEquals(1, actual.size());
         ConsentEntity actualConsent = actual.get(0);
-        assertEquals(accountReference.getIban(), actualConsent.getAspspAccountAccesses().get(0).getAccountIdentifier());
-        assertEquals(AccountReferenceType.IBAN, actualConsent.getAspspAccountAccesses().get(0).getAccountReferenceType());
-        assertEquals(accountReference.getCurrency(), actualConsent.getAspspAccountAccesses().get(0).getCurrency());
+        assertEquals(accountReference.getIban(), actualConsent.getAspspAccountAccesses().iterator().next().getAccountIdentifier());
+        assertEquals(AccountReferenceType.IBAN, actualConsent.getAspspAccountAccesses().iterator().next().getAccountReferenceType());
+        assertEquals(accountReference.getCurrency(), actualConsent.getAspspAccountAccesses().iterator().next().getCurrency());
     }
 
     @Test
@@ -152,7 +152,7 @@ class PiisConsentEntitySpecificationIT extends BaseTest {
         assertTrue(CollectionUtils.isNotEmpty(actual));
         assertEquals(1, actual.size());
         ConsentEntity actualConsent = actual.get(0);
-        assertEquals(accountReference.getIban(), actualConsent.getAspspAccountAccesses().get(0).getAccountIdentifier());
-        assertEquals(AccountReferenceType.IBAN, actualConsent.getAspspAccountAccesses().get(0).getAccountReferenceType());
+        assertEquals(accountReference.getIban(), actualConsent.getAspspAccountAccesses().iterator().next().getAccountIdentifier());
+        assertEquals(AccountReferenceType.IBAN, actualConsent.getAspspAccountAccesses().iterator().next().getAccountReferenceType());
     }
 }

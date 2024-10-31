@@ -31,7 +31,9 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Component
@@ -50,7 +52,7 @@ public class AccessMapper {
         return buildAccountAccess(holder, ownerNameType, trustedBeneficiariesType);
     }
 
-    public AccountAccess mapAspspAccessesToAccountAccess(List<AspspAccountAccess> aspspAccountAccesses,
+    public AccountAccess mapAspspAccessesToAccountAccess(Set<AspspAccountAccess> aspspAccountAccesses,
                                                          AdditionalAccountInformationType ownerNameType,
                                                          AdditionalAccountInformationType trustedBeneficiariesType) {
         AccountAccessListHolder holder = new AccountAccessListHolder();
@@ -104,8 +106,8 @@ public class AccessMapper {
         return tppAccountAccesses;
     }
 
-    public List<AspspAccountAccess> mapToAspspAccountAccess(ConsentEntity consent, AccountAccess accountAccess) {
-        List<AspspAccountAccess> aspspAccountAccesses = new ArrayList<>();
+    public Set<AspspAccountAccess> mapToAspspAccountAccess(ConsentEntity consent, AccountAccess accountAccess) {
+        Set<AspspAccountAccess> aspspAccountAccesses = new HashSet<>();
         aspspAccountAccesses.addAll(accountAccess.getAccounts().stream().map(a -> new AspspAccountAccess(
             a.getId(), consent, a.getUsedAccountReferenceSelector().getAccountValue(),
                                                                                                          TypeAccess.ACCOUNT,
