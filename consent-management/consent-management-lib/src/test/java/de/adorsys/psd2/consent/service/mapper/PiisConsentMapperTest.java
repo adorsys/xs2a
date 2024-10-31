@@ -88,7 +88,7 @@ class PiisConsentMapperTest {
 
         ConsentEntity expected = jsonReader.getObjectFromFile("json/service/mapper/piis-consent-entity.json", ConsentEntity.class);
         expected.setId(null);
-        expected.getAspspAccountAccesses().get(0).setConsent(actual);
+        expected.getAspspAccountAccesses().iterator().next().setConsent(actual);
         expected.setRecurringIndicator(false);
         expected.setLastActionDateTime(actual.getLastActionDateTime());
         expected.setStatusChangeTimestamp(null);
@@ -113,7 +113,7 @@ class PiisConsentMapperTest {
 
         ConsentEntity expected = jsonReader.getObjectFromFile("json/service/mapper/piis-consent-entity.json", ConsentEntity.class);
         expected.setId(null);
-        expected.getAspspAccountAccesses().get(0).setConsent(expected);
+        expected.getAspspAccountAccesses().iterator().next().setConsent(expected);
         expected.setRecurringIndicator(false);
         expected.setLastActionDateTime(actual.getLastActionDateTime());
         expected.setStatusChangeTimestamp(null);

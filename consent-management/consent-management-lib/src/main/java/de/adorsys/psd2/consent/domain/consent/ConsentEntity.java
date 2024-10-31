@@ -38,10 +38,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 import java.time.temporal.ChronoUnit;
-import java.util.ArrayList;
-import java.util.EnumSet;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 @Data
 @Entity(name = "consent")
@@ -124,7 +121,7 @@ public class ConsentEntity extends InstanceDependableEntity implements Authorisa
     private List<TppAccountAccess> tppAccountAccesses = new ArrayList<>();
 
     @OneToMany(mappedBy = "consent", cascade = CascadeType.MERGE)
-    private List<AspspAccountAccess> aspspAccountAccesses = new ArrayList<>();
+    private Set<AspspAccountAccess> aspspAccountAccesses = new HashSet<>();
 
     @Column(name = "owner_name_type", nullable = false)
     @Enumerated(value = EnumType.STRING)
