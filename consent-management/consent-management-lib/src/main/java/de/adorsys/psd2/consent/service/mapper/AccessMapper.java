@@ -103,8 +103,8 @@ public class AccessMapper {
         return tppAccountAccesses;
     }
 
-    public List<AspspAccountAccess> mapToAspspAccountAccess(ConsentEntity consent, AccountAccess accountAccess) {
-        List<AspspAccountAccess> aspspAccountAccesses = new ArrayList<>();
+    public Set<AspspAccountAccess> mapToAspspAccountAccess(ConsentEntity consent, AccountAccess accountAccess) {
+        Set<AspspAccountAccess> aspspAccountAccesses = new HashSet<>();
         aspspAccountAccesses.addAll(accountAccess.getAccounts().stream().map(a -> new AspspAccountAccess(
             a.getId(), consent, a.getUsedAccountReferenceSelector().getAccountValue(),
                                                                                                          TypeAccess.ACCOUNT,
