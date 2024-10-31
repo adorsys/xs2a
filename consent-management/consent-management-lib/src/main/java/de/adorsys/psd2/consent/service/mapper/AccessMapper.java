@@ -30,8 +30,7 @@ import lombok.Getter;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Component
@@ -50,7 +49,7 @@ public class AccessMapper {
         return buildAccountAccess(holder, ownerNameType, trustedBeneficiariesType);
     }
 
-    public AccountAccess mapAspspAccessesToAccountAccess(List<AspspAccountAccess> aspspAccountAccesses,
+    public AccountAccess mapAspspAccessesToAccountAccess(Set<AspspAccountAccess> aspspAccountAccesses,
                                                          AdditionalAccountInformationType ownerNameType,
                                                          AdditionalAccountInformationType trustedBeneficiariesType) {
         AccountAccessListHolder holder = new AccountAccessListHolder();

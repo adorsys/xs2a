@@ -80,7 +80,7 @@ class AisConsentSpecificationIT extends BaseTest {
         ConsentEntity consentEntity = jsonReader.getObjectFromFile("json/specification/consent-entity.json", ConsentEntity.class);
         consentEntity.setConsentType(ConsentType.AIS.getName());
         consentEntity.getTppInformation().setTppInfo(tppInfo);
-        consentEntity.getAspspAccountAccesses().get(0).setConsent(consentEntity);
+        consentEntity.getAspspAccountAccesses().iterator().next().setConsent(consentEntity);
         consent = consentJpaRepository.save(consentEntity);
     }
 
@@ -173,7 +173,7 @@ class AisConsentSpecificationIT extends BaseTest {
         ConsentEntity actualConsent = actual.get(0);
         assertEquals(PSU_ID_DATA.getPsuId(), actualConsent.getPsuDataList().get(0).getPsuId());
         assertEquals(INSTANCE_ID, actual.get(0).getInstanceId());
-        assertEquals("DE15500105172295759744", actual.get(0).getAspspAccountAccesses().get(0).getAccountIdentifier());
+        assertEquals("DE15500105172295759744", actual.get(0).getAspspAccountAccesses().iterator().next().getAccountIdentifier());
     }
 
     @Test
@@ -218,7 +218,7 @@ class AisConsentSpecificationIT extends BaseTest {
         assertTrue(CollectionUtils.isNotEmpty(actual));
         assertEquals(1, actual.size());
         ConsentEntity actualConsent = actual.get(0);
-        assertEquals(ASPSP_ACCOUNT_ID, actualConsent.getAspspAccountAccesses().get(0).getAspspAccountId());
+        assertEquals(ASPSP_ACCOUNT_ID, actualConsent.getAspspAccountAccesses().iterator().next().getAspspAccountId());
         assertTrue(actualConsent.getCreationTimestamp().isAfter(from));
         assertTrue(actualConsent.getCreationTimestamp().isBefore(to));
         assertEquals(INSTANCE_ID, actualConsent.getInstanceId());
