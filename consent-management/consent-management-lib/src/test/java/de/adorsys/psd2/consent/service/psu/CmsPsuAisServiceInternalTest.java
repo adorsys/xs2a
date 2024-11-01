@@ -892,7 +892,7 @@ class CmsPsuAisServiceInternalTest {
             .thenReturn(mappedAccountAccess);
         List<AspspAccountAccess> aspspAccountAccessesList = jsonReader.getObjectFromFile("json/service/psu/aspsp-account-access-list.json", new TypeReference<List<AspspAccountAccess>>() {
         });
-        Set<AspspAccountAccess> aspspAccountAccesses = new LinkedHashSet<>(aspspAccountAccessesList);
+        Set<AspspAccountAccess> aspspAccountAccesses = new HashSet<>(aspspAccountAccessesList);
         when(accessMapper.mapToAspspAccountAccess(consentEntity, mappedAccountAccess))
             .thenReturn(aspspAccountAccesses);
 
@@ -948,7 +948,7 @@ class CmsPsuAisServiceInternalTest {
             .thenReturn(mappedAccountAccess);
         List<AspspAccountAccess> aspspAccountAccessesList = jsonReader.getObjectFromFile("json/service/psu/aspsp-account-access-list-owner-name.json", new TypeReference<List<AspspAccountAccess>>() {
         });
-        Set<AspspAccountAccess> aspspAccountAccesses = new LinkedHashSet<>(aspspAccountAccessesList);
+        Set<AspspAccountAccess> aspspAccountAccesses = new HashSet<>(aspspAccountAccessesList);
         when(accessMapper.mapToAspspAccountAccess(consentEntity, mappedAccountAccess))
             .thenReturn(aspspAccountAccesses);
 
