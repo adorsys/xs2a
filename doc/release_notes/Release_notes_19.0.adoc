@@ -6,6 +6,8 @@
 
 * commons-collections -> to commons-collections4
 * spring and spring-dependencies version to: 6.1.13
+* commons-io version: 2.16.1
+* Web links updated.
 
 == Updated documentation
 
