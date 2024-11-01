@@ -169,11 +169,6 @@ public class PaymentModelMapperPsd2 {
     }
 
     private String convertResponseToRawData(byte[] paymentData) {
-        try {
-            return IOUtils.toString(paymentData, Charset.defaultCharset().name());
-        } catch (IOException e) {
-            log.warn("Can not convert payment from byte[] ", e);
-            return null;
-        }
+        return IOUtils.toString(paymentData, Charset.defaultCharset().name());
     }
 }
