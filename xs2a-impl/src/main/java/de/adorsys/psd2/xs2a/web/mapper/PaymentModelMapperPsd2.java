@@ -36,7 +36,6 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.BooleanUtils;
 import org.springframework.stereotype.Component;
 
-import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.Map;
@@ -169,11 +168,6 @@ public class PaymentModelMapperPsd2 {
     }
 
     private String convertResponseToRawData(byte[] paymentData) {
-        try {
-            return IOUtils.toString(paymentData, Charset.defaultCharset().name());
-        } catch (IOException e) {
-            log.warn("Can not convert payment from byte[] ", e);
-            return null;
-        }
+        return IOUtils.toString(paymentData, Charset.defaultCharset().name());
     }
 }

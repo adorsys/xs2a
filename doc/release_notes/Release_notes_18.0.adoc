@@ -1,8 +1,12 @@
 = Release notes v.18.0
 
 == Table of Contents
-
+== Updated dependencies
 * Updated documentation
+* spring and spring dependencies version: 6.1.13
+* common-io version: 2.16.1.
+* Web links updated.
+
 
 == Updated documentation
 
