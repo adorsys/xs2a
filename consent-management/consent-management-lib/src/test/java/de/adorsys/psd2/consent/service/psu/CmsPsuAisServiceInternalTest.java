@@ -75,10 +75,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -893,8 +890,9 @@ class CmsPsuAisServiceInternalTest {
         AccountAccess mappedAccountAccess = jsonReader.getObjectFromFile("json/account-access-mapped.json", AccountAccess.class);
         when(aisConsentMapper.mapToAccountAccess(aisAccountAccess))
             .thenReturn(mappedAccountAccess);
-        List<AspspAccountAccess> aspspAccountAccesses = jsonReader.getObjectFromFile("json/service/psu/aspsp-account-access-list.json", new TypeReference<List<AspspAccountAccess>>() {
+        List<AspspAccountAccess> aspspAccountAccessesList = jsonReader.getObjectFromFile("json/service/psu/aspsp-account-access-list.json", new TypeReference<List<AspspAccountAccess>>() {
         });
+        Set<AspspAccountAccess> aspspAccountAccesses = new HashSet<>(aspspAccountAccessesList);
         when(accessMapper.mapToAspspAccountAccess(consentEntity, mappedAccountAccess))
             .thenReturn(aspspAccountAccesses);
 
@@ -948,8 +946,9 @@ class CmsPsuAisServiceInternalTest {
         AccountAccess mappedAccountAccess = jsonReader.getObjectFromFile("json/account-access-with-additional-information.json", AccountAccess.class);
         when(aisConsentMapper.mapToAccountAccess(aisAccountAccess))
             .thenReturn(mappedAccountAccess);
-        List<AspspAccountAccess> aspspAccountAccesses = jsonReader.getObjectFromFile("json/service/psu/aspsp-account-access-list-owner-name.json", new TypeReference<List<AspspAccountAccess>>() {
+        List<AspspAccountAccess> aspspAccountAccessesList = jsonReader.getObjectFromFile("json/service/psu/aspsp-account-access-list-owner-name.json", new TypeReference<List<AspspAccountAccess>>() {
         });
+        Set<AspspAccountAccess> aspspAccountAccesses = new HashSet<>(aspspAccountAccessesList);
         when(accessMapper.mapToAspspAccountAccess(consentEntity, mappedAccountAccess))
             .thenReturn(aspspAccountAccesses);
 

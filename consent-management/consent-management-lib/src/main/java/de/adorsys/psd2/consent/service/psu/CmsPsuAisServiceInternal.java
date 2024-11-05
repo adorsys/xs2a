@@ -71,10 +71,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.Collections;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static de.adorsys.psd2.xs2a.core.consent.ConsentStatus.*;
@@ -315,7 +312,7 @@ public class CmsPsuAisServiceInternal implements CmsPsuAisService {
         byte[] data = consentDataMapper.getBytesFromConsentData(aisConsentDataNew);
 
         AccountAccess requestedAccountAccess = consentMapper.mapToAccountAccess(requestedAisAccountAccess);
-        List<AspspAccountAccess> aspspAccountAccesses = accessMapper.mapToAspspAccountAccess(consent, requestedAccountAccess);
+        Set<AspspAccountAccess> aspspAccountAccesses = accessMapper.mapToAspspAccountAccess(consent, requestedAccountAccess);
 
         consent.setData(data);
         consent.setAspspAccountAccesses(aspspAccountAccesses);
