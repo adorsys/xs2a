@@ -54,7 +54,7 @@ public class PiisConsentMapper {
 
     public CmsPiisConsent mapToCmsPiisConsent(ConsentEntity consentEntity) {
         PiisConsentData piisConsentData = consentDataMapper.mapToPiisConsentData(consentEntity.getData());
-        AccountReference accountReference = accessMapper.mapToAccountReference(consentEntity.getAspspAccountAccesses().get(0));
+        AccountReference accountReference = accessMapper.mapToAccountReference(consentEntity.getAspspAccountAccesses().iterator().next());
         return new CmsPiisConsent(consentEntity.getExternalId(),
                                   consentEntity.isRecurringIndicator(),
                                   consentEntity.getRequestDateTime(),
