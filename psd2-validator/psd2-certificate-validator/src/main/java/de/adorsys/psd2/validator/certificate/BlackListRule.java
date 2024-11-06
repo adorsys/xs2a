@@ -19,6 +19,8 @@
 package de.adorsys.psd2.validator.certificate;
 
 import no.difi.certvalidator.api.CertificateBucket;
+import no.difi.certvalidator.api.CertificateValidationException;
+import no.difi.certvalidator.api.Report;
 import no.difi.certvalidator.api.ValidatorRule;
 
 import java.security.cert.X509Certificate;
@@ -40,5 +42,10 @@ public class BlackListRule implements ValidatorRule {
                 );
             }
 		}
+	}
+
+	@Override
+	public Report validate(X509Certificate x509Certificate, Report report) throws CertificateValidationException {
+		return null;
 	}
 }
