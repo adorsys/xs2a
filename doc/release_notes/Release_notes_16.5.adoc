@@ -1,0 +1,18 @@
+= Release notes v.16.5
+
+== Table of Contents
+
+* Updated dependencies
+
+== Updated dependencies
+
+Libraries were updated:
+
+* commons-collections -> to commons-collections4
+* spring and spring dependencies version: 6.1.13
+* common-io version: 2.16.1.
+* testcontainer version : 1.20.3
+* Web links updated.
+
+
+
