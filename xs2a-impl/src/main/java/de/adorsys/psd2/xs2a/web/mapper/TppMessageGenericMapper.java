@@ -22,7 +22,7 @@ import de.adorsys.psd2.model.TppMessageCategory;
 import de.adorsys.psd2.model.TppMessageGeneric;
 import de.adorsys.psd2.xs2a.core.domain.MessageCategory;
 import de.adorsys.psd2.xs2a.core.domain.TppMessageInformation;
-import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections4.CollectionUtils;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
