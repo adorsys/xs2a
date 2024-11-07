@@ -1,14 +1,24 @@
 = Release notes v.19.0
 
 == Table of Contents
+* Updated dependencies
+* Updated documentation
+* Remove deprecated DERUTF8String.getInstance methods
+
 == Updated dependencies
-* commons-collections -> to commons-collections4
+* Updated documentation
 * spring and spring dependencies version: 6.1.13
 * common-io version: 2.16.1.
 * testcontainer version : 1.20.3
 * Web links updated.
-
+* Excluded bcpkix-jdk15on
 
 == Updated documentation
 
 Updated roadmap and release policy files.
+
+
+== Remove deprecated DERUTF8String.getInstance methods
+
+Switch from DERUTF8String.getInstance() to ASN1UTF8String.getInstance()
+
