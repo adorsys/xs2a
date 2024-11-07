@@ -43,7 +43,7 @@ public enum RoleOfPSP {
 	public static RoleOfPSP getInstance(ASN1Encodable asn1Encodable) {
 		ASN1Sequence sequence = ASN1Sequence.getInstance(asn1Encodable);
 		ASN1ObjectIdentifier objectIdentifier = ASN1ObjectIdentifier.getInstance(sequence.getObjectAt(0));
-		DERUTF8String instance = DERUTF8String.getInstance(sequence.getObjectAt(1));
+		DERUTF8String instance = (DERUTF8String) DERUTF8String.getInstance(sequence.getObjectAt(1));
 
 		return Arrays.stream(RoleOfPSP.values())
 				.filter(role -> role.getRoleOfPspOid().getId().equals(objectIdentifier.getId())
