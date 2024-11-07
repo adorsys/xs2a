@@ -22,7 +22,7 @@ import de.adorsys.psd2.mapper.Xs2aObjectMapper;
 import de.adorsys.psd2.validator.payment.config.ValidationObject;
 import de.adorsys.psd2.xs2a.core.error.MessageError;
 import de.adorsys.psd2.xs2a.web.validator.ErrorBuildingService;
-import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections4.CollectionUtils;
 
 import jakarta.servlet.http.HttpServletRequest;
 

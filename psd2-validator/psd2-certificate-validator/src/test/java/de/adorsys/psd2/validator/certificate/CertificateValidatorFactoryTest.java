@@ -41,7 +41,7 @@ class CertificateValidatorFactoryTest {
 
     @Test
     void when_ValidCertificate_Expected_True() {
-        String encodedCert = CertificateUtils.getCertificateByName("certificateValid.crt");
+        String encodedCert = CertificateUtils.getCertificateByName(null);
         CertificateValidatorFactory validatorFactory = new CertificateValidatorFactory(blockedCertBucket,
                                                                                        rootCertBucket, intermediateCertBucket);
 
