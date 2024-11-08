@@ -1,0 +1,10 @@
+= Release notes v.16.4.1
+
+== Table of Contents
+
+* Changed type of aspsp_account_access in consentEntity
+
+
+== Changed type of aspsp_account_access in consentEntity
+
+Changed the type of aspsp_account_access field present in ConsentEntity from List to Set
