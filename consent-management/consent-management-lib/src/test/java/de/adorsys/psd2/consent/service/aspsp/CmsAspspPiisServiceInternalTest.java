@@ -121,7 +121,7 @@ class CmsAspspPiisServiceInternalTest {
 
         ConsentEntity piisConsent = argumentCaptor.getValue();
         assertTrue(StringUtils.isNotBlank(piisConsent.getExternalId()));
-        assertEquals(Collections.singletonList(buildAspspAccountAccess(buildAccountReference())), piisConsent.getAspspAccountAccesses());
+        assertEquals(new HashSet<>(Collections.singletonList(buildAspspAccountAccess(buildAccountReference()))), piisConsent.getAspspAccountAccesses());
         assertEquals(VALID_UNTIL_DATE, piisConsent.getValidUntil());
         assertEquals(DATA, piisConsent.getData());
     }
@@ -431,7 +431,7 @@ class CmsAspspPiisServiceInternalTest {
     private ConsentEntity buildConsent(Long id) {
         ConsentEntity piisConsent = new ConsentEntity();
         piisConsent.setId(id);
-        piisConsent.setAspspAccountAccesses(Collections.singletonList(buildAspspAccountAccess(buildAccountReference())));
+        piisConsent.setAspspAccountAccesses(new HashSet<>(Collections.singletonList(buildAspspAccountAccess(buildAccountReference()))));
         piisConsent.setExternalId(CONSENT_EXTERNAL_ID);
         piisConsent.setRequestDateTime(OffsetDateTime.now());
         piisConsent.setPsuDataList(Collections.singletonList(buildPsuData()));
