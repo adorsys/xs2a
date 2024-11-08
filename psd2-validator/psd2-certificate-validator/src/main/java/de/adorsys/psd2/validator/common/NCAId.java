@@ -18,6 +18,7 @@
 
 package de.adorsys.psd2.validator.common;
 
+import org.bouncycastle.asn1.ASN1UTF8String;
 import org.bouncycastle.asn1.DERUTF8String;
 
 public class NCAId extends DERUTF8String {
@@ -30,6 +31,6 @@ public class NCAId extends DERUTF8String {
 		if(obj instanceof NCAId) {
 			return (NCAId) obj;
 		}
-		return new NCAId(DERUTF8String.getInstance(obj).getString());
+		return new NCAId(ASN1UTF8String.getInstance(obj).getString());
 	}
 }
