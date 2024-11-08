@@ -19,6 +19,7 @@
 package de.adorsys.psd2.validator.common;
 
 import org.bouncycastle.asn1.DERUTF8String;
+import org.bouncycastle.asn1.ASN1UTF8String;
 
 public class NCAName extends DERUTF8String {
 	public NCAName(String string) {
@@ -29,6 +30,6 @@ public class NCAName extends DERUTF8String {
 		if(obj instanceof NCAName) {
 			return (NCAName) obj;
 		}
-		return new NCAName(DERUTF8String.getInstance(obj).getString());
+		return new NCAName(ASN1UTF8String.getInstance(obj).getString());
 	}
 }
