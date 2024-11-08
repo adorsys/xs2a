@@ -2,7 +2,6 @@
 
 == Table of Contents
 * Updated dependencies
-* Updated documentation
 * Remove deprecated DERUTF8String.getInstance methods
 
 == Updated dependencies
@@ -12,11 +11,6 @@
 * testcontainer version : 1.20.3
 * Web links updated.
 * Excluded bcpkix-jdk15on
-
-== Updated documentation
-
-Updated roadmap and release policy files.
-
 
 == Remove deprecated DERUTF8String.getInstance methods
 
