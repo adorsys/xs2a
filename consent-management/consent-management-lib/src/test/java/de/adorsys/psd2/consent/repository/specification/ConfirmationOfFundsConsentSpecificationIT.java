@@ -76,7 +76,7 @@ class ConfirmationOfFundsConsentSpecificationIT extends BaseTest {
         piisAspspConsent.setId(1L);
         piisAspspConsent.setExternalId(UUID.randomUUID().toString());
         piisAspspConsent.setConsentType(ConsentType.PIIS_ASPSP.getName());
-        piisAspspConsent.getAspspAccountAccesses().get(0).setConsent(piisAspspConsent);
+        piisAspspConsent.getAspspAccountAccesses().iterator().next().setConsent(piisAspspConsent);
 
         this.piisAspspConsent = consentJpaRepository.save(piisAspspConsent);
 
@@ -86,7 +86,7 @@ class ConfirmationOfFundsConsentSpecificationIT extends BaseTest {
         piisTppConsent.setId(2L);
         piisTppConsent.setExternalId(UUID.randomUUID().toString());
         piisTppConsent.setConsentType(ConsentType.PIIS_TPP.getName());
-        piisTppConsent.getAspspAccountAccesses().get(0).setConsent(piisTppConsent);
+        piisTppConsent.getAspspAccountAccesses().iterator().next().setConsent(piisTppConsent);
         this.piisTppConsent = consentJpaRepository.save(piisTppConsent);
     }
 
