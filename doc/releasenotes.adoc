@@ -8,12 +8,12 @@ For upcoming versions see our xref:roadmap.adoc[Roadmap].
 
 === Mainline 19.x (Development. Planned to be released after 24.08.2026 as 20.0 Stable version)
 
-* xref:release_notes/Release_notes_19.0.1.adoc[Version 19.0.1 (release date: xx.xx.2024)]
+* xref:release_notes/Release_notes_19.1.adoc[Version 19.0.1 (release date: xx.xx.2024)]
 * xref:release_notes/Release_notes_19.0.adoc[Version 19.0 (release date: 27.09.2024)]
 
 === Mainline 18.x (Stable. Supported minimum till 24.08.2026)
 
-* xref:release_notes/Release_notes_18.0.1.adoc[Version 18.0.1 (release date: xx.xx.2024)]
+* xref:release_notes/Release_notes_18.1.adoc[Version 18.0.1 (release date: xx.xx.2024)]
 * xref:release_notes/Release_notes_18.0.adoc[Version 18.0 (release date: 27.09.2024)]
 
 === Mainline 17.x (Development. Planned to be released after 24.08.2024 as 18.0 Stable version)
@@ -26,7 +26,7 @@ For upcoming versions see our xref:roadmap.adoc[Roadmap].
 
 === Mainline 16.x (Stable. Supported minimum till 24.08.2024)
 
-* xref:release_notes/Release_notes_16.4.1.adoc[Version 16.4.1 (release date: xx.xx.2024)]
+* xref:release_notes/Release_notes_16.5.adoc[Version 16.4.1 (release date: xx.xx.2024)]
 * xref:release_notes/Release_notes_16.4.adoc[Version 16.4 (release date: 26.09.2024)]
 * xref:release_notes/Release_notes_16.3.adoc[Version 16.3 (release date: 14.02.2024)]
 * xref:release_notes/Release_notes_16.2.adoc[Version 16.2 (release date: 02.01.2024)]
