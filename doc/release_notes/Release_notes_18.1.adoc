@@ -1,6 +1,10 @@
-= Release notes v.18.0
+= Release notes v.18.1
 
 == Table of Contents
+* Updated dependencies
+* Changed type of aspsp_account_access in consentEntity
+* Remove deprecated DERUTF8String.getInstance methods
+
 == Updated dependencies
 * Updated documentation
 * spring and spring dependencies version: 6.1.13
@@ -9,6 +13,10 @@
 * Web links updated.
 * Excluded bcpkix-jdk15on
 
+
+== Changed type of aspsp_account_access in consentEntity
+
+Changed the type of aspsp_account_access field present in ConsentEntity from List to Set
 
 == Remove deprecated DERUTF8String.getInstance methods
 

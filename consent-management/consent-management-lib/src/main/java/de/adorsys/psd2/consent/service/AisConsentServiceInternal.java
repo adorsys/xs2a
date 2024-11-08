@@ -44,10 +44,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -127,12 +124,12 @@ public class AisConsentServiceInternal implements AisConsentService {
     }
 
     private ConsentEntity updateConsentAccess(ConsentEntity consentEntity, AccountAccess request) {
-        List<AspspAccountAccess> aspspAccountAccesses = consentEntity.getAspspAccountAccesses();
+        Set<AspspAccountAccess> aspspAccountAccesses = consentEntity.getAspspAccountAccesses();
         AccountAccess existingAccess = accessMapper.mapAspspAccessesToAccountAccess(aspspAccountAccesses,
                                                                                     consentEntity.getOwnerNameType(),
                                                                                     consentEntity.getTrustedBeneficiariesType());
         AccountAccess updatedAccesses = accountAccessUpdater.updateAccountReferencesInAccess(existingAccess, request);
-        List<AspspAccountAccess> updatedAspspAccountAccesses = accessMapper.mapToAspspAccountAccess(consentEntity, updatedAccesses);
+        Set<AspspAccountAccess> updatedAspspAccountAccesses = accessMapper.mapToAspspAccountAccess(consentEntity, updatedAccesses);
         consentEntity.setAspspAccountAccesses(updatedAspspAccountAccesses);
         return consentEntity;
     }

@@ -45,8 +45,10 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -173,8 +175,9 @@ class AisConsentServiceInternalTest {
         when(aisConsentRepository.getActualAisConsent(CONSENT_ID)).thenReturn(Optional.of(consentEntity));
         List<AspspAccountAccess> aspspAccountAccesses = jsonReader.getObjectFromFile("json/service/ais-consent-service/aspsp-account-accesses.json", new TypeReference<>() {
         });
+        Set<AspspAccountAccess> accountSet = new HashSet<>(aspspAccountAccesses);
         AccountAccess existingAccountAccess = jsonReader.getObjectFromFile("json/service/ais-consent-service/account-access-existing.json", AccountAccess.class);
-        when(accessMapper.mapAspspAccessesToAccountAccess(aspspAccountAccesses, AdditionalAccountInformationType.DEDICATED_ACCOUNTS, AdditionalAccountInformationType.NONE)).thenReturn(existingAccountAccess);
+        when(accessMapper.mapAspspAccessesToAccountAccess(accountSet, AdditionalAccountInformationType.DEDICATED_ACCOUNTS, AdditionalAccountInformationType.NONE)).thenReturn(existingAccountAccess);
         AccountAccess accountAccess = jsonReader.getObjectFromFile("json/service/ais-consent-service/account-access.json", AccountAccess.class);
         AccountAccess updatedAccountAccess = jsonReader.getObjectFromFile("json/service/ais-consent-service/account-access-updated.json", AccountAccess.class);
         when(accountAccessUpdater.updateAccountReferencesInAccess(existingAccountAccess, accountAccess)).thenReturn(updatedAccountAccess);
@@ -194,8 +197,9 @@ class AisConsentServiceInternalTest {
         when(aisConsentRepository.getActualAisConsent(CONSENT_ID)).thenReturn(Optional.of(consentEntity));
         List<AspspAccountAccess> aspspAccountAccesses = jsonReader.getObjectFromFile("json/service/ais-consent-service/aspsp-account-accesses.json", new TypeReference<>() {
         });
+        Set<AspspAccountAccess> accountSet = new HashSet<>(aspspAccountAccesses);
         AccountAccess existingAccountAccess = jsonReader.getObjectFromFile("json/service/ais-consent-service/account-access-existing.json", AccountAccess.class);
-        when(accessMapper.mapAspspAccessesToAccountAccess(aspspAccountAccesses, AdditionalAccountInformationType.DEDICATED_ACCOUNTS, AdditionalAccountInformationType.NONE)).thenReturn(existingAccountAccess);
+        when(accessMapper.mapAspspAccessesToAccountAccess(accountSet, AdditionalAccountInformationType.DEDICATED_ACCOUNTS, AdditionalAccountInformationType.NONE)).thenReturn(existingAccountAccess);
         AccountAccess requestedAccountAccess = jsonReader.getObjectFromFile("json/service/ais-consent-service/account-access-requested.json", AccountAccess.class);
         AccountAccess updatedAccountAccess = jsonReader.getObjectFromFile("json/service/ais-consent-service/account-access-updated.json", AccountAccess.class);
         when(accountAccessUpdater.updateAccountReferencesInAccess(eq(existingAccountAccess), any())).thenReturn(updatedAccountAccess);
