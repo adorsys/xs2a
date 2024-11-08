@@ -9,11 +9,6 @@
 * Web links updated.
 * Excluded bcpkix-jdk15on
 
-
-== Updated documentation
-
-Updated roadmap and release policy files.
-
 == Remove deprecated DERUTF8String.getInstance methods
 
 Switch from DERUTF8String.getInstance() to ASN1UTF8String.getInstance()
