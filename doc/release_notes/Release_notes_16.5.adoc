@@ -3,6 +3,7 @@
 == Table of Contents
 
 * Updated dependencies
+* Changed type of aspsp_account_access in consentEntity
 * Remove deprecated DERUTF8String.getInstance methods
 
 == Updated dependencies
@@ -15,6 +16,10 @@ Libraries were updated:
 * testcontainer version : 1.20.3
 * Web links updated.
 * Excluded bcpkix-jdk15on
+
+== Changed type of aspsp_account_access in consentEntity
+
+Changed the type of aspsp_account_access field present in ConsentEntity from List to Set
 
 == Remove deprecated DERUTF8String.getInstance methods
 
