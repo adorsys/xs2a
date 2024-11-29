@@ -431,6 +431,11 @@
                 <artifactId>spring-core</artifactId>
                 <version>${spring-core.version}</version>
             </dependency>
+            <dependency>
+                <groupId>ch.qos.logback</groupId>
+                <artifactId>logback-core</artifactId>
+                <version>${logback-classic.version}</version>
+            </dependency>
 
             <dependency>
                 <groupId>commons-validator</groupId>
@@ -440,6 +445,10 @@
                     <exclusion>
                         <groupId>commons-collections</groupId>
                         <artifactId>commons-collections</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>commons-logging</groupId>
+                        <artifactId>commons-logging</artifactId>
                     </exclusion>
                 </exclusions>
             </dependency>
