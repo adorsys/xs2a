@@ -19,3 +19,4 @@
 * jakarta.el bumped up to 6.0.0
 * jsonassert bumped up to 1.5.3
 * swagger annotations bumped up to 2.2.25
+* slf4j-api bumped up to 2.0.16
