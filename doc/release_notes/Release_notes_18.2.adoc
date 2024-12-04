@@ -21,3 +21,8 @@
 * swagger annotations bumped up to 2.2.25
 * slf4j-api bumped up to 2.0.16
 * commons-collections4 bumped up to  4.5.0-M2
+
+== Service desk issue fixed.
+
+*  xs2a-core has a dependency to commons-collections4:4.4 which has a vulnerability from dependency (PASD-275)
+
