@@ -101,7 +101,7 @@ variables:
 #-------------------------------------------------------------------
 
 Lint (Docker compose):
-  image: maven:3.6.3-openjdk-17-slim
+  image: maven:3.9-eclipse-temurin-21
   stage: "Lint"
   except:
     - schedules
@@ -141,7 +141,7 @@ Lint (YAML, JSON, XML):
   #     - find ./ -type f \( -iname "*.xml" ! -iname pom.xml \) -exec xmllint --noout {} \;
 
 Lint (PMD CPD):
-  image: maven:3.6.3-openjdk-17-slim
+  image: maven:3.9-eclipse-temurin-21
   stage: "Lint"
   except:
     - schedules
@@ -192,7 +192,7 @@ Build XS2A:
   except:
     - schedules
   variables:
-    JAVA_VERSION: "system@1.17"
+    JAVA_VERSION: "system@1.21"
     JAVA_TOOL_OPTIONS: "-Djavax.net.ssl.trustStorePassword=changeit -XX:MaxRAM=3G"
   <<: *build_java
   artifacts:
@@ -213,7 +213,7 @@ Build XS2A:
 
 Test (IT):
   stage: "Test"
-  image: maven:3.6.3-openjdk-17
+  image: maven:3.9-eclipse-temurin-21
   services:
     - docker:dind
   tags:
@@ -229,7 +229,7 @@ Test (IT):
     DOCKER_HOST: tcp://docker:2375
     DOCKER_TLS_CERTDIR: ""
     DOCKER_DRIVER: overlay2
-    JAVA_VERSION: "system@1.17"
+    JAVA_VERSION: "system@1.21"
     JAVA_TOOL_OPTIONS: "-Djavax.net.ssl.trustStorePassword=changeit -XX:MaxRAM=3G"
     TESTCONTAINERS_RYUK_DISABLED: "true"
 
@@ -239,7 +239,7 @@ Test (Javadoc):
     - schedules
   variables:
     JAVA_TOOL_OPTIONS: "-Djavax.net.ssl.trustStorePassword=changeit -XX:MaxRAM=3G"
-    JAVA_VERSION: "system@1.17"
+    JAVA_VERSION: "system@1.21"
   script:
     - jabba use ${JAVA_VERSION}
     - java -XX:+PrintFlagsFinal -version | grep -Ei "maxheapsize|maxram"
@@ -251,7 +251,7 @@ Test (Unit Tests):
     - schedules
   <<: *java_tests
   variables:
-    JAVA_VERSION: "system@1.17"
+    JAVA_VERSION: "system@1.21"
     JAVA_TOOL_OPTIONS: "-Djavax.net.ssl.trustStorePassword=changeit -XX:MaxRAM=3G"
 
 Test (ASCII Doc):
@@ -358,7 +358,7 @@ Release snapshot artifacts (develop):
     - schedules
   cache: {}
   variables:
-    BUILD_JAVA_VERSION: "system@1.17"
+    BUILD_JAVA_VERSION: "system@1.21"
     JAVA_TOOL_OPTIONS: "-Djavax.net.ssl.trustStorePassword=changeit -XX:MaxRAM=3G"
   <<: *release_java_private
 
@@ -370,7 +370,7 @@ Release snapshot artifacts (tags):
     - schedules
   cache: {}
   variables:
-    BUILD_JAVA_VERSION: "system@1.17"
+    BUILD_JAVA_VERSION: "system@1.21"
     JAVA_TOOL_OPTIONS: "-Djavax.net.ssl.trustStorePassword=changeit -XX:MaxRAM=3G"
   <<: *release_java_private
 
