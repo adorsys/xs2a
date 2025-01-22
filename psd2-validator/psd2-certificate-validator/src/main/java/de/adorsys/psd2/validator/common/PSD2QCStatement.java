@@ -63,7 +63,7 @@ public class PSD2QCStatement {
 		ASN1Sequence qcStatements;
 		try {
             try (ASN1InputStream derAsn1InputStream = new ASN1InputStream(new ByteArrayInputStream(extensionValue))) {
-                DEROctetString oct = (DEROctetString) (derAsn1InputStream.readObject());
+                DEROctetString oct = (DEROctetString) derAsn1InputStream.readObject();
                 try (ASN1InputStream asn1InputStream = new ASN1InputStream(oct.getOctets())) {
                     qcStatements = (ASN1Sequence) asn1InputStream.readObject();
                 }

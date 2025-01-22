@@ -19,7 +19,6 @@
 package de.adorsys.psd2.xs2a.exception;
 
 import de.adorsys.psd2.aspsp.profile.exception.AspspProfileRestException;
-import de.adorsys.psd2.xs2a.core.domain.TppMessageInformation;
 import de.adorsys.psd2.xs2a.core.error.ErrorType;
 import de.adorsys.psd2.xs2a.core.error.MessageError;
 import de.adorsys.psd2.xs2a.core.error.MessageErrorCode;
@@ -154,7 +153,7 @@ public class GlobalExceptionHandlerController {
                                                               HandlerMethod handlerMethod) {
         log.warn("WrongPaymentTypeException handled in service: {}, message: {}",
                  handlerMethod.getMethod().getDeclaringClass().getSimpleName(), ex.getMessage());
-        MessageError messageError = new MessageError(ErrorType.PIS_400, TppMessageInformation.of(PARAMETER_NOT_SUPPORTED_WRONG_PAYMENT_TYPE, ex.getPaymentType()));
+        MessageError messageError = new MessageError(ErrorType.PIS_400, of(PARAMETER_NOT_SUPPORTED_WRONG_PAYMENT_TYPE, ex.getPaymentType()));
         return responseErrorMapper.generateErrorResponse(messageError);
     }
 

@@ -122,7 +122,7 @@ public class CardAccountSpiMockImpl implements CardAccountSpi {
                                       DATE,
                                       DATE.plusDays(1),
                                       new SpiAmount(Currency.getInstance("EUR"), new BigDecimal(200)),
-                                      new SpiAmount(Currency.getInstance("EUR"), new BigDecimal(2)),
+                                      new SpiAmount(Currency.getInstance("EUR"), BigDecimal.TWO),
                                       new ArrayList<>(),
                                       new SpiAmount(Currency.getInstance("EUR"), new BigDecimal(200)),
                                       new SpiAmount(Currency.getInstance("EUR"), new BigDecimal(200)),

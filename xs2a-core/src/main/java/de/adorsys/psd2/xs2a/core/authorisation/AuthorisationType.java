@@ -32,7 +32,7 @@ public enum AuthorisationType {
     private static final Map<String, AuthorisationType> HOLDER = new HashMap<>();
 
     static {
-        for (AuthorisationType authorisationType : AuthorisationType.values()) {
+        for (AuthorisationType authorisationType : values()) {
             HOLDER.put(authorisationType.name().toLowerCase(), authorisationType);
         }
     }

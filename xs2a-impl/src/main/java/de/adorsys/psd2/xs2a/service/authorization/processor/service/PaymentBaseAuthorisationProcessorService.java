@@ -468,7 +468,7 @@ abstract class PaymentBaseAuthorisationProcessorService extends BaseAuthorisatio
             return executePaymentWithoutSca(authorisationProcessorRequest, psuData, paymentTypeFromSpi, payment, contextData, EXEMPTED, xs2aCurrencyConversionInfo);
         }
 
-        ScaStatus scaStatus = ObjectUtils.defaultIfNull(spiToXs2aScaStatusMapper.mapToXs2aScaStatus(authorizationCodeResult.getScaStatus()), ScaStatus.SCAMETHODSELECTED);
+        ScaStatus scaStatus = ObjectUtils.defaultIfNull(spiToXs2aScaStatusMapper.mapToXs2aScaStatus(authorizationCodeResult.getScaStatus()), SCAMETHODSELECTED);
 
         Xs2aUpdatePisCommonPaymentPsuDataResponse response = new Xs2aUpdatePisCommonPaymentPsuDataResponse(
             scaStatus, payment.getPaymentId(), authorisationId, psuData, xs2aCurrencyConversionInfo);

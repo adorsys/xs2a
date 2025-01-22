@@ -38,6 +38,7 @@ import java.util.Optional;
  * Common validator implementation for verifying query parameters in the request
  */
 @RequiredArgsConstructor
+@SuppressWarnings("PMD.UnusedLocalVariable")
 public abstract class AbstractQueryParameterValidatorImpl implements QueryParameterValidator {
     protected final ErrorBuildingService errorBuildingService;
 
@@ -125,7 +126,7 @@ public abstract class AbstractQueryParameterValidatorImpl implements QueryParame
             return false;
         }
         try {
-            LocalDate.parse(dateParam, DateTimeFormatter.ISO_DATE);
+            LocalDate date = LocalDate.parse(dateParam, DateTimeFormatter.ISO_DATE);
         } catch (DateTimeParseException e) {
             return false;
         }

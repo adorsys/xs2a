@@ -25,7 +25,6 @@ import de.adorsys.psd2.core.data.piis.v1.PiisConsent;
 import de.adorsys.psd2.event.core.model.EventType;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
 import de.adorsys.psd2.xs2a.core.domain.ErrorHolder;
-import de.adorsys.psd2.xs2a.core.domain.TppMessageInformation;
 import de.adorsys.psd2.xs2a.core.error.ErrorType;
 import de.adorsys.psd2.xs2a.core.error.MessageError;
 import de.adorsys.psd2.xs2a.core.error.MessageErrorCode;
@@ -217,7 +216,7 @@ public class FundsConfirmationService {
             log.info("Check availability of funds failed, Consent-ID should not be present in request in case of ASPSP PIIS consent supported [{}].",
                      request);
             return new PiisConsentValidationResult(ErrorHolder.builder(PIIS_400)
-                                                       .tppMessages(TppMessageInformation.of(FORMAT_ERROR))
+                                                       .tppMessages(of(FORMAT_ERROR))
                                                        .build());
         }
         AccountReference accountReference = request.getPsuAccount();
@@ -228,7 +227,7 @@ public class FundsConfirmationService {
             log.info("Check availability of funds failed, no account identifier found in the request during validation [{}].",
                      accountReference);
             return new PiisConsentValidationResult(ErrorHolder.builder(PIIS_400)
-                                                       .tppMessages(TppMessageInformation.of(FORMAT_ERROR))
+                                                       .tppMessages(of(FORMAT_ERROR))
                                                        .build());
         }
 

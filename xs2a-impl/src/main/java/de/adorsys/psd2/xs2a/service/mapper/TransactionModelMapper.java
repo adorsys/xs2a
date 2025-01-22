@@ -41,6 +41,7 @@ import java.util.stream.Collectors;
     Xs2aAddressMapper.class, AspspProfileServiceWrapper.class,
     ReportExchangeMapper.class, BalanceMapper.class,
     DayOfExecutionMapper.class, RemittanceMapper.class})
+@SuppressWarnings("PMD.UnnecessaryFullyQualifiedName")
 public abstract class TransactionModelMapper {
     @Autowired
     protected ReportExchangeMapper reportExchangeMapper;
