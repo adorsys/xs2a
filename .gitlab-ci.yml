@@ -197,13 +197,23 @@ Build XS2A:
   except:
     - schedules
   variables:
-    JAVA_VERSION: "adopt@1.21"
+    JAVA_VERSION: "21.0.6-oracle"
     JAVA_TOOL_OPTIONS: "-Djavax.net.ssl.trustStorePassword=changeit -XX:MaxRAM=3G"
   before_script:
-    - jabba install ${JAVA_VERSION} || jabba install adopt@1.21
-    - jabba use ${JAVA_VERSION}
-    - java -version  # Confirm the Java version
-  <<: *build_java
+    # Install SDKMAN!
+    - curl -s "https://get.sdkman.io" | bash
+    - source "$HOME/.sdkman/bin/sdkman-init.sh"
+
+    # Install and use the desired Java version
+    - sdk install java ${JAVA_VERSION}
+    - sdk use java ${JAVA_VERSION}
+
+    # Confirm the Java version
+    - java -version
+    - sdk install maven
+    - mvn -version
+  script:
+    - mvn clean package -DskipTests
   artifacts:
     paths:
       - "xs2a-standalone-starter/target/xs2a-standalone-starter-exec.jar"
