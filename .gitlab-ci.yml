@@ -248,7 +248,7 @@ Test (IT):
     DOCKER_HOST: tcp://docker:2375
     DOCKER_TLS_CERTDIR: ""
     DOCKER_DRIVER: overlay2
-    JAVA_VERSION: "system@1.21"
+    JAVA_VERSION: "21.0.6-oracle"
     JAVA_TOOL_OPTIONS: "-Djavax.net.ssl.trustStorePassword=changeit -XX:MaxRAM=3G"
     TESTCONTAINERS_RYUK_DISABLED: "true"
 
@@ -258,7 +258,7 @@ Test (Javadoc):
     - schedules
   variables:
     JAVA_TOOL_OPTIONS: "-Djavax.net.ssl.trustStorePassword=changeit -XX:MaxRAM=3G"
-    JAVA_VERSION: "system@1.21"
+    JAVA_VERSION: "21.0.6-oracle"
   script:
     - jabba use ${JAVA_VERSION}
     - java -XX:+PrintFlagsFinal -version | grep -Ei "maxheapsize|maxram"
@@ -270,7 +270,7 @@ Test (Unit Tests):
     - schedules
   <<: *java_tests
   variables:
-    JAVA_VERSION: "system@1.21"
+    JAVA_VERSION: "21.0.6-oracle"
     JAVA_TOOL_OPTIONS: "-Djavax.net.ssl.trustStorePassword=changeit -XX:MaxRAM=3G"
 
 Test (ASCII Doc):
@@ -377,7 +377,7 @@ Release snapshot artifacts (develop):
     - schedules
   cache: {}
   variables:
-    BUILD_JAVA_VERSION: "system@1.21"
+    BUILD_JAVA_VERSION: "21.0.6-oracle"
     JAVA_TOOL_OPTIONS: "-Djavax.net.ssl.trustStorePassword=changeit -XX:MaxRAM=3G"
   <<: *release_java_private
 
@@ -389,7 +389,7 @@ Release snapshot artifacts (tags):
     - schedules
   cache: {}
   variables:
-    BUILD_JAVA_VERSION: "system@1.21"
+    BUILD_JAVA_VERSION: "21.0.6-oracle"
     JAVA_TOOL_OPTIONS: "-Djavax.net.ssl.trustStorePassword=changeit -XX:MaxRAM=3G"
   <<: *release_java_private
 
