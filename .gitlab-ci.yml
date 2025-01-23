@@ -99,7 +99,8 @@ variables:
 
 before_script:
   # Install SDKMAN!
-  - yum install curl
+  - apt install curl
+  - curl --version
   - export SDKMAN_DIR="$HOME/.sdkman"
   - mkdir -p "$SDKMAN_DIR"
   - curl -s "https://get.sdkman.io" | bash -s -- --install-dir "$SDKMAN_DIR"
