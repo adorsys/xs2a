@@ -41,14 +41,14 @@ variables:
 
 .build_java: &build_java
   script:
-    - jabba use ${JAVA_VERSION}
+    - sdk use ${JAVA_VERSION}
     - env BUILD_NUMBER=$CI_PIPELINE_IID ./scripts/set_xs2a_connector_version_in_swagger.sh
     - java -XX:+PrintFlagsFinal -version | grep -Ei "maxheapsize|maxram"
     - mvn -ntp -DskipITs -DskipTests -Dci.build.number=Build\:${CI_PIPELINE_ID} clean install
 
 .java_tests: &java_tests
   script:
-    - jabba use $JAVA_VERSION
+    - sdk use $JAVA_VERSION
     - java -XX:+PrintFlagsFinal -version | grep -Ei "maxheapsize|maxram"
     - mvn -ntp -DskipITs --fail-at-end clean install -q
 
@@ -73,7 +73,7 @@ variables:
 .release_java_private: &release_java_private
   stage: "Release"
   script:
-    - jabba use $BUILD_JAVA_VERSION
+    - sdk use $BUILD_JAVA_VERSION
     - java -XX:+PrintFlagsFinal -version | grep -Ei "maxheapsize|maxram"
     - mvn -ntp --settings scripts/mvn-release-settings.xml -Pgitlab-maven -DskipTests -U deploy
   cache:
@@ -199,17 +199,17 @@ Build XS2A:
   variables:
     JAVA_VERSION: "21.0.2-open"
     JAVA_TOOL_OPTIONS: "-Djavax.net.ssl.trustStorePassword=changeit -XX:MaxRAM=3G"
-  before_script:
-    # Install SDKMAN!
-    - apt-get update && apt-get install curl
-    - export SDKMAN_DIR="$HOME/.sdkman"
-    - mkdir -p "$SDKMAN_DIR"
-    - curl -s "https://get.sdkman.io" | bash -s -- --install-dir "$SDKMAN_DIR"
-    - source "$SDKMAN_DIR/bin/sdkman-init.sh"
-    - sdk install java ${JAVA_VERSION}
-    - sdk use java ${JAVA_VERSION}
-    - sdk install maven
-    - mvn -version
+#  before_script:
+#    # Install SDKMAN!
+#    - apt-get update && apt-get install curl
+#    - export SDKMAN_DIR="$HOME/.sdkman"
+#    - mkdir -p "$SDKMAN_DIR"
+#    - curl -s "https://get.sdkman.io" | bash -s -- --install-dir "$SDKMAN_DIR"
+#    - source "$SDKMAN_DIR/bin/sdkman-init.sh"
+#    - sdk install java ${JAVA_VERSION}
+#    - sdk use java ${JAVA_VERSION}
+#    - sdk install maven
+#    - mvn -version
   <<: *build_java
   artifacts:
     paths:
@@ -237,7 +237,7 @@ Test (IT):
   except:
     - schedules
   script:
-#    - jabba use ${JAVA_VERSION}
+#    - sdk use ${JAVA_VERSION}
     - echo "DOCKER_HOST=${DOCKER_HOST}"
     - java -XX:+PrintFlagsFinal -version | grep -Ei "maxheapsize|maxram"
     - mvn -ntp failsafe:integration-test failsafe:verify
@@ -257,7 +257,7 @@ Test (Javadoc):
     JAVA_TOOL_OPTIONS: "-Djavax.net.ssl.trustStorePassword=changeit -XX:MaxRAM=3G"
     JAVA_VERSION: "21.0.2-open"
   script:
-    - jabba use ${JAVA_VERSION}
+    - sdk use ${JAVA_VERSION}
     - java -XX:+PrintFlagsFinal -version | grep -Ei "maxheapsize|maxram"
     - mvn -ntp -Dmaven.test.skip=true -Pjavadoc verify javadoc:javadoc
 
