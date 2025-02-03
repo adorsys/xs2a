@@ -9,8 +9,9 @@ image: "gitlab-registry.adorsys.de/adorsys/xs2a/gitlab-ci:latest"
 
 ### Authentication for registry docker image for gitlab ci build
 before_script:
-  - echo "Logging into GitLab Container Registry..."
-  - echo ${ADORSYS_REGISTRY_PASSWORD} | docker login -u ${ADORSYS_REGISTRY_USER} --password-stdin gitlab-registry.adorsys.de
+  - apt-get update && apt-get install -y docker.io
+  - docker --version
+  - echo "${ADORSYS_REGISTRY_PASSWORD}" | docker login -u "${ADORSYS_REGISTRY_USER}" --password-stdin gitlab-registry.adorsys.de
 
 # ------------------------------------------------------------------
 # stages
