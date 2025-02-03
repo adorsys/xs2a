@@ -265,24 +265,52 @@ Test (Javadoc):
     - java -XX:+PrintFlagsFinal -version | grep -Ei "maxheapsize|maxram"
     - mvn -ntp -Dmaven.test.skip=true -Pjavadoc verify javadoc:javadoc
 
+#Test (Unit Tests):
+#  stage: "Test"
+#  except:
+#    - schedules
+#  <<: *java_tests
+#  variables:
+#    JAVA_VERSION: "21.0.2-open"
+#    JAVA_TOOL_OPTIONS: "-Djavax.net.ssl.trustStorePassword=changeit -XX:MaxRAM=3G"
+
 Test (Unit Tests):
   stage: "Test"
   except:
     - schedules
-  <<: *java_tests
+  image: eclipse-temurin:21
   variables:
-    JAVA_VERSION: "21.0.2-open"
+    JAVA_VERSION: "21.0.6-tem"
     JAVA_TOOL_OPTIONS: "-Djavax.net.ssl.trustStorePassword=changeit -XX:MaxRAM=3G"
+  script:
+    - sdk install java ${JAVA_VERSION} || true
+    - sdk use java ${JAVA_VERSION}
+    - java -version
 
 Test (ASCII Doc):
   stage: "Test"
   except:
     - schedules
-  image: adorsys/arc42-tools
+  image: docker:latest
+  services:
+    - docker:dind
   variables:
     JAVA_TOOL_OPTIONS: "-Djavax.net.ssl.trustStorePassword=changeit -XX:MaxRAM=3G"
   script:
+    - apk add --no-cache docker || apt-get update && apt-get install -y docker.io
+    - docker --version
     - make pages
+
+
+#Test (ASCII Doc):
+#  stage: "Test"
+#  except:
+#    - schedules
+#  image: adorsys/arc42-tools
+#  variables:
+#    JAVA_TOOL_OPTIONS: "-Djavax.net.ssl.trustStorePassword=changeit -XX:MaxRAM=3G"
+#  script:
+#    - make pages
 
 # Test:Performance:
 #   stage: "Test"
