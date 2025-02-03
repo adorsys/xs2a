@@ -257,6 +257,7 @@ Test (Javadoc):
   stage: "Test"
   except:
     - schedules
+  image: "gitlab-registry.adorsys.de/adorsys/xs2a/gitlab-ci:latest"
   variables:
     JAVA_TOOL_OPTIONS: "-Djavax.net.ssl.trustStorePassword=changeit -XX:MaxRAM=3G"
     JAVA_VERSION: "21.0.6-tem"
@@ -283,8 +284,6 @@ Test (ASCII Doc):
   variables:
     JAVA_TOOL_OPTIONS: "-Djavax.net.ssl.trustStorePassword=changeit -XX:MaxRAM=3G"
   script:
-#    - dnf install -y docker
-#    - docker --version
     - make pages
 
 
