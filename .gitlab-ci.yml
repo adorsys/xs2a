@@ -1,3 +1,4 @@
+---
 # yamllint disable rule:line-length
 # ------------------------------------------------------------------
 # Global settings
@@ -213,9 +214,18 @@ Build XS2A:
   variables:
     JAVA_VERSION: "21.0.2-open"
     JAVA_TOOL_OPTIONS: "-Djavax.net.ssl.trustStorePassword=changeit -XX:MaxRAM=3G"
-    SDKMAN_DIR: "$HOME/.local/sdkman"
-  script:
-    - mvn clean package -DskipTests
+#  before_script:
+#    # Install SDKMAN!
+#    - apt-get update && apt-get install curl
+#    - export SDKMAN_DIR="$HOME/.sdkman"
+#    - mkdir -p "$SDKMAN_DIR"
+#    - curl -s "https://get.sdkman.io" | bash -s -- --install-dir "$SDKMAN_DIR"
+#    - source "$SDKMAN_DIR/bin/sdkman-init.sh"
+#    - sdk install java ${JAVA_VERSION}
+#    - sdk use java ${JAVA_VERSION}
+#    - sdk install maven
+#    - mvn -version
+  <<: *build_java
   artifacts:
     paths:
       - "xs2a-standalone-starter/target/xs2a-standalone-starter-exec.jar"
