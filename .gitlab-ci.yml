@@ -5,7 +5,7 @@
 # ------------------------------------------------------------------
 
 #image: "adorsys/ci-build:latest"
-image: gitlab-registry.adorsys.de/adorsys/xs2a/gitlab-ci:latest
+image: "gitlab-registry.adorsys.de/adorsys/xs2a/gitlab-ci:latest"
 
 ### Authentication for registry docker image for gitlab ci build
 before_script:
