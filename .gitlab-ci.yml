@@ -253,17 +253,29 @@ Test (IT):
     JAVA_TOOL_OPTIONS: "-Djavax.net.ssl.trustStorePassword=changeit -XX:MaxRAM=3G"
     TESTCONTAINERS_RYUK_DISABLED: "true"
 
+#Test (Javadoc):
+#  stage: "Test"
+#  except:
+#    - schedules
+#  image: "gitlab-registry.adorsys.de/adorsys/xs2a/gitlab-ci:latest"
+#  variables:
+#    JAVA_TOOL_OPTIONS: "-Djavax.net.ssl.trustStorePassword=changeit -XX:MaxRAM=3G"
+#    JAVA_VERSION: "21.0.6-tem"
+#  script:
+#    - sdk install java ${JAVA_VERSION} || true
+#    - sdk default java ${JAVA_VERSION}
+#    - java -XX:+PrintFlagsFinal -version | grep -Ei "maxheapsize|maxram"
+#    - mvn -ntp -Dmaven.test.skip=true -Pjavadoc verify javadoc:javadoc
+
 Test (Javadoc):
   stage: "Test"
   except:
     - schedules
-  image: "gitlab-registry.adorsys.de/adorsys/xs2a/gitlab-ci:latest"
   variables:
     JAVA_TOOL_OPTIONS: "-Djavax.net.ssl.trustStorePassword=changeit -XX:MaxRAM=3G"
-    JAVA_VERSION: "21.0.6-tem"
+    JAVA_VERSION: "21.0.2-open"
   script:
-    - sdk install java ${JAVA_VERSION} || true
-    - sdk default java ${JAVA_VERSION}
+    - sdk use java ${JAVA_VERSION}
     - java -XX:+PrintFlagsFinal -version | grep -Ei "maxheapsize|maxram"
     - mvn -ntp -Dmaven.test.skip=true -Pjavadoc verify javadoc:javadoc
 
