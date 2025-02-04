@@ -263,7 +263,7 @@ Test (Javadoc):
     JAVA_VERSION: "21.0.6-tem"
   script:
     - sdk install java ${JAVA_VERSION} || true
-    - sdk default ${JAVA_VERSION}
+    - sdk default java ${JAVA_VERSION}
     - java -XX:+PrintFlagsFinal -version | grep -Ei "maxheapsize|maxram"
     - mvn -ntp -Dmaven.test.skip=true -Pjavadoc verify javadoc:javadoc
 
