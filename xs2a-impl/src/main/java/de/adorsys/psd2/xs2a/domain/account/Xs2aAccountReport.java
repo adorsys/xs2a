@@ -29,7 +29,7 @@ import jakarta.validation.constraints.NotNull;
 import java.util.List;
 
 @Data
-@JsonInclude(com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL)
+@JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonRootName(value = "transactions")
 public class Xs2aAccountReport {
 

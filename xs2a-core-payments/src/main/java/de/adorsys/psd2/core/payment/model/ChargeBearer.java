@@ -41,7 +41,7 @@ public enum ChargeBearer {
 
     @JsonCreator
     public static ChargeBearer fromValue(String text) {
-        for (ChargeBearer b : ChargeBearer.values()) {
+        for (ChargeBearer b : values()) {
             if (String.valueOf(b.value).equals(text)) {
                 return b;
             }

@@ -53,7 +53,7 @@ public enum BookingStatus {
     }
 
     public static Optional<BookingStatus> getByValue(String value) {
-        return Arrays.stream(BookingStatus.values())
+        return Arrays.stream(values())
                    .filter(bs -> bs.value.equalsIgnoreCase(value))
                    .findFirst();
     }
