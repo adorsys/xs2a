@@ -17,7 +17,7 @@
  */
 
 package de.adorsys.psd2.event.core.model;
-@SuppressWarnings("PMD.ExcessivePublicCount")
+
 public enum EventType {
     /* Signing basket */
     CREATE_SIGNING_BASKET_REQUEST_RECEIVED,

@@ -75,7 +75,7 @@ public enum ScaStatus {
     private static final Map<String, ScaStatus> HOLDER = new HashMap<>();
 
     static {
-        for (ScaStatus status : values()) {
+        for (ScaStatus status : ScaStatus.values()) {
             HOLDER.put(status.value.toLowerCase(), status);
         }
     }

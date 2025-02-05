@@ -45,7 +45,7 @@ public enum RoleOfPSP {
 		ASN1ObjectIdentifier objectIdentifier = ASN1ObjectIdentifier.getInstance(sequence.getObjectAt(0));
 		DERUTF8String instance = (DERUTF8String) ASN1UTF8String.getInstance(sequence.getObjectAt(1));
 
-		return Arrays.stream(values())
+		return Arrays.stream(RoleOfPSP.values())
 				.filter(role -> role.getRoleOfPspOid().getId().equals(objectIdentifier.getId())
 						&& role.getRoleOfPspName().getString().equals(instance.getString()))
 				.findFirst().orElseThrow(() -> new IllegalArgumentException(

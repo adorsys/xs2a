@@ -47,9 +47,9 @@ public enum AdditionalAccountInformationType {
     public static AdditionalAccountInformationType findTypeByList(List<?> list) {
         return Optional.ofNullable(list)
                    .map(l -> l.isEmpty()
-                                 ? ALL_AVAILABLE_ACCOUNTS
-                                 : DEDICATED_ACCOUNTS)
-                   .orElse(NONE);
+                                 ? AdditionalAccountInformationType.ALL_AVAILABLE_ACCOUNTS
+                                 : AdditionalAccountInformationType.DEDICATED_ACCOUNTS)
+                   .orElse(AdditionalAccountInformationType.NONE);
     }
 
     public abstract List<AccountReference> getReferencesByType(List<AccountReference> accountReferences);

@@ -20,7 +20,7 @@ package de.adorsys.psd2.core.payment.model;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
-@SuppressWarnings("PMD.ExcessivePublicCount")
+
 public enum PurposeCode {
     BKDF("BKDF"),
     BKFE("BKFE"),
@@ -323,7 +323,7 @@ public enum PurposeCode {
 
     @JsonCreator
     public static PurposeCode fromValue(String text) {
-        for (PurposeCode b : values()) {
+        for (PurposeCode b : PurposeCode.values()) {
             if (String.valueOf(b.value).equals(text)) {
                 return b;
             }

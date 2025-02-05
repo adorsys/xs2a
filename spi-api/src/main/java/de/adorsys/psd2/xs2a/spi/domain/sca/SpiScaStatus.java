@@ -75,7 +75,7 @@ public enum SpiScaStatus {
     private static final Map<String, SpiScaStatus> HOLDER = new HashMap<>();
 
     static {
-        for (SpiScaStatus status : values()) {
+        for (SpiScaStatus status : SpiScaStatus.values()) {
             HOLDER.put(status.value.toLowerCase(), status);
         }
     }

@@ -68,7 +68,7 @@ public enum DayOfExecution {
 
     @JsonCreator
     public static DayOfExecution fromValue(String text) {
-        for (DayOfExecution b : values()) {
+        for (DayOfExecution b : DayOfExecution.values()) {
             if (String.valueOf(b.value).equals(text)) {
                 return b;
             }

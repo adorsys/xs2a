@@ -20,7 +20,7 @@ package de.adorsys.psd2.xs2a.spi.domain.payment;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
-@SuppressWarnings("PMD.ExcessivePublicCount")
+
 public enum SpiPurposeCode {
     BKDF("BKDF"),
     BKFE("BKFE"),
@@ -323,7 +323,7 @@ public enum SpiPurposeCode {
 
     @JsonCreator
     public static SpiPurposeCode fromValue(String text) {
-        for (SpiPurposeCode b : values()) {
+        for (SpiPurposeCode b : SpiPurposeCode.values()) {
             if (String.valueOf(b.value).equals(text)) {
                 return b;
             }

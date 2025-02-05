@@ -46,7 +46,7 @@ public enum FrequencyCode {
 
     @JsonCreator
     public static FrequencyCode fromValue(String text) {
-        for (FrequencyCode b : values()) {
+        for (FrequencyCode b : FrequencyCode.values()) {
             if (String.valueOf(b.value).equals(text)) {
                 return b;
             }

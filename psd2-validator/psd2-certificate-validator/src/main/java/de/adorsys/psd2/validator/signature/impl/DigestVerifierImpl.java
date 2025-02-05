@@ -25,6 +25,7 @@ import de.adorsys.psd2.validator.signature.service.algorithm.HashingAlgorithm;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.Optional;
+
 public class DigestVerifierImpl implements DigestVerifier {
     @Override
     public boolean verify(String digestFromRequest, String body) {

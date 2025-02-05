@@ -83,7 +83,7 @@ public enum ErrorType {
     }
 
     public static Optional<ErrorType> getByServiceTypeAndErrorCode(ServiceType serviceType, int errorCode) {
-        return Arrays.stream(values())
+        return Arrays.stream(ErrorType.values())
             .filter(et -> et.getServiceType().equals(serviceType))
             .filter(et -> et.getErrorCode() == errorCode)
             .findFirst();

@@ -81,7 +81,6 @@ import static de.adorsys.psd2.xs2a.core.domain.TppMessageInformation.of;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-@SuppressWarnings("PMD.CouplingBetweenObjects")
 public class ConsentService {
     private final Xs2aAisConsentMapper aisConsentMapper;
     private final SpiToXs2aAccountAccessMapper spiToXs2aAccountAccessMapper;

@@ -53,7 +53,7 @@ public enum SpiBookingStatus {
     }
 
     public static Optional<SpiBookingStatus> getByValue(String value) {
-        return Arrays.stream(values())
+        return Arrays.stream(SpiBookingStatus.values())
                    .filter(bs -> bs.value.equalsIgnoreCase(value))
                    .findFirst();
     }
