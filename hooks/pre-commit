@@ -1,0 +1,111 @@
+#!/bin/bash
+
+# Get the current branch name
+BRANCH_NAME=$(git branch --show-current)
+
+# Debug print statement
+echo "Branch name: '$BRANCH_NAME'"
+
+check_branch_name() {
+  local branch_name="$1"
+
+  # Check for "master" and "master-<even_number>.x" branches
+  if [[  "$branch_name" =~ ^master$ || "$branch_name" =~ ^master-([0-9]+).x && ${BASH_REMATCH[1]}%2 == 0 ]]; then
+    return 0
+  fi
+
+  # Check for "v2master" and "v2master-<even_number>.x" branches
+  if [[ "$branch_name" =~ ^v2master$ || "$branch_name" =~ ^v2master-([0-9]+).x$ && ${BASH_REMATCH[1]}%2 == 0 ]]; then
+    return 0
+  fi
+
+  # Check for "v2develop" and "develop" branch
+  if [[ "$branch_name" == "develop" || "$branch_name" == "v2develop" ]]; then
+    return 0
+  fi
+
+  # Check for "support" and "support-<even_number>.x" branches
+  if [[  "$branch_name" =~ ^support$ || "$branch_name" =~ ^support-([0-9]+).x$ && ${BASH_REMATCH[1]}%2 == 0 ]]; then
+    return 0
+  fi
+
+  # Check for "v2support" and "v2support-<even_number>.x" branches
+  if [[ "$branch_name" =~ ^v2support$ || "$branch_name" =~ ^v2support-([0-9]+).x$ && ${BASH_REMATCH[1]}%2 == 0 ]]; then
+    return 0
+  fi
+
+  # Check for "release-x.x" or "release-x.x.x" format
+  if [[ "$branch_name" =~ ^release-([0-9]+(\.[0-9]+){1,2})$ ]]; then
+    return 0
+  fi
+
+  # Check for "release-<num>.<num>-<some text>" format (new format)
+  if [[ "$branch_name" =~ ^release-([0-9]+\.[0-9]+)-[a-zA-Z0-9_-]+$ || "$branch_name" =~ ^release-([0-9]+\.[0-9]+\.[0-9]+)-[a-zA-Z0-9_-]+$ ]]; then
+    return 0
+  fi
+
+  # Check for "v2release-x.x" or "v2release-x.x.x" format
+  if [[ "$branch_name" =~ ^v2release-([0-9]+(\.[0-9]+){1,2})$ ]]; then
+    return 0
+  fi
+
+  # Check for "v2hotfix-x.x.x" format
+  if [[ "$branch_name" =~ ^v2hotfix-([0-9]+\.[0-9]+\.[0-9]+)$ ]]; then
+    return 0
+  fi
+
+  # Check for "v2 develop subbranches" format
+  if [[ "$branch_name" =~ ^v2/(feature|setup|bugfix|infra|ci|test|docs|deploy|security|perf|refactor|upgrade)/issue-([0-9]+)-[a-zA-Z0-9_-]+$ ]]; then
+    return 0
+  fi
+
+  # Check for "v2 support subbranches" format
+  if [[ "$branch_name" =~ ^v2/PASD/[0-9]+/issue-([0-9]+)-[a-zA-Z0-9_-]+$ ]]; then
+    return 0
+  fi
+
+  # Check for "v1 develop subbranches" format
+  if [[ "$branch_name" =~ ^(feature|setup|bugfix|infra|ci|test|docs|deploy|security|perf|refactor|upgrade)/issue-([0-9]+)-[a-zA-Z0-9_-]+$ ]]; then
+    return 0
+  fi
+
+  # Check for "v1 support subbranches" format
+  if [[ "$branch_name" =~ ^PASD/[0-9]+/issue-([0-9]+)-[a-zA-Z0-9_-]+$ ]]; then
+    return 0
+  fi
+
+  # If none of the conditions matched, branch name format is incorrect
+    echo "ERROR: Branch name '$branch_name' format is INCORRECT." >&2
+    echo "Please use one of the following formats:" >&2
+    echo "  master" >&2
+    echo "  v2master" >&2
+    echo "  develop" >&2
+    echo "  v2develop" >&2
+    echo "  support or support-<even_number>.x" >&2
+    echo "  v2support or v2support-<even_number>.x" >&2
+    echo "  release-<x.x> or release-<x.x.x> (where x,y are digits)" >&2
+    echo "  release-<x.x>-<some text> or release-<x.x.x>-<some text>" >&2  # New format added
+    echo "  v2release-<x.x> or v2release-<x.x.x>" >&2
+    echo "  v2hotfix-<x.x.x> (where x are digits)" >&2
+    echo "  v2/(feature|setup|bugfix|infra|ci|test|docs|deploy|security|perf|refactor|upgrade)/issue-<gitlab_number>-<description_text>" >&2
+    echo "  v2/PASD/<serviceDesk_number>/issue-<gitlab_number>-<description_text>" >&2
+    echo "Examples:" >&2
+    echo "  master" >&2
+    echo "  v2master" >&2
+    echo "  support-2.x" >&2
+    echo "  v2support-2.x" >&2
+    echo "  release-22.0" >&2
+    echo "  release-22.0-RC1" >&2
+    echo "  v2release-22.0" >&2
+    echo "  v2hotfix-22.0.1" >&2
+    echo "  v2/feature/issue-1234-new-feature" >&2
+    echo "  v2/PASD/123/issue-5678-new-feature" >&2
+    return 1
+}
+
+# Check branch name
+if ! check_branch_name "$BRANCH_NAME"; then
+  exit 1
+fi
+
+echo -e "Branch name format is valid. Proceeding...\n"

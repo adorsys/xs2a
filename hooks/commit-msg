@@ -1,0 +1,42 @@
+#!/bin/bash
+
+# Function to output error messages
+print_error() {
+  echo -e "\nERROR: $1" >&2
+  exit 1
+}
+
+# Function to output debug messages (if debug mode is enabled)
+print_debug() {
+  if [ "$DEBUG" == "true" ]; then
+    echo -e "DEBUG: $1" >&2
+  fi
+}
+
+# Debug flag (can be set externally or internally)
+DEBUG=false
+
+# Check if a commit message file is provided
+if [ -z "$1" ]; then
+  print_error "No commit message file provided."
+fi
+
+COMMIT_MSG_FILE=$1
+COMMIT_MSG=$(cat "$COMMIT_MSG_FILE" | xargs)  # Trim leading and trailing whitespace
+
+# Check if the commit message is empty
+if [ -z "$COMMIT_MSG" ]; then
+  print_error "Commit message is empty."
+fi
+
+# Debug print statement
+print_debug "Commit message: '$COMMIT_MSG'"
+
+# Regex to match the specified formats with optional scope
+# Extended the regex to handle cases where the scope is empty or contains special characters.
+if ! [[ $COMMIT_MSG =~ ^(feat|fix|docs|doc|style|refactor|perf|test|chore|upgrade|ci|scan|release)(\([a-zA-Z0-9_-]*\))?:\ .+ ]]; then
+  print_error "Commit message format is INCORRECT. Expected format: <type>(<scope>): <message> OR <type>: <message>"
+fi
+
+# Allow commit to proceed
+echo "Commit message format is valid."
