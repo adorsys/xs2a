@@ -55,22 +55,22 @@ check_branch_name() {
   fi
 
   # Check for "v2 develop subbranches" format
-  if [[ "$branch_name" =~ ^v2/(feature|setup|bugfix|infra|ci|test|docs|deploy|security|perf|refactor|upgrade)/issue-([0-9]+)-[a-zA-Z0-9_-]+$ ]]; then
+  if [[ "$branch_name" =~ ^v2/(feature|setup|bugfix|infra|ci|test|docs|deploy|security|perf|refactor|upgrade)/issue-([0-9]+)-([a-zA-Z0-9_-]+)$ ]]; then
     return 0
   fi
 
   # Check for "v2 support subbranches" format
-  if [[ "$branch_name" =~ ^v2/PASD/[0-9]+/issue-([0-9]+)-[a-zA-Z0-9_-]+$ ]]; then
+  if [[ "$branch_name" =~ ^v2/PASD/[0-9]+/issue-([0-9]+)-([a-zA-Z0-9_-]+)$ ]]; then
     return 0
   fi
 
   # Check for "v1 develop subbranches" format
-  if [[ "$branch_name" =~ ^(feature|setup|bugfix|infra|ci|test|docs|deploy|security|perf|refactor|upgrade)/issue-([0-9]+)-[a-zA-Z0-9_-]+$ ]]; then
+  if [[ "$branch_name" =~ ^(feature|setup|bugfix|infra|ci|test|docs|deploy|security|perf|refactor|upgrade)/issue-([0-9]+)-([a-zA-Z0-9_-]+)$ ]]; then
     return 0
   fi
 
   # Check for "v1 support subbranches" format
-  if [[ "$branch_name" =~ ^PASD/[0-9]+/issue-([0-9]+)-[a-zA-Z0-9_-]+$ ]]; then
+  if [[ "$branch_name" =~ ^PASD/[0-9]+/issue-([0-9]+)-([a-zA-Z0-9_-]+)$ ]]; then
     return 0
   fi
 
