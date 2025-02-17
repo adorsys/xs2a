@@ -32,10 +32,8 @@ fi
 # Debug print statement
 print_debug "Commit message: '$COMMIT_MSG'"
 
-# Regex to match the specified formats with optional scope
-# Extended the regex to handle cases where the scope is empty or contains special characters.
-if ! [[ $COMMIT_MSG =~ ^(feat|fix|docs|doc|style|refactor|perf|test|chore|upgrade|ci|scan|release)(\([a-zA-Z0-9_-]*\))?:\ .+ ]]; then
-  print_error "Commit message format is INCORRECT. Expected format: <type>(<scope>): <message> OR <type>: <message>"
+if ! [[ $COMMIT_MSG =~ ^(feat|fix|docs|doc|style|refactor|perf|test|chore|upgrade|ci|scan|release)(\([a-zA-Z0-9_-]*\))?:\ [a-zA-Z0-9_-]+#[0-9]+\ .+ || $COMMIT_MSG =~ ^(feat|fix|docs|doc|style|refactor|perf|test|chore|upgrade|ci|scan|release):\ [a-zA-Z0-9_-]+#[0-9]+\ .+ ]]; then
+  print_error "Commit message format is INCORRECT. Expected format: <type>(<scope>): <developer gitlab username>#<issue-number> <message> OR <type>: <developer gitlab username>#<issue-number> <message>"
 fi
 
 # Allow commit to proceed
