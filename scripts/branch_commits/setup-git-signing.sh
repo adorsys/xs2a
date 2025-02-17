@@ -6,43 +6,40 @@ if ! git rev-parse --is-inside-work-tree > /dev/null 2>&1; then
     exit 1
 fi
 
-# Setup git / ssh for user
-echo "********************************************************"
-echo "     Configuring Git to use SSH to sign commits "
-echo "********************************************************"
-
-read -p "Enter your Adorsys GitLab account username: " username
-git config user.name "$username"
-
-read -p "Enter your Adorsys email: " email
-git config user.email "$email"
-
-# Store the current directory
-current_dir=$(pwd)
-
 # Navigate to $HOME/.ssh
 cd $HOME/.ssh || { echo "Failed to navigate to $HOME/.ssh. Exiting."; exit 1; }
 
 # Check if either id_ed25519 or id_rsa exists in $HOME/.ssh
-if [[ ! -f $HOME/.ssh/id_ed25519 && ! -f $HOME/.ssh/id_rsa ]]; then
-    # Neither id_ed25519 nor id_rsa exists, ask user which key to generate
+if [[ -f id_ed25519.pub || -f id_rsa.pub ]]; then
+    echo "Found existing SSH key. Skipping username and email configuration."
+else
+    # Neither id_ed25519 nor id_rsa exists, ask user for username and email
     echo "No SSH keys found."
-    read -p "Do you want to generate an ed25519 key (recommended) or rsa key?
-            Type 'ed' for ed25519 or 'rsa' for rsa.
-            Press Enter for rsa: " key_choice
+    read -p "Enter your Adorsys GitLab account username: " username
+    git config user.name "$username"
+
+    read -p "Enter your Adorsys email: " email
+    git config user.email "$email"
+fi
+
+# Check if either id_ed25519 or id_rsa exists in $HOME/.ssh
+if [[ ! -f id_ed25519 && ! -f id_rsa ]]; then
+    # Ask user which key to generate
+    echo "Do you want to generate an ed25519 key (recommended) or rsa key?"
+    read -p "Type 'ed' for ed25519 or 'rsa' for rsa. Press Enter for rsa: " key_choice
     if [[ -z "$key_choice" || "$key_choice" == "rsa" ]]; then
         echo "Generating RSA SSH key."
-        ssh-keygen -t rsa -b 4096 -C "$email" -f $HOME/.ssh/id_rsa -N ""
+        ssh-keygen -t rsa -b 4096 -C "$email" -f id_rsa -N ""
     elif [[ "$key_choice" == "ed" ]]; then
         echo "Generating ed25519 SSH key."
-        ssh-keygen -t ed25519 -C "$email" -f $HOME/.ssh/id_ed25519 -N ""
+        ssh-keygen -t ed25519 -C "$email" -f id_ed25519 -N ""
     else
         echo "Invalid input. Defaulting to rsa key generation."
-        ssh-keygen -t rsa -b 4096 -C "$email" -f $HOME/.ssh/id_rsa -N ""
+        ssh-keygen -t rsa -b 4096 -C "$email" -f id_rsa -N ""
     fi
-elif [[ -f $HOME/.ssh/id_ed25519 && -f $HOME/.ssh/id_ed25519.pub ]]; then
+elif [[ -f id_ed25519 && -f id_ed25519.pub ]]; then
     echo "Found existing ed25519 SSH key. Using it."
-elif [[ -f $HOME/.ssh/id_rsa && -f $HOME/.ssh/id_rsa.pub ]]; then
+elif [[ -f id_rsa && -f id_rsa.pub ]]; then
     echo "Found existing RSA SSH key. Using it."
 else
     echo "SSH keys are in an inconsistent state. Please check the existing files."
@@ -50,7 +47,7 @@ else
 fi
 
 # Return to the original project directory
-cd "$current_dir" || { echo "Failed to return to the project directory. Exiting."; exit 1; }
+cd - || { echo "Failed to return to the project directory. Exiting."; exit 1; }
 
 echo "%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%"
 echo "Please follow these steps:"
@@ -82,12 +79,8 @@ if [[ "$completed" == "yes" || "$completed" == "y" ]]; then
     fi
     git config commit.gpgsign true  # Enable signing by default
 
-    # Ensure $HOME/.ssh directory exists (should already exist from earlier in script)
-    ssh_dir="$HOME/.ssh"
-    mkdir -p "$ssh_dir"
-
     # Create allowed signers file in .ssh directory
-    allowed_signers_file="$ssh_dir/allowed_signers"
+    allowed_signers_file="$HOME/.ssh/allowed_signers"
     if [[ -f $HOME/.ssh/id_ed25519.pub ]]; then
         echo "$email $(cat $HOME/.ssh/id_ed25519.pub)" > "$allowed_signers_file"
     elif [[ -f $HOME/.ssh/id_rsa.pub ]]; then
