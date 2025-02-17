@@ -59,11 +59,11 @@ while read local_ref local_sha remote_ref remote_sha; do
             COMMIT_MSG=$(git log -1 --pretty=format:"%s" "$commit")  # Get the commit message only
             print_debug "Checking commit message: '$COMMIT_MSG'"
 
-            # Regex to match the specified commit message format
-            if ! [[ $COMMIT_MSG =~ ^(feat|fix|docs|doc|style|refactor|perf|test|chore|upgrade|ci|scan)(\([a-zA-Z0-9_-]*\))?:\ .+ ]]; then
+            # Updated regex to match the new formats
+            if ! [[ $COMMIT_MSG =~ ^(feat|fix|docs|doc|style|refactor|perf|test|chore|upgrade|ci|scan|release)(\([a-zA-Z0-9_-]*\))?:\ [a-zA-Z0-9_-]+#[0-9]+\ .+ || $COMMIT_MSG =~ ^(feat|fix|docs|doc|style|refactor|perf|test|chore|upgrade|ci|scan|release):\ [a-zA-Z0-9_-]+#[0-9]+\ .+ ]]; then
                 # If the commit message doesn't match the format, add it to the list of invalid messages
                 echo -e "\nERROR: Commit message for commit $commit does NOT follow the correct format." >&2
-                echo "Expected format: <type>(<scope>): <message>" >&2
+                echo "Expected format: <type>(<scope>): <developer gitlab username>#<issue-number> <message> OR <type>: <developer gitlab username>#<issue-number> <message>" >&2
                 echo "Commit: $COMMIT_MSG" >&2
                 INVALID_COMMIT_MESSAGES+=("$commit")
             fi
@@ -99,7 +99,7 @@ while read local_ref local_sha remote_ref remote_sha; do
             git reset --soft "$remote_sha"
 
             echo -e "\nPlease fix the commit messages to follow the required format and try again." >&2
-            echo "Expected format: <type>(<scope>): <message>" "OR" "<type>: <message>" >&2
+            echo "Expected format: <type>(<scope>): <developer gitlab username>#<issue-number> <message> OR <type>: <developer gitlab username>#<issue-number> <message>" >&2
             exit 1
         fi
     fi
