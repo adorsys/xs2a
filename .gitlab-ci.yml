@@ -133,30 +133,20 @@ validate_commits_branche_name:
       # Debug flag (can be set externally or internally)
       DEBUG=false
 
-      # Global variable for temporary file
-      TEMP_FILE=""
-
-      # Cleanup function
-      cleanup() {
-          if [ -n "${TEMP_FILE}" ] && [ -f "${TEMP_FILE}" ]; then
-              rm -f "${TEMP_FILE}"
-          fi
-      }
-
-      # Set trap for cleanup
-      trap cleanup EXIT
+      # Get the current branch name
+      BRANCH_NAME=${CI_COMMIT_REF_NAME:?"CI_COMMIT_REF_NAME is not set"}
+      echo "Checking branch: $BRANCH_NAME"
 
       # Check branch name format
       check_branch_name() {
           local branch_name="$1"
           print_debug "Checking branch name: '$branch_name'"
 
-          # Updated regex to validate branch name format
-          if [[ "$branch_name" =~ ^(master|v2master|develop|v2develop|support|v2support|release|v2release|v2hotfix|release-([0-9]+(\.[0-9]+){1,2})|release-([0-9]+\.[0-9]+)-[a-zA-Z0-9_-]+|release-([0-9]+\.[0-9]+\.[0-9]+)-[a-zA-Z0-9_-]+|v2/(feature|setup|bugfix|infra|ci|test|docs|deploy|security|perf|refactor|upgrade)/issue-([0-9]+)-([a-zA-Z0-9_-]+)|v2/PASD/[0-9]+/issue-([0-9]+)-([a-zA-Z0-9_-]+)|(feature|setup|bugfix|infra|ci|test|docs|deploy|security|perf|refactor|upgrade)/issue-([0-9]+)-([a-zA-Z0-9_-]+)|PASD/[0-9]+/issue-([0-9]+)-([a-zA-Z0-9_-]+))$ ]]; then
+          # Branch name patterns
+          if [[ "$branch_name" =~ ^(master|v2master|develop|v2develop|support-([0-9]+)\.[0-9]+|v2support-([0-9]+)\.[0-9]+|release-([0-9]+(\.[0-9]+){1,2})|v2release-([0-9]+(\.[0-9]+){1,2})|hotfix-([0-9]+\.[0-9]+\.[0-9]+)|v2hotfix-([0-9]+\.[0-9]+\.[0-9]+)|release-([0-9]+\.[0-9]+)-[a-zA-Z0-9_-]+|release-([0-9]+\.[0-9]+\.[0-9]+)-[a-zA-Z0-9_-]+|v2/(feature|setup|bugfix|infra|ci|test|docs|deploy|security|perf|refactor|upgrade)/issue-([0-9]+)-([a-zA-Z0-9_-]+)|v2/PASD/[0-9]+/issue-([0-9]+)-([a-zA-Z0-9_-]+)|(feature|setup|bugfix|infra|ci|test|docs|deploy|security|perf|refactor|upgrade)/issue-([0-9]+)-([a-zA-Z0-9_-]+)|PASD/[0-9]+/issue-([0-9]+)-([a-zA-Z0-9_-]+))$ ]]; then
               return 0
           fi
 
-          # If the branch doesn't match, it's invalid
           print_error "Branch name '$branch_name' format is INCORRECT."
       }
 
@@ -165,13 +155,13 @@ validate_commits_branche_name:
           local commit_msg="$1"
           print_debug "Checking commit message: '$commit_msg'"
 
-          # Updated regex to validate commit message format
+          # Commit message regex
           if ! [[ $commit_msg =~ ^(feat|fix|docs|doc|style|refactor|perf|test|chore|upgrade|ci|scan|release)(\([a-zA-Z0-9_-]*\))?:\ [a-zA-Z0-9_-]{3}#[0-9]+\ .+ || $commit_msg =~ ^(feat|fix|docs|doc|style|refactor|perf|test|chore|upgrade|ci|scan|release):\ [a-zA-Z0-9_-]{3}#[0-9]+\ .+ ]]; then
               print_error "Commit message format is INCORRECT. Expected format: <type>(<scope>): <developer gitlab username (3 chars)>#<issue-number> <message> OR <type>: <developer gitlab username (3 chars)>#<issue-number> <message>"
           fi
       }
 
-      # Block direct pushes to critical branches
+      # Ensure no direct pushes to blocked branches
       is_blocked_branch() {
           local branch="$1"
           if [[ "$branch" =~ ^(develop|master|master-[0-9]+(\.[0-9]+){1,2}|release-[0-9]+(\.[0-9]+){1,2}|v2/develop|v2/master|v2/master-[0-9]+(\.[0-9]+){1,2}|v2/release-[0-9]+(\.[0-9]+){1,2})$ ]]; then
@@ -180,10 +170,6 @@ validate_commits_branche_name:
               return 1 # Not blocked
           fi
       }
-
-      # Get the branch name from CI environment
-      BRANCH_NAME=${CI_COMMIT_REF_NAME:?"CI_COMMIT_REF_NAME is not set"}
-      echo "Checking branch: $BRANCH_NAME"
 
       # Validate branch name
       check_branch_name "$BRANCH_NAME"
