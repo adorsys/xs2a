@@ -1,0 +1,96 @@
+#!/bin/bash
+
+# Function to output debug messages (if debug mode is enabled)
+print_debug() {
+  if [ "$DEBUG" == "true" ]; then
+    echo -e "DEBUG: $1" >&2
+  fi
+}
+
+DEBUG=false
+
+COMMIT_MSG_FILE=$1
+COMMIT_SOURCE=$2
+SHA1=$3
+
+# Exit if not a normal commit message (e.g., merge, template)
+if [ "$COMMIT_SOURCE" != "message" ]; then
+  exit 0
+fi
+
+# Get current branch name
+BRANCH_NAME=$(git branch --show-current)
+print_debug "Branch name: $BRANCH_NAME"
+
+# Extract issue number from branch name (e.g., 'issue-1234')
+if [[ $BRANCH_NAME =~ issue-([0-9]+) ]]; then
+  ISSUE_NUMBER="${BASH_REMATCH[1]}"
+  print_debug "Extracted issue number: $ISSUE_NUMBER"
+else
+  print_debug "No issue number found in branch name."
+  exit 0
+fi
+
+# Get user name from git config
+USER_NAME=$(git config user.name)
+print_debug "User name: $USER_NAME"
+
+# Check if username is valid (exactly 3 alphabetic characters)
+if [[ ! "$USER_NAME" =~ ^[a-zA-Z]{3}$ ]]; then
+  if [[ ${#USER_NAME} -gt 3 ]]; then
+    echo "Your Git username '$USER_NAME' is more than 3 characters."
+  elif [[ ${#USER_NAME} -lt 3 ]]; then
+    echo "Your Git username '$USER_NAME' is less than 3 characters."
+  fi
+  echo "Please set your GitLab username to exactly 3 alphabetic characters using:"
+  echo "git config user.name 'gitlab username'"
+  exit 1
+fi
+
+print_debug "Using GitLab username: $USER_NAME"
+
+# Read the commit message
+COMMIT_MSG=$(cat "$COMMIT_MSG_FILE")
+print_debug "Original commit message: $COMMIT_MSG"
+
+# Process only the first line
+FIRST_LINE=$(echo "$COMMIT_MSG" | head -n 1)
+REST_LINES=$(echo "$COMMIT_MSG" | tail -n +2)
+
+# Skip if first line is a comment
+if [[ $FIRST_LINE =~ ^# ]]; then
+  print_debug "First line is a comment, skipping modification."
+  exit 0
+fi
+
+# Parse the first line into type, scope (optional), and message
+if [[ $FIRST_LINE =~ ^([a-zA-Z]+)(\([a-zA-Z0-9_-]+\))?:\ (.+) ]]; then
+  TYPE="${BASH_REMATCH[1]}"
+  SCOPE="${BASH_REMATCH[2]}"
+  MSG_PART="${BASH_REMATCH[3]}"
+  print_debug "Parsed type: $TYPE, scope: $SCOPE, msg_part: $MSG_PART"
+
+  # Replace or prepend user#issue
+  if [[ $MSG_PART =~ ^([a-zA-Z0-9_-]{3}#[0-9]+)(\ )?(.*) ]]; then
+    REMAINING_MSG="${BASH_REMATCH[3]}"
+    NEW_MSG_PART="$USER_NAME#$ISSUE_NUMBER $REMAINING_MSG"
+  else
+    NEW_MSG_PART="$USER_NAME#$ISSUE_NUMBER $MSG_PART"
+  fi
+
+  # Rebuild the first line
+  if [ -z "$SCOPE" ]; then
+    NEW_FIRST_LINE="$TYPE: $NEW_MSG_PART"
+  else
+    NEW_FIRST_LINE="$TYPE$SCOPE: $NEW_MSG_PART"
+  fi
+else
+  # Message doesn't follow format; leave as-is (commit-msg hook will catch it)
+  NEW_FIRST_LINE="$FIRST_LINE"
+fi
+
+# Write the modified message back
+echo "$NEW_FIRST_LINE" > "$COMMIT_MSG_FILE"
+echo "$REST_LINES" >> "$COMMIT_MSG_FILE"
+
+print_debug "New commit message: $(cat "$COMMIT_MSG_FILE")"
