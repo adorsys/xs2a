@@ -11,6 +11,7 @@ image: "adorsys/ci-build:latest"
 # ------------------------------------------------------------------
 
 stages:
+  - "Validate"
   - "Lint"    # Lint files and configuration
   - "Compile" # build jar and provide as artifact
   - "Test"    # run tests and code quality checks
@@ -88,6 +89,106 @@ variables:
 # ------------------------------------------------------------------
 # jobs
 # ------------------------------------------------------------------
+
+#-------------------------------------------------------------------
+# Validation of commit messages and branch names
+#-------------------------------------------------------------------
+
+validate_commits_branche_name:
+  stage: "Validate"
+  image:
+    name: alpine:latest
+    entrypoint: [""]
+  except:
+    - tags
+  before_script:
+    - apk update
+    - apk add --no-cache git bash curl jq
+    - git --version
+  script:
+    - |
+      cat > validate.sh << 'EOF'
+      #!/bin/bash
+
+      # Function to output error messages
+      print_error() {
+          echo -e "\nERROR: $1" >&2
+          exit 1
+      }
+
+      # Function to output debug messages (if debug mode is enabled)
+      print_debug() {
+          if [ "$DEBUG" == "true" ]; then
+              echo -e "DEBUG: $1" >&2
+          fi
+      }
+
+      # Debug flag (can be set externally or internally)
+      DEBUG=false
+
+      # Get the current branch name
+      BRANCH_NAME=${CI_COMMIT_REF_NAME:?"CI_COMMIT_REF_NAME is not set"}
+      echo "Checking branch: $BRANCH_NAME"
+
+      # Check branch name format
+      check_branch_name() {
+          local branch_name="$1"
+          print_debug "Checking branch name: '$branch_name'"
+
+          # Branch name patterns
+          if [[ "$branch_name" =~ ^(master|v2master|develop|v2develop|support-([0-9]+)\.[0-9]+|v2support-([0-9]+)\.[0-9]+|release-([0-9]+(\.[0-9]+){1,2})|v2release-([0-9]+(\.[0-9]+){1,2})|hotfix-([0-9]+\.[0-9]+\.[0-9]+)|v2hotfix-([0-9]+\.[0-9]+\.[0-9]+)|release-([0-9]+\.[0-9]+)-[a-zA-Z0-9_-]+|release-([0-9]+\.[0-9]+\.[0-9]+)-[a-zA-Z0-9_-]+|v2/(feature|setup|bugfix|infra|ci|test|docs|deploy|security|perf|refactor|upgrade)/issue-([0-9]+)-([a-zA-Z0-9_-]+)|v2/PASD/[0-9]+/issue-([0-9]+)-([a-zA-Z0-9_-]+)|(feature|setup|bugfix|infra|ci|test|docs|deploy|security|perf|refactor|upgrade)/issue-([0-9]+)-([a-zA-Z0-9_-]+)|PASD/[0-9]+/issue-([0-9]+)-([a-zA-Z0-9_-]+))$ ]]; then
+              return 0
+          fi
+
+          print_error "Branch name '$branch_name' format is INCORRECT."
+      }
+
+      # Check commit message format
+      check_commit_message() {
+          local commit_msg="$1"
+          print_debug "Checking commit message: '$commit_msg'"
+
+          # Commit message regex
+          if ! [[ $commit_msg =~ ^(feat|fix|docs|doc|style|refactor|perf|test|chore|upgrade|ci|scan|release)(\([a-zA-Z0-9_-]*\))?:\ [a-zA-Z0-9_-]{3}#[0-9]+\ .+ || $commit_msg =~ ^(feat|fix|docs|doc|style|refactor|perf|test|chore|upgrade|ci|scan|release):\ [a-zA-Z0-9_-]{3}#[0-9]+\ .+ ]]; then
+              print_error "Commit message format is INCORRECT. Expected format: <type>(<scope>): <developer gitlab username (3 chars)>#<issue-number> <message> OR <type>: <developer gitlab username (3 chars)>#<issue-number> <message>"
+          fi
+      }
+
+      # Ensure no direct pushes to blocked branches
+      is_blocked_branch() {
+          local branch="$1"
+          if [[ "$branch" =~ ^(develop|master|master-[0-9]+(\.[0-9]+){1,2}|release-[0-9]+(\.[0-9]+){1,2}|v2/develop|v2/master|v2/master-[0-9]+(\.[0-9]+){1,2}|v2/release-[0-9]+(\.[0-9]+){1,2})$ ]]; then
+              return 0 # Blocked branch
+          else
+              return 1 # Not blocked
+          fi
+      }
+
+      # Validate branch name
+      check_branch_name "$BRANCH_NAME"
+
+      # Get the latest commit hash and validate each commit
+      COMMITS=$(git log --format="%H" -n 1)
+      if [ -z "$COMMITS" ]; then
+          print_error "No commits found to validate"
+      fi
+
+      # Loop through each commit to check its message
+      for commit in $COMMITS; do
+          COMMIT_MSG=$(git log --format=%s -n 1 $commit)
+          check_commit_message "$COMMIT_MSG"
+      done
+
+      # Ensure no direct pushes to blocked branches
+      if is_blocked_branch "$BRANCH_NAME"; then
+          print_error "Direct push to the '$BRANCH_NAME' branch is not allowed."
+      fi
+
+      echo "Branch and commit validations passed. Proceeding..."
+      EOF
+
+    - chmod +x validate.sh
+    - ./validate.sh
 
 #-------------------------------------------------------------------
 # lint

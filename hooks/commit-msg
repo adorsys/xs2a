@@ -1,0 +1,54 @@
+#!/bin/bash
+
+# Function to output error messages
+print_error() {
+  echo -e "\nERROR: $1" >&2
+  exit 1
+}
+
+# Function to output debug messages (if debug mode is enabled)
+print_debug() {
+  if [ "$DEBUG" == "true" ]; then
+    echo -e "DEBUG: $1" >&2
+  fi
+}
+
+# Debug flag (can be set externally or internally)
+DEBUG=false
+
+# Check if a commit message file is provided
+if [ -z "$1" ]; then
+  print_error "No commit message file provided."
+fi
+
+COMMIT_MSG_FILE=$1
+COMMIT_MSG=$(cat "$COMMIT_MSG_FILE" | xargs)  # Trim leading and trailing whitespace
+
+# Check if the commit message is empty
+if [ -z "$COMMIT_MSG" ]; then
+  print_error "Commit message is empty."
+fi
+
+# Debug print statement
+print_debug "Commit message: '$COMMIT_MSG'"
+
+# Updated regex to enforce exactly 3 characters for the username
+if ! [[ $COMMIT_MSG =~ ^(feat|fix|docs|doc|style|refactor|perf|test|chore|upgrade|ci|scan|release)(\([a-zA-Z0-9_-]*\))?:\ [a-zA-Z0-9_-]{3}#[0-9]+\ .+ || $COMMIT_MSG =~ ^(feat|fix|docs|doc|style|refactor|perf|test|chore|upgrade|ci|scan|release):\ [a-zA-Z0-9_-]{3}#[0-9]+\ .+ ]]; then
+  # If commit message format is incorrect, delete the last commit and inform the user
+  print_error "Commit message format is INCORRECT. Expected format: <type>(<scope>): <message> OR <type>: <message>"
+
+  # Delete the last commit
+  git reset --hard HEAD~1
+  echo -e "\nThe last commit has been deleted due to an invalid commit message."
+
+  # Inform the user and instruct them to make the commit again with the correct format
+  echo -e "Please make the commit again using the following correct format:\n"
+  echo -e "<type>(<scope>): <message>\n"
+  echo -e "or\n"
+  echo -e "<type>: <message>\n"
+
+  exit 1
+fi
+
+# Allow commit to proceed
+echo "Commit message format is valid."

@@ -1,0 +1,108 @@
+#!/bin/bash
+
+# Function to output error messages
+print_error() {
+  echo -e "\nERROR: $1" >&2
+  exit 1
+}
+
+# Function to output debug messages (if debug mode is enabled)
+print_debug() {
+  if [ "$DEBUG" == "true" ]; then
+    echo -e "DEBUG: $1" >&2
+  fi
+}
+
+# Debug flag (can be set externally or internally)
+DEBUG=false
+
+# Function to check if the branch is one of the blocked branches
+is_blocked_branch() {
+    local branch="$1"
+    if [[ "$branch" =~ ^(develop|master|master-[0-9]+(\.[0-9]+){1,2}|release-[0-9]+(\.[0-9]+){1,2}|v2/develop|v2/master|v2/master-[0-9]+(\.[0-9]+){1,2}|v2/release-[0-9]+(\.[0-9]+){1,2})$ ]]; then
+        return 0 # This is a blocked branch
+    else
+        return 1 # Not a blocked branch
+    fi
+}
+
+# Read input from the pre-push hook
+while read local_ref local_sha remote_ref remote_sha; do
+    # Extract the branch name from the local reference
+    local_branch=$(git rev-parse --abbrev-ref "$local_ref")
+
+    # Check if the branch is blocked
+    if is_blocked_branch "$local_branch"; then
+        echo -e "\nERROR: Direct push to the '$local_branch' branch is not allowed." >&2
+        echo "Please create a pull request or use an appropriate workflow to merge changes." >&2
+        exit 1
+    fi
+
+    # Only proceed if there are new commits to push
+    if [ "$local_sha" != "$remote_sha" ]; then
+        # Get a list of commits that are being pushed
+        COMMITS=$(git rev-list "$local_sha" ^"$remote_sha")
+        UNSIGNED_COMMITS=()
+        INVALID_COMMIT_MESSAGES=()
+
+        for commit in $COMMITS; do
+            # Check if commit has a signature line using git log --show-signature
+            if ! git log -1 --show-signature "$commit" | grep -q "Good \"git\" signature"; then
+                # Get the commit message
+                COMMIT_MSG=$(git log -1 --pretty=format:"%h %s" "$commit")
+                echo -e "\nERROR: Commit $commit is NOT SIGNED." >&2
+                echo "Details of the unsigned commit: $COMMIT_MSG" >&2
+                UNSIGNED_COMMITS+=("$commit")
+            fi
+
+            # Check if the commit message follows the required format
+            COMMIT_MSG=$(git log -1 --pretty=format:"%s" "$commit")  # Get the commit message only
+            print_debug "Checking commit message: '$COMMIT_MSG'"
+
+            # Updated regex to match the new formats with exactly 3 characters for the username
+            if ! [[ $COMMIT_MSG =~ ^(feat|fix|docs|doc|style|refactor|perf|test|chore|upgrade|ci|scan|release)(\([a-zA-Z0-9_-]*\))?:\ [a-zA-Z0-9_-]{3}#[0-9]+\ .+ || $COMMIT_MSG =~ ^(feat|fix|docs|doc|style|refactor|perf|test|chore|upgrade|ci|scan|release):\ [a-zA-Z0-9_-]{3}#[0-9]+\ .+ ]]; then
+                # If the commit message doesn't match the format, add it to the list of invalid messages
+                echo -e "\nERROR: Commit message for commit $commit does NOT follow the correct format." >&2
+                echo "Expected format: <type>(<scope>): <message> OR <type>: <message>" >&2
+                echo "Commit: $COMMIT_MSG" >&2
+                INVALID_COMMIT_MESSAGES+=("$commit")
+            fi
+        done
+
+        # If there are any unsigned commits, remove them and ask the user to redo
+        if [ ${#UNSIGNED_COMMITS[@]} -ne 0 ]; then
+            echo -e "\nThe following unsigned commits will be removed:" >&2
+            for unsigned_commit in "${UNSIGNED_COMMITS[@]}"; do
+                COMMIT_MSG=$(git log -1 --pretty=format:"%h %s" "$unsigned_commit")
+                echo " - Commit: $COMMIT_MSG" >&2
+            done
+
+            # Reset the commits (soft reset to keep changes in the working directory)
+            git reset --soft "$remote_sha"
+
+            echo -e "\nPlease sign your commits and try again." >&2
+            echo "You can sign commits by:" >&2
+            echo "1. Using -S flag: git commit -S -m 'your message'" >&2
+            echo "2. Or ensure commit.gpgsign is set to true in git config" >&2
+            exit 1
+        fi
+
+        # If there are any invalid commit messages, block the push and ask for correction
+        if [ ${#INVALID_COMMIT_MESSAGES[@]} -ne 0 ]; then
+            echo -e "\nThe following commits have invalid messages and will be rejected:" >&2
+            for invalid_commit in "${INVALID_COMMIT_MESSAGES[@]}"; do
+                COMMIT_MSG=$(git log -1 --pretty=format:"%h %s" "$invalid_commit")
+                echo " - Commit: $COMMIT_MSG" >&2
+            done
+
+            # Reset the commits (soft reset to keep changes in the working directory)
+            git reset --soft "$remote_sha"
+
+            echo -e "\nPlease fix the commit messages to follow the required format and try again." >&2
+            echo "Expected format: <type>(<scope>): <developer gitlab username (3 chars)>#<issue-number> <message> OR <type>: <developer gitlab username (3 chars)>#<issue-number> <message>" >&2
+            exit 1
+        fi
+    fi
+done
+
+echo -e "\nAll commits are signed and follow the correct message format.\nProceeding with push...\n"
