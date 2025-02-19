@@ -34,7 +34,20 @@ print_debug "Commit message: '$COMMIT_MSG'"
 
 # Updated regex to enforce exactly 3 characters for the username
 if ! [[ $COMMIT_MSG =~ ^(feat|fix|docs|doc|style|refactor|perf|test|chore|upgrade|ci|scan|release)(\([a-zA-Z0-9_-]*\))?:\ [a-zA-Z0-9_-]{3}#[0-9]+\ .+ || $COMMIT_MSG =~ ^(feat|fix|docs|doc|style|refactor|perf|test|chore|upgrade|ci|scan|release):\ [a-zA-Z0-9_-]{3}#[0-9]+\ .+ ]]; then
-  print_error "Commit message format is INCORRECT. Expected format: <type>(<scope>): <developer gitlab username (3 chars)>#<issue-number> <message> OR <type>: <developer gitlab username (3 chars)>#<issue-number> <message>"
+  # If commit message format is incorrect, delete the last commit and inform the user
+  print_error "Commit message format is INCORRECT. Expected format: <type>(<scope>): <message> OR <type>: <message>"
+
+  # Delete the last commit
+  git reset --hard HEAD~1
+  echo -e "\nThe last commit has been deleted due to an invalid commit message."
+
+  # Inform the user and instruct them to make the commit again with the correct format
+  echo -e "Please make the commit again using the following correct format:\n"
+  echo -e "<type>(<scope>): <message>\n"
+  echo -e "or\n"
+  echo -e "<type>: <message>\n"
+
+  exit 1
 fi
 
 # Allow commit to proceed

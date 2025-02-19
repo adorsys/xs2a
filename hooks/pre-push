@@ -63,7 +63,7 @@ while read local_ref local_sha remote_ref remote_sha; do
             if ! [[ $COMMIT_MSG =~ ^(feat|fix|docs|doc|style|refactor|perf|test|chore|upgrade|ci|scan|release)(\([a-zA-Z0-9_-]*\))?:\ [a-zA-Z0-9_-]{3}#[0-9]+\ .+ || $COMMIT_MSG =~ ^(feat|fix|docs|doc|style|refactor|perf|test|chore|upgrade|ci|scan|release):\ [a-zA-Z0-9_-]{3}#[0-9]+\ .+ ]]; then
                 # If the commit message doesn't match the format, add it to the list of invalid messages
                 echo -e "\nERROR: Commit message for commit $commit does NOT follow the correct format." >&2
-                echo "Expected format: <type>(<scope>): <developer gitlab username (3 chars)>#<issue-number> <message> OR <type>: <developer gitlab username (3 chars)>#<issue-number> <message>" >&2
+                echo "Expected format: <type>(<scope>): <message> OR <type>: <message>" >&2
                 echo "Commit: $COMMIT_MSG" >&2
                 INVALID_COMMIT_MESSAGES+=("$commit")
             fi

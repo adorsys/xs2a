@@ -36,15 +36,16 @@ USER_NAME=$(git config user.name)
 print_debug "User name: $USER_NAME"
 
 # Check if username is valid (exactly 3 alphabetic characters)
-while [[ ! "$USER_NAME" =~ ^[a-zA-Z]{3}$ ]]; do
+if [[ ! "$USER_NAME" =~ ^[a-zA-Z]{3}$ ]]; then
   if [[ ${#USER_NAME} -gt 3 ]]; then
     echo "Your Git username '$USER_NAME' is more than 3 characters."
   elif [[ ${#USER_NAME} -lt 3 ]]; then
     echo "Your Git username '$USER_NAME' is less than 3 characters."
   fi
-  echo "Please enter your GitLab username (exactly 3 alphabetic characters, no numbers or special characters):"
-  read -r USER_NAME
-done
+  echo "Please set your GitLab username to exactly 3 alphabetic characters using:"
+  echo "git config user.name 'gitlab username'"
+  exit 1
+fi
 
 print_debug "Using GitLab username: $USER_NAME"
 
