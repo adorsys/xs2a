@@ -108,6 +108,7 @@ validate_commits_branche_name:
     entrypoint: [""]
   except:
     - tags
+    - merge_requests
   before_script:
     - apk update
     - apk add --no-cache git bash curl jq
