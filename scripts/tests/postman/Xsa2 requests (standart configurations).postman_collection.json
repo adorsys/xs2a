@@ -90501,7 +90501,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{ \n\t\"endToEndIdentification\": \"WBG-123456789\",\n\t\"debtorAccount\": { \n\t\t\"currency\": \"EUR\",\n\t\t\"iban\": \"{{iban_none}}\"\n\t}, \n\t\"instructedAmount\": { \n\t\t\"currency\": \"EUR\",\n\t\t\"amount\": \"0.01\"\n\t},\n\t\"creditorAccount\": { \n\t\t\"currency\": \"EUR\",\n\t\t\"iban\": \"{{iban_none}}\"\n\t},\n\t\"creditorAgent\" : \"AAAADEBBXXX\",\n\t\"creditorName\": \"WBG\", \n\t\"creditorAddress\": { \n\t\t\"buildingNumber\": \"56\", \n\t\t\"townName\": \"Nürnberg\", \n\t\t\"country\": \"DE\", \n\t\t\"postCode\": \"90543\", \n\t\t\"streetName\": \"WBG Straße\" \n\t},\n\t\"requestedExecutionDate\": \"2025-02-02\", \n\t\"remittanceInformationUnstructured\": \"Ref. Number WBG-1222\"\n}"
+									"raw": "{ \n\t\"endToEndIdentification\": \"WBG-123456789\",\n\t\"debtorAccount\": { \n\t\t\"currency\": \"EUR\",\n\t\t\"iban\": \"{{iban_none}}\"\n\t}, \n\t\"instructedAmount\": { \n\t\t\"currency\": \"EUR\",\n\t\t\"amount\": \"0.01\"\n\t},\n\t\"creditorAccount\": { \n\t\t\"currency\": \"EUR\",\n\t\t\"iban\": \"{{iban_none}}\"\n\t},\n\t\"creditorAgent\" : \"AAAADEBBXXX\",\n\t\"creditorName\": \"WBG\", \n\t\"creditorAddress\": { \n\t\t\"buildingNumber\": \"56\", \n\t\t\"townName\": \"Nürnberg\", \n\t\t\"country\": \"DE\", \n\t\t\"postCode\": \"90543\", \n\t\t\"streetName\": \"WBG Straße\" \n\t},\n\t\"requestedExecutionDate\": \"2030-02-02\", \n\t\"remittanceInformationUnstructured\": \"Ref. Number WBG-1222\"\n}"
 								},
 								"url": {
 									"raw": "{{protocol}}://{{url_xs2a}}/v1/{{payment_service}}/{{payment_product}}",
@@ -93188,7 +93188,7 @@
 														},
 														{
 															"key": "json_standingorderType",
-															"value": "{\n  \"startDate\": \"2025-03-01\",\n  \"endDate\": \"2027-03-01\",\n  \"frequency\": \"Monthly\",\n  \"executionRule\": \"preceding\",\n  \"dayOfExecution\": \"1\"\n}",
+															"value": "{\n  \"startDate\": \"2027-03-01\",\n  \"endDate\": \"2029-03-01\",\n  \"frequency\": \"Monthly\",\n  \"executionRule\": \"preceding\",\n  \"dayOfExecution\": \"1\"\n}",
 															"type": "text"
 														}
 													]
@@ -93692,7 +93692,7 @@
 														},
 														{
 															"key": "json_standingorderType",
-															"value": "{\n  \"startDate\": \"2025-03-01\",\n  \"endDate\": \"2027-03-01\",\n  \"frequency\": \"Monthly\",\n  \"executionRule\": \"preceding\",\n  \"dayOfExecution\": \"1\"\n}",
+															"value": "{\n  \"startDate\": \"2027-03-01\",\n  \"endDate\": \"2029-03-01\",\n  \"frequency\": \"Monthly\",\n  \"executionRule\": \"preceding\",\n  \"dayOfExecution\": \"1\"\n}",
 															"type": "text"
 														}
 													]
@@ -94196,7 +94196,7 @@
 														},
 														{
 															"key": "json_standingorderType",
-															"value": "{\n  \"startDate\": \"2025-03-01\",\n  \"endDate\": \"2027-03-01\",\n  \"frequency\": \"Monthly\",\n  \"executionRule\": \"preceding\",\n  \"dayOfExecution\": \"1\"\n}",
+															"value": "{\n  \"startDate\": \"2027-03-01\",\n  \"endDate\": \"2029-03-01\",\n  \"frequency\": \"Monthly\",\n  \"executionRule\": \"preceding\",\n  \"dayOfExecution\": \"1\"\n}",
 															"type": "text"
 														}
 													]
@@ -94700,7 +94700,7 @@
 														},
 														{
 															"key": "json_standingorderType",
-															"value": "{\n  \"startDate\": \"2025-03-01\",\n  \"endDate\": \"2027-03-01\",\n  \"frequency\": \"Monthly\",\n  \"executionRule\": \"preceding\",\n  \"dayOfExecution\": \"1\"\n}",
+															"value": "{\n  \"startDate\": \"2027-03-01\",\n  \"endDate\": \"2029-03-01\",\n  \"frequency\": \"Monthly\",\n  \"executionRule\": \"preceding\",\n  \"dayOfExecution\": \"1\"\n}",
 															"type": "text"
 														}
 													]
@@ -97313,7 +97313,7 @@
 										},
 										{
 											"key": "json_standingorderType",
-											"value": "{\n  \"startDate\": \"2025-03-01\",\n  \"endDate\": \"2027-03-01\",\n  \"frequency\": \"Monthly\",\n  \"executionRule\": \"preceding\",\n  \"dayOfExecution\": \"1\"\n}",
+											"value": "{\n  \"startDate\": \"2027-03-01\",\n  \"endDate\": \"2029-03-01\",\n  \"frequency\": \"Monthly\",\n  \"executionRule\": \"preceding\",\n  \"dayOfExecution\": \"1\"\n}",
 											"type": "text"
 										}
 									]
