@@ -41,6 +41,7 @@ import java.util.Map;
 @Slf4j
 public class BankProfileReadingService implements ResourceLoaderAware {
     private static final String DEFAULT_BANK_PROFILE = "classpath:bank_profile.yml";
+    private static final String XS2A_BANK_PROFILE = "classpath:bank_profile_xs2a.yml";
     private static final String CLASSPATH_PREFIX = "classpath:";
     private static final String FILE_PREFIX = "file:";
     private static final String FILE_NOT_FOUND_ERROR_MESSAGE = "PSD2 api file is not found";
@@ -53,6 +54,9 @@ public class BankProfileReadingService implements ResourceLoaderAware {
 
     @Value("#{${xs2a.bank_profile.multitenancy.customBankProfiles:{:}}}")
     private Map<String, String> customBankProfiles = new HashMap<>();
+
+    @Value("${spring.profiles.active:original}")
+    private String activeProfile;
 
     private ResourceLoader resourceLoader;
     private Yaml yaml;
@@ -103,21 +107,26 @@ public class BankProfileReadingService implements ResourceLoaderAware {
             if (!customBankProfiles.containsKey(instanceId.toLowerCase())) {
                 throw new AspspProfileConfigurationNotFoundException(instanceId);
             }
-            return customBankProfiles.get(instanceId);
+            return customBankProfiles.get(instanceId.toLowerCase());
         } else {
             return resolveBankProfile();
         }
     }
 
     private String resolveBankProfile() {
-        if (StringUtils.isBlank(customBankProfile)) {
-            return DEFAULT_BANK_PROFILE;
-        } else {
+        if (StringUtils.isNotBlank(customBankProfile)) {
             if (customBankProfile.startsWith(CLASSPATH_PREFIX)
-                    || customBankProfile.startsWith(FILE_PREFIX)) {
+                || customBankProfile.startsWith(FILE_PREFIX)) {
                 return customBankProfile;
             }
             return FILE_PREFIX + customBankProfile;
+        } else {
+            // Checking if "xs2a" is among active profiles
+            boolean isXs2aActive = activeProfile != null && activeProfile.toLowerCase().contains("xs2a");
+            String profileFile = isXs2aActive ? XS2A_BANK_PROFILE : DEFAULT_BANK_PROFILE;
+            log.debug("Active profiles: {}, 'xs2a' detected: {}, Resolved bank profile file: {}",
+                activeProfile, isXs2aActive, profileFile);
+            return profileFile;
         }
     }
 

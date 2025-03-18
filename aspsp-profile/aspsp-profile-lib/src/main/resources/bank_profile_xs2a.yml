@@ -1,0 +1,89 @@
+---
+setting:
+  ais:
+    consentTypes:
+      bankOfferedConsentSupported: TRUE
+      globalConsentSupported: TRUE
+      availableAccountsConsentSupported: TRUE
+      accountAccessFrequencyPerDay: 4
+      notConfirmedConsentExpirationTimeMs: 86400000
+      maxConsentValidityDays: 90
+      accountOwnerInformationSupported: false
+      trustedBeneficiariesSupported: false
+    redirectLinkToOnlineBanking:
+      aisRedirectUrlToAspsp: http://localhost:4400/account-information/login?encryptedConsentId={encrypted-consent-id}&redirectId={redirect-id}
+    transactionParameters:
+      availableBookingStatuses:
+        - BOOKED
+      transactionsWithoutBalancesSupported: TRUE
+      supportedTransactionApplicationTypes:
+        - application/json
+    deltaReportSettings:
+      entryReferenceFromSupported: FALSE
+      deltaListSupported: FALSE
+    scaRequirementsForOneTimeConsents:
+      scaByOneTimeAvailableAccountsConsentRequired: TRUE
+      scaByOneTimeGlobalConsentRequired: TRUE
+  pis:
+    supportedPaymentTypeAndProductMatrix:
+      SINGLE:
+        - sepa-credit-transfers
+        - instant-sepa-credit-transfers
+        - target-2-payments
+        - cross-border-credit-transfers
+      PERIODIC:
+        - sepa-credit-transfers
+        - instant-sepa-credit-transfers
+        - target-2-payments
+        - cross-border-credit-transfers
+      BULK:
+        - sepa-credit-transfers
+        - instant-sepa-credit-transfers
+        - target-2-payments
+        - cross-border-credit-transfers
+        - pain.001-sepa-credit-transfers
+    maxTransactionValidityDays: 0
+    notConfirmedPaymentExpirationTimeMs: 86400000
+    paymentCancellationAuthorisationMandated: FALSE
+    redirectLinkToOnlineBanking:
+      pisRedirectUrlToAspsp: http://localhost:4400/payment-initiation/login?paymentId={encrypted-payment-id}&redirectId={redirect-id}
+      pisPaymentCancellationRedirectUrlToAspsp: http://localhost:4400/payment-cancellation/login?paymentId={encrypted-payment-id}&redirectId={redirect-id}
+      paymentCancellationRedirectUrlExpirationTimeMs: 600000
+    countryValidationSupported: DE
+    supportedTransactionStatusFormats:
+      - application/json
+  piis:
+    piisConsentSupported: TPP_CONSENT_SUPPORTED
+    redirectLinkToOnlineBanking:
+      piisRedirectUrlToAspsp: http://localhost:4400/account-information/login?encryptedConsentId={encrypted-consent-id}&redirectId={redirect-id}
+  sb:
+    signingBasketSupported: FALSE
+    signingBasketMaxEntries: 10
+    notConfirmedSigningBasketExpirationTimeMs: 86400000
+  common:
+    scaApproachesSupported:
+      - EMBEDDED
+      - REDIRECT
+      - DECOUPLED
+    scaRedirectFlow: REDIRECT
+    oauthConfigurationUrl: http://localhost:8090/oauth/authorization-server
+    startAuthorisationMode: auto
+    tppSignatureRequired: FALSE
+    psuInInitialRequestMandated: FALSE
+    redirectUrlExpirationTimeMs: 600000
+    authorisationExpirationTimeMs: 86400000
+    forceXs2aBaseLinksUrl: FALSE
+    xs2aBaseLinksUrl: http://myhost.com/
+    supportedAccountReferenceFields:
+      - IBAN
+    multicurrencyAccountLevelSupported: SUBACCOUNT
+    aisPisSessionsSupported: FALSE
+    checkTppRolesFromCertificateSupported: TRUE
+    aspspNotificationsSupported:
+      - NONE
+    authorisationConfirmationRequestMandated: FALSE
+    authorisationConfirmationCheckByXs2a: FALSE
+    checkUriComplianceToDomainSupported: FALSE
+    tppUriComplianceResponse: WARNING
+    psuInInitialRequestIgnored: FALSE
+    ibanValidationDisabled: FALSE

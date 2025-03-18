@@ -28,6 +28,7 @@ Configuration can be supplied using the yaml-file in the file system.
 If no file is supplied, default configuration will be used.
 To supply file please provide a property to spring framework (i.e. via application.properties of your app or environment variable):
 `xs2a.bank_profile.path=/path/to/yaml-file`.
+Alternatively, the ASPSP Profile can be configured using Spring profiles to switch between predefined existing configuration files.**`xs2a`** Uses `bank_profile_xs2a.yml` with extended configurations.
 
 === Supported configuration options
 
