@@ -36,6 +36,16 @@ variables:
   JAVA_TOOL_OPTIONS: "-XX:+UnlockExperimentalVMOptions -XX:MaxRAM=3G -XX:MaxRAMFraction=3"
   MAVEN_OPTS: "-Dmaven.repo.local=.m2/repository"
 
+  ###########################
+  # Github variables         #
+  ###########################
+
+  GITHUB_REPOSITORY: "adorsys/xs2a"
+  GITHUB_USERNAME: $GITHUB_USERNAME
+  GITHUB_EMAIL: $GITHUB_EMAIL
+  GITHUB_SSH_SERVER_FINGERPRINT: $GITHUB_SSH_SERVER_FINGERPRINT
+  GITHUB_DEPLOY_KEY_BASE64: $GITHUB_DEPLOY_KEY_BASE64  # Base64-encoded key
+
 # ------------------------------------------------------------------
 # reusable yaml anchors
 # ------------------------------------------------------------------
@@ -84,13 +94,36 @@ variables:
 
 .sync_changes_github: &sync_changes_github
   image: alpine/git
+  before_script:
+    - apk add --no-cache openssh-client
+    - mkdir -p ~/.ssh
+    - chmod 700 ~/.ssh
+    # Decode Base64 to SSH key
+    - echo "$GITHUB_DEPLOY_KEY_BASE64" | base64 -d > ~/.ssh/id_ed25519
+    - chmod 600 ~/.ssh/id_ed25519
+    # Configure SSH
+    - eval $(ssh-agent -s)
+    - ssh-add ~/.ssh/id_ed25519
+    - echo "$GITHUB_SSH_SERVER_FINGERPRINT" >> ~/.ssh/known_hosts
   script:
     - git config --global user.name "$GITHUB_USERNAME"
-    - git remote add github https://$GITHUB_TOKEN@github.com/$GITHUB_REPOSITORY.git
-    - for branch in $(git branch -r | grep -E "origin/.*(release-${GITHUB_PROJECT_CLONE_VERSION}.*|support-${GITHUB_PROJECT_CLONE_VERSION}.x).*"); do
-      branch=${branch#origin/};
-      git checkout $branch;
-      git push github $branch;
+    - git config --global user.email "$GITHUB_EMAIL"
+    - git remote add github git@github.com:$GITHUB_REPOSITORY.git || true
+    - |
+      # Get existing GitHub branches
+      git fetch github --prune
+      GITHUB_BRANCHES=$(git ls-remote --heads github | awk -F'/' '{print $3}')
+      # Process all support/v2support branches
+      for branch in $(git branch -r | grep -E "origin/(v2)?support-.*\.x"); do
+        branch=${branch#origin/}
+        # Check if branch exists on GitHub
+        if ! echo "$GITHUB_BRANCHES" | grep -qxF "$branch"; then
+          echo "Pushing new branch: $branch to GitHub"
+          git checkout -b "$branch" "origin/$branch"
+          git push -u github "$branch"
+        else
+          echo "Branch $branch already exists on GitHub - skipping"
+        fi
       done
 
 # ------------------------------------------------------------------
@@ -476,16 +509,17 @@ Release snapshot artifacts (tags):
     JAVA_TOOL_OPTIONS: "-Djavax.net.ssl.trustStorePassword=changeit -XX:MaxRAM=3G"
   <<: *release_java_private
 
-Clone to github:
-  stage: "Clone to github"
+clone_to_github:
+  #  <<: *sync_changes_github
+  #  stage: "Clone to github"
+  #  rules:
+  #    - if: '$CI_COMMIT_REF_NAME == "ci/issue-1984-sync-github"'
+  #      when: always
   <<: *sync_changes_github
-  image: alpine/git:latest
-  needs: []
-  only:
-    - support-16.x
-    - /^release-16\..*/
-  except:
-    - schedules
-  variables:
-    GITHUB_REPOSITORY: adorsys/xs2a
-    GITHUB_PROJECT_CLONE_VERSION: "16"
+  stage: "Clone to github"
+  rules:
+    - if: |
+        $CI_PIPELINE_SOURCE == "schedule" &&
+        ($MONTH == "06" || $MONTH == "12") &&
+        ($CI_COMMIT_REF_NAME =~ /^(v2)?support-.*\.x$/ || $CI_COMMIT_REF_NAME == "develop")
+      when: always
