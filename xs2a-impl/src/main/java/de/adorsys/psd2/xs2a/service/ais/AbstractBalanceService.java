@@ -18,29 +18,32 @@
 
 package de.adorsys.psd2.xs2a.service.ais;
 
+import de.adorsys.psd2.core.data.AccountAccess;
 import de.adorsys.psd2.core.data.ais.AisConsent;
 import de.adorsys.psd2.event.core.model.EventType;
 import de.adorsys.psd2.logger.context.LoggingContextService;
 import de.adorsys.psd2.xs2a.core.domain.TppMessageInformation;
+import de.adorsys.psd2.xs2a.core.error.MessageError;
 import de.adorsys.psd2.xs2a.core.service.validator.ValidationResult;
 import de.adorsys.psd2.xs2a.domain.ResponseObject;
 import de.adorsys.psd2.xs2a.domain.account.Xs2aBalancesReport;
 import de.adorsys.psd2.xs2a.service.event.Xs2aEventService;
 import de.adorsys.psd2.xs2a.spi.domain.account.SpiAccountBalance;
+import de.adorsys.psd2.xs2a.spi.domain.account.SpiAccountReference;
 import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponse;
+import java.util.List;
+import java.util.Optional;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
-import java.util.List;
-import java.util.Optional;
-
 import static de.adorsys.psd2.xs2a.core.error.ErrorType.AIS_400;
 import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.CONSENT_UNKNOWN_400;
+import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.FORMAT_ERROR_UNKNOWN_ACCOUNT;
 
 @Slf4j
 @AllArgsConstructor
 public abstract class AbstractBalanceService {
-    private final AccountServicesHolder accountServicesHolder;
+    protected final AccountServicesHolder accountServicesHolder;
     private final Xs2aEventService xs2aEventService;
     private final LoggingContextService loggingContextService;
 
@@ -77,7 +80,17 @@ public abstract class AbstractBalanceService {
                        .build();
         }
 
-        SpiResponse<List<SpiAccountBalance>> spiResponse = getSpiResponse(aisConsent, consentId, accountId);
+        final var spiAccountReference = getRequestedAccountReference(aisConsent, accountId);
+        if (spiAccountReference == null) {
+            log.info("Account-ID [{}], Consent-ID [{}], RequestUri [{}]. Get balance report with incorrect account id",
+                accountId, consentId, requestUri);
+
+            return ResponseObject.<Xs2aBalancesReport>builder()
+                .fail(new MessageError(AIS_400, TppMessageInformation.of(FORMAT_ERROR_UNKNOWN_ACCOUNT)))
+                .build();
+        }
+
+        SpiResponse<List<SpiAccountBalance>> spiResponse = getSpiResponse(aisConsent, consentId, spiAccountReference);
 
         if (spiResponse.hasError()) {
             return checkSpiResponse(consentId, accountId, spiResponse);
@@ -88,11 +101,16 @@ public abstract class AbstractBalanceService {
         return getXs2aBalancesReportResponseObject(aisConsent, accountId, consentId, requestUri, spiResponse.getPayload());
     }
 
+    protected SpiAccountReference getRequestedAccountReference(AisConsent aisConsent, String accountId) {
+        final AccountAccess access = aisConsent.getAspspAccountAccesses();
+        return accountServicesHolder.findAccountReference(access.getBalances(), accountId);
+    }
+
     protected abstract EventType getEventType();
 
     protected abstract ValidationResult getValidationResultForCommonAccountBalanceRequest(String accountId, String requestUri, AisConsent accountConsent);
 
-    protected abstract SpiResponse<List<SpiAccountBalance>> getSpiResponse(AisConsent aisConsent, String consentId, String accountId);
+    protected abstract SpiResponse<List<SpiAccountBalance>> getSpiResponse(AisConsent aisConsent, String consentId, SpiAccountReference accountReference);
 
     protected abstract ResponseObject<Xs2aBalancesReport> checkSpiResponse(String consentId, String accountId, SpiResponse<List<SpiAccountBalance>> spiResponse);
 
