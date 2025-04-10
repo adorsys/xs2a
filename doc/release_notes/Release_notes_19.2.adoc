@@ -25,3 +25,4 @@
 ## Service desk issue fixed.
 
 *  xs2a-core has a dependency to commons-collections4:4.4 which has a vulnerability from dependency (PASD-275)
+*  Use existing consent when added new user account - Error 500 (PASD-286)
