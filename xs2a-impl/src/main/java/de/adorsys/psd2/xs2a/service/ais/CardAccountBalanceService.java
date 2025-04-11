@@ -53,7 +53,6 @@ import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.CONSENT_INVALID;
 public class CardAccountBalanceService extends AbstractBalanceService {
     private final CardAccountSpi cardAccountSpi;
     private final AccountMappersHolder accountMappersHolder;
-    private final AccountServicesHolder accountServicesHolder;
     private final GetCardBalancesReportValidator getCardBalancesReportValidator;
     private final SpiAspspConsentDataProviderFactory aspspConsentDataProviderFactory;
 
@@ -67,7 +66,6 @@ public class CardAccountBalanceService extends AbstractBalanceService {
                                      SpiAspspConsentDataProviderFactory aspspConsentDataProviderFactory) {
         super(accountServicesHolder, xs2aEventService, loggingContextService);
         this.cardAccountSpi = cardAccountSpi;
-        this.accountServicesHolder = accountServicesHolder;
         this.accountMappersHolder = accountMappersHolder;
         this.getCardBalancesReportValidator = getCardBalancesReportValidator;
         this.aspspConsentDataProviderFactory = aspspConsentDataProviderFactory;
@@ -85,14 +83,14 @@ public class CardAccountBalanceService extends AbstractBalanceService {
     }
 
     @Override
-    protected SpiResponse<List<SpiAccountBalance>> getSpiResponse(AisConsent aisConsent, String consentId, String accountId) {
-        AccountAccess access = aisConsent.getAspspAccountAccesses();
-        SpiAccountReference requestedAccountReference = accountServicesHolder.findAccountReference(access.getBalances(), accountId);
-
-        return cardAccountSpi.requestCardBalancesForAccount(accountServicesHolder.getSpiContextData(),
-                                                            requestedAccountReference,
-                                                            accountMappersHolder.mapToSpiAccountConsent(aisConsent),
-                                                            aspspConsentDataProviderFactory.getSpiAspspDataProviderFor(consentId));
+    protected SpiResponse<List<SpiAccountBalance>> getSpiResponse(AisConsent aisConsent,
+                                                                  String consentId,
+                                                                  SpiAccountReference accountReference) {
+        return cardAccountSpi.requestCardBalancesForAccount(
+                accountServicesHolder.getSpiContextData(),
+                accountReference,
+                accountMappersHolder.mapToSpiAccountConsent(aisConsent),
+                aspspConsentDataProviderFactory.getSpiAspspDataProviderFor(consentId));
     }
 
     @Override
