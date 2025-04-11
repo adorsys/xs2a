@@ -66,6 +66,7 @@ import static de.adorsys.psd2.xs2a.core.domain.TppMessageInformation.of;
 import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.CONSENT_INVALID;
 import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.CONSENT_UNKNOWN_400;
 import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.FORMAT_ERROR;
+import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.FORMAT_ERROR_UNKNOWN_ACCOUNT;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyBoolean;
@@ -194,6 +195,23 @@ class BalanceServiceTest {
 
         // Then
         assertThatErrorIs(actualResponse, CONSENT_INVALID);
+    }
+
+    @Test
+    void getBalancesReport_Failure_GlobalConsentNotContainsAccountReference() {
+        // Given
+        when(accountServicesHolder.getAccountConsentById(CONSENT_ID))
+            .thenReturn(Optional.of(aisConsent));
+        when(getBalancesReportValidator.validate(getAccountBalanceRequestObject))
+            .thenReturn(ValidationResult.valid());
+        when(accountServicesHolder.findAccountReference(any(), any()))
+            .thenReturn(null);
+
+        // When
+        ResponseObject<Xs2aBalancesReport> actualResponse = balanceService.getBalancesReport(CONSENT_ID, ACCOUNT_ID, REQUEST_URI);
+
+        // Then
+        assertThatErrorIs(actualResponse, FORMAT_ERROR_UNKNOWN_ACCOUNT);
     }
 
     @Test
