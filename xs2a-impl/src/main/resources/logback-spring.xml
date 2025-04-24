@@ -39,13 +39,14 @@
             <pattern>${LOGS_PATTERN}</pattern>
         </layout>
 
-        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
             <fileNamePattern>${LOGS_HOME}/%d{yyyy-MM-dd}.%i.log</fileNamePattern>
-            <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
-                <maxFileSize>10MB</maxFileSize>
-            </timeBasedFileNamingAndTriggeringPolicy>
+            <maxFileSize>10MB</maxFileSize>
+            <maxHistory>30</maxHistory>
+            <totalSizeCap>1GB</totalSizeCap>
         </rollingPolicy>
     </appender>
+
 
     <!-- Uncomment the next line block to make access-logger write logs to file, mentioned in <fileNamePattern> tag -->
     <!--<appender name="FILE-ACCESS" class="ch.qos.logback.core.rolling.RollingFileAppender">-->
