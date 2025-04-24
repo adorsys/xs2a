@@ -228,8 +228,8 @@
         <spring-webmvc.version>${spring.version}</spring-webmvc.version>
         <spring-core.version>${spring.version}</spring-core.version>
         <spring-data-jpa.version>3.3.5</spring-data-jpa.version>
-        <spring-boot.version>3.3.5</spring-boot.version>
-        <spring-boot-starter-web.version>3.3.5</spring-boot-starter-web.version>
+        <spring-boot.version>3.3.10</spring-boot.version>
+        <spring-boot-starter-web.version>3.3.10</spring-boot-starter-web.version>
 
         <junit-jupiter.version>5.11.0</junit-jupiter.version>
         <mockito.version>5.12.0</mockito.version>
