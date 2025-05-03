@@ -1,0 +1,7 @@
+= Release notes v.19.3
+
+== Table of Contents
+
+== Updated dependencies
+
+== Service desk issue fixed.
