@@ -114,7 +114,7 @@ class CmsAspspAisExportControllerTest {
                                                                               null))
             .thenReturn(new PageData<>(consents, 0, 20, 1));
 
-        mockMvc.perform(get("/aspsp-api/v1/ais/consents/psu/")
+        mockMvc.perform(get("/aspsp-api/v1/ais/consents/psu")
                             .contentType(MediaType.APPLICATION_JSON_VALUE)
                             .headers(httpHeaders))
             .andExpect(status().is(HttpStatus.OK.value()))
