@@ -26,7 +26,6 @@ import de.adorsys.psd2.xs2a.core.pagination.data.PageRequestParameters;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.xs2a.reader.JsonReader;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -107,7 +106,6 @@ class CmsAspspAisExportControllerTest {
                                                                        null);
     }
 
-    @Disabled
     @Test
     void getConsentsByPsu_Success() throws Exception {
         when(cmsAspspAisExportService.exportConsentsByPsuAndAdditionalTppInfo(psuIdData, START_DATE, END_DATE, INSTANCE_ID, PAGE_INDEX, ITEMS_PER_PAGE,
