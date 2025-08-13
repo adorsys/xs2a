@@ -195,12 +195,12 @@ variables:
 #-------------------------------------------------------------------
 
 Lint (Docker compose):
-  image: maven:3.8.8-eclipse-temurin-17
+  image: maven:3.9.3-eclipse-temurin-17
   stage: "Lint"
   except:
     - schedules
     - support-18.x
-    - master-16.x
+    - master-18.x
   script:
     - apt update && apt install yamllint docker-compose make -yq
     - echo "Run Docker compose lint"
@@ -212,7 +212,7 @@ Lint (Ci file):
   except:
     - schedules
     - support-18.x
-    - master-16.x
+    - master-18.x
   script:
     - apt-get update && apt-get install yamllint python3-pkg-resources -yq
     - echo "Run Gitlab ci file lint"
@@ -224,7 +224,7 @@ Lint (YAML, JSON, XML):
   except:
     - schedules
     - support-18.x
-    - master-16.x
+    - master-18.x
   script:
     - apt-get update && apt-get install jsonlint yamllint libxml2-utils make curl -yq && ln -s /usr/bin/jsonlint-php /usr/bin/jsonlint
     - echo "Run Xs2A core lint"
@@ -235,12 +235,12 @@ Lint (YAML, JSON, XML):
   #     - find ./ -type f \( -iname "*.xml" ! -iname pom.xml \) -exec xmllint --noout {} \;
 
 Lint (PMD CPD):
-  image: maven:3.8.8-eclipse-temurin-17
+  image:  maven:3.9.3-eclipse-temurin-17
   stage: "Lint"
   except:
     - schedules
     - support-18.x
-    - master-16.x
+    - master-18.x
   script:
     - apt update && apt install make -yq
     - echo "Test java code for PMD and CPD"
@@ -265,7 +265,7 @@ Lint (dockerfiles):
   except:
     - schedules
     - support-18.x
-    - master-16.x
+    - master-18.x
   variables:
     DOCKER_HOST: tcp://docker:2375
     DOCKER_TLS_CERTDIR: ""
@@ -307,7 +307,7 @@ Build XS2A:
 
 Test (IT):
   stage: "Test"
-  image: maven:3.6.3-openjdk-17
+  image:  maven:3.9.3-eclipse-temurin-17
   services:
     - docker:dind
   tags:
@@ -372,7 +372,7 @@ Build and push images to private repo (support-18.x):
     DOCKER_HOST: tcp://docker:2375
     DOCKER_TLS_CERTDIR: ""
     DOCKER_DRIVER: overlay2
-    DOCKER_TAG: support16x
+    DOCKER_TAG: support18x
     DOCKERHUB_REGISTRY: gitlab-registry.adorsys.de
     DOCKERHUB_NAMESPACE: "adorsys/xs2a/aspsp-xs2a"
   <<: *push_dockerhub_images_private
