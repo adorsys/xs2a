@@ -1,0 +1,11 @@
+= Release notes v.19.4
+
+== Table of Contents
+* Updated dependencies
+
+== Updated dependencies
+
+
+
+== Service desk issue fixed.
+
