@@ -236,7 +236,7 @@ variables:
 #-------------------------------------------------------------------
 
 Lint (Docker compose):
-  image: maven:3.6.3-openjdk-17-slim
+  image:  maven:3.9.3-eclipse-temurin-17
   stage: "Lint"
   except:
     - schedules
@@ -276,7 +276,7 @@ Lint (YAML, JSON, XML):
   #     - find ./ -type f \( -iname "*.xml" ! -iname pom.xml \) -exec xmllint --noout {} \;
 
 Lint (PMD CPD):
-  image: maven:3.6.3-openjdk-17-slim
+  image:  maven:3.9.3-eclipse-temurin-17
   stage: "Lint"
   except:
     - schedules
@@ -348,7 +348,7 @@ Build XS2A:
 
 Test (IT):
   stage: "Test"
-  image: maven:3.6.3-openjdk-17
+  image:  maven:3.9.3-eclipse-temurin-17
   services:
     - docker:dind
   tags:

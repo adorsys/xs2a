@@ -169,10 +169,11 @@
         <lombok.version>1.18.30</lombok.version>
         <org.mapstruct.version>1.5.5.Final</org.mapstruct.version>
         <lombok-mapstruct-binding.version>0.2.0</lombok-mapstruct-binding.version>
-        <springdoc.version>2.3.0</springdoc.version>
-        <swagger.annotations.version>2.2.25</swagger.annotations.version>
-        <gson.version>2.8.9</gson.version>
-        <apache.commons-lang3.version>3.7</apache.commons-lang3.version>
+        <springdoc.version>2.8.9</springdoc.version>
+        <swagger.annotations.version>2.2.34</swagger.annotations.version>
+        <gson.version>2.10.1</gson.version>
+        <apache.commons-lang3.version>3.18.0</apache.commons-lang3.version>
+        <json-smart.version>2.5.0</json-smart.version>
         <commons-collections4.version>4.4</commons-collections4.version>
         <apache.httpcomponents.version>4.5.6</apache.httpcomponents.version>
         <hibernate.version>6.4.3.Final</hibernate.version>
@@ -200,12 +201,13 @@
         <guava.version>33.3.1-jre</guava.version>
         <commons-compress.version>1.27.1</commons-compress.version>
         <janino.version>3.1.9</janino.version>
+        <json.smart.version>2.5.2</json.smart.version>
 
         <jakarta.servlet-api.version>6.1.0</jakarta.servlet-api.version>
         <jakarta.annotation-api.version>3.0.0</jakarta.annotation-api.version>
-        <jakarta.validation-api.version>3.1.0</jakarta.validation-api.version>
+        <jakarta.validation-api.version>3.1.1</jakarta.validation-api.version>
         <jakarta.persistence-api.version>3.1.0</jakarta.persistence-api.version>
-        <jakarta.el.version>6.0.0</jakarta.el.version>
+        <jakarta.el.version>6.0.1</jakarta.el.version>
 
         <maven-pmd-plugin.version>3.21.0</maven-pmd-plugin.version>
         <maven-enforcer-plugin.version>3.4.1</maven-enforcer-plugin.version>
@@ -219,7 +221,7 @@
         <maven-javadoc-plugin.version>3.6.0</maven-javadoc-plugin.version>
         <lombok-maven-plugin.version>1.18.4.0</lombok-maven-plugin.version>
 
-        <spring.version>6.1.14</spring.version>
+        <spring.version>6.2.9</spring.version>
         <spring-test.version>${spring.version}</spring-test.version>
         <spring-web.version>${spring.version}</spring-web.version>
         <spring-context.version>${spring.version}</spring-context.version>
@@ -228,9 +230,9 @@
         <spring-aop.version>${spring.version}</spring-aop.version>
         <spring-webmvc.version>${spring.version}</spring-webmvc.version>
         <spring-core.version>${spring.version}</spring-core.version>
-        <spring-data-jpa.version>3.3.10</spring-data-jpa.version>
-        <spring-boot.version>3.3.10</spring-boot.version>
-        <spring-boot-starter-web.version>3.3.10</spring-boot-starter-web.version>
+        <spring-data-jpa.version>3.4.7</spring-data-jpa.version>
+        <spring-boot.version>3.4.7</spring-boot.version>
+        <spring-boot-starter-web.version>3.4.7</spring-boot-starter-web.version>
 
         <junit-jupiter.version>5.11.0</junit-jupiter.version>
         <mockito.version>5.12.0</mockito.version>
@@ -376,6 +378,10 @@
                         <groupId>org.slf4j</groupId>
                         <artifactId>jul-to-slf4j</artifactId>
                     </exclusion>
+                <exclusion>
+                    <groupId>net.minidev</groupId>
+                    <artifactId>json-smart</artifactId>
+                </exclusion>
                 </exclusions>
             </dependency>
 
@@ -646,6 +652,12 @@
                 <artifactId>annotations</artifactId>
                 <version>${jetbrains.annotations.version}</version>
                 <scope>compile</scope>
+            </dependency>
+
+            <dependency>
+                <groupId>net.minidev</groupId>
+                <artifactId>json-smart</artifactId>
+                <version>${json.smart.version}</version>
             </dependency>
 
             <dependency>
