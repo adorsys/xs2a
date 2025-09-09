@@ -37,7 +37,10 @@ public enum TransactionStatus {
     CANC("Canceled", true), //Canceled
     ACFC("AcceptedFundsChecked", false), //Preceding check of technical validation and customer profile was successful and an automatic funds check was positive
     PATC("PartiallyAcceptedTechnicalCorrect", false), // The payment initiation needs multiple authentications, where some but not yet all have been performed. Syntactical and semantical validations are successful.
-    PART("PartiallyAccepted", false); // A number of transactions have been accepted, whereas another number of transactions have not yet achieved 'accepted' status.
+    PART("PartiallyAccepted", false), // A number of transactions have been accepted, whereas another number of transactions have not yet achieved 'accepted' status.
+    RVCM("RVCM", true), // ReceivedVerification CompletedWithMismatches
+    RVNC("RVNC", true),  // ReceivedVerification NotCompleted
+    RCVC("RCVC", true); // ReceivedVerification Completed
 
     private static Map<String, TransactionStatus> container = new HashMap<>();
 
