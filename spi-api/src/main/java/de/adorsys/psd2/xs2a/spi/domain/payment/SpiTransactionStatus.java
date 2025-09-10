@@ -38,9 +38,9 @@ public enum SpiTransactionStatus {
     ACFC("AcceptedFundsChecked", false), //Preceding check of technical validation and customer profile was successful and an automatic funds check was positive
     PATC("PartiallyAcceptedTechnicalCorrect", false), // The payment initiation needs multiple authentications, where some but not yet all have been performed. Syntactical and semantical validations are successful.
     PART("PartiallyAccepted", false), // A number of transactions have been accepted, whereas another number of transactions have not yet achieved 'accepted' status.
-    RVCM("ReceivedVerificationCompletedWithMismatches", true), // Verification of Payee process was completed by the responding PSP, but the provided account name did not fully match the registered account holder's name.
-    RVNC("ReceivedVerificationNotCompleted", true),  // The verification process could not be completed (e.g., technical failure, IBAN not found, no response from responding PSP).
-    RCVC("ReceivedVerificationCompleted", true); // Verification of Payee process was successfully completed with a confirmed match between the provided name and the registered account holder's name.
+    RVCM("ReceivedVerificationCompletedWithMismatches", false), // Verification of Payee process was completed by the responding PSP, but the provided account name did not fully match the registered account holder's name.
+    RVNC("ReceivedVerificationNotCompleted", false),  // The verification process could not be completed (e.g., technical failure, IBAN not found, no response from responding PSP).
+    RCVC("ReceivedVerificationCompleted", false); // Verification of Payee process was successfully completed with a confirmed match between the provided name and the registered account holder's name.
 
 
     private static Map<String, SpiTransactionStatus> container = new HashMap<>();
