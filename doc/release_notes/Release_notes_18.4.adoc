@@ -1,9 +1,12 @@
-= Release notes v.18.4
+= Release notes v.19.4 [11-09-2025]
 
 == Table of Contents
-
+* Add new transaction statuses
 
 == Updated dependencies
 
+- Adds new transaction statuses RVCM, RVNC, and RCVC
+- Updates the PSD2 API specification to version 1.3.15. This includes the removal of the old v1.3.12 specification file and the addition of the new v1.3.15 file.
 
 == Service desk issue fixed.
+- PASD-297
