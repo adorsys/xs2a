@@ -1,0 +1,12 @@
+= Release notes v.18.5 [date here]
+
+== Table of Contents
+*
+
+== Updated dependencies
+
+-
+-
+
+== Service desk issue fixed.
+-
