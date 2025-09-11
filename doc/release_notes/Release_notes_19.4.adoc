@@ -1,4 +1,4 @@
-= Release notes v.19.4
+= Release notes v.19.4 [11-09-2025]
 
 == Table of Contents
 * Add new transaction statuses
