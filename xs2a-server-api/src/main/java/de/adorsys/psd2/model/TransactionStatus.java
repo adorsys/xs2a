@@ -38,7 +38,10 @@ public enum TransactionStatus {
     CANC("CANC"),
     ACFC("ACFC"),
     PATC("PATC"),
-    PART("PART");
+    PART("PART"),
+    RVCM("RVCM"),
+    RVNC("RVNC"),
+    RCVC("RCVC");
 
   private String value;
 
