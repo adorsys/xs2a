@@ -219,7 +219,8 @@ Lint (Docker compose):
     - support-18.x
     - master-18.x
   script:
-    - apt update && apt install yamllint docker-compose make python3-distutils -yq
+    - apt update && apt install -y yamllint docker-compose make python3-pip
+    - pip3 install setuptools
     - echo "Run Docker compose lint"
     - docker-compose -f docker-compose.yml config  -q
 
@@ -263,7 +264,10 @@ Lint (PMD CPD):
     - echo "Test java code for PMD and CPD"
     - echo "DOCKER_HOST=$DOCKER_HOST"
     - mvn -ntp -Dmaven.test.skip=true package pmd:check # commented cause many duplications pmd:cpd-check
-  cache: {}
+  cache:
+    key: "Java_${CI_COMMIT_REF_SLUG}"
+    paths:
+      - .m2/repository
   artifacts:
     paths:
       - "qa/pmd/pmd-ruleset.xml"
