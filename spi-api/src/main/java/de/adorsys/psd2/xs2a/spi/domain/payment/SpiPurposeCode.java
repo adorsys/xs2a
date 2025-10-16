@@ -20,7 +20,7 @@ package de.adorsys.psd2.xs2a.spi.domain.payment;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
-
+@SuppressWarnings("PMD")
 public enum SpiPurposeCode {
     BKDF("BKDF"),
     BKFE("BKFE"),
