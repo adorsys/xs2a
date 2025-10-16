@@ -38,6 +38,7 @@ import java.util.Optional;
  * Common validator implementation for verifying query parameters in the request
  */
 @RequiredArgsConstructor
+@SuppressWarnings("PMD")
 public abstract class AbstractQueryParameterValidatorImpl implements QueryParameterValidator {
     protected final ErrorBuildingService errorBuildingService;
 
