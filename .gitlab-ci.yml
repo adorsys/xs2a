@@ -219,10 +219,10 @@ Lint (Docker compose):
     - support-18.x
     - master-18.x
   script:
-    - apt update && apt install -y yamllint docker-compose make python3-pip
-    - pip3 install setuptools
+    - apt update && apt install -y yamllint docker-compose make python3-pip python3-setuptools
     - echo "Run Docker compose lint"
-    - docker-compose -f docker-compose.yml config  -q
+    - docker-compose -f docker-compose.yml config -q
+
 
 Lint (Ci file):
   image: debian:stable-slim
