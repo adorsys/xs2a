@@ -219,7 +219,7 @@ Lint (Docker compose):
     - support-18.x
     - master-18.x
   script:
-    - apt update && apt install yamllint docker-compose make -yq
+    - apt update && apt install yamllint docker-compose make python3-distutils -yq
     - echo "Run Docker compose lint"
     - docker-compose -f docker-compose.yml config  -q
 
