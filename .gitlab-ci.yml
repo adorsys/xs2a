@@ -366,7 +366,7 @@ Test (Unit Tests):
     - schedules
   <<: *java_tests
   variables:
-    JAVA_VERSION: "system@1.17"
+    JAVA_VERSION: "21.0.2-open"
     JAVA_TOOL_OPTIONS: "-Djavax.net.ssl.trustStorePassword=changeit -XX:MaxRAM=3G"
 
 Test (ASCII Doc):
