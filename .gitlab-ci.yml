@@ -4,8 +4,16 @@
 # Global settings
 # ------------------------------------------------------------------
 
-image: "adorsys/ci-build:latest"
+#image: "adorsys/ci-build:latest"
 
+
+image: "gitlab-registry.adorsys.de/adorsys/xs2a/gitlab-ci:latest"
+
+### Authentication for registry docker image for gitlab ci build
+before_script:
+  - apt-get update && apt-get install -y docker.io
+  - docker --version
+  - echo "${ADORSYS_REGISTRY_PASSWORD}" | docker login -u "${ADORSYS_REGISTRY_USER}" --password-stdin gitlab-registry.adorsys.de
 # ------------------------------------------------------------------
 # stages
 # ------------------------------------------------------------------
@@ -28,6 +36,10 @@ variables:
   DOCKER_IMAGE_NAME_ASPSP_PROFILE: "xs2a-aspsp-profile"
   DOCKER_IMAGE_NAME_CERTIFICATE_GENERATOR: "xs2a-certificate-generator"
   DOCKER_IMAGE_NAME_JMETER_TEST: "xs2a-performance-tests"
+  DOCKER_HOST: "tcp://docker:2375/"
+  DOCKER_TLS_CERTDIR: ""
+  DOCKER_DRIVER: "overlay2"
+  #JAVA_VERSION: "21.0.2-open"
 
   ###########################
   # Build variables         #
@@ -36,20 +48,25 @@ variables:
   JAVA_TOOL_OPTIONS: "-XX:+UnlockExperimentalVMOptions -XX:MaxRAM=3G -XX:MaxRAMFraction=3"
   MAVEN_OPTS: "-Dmaven.repo.local=.m2/repository"
 
+## service for docker
+services:
+  - name: docker:dind
+    alias: docker
+
 # ------------------------------------------------------------------
 # reusable yaml anchors
 # ------------------------------------------------------------------
 
 .build_java: &build_java
   script:
-    - jabba use ${JAVA_VERSION}
+    - sdk use java ${JAVA_VERSION}
     - env BUILD_NUMBER=$CI_PIPELINE_IID ./scripts/set_xs2a_connector_version_in_swagger.sh
     - java -XX:+PrintFlagsFinal -version | grep -Ei "maxheapsize|maxram"
     - mvn -ntp -DskipITs -DskipTests -Dci.build.number=Build\:${CI_PIPELINE_ID} clean install
 
 .java_tests: &java_tests
   script:
-    - jabba use $JAVA_VERSION
+    - sdk use java $JAVA_VERSION
     - java -XX:+PrintFlagsFinal -version | grep -Ei "maxheapsize|maxram"
     - mvn -ntp -DskipITs --fail-at-end clean install -q
 
@@ -67,7 +84,7 @@ variables:
 .release_java_private: &release_java_private
   stage: "Release"
   script:
-    - jabba use $BUILD_JAVA_VERSION
+    - sdk use java $BUILD_JAVA_VERSION
     - java -XX:+PrintFlagsFinal -version | grep -Ei "maxheapsize|maxram"
     - mvn -ntp --settings scripts/mvn-release-settings.xml -Pgitlab-maven -DskipTests -U deploy
   cache:
@@ -195,16 +212,17 @@ variables:
 #-------------------------------------------------------------------
 
 Lint (Docker compose):
-  image: maven:3.9.3-eclipse-temurin-17
+  image: maven:3.9-eclipse-temurin-21
   stage: "Lint"
   except:
     - schedules
     - support-18.x
     - master-18.x
   script:
-    - apt update && apt install yamllint docker-compose make -yq
+    - apt update && apt install -y yamllint docker-compose make python3-pip python3-setuptools
     - echo "Run Docker compose lint"
-    - docker-compose -f docker-compose.yml config  -q
+    - docker-compose -f docker-compose.yml config -q
+
 
 Lint (Ci file):
   image: debian:stable-slim
@@ -235,7 +253,7 @@ Lint (YAML, JSON, XML):
   #     - find ./ -type f \( -iname "*.xml" ! -iname pom.xml \) -exec xmllint --noout {} \;
 
 Lint (PMD CPD):
-  image:  maven:3.9.3-eclipse-temurin-17
+  image: maven:3.9-eclipse-temurin-21
   stage: "Lint"
   except:
     - schedules
@@ -246,7 +264,10 @@ Lint (PMD CPD):
     - echo "Test java code for PMD and CPD"
     - echo "DOCKER_HOST=$DOCKER_HOST"
     - mvn -ntp -Dmaven.test.skip=true package pmd:check # commented cause many duplications pmd:cpd-check
-  cache: {}
+  cache:
+    key: "Java_${CI_COMMIT_REF_SLUG}"
+    paths:
+      - .m2/repository
   artifacts:
     paths:
       - "qa/pmd/pmd-ruleset.xml"
@@ -286,7 +307,7 @@ Build XS2A:
   except:
     - schedules
   variables:
-    JAVA_VERSION: "system@1.17"
+    JAVA_VERSION: "21.0.2-open"
     JAVA_TOOL_OPTIONS: "-Djavax.net.ssl.trustStorePassword=changeit -XX:MaxRAM=3G"
   <<: *build_java
   artifacts:
@@ -307,7 +328,7 @@ Build XS2A:
 
 Test (IT):
   stage: "Test"
-  image:  maven:3.9.3-eclipse-temurin-17
+  image: maven:3.9-eclipse-temurin-21
   services:
     - docker:dind
   tags:
@@ -323,7 +344,7 @@ Test (IT):
     DOCKER_HOST: tcp://docker:2375
     DOCKER_TLS_CERTDIR: ""
     DOCKER_DRIVER: overlay2
-    JAVA_VERSION: "system@1.17"
+    JAVA_VERSION: "21.0.2-open"
     JAVA_TOOL_OPTIONS: "-Djavax.net.ssl.trustStorePassword=changeit -XX:MaxRAM=3G"
     TESTCONTAINERS_RYUK_DISABLED: "true"
 
@@ -333,9 +354,9 @@ Test (Javadoc):
     - schedules
   variables:
     JAVA_TOOL_OPTIONS: "-Djavax.net.ssl.trustStorePassword=changeit -XX:MaxRAM=3G"
-    JAVA_VERSION: "system@1.17"
+    JAVA_VERSION: "21.0.2-open"
   script:
-    - jabba use ${JAVA_VERSION}
+    - sdk use java ${JAVA_VERSION}
     - java -XX:+PrintFlagsFinal -version | grep -Ei "maxheapsize|maxram"
     - mvn -ntp -Dmaven.test.skip=true -Pjavadoc verify javadoc:javadoc
 
@@ -345,7 +366,7 @@ Test (Unit Tests):
     - schedules
   <<: *java_tests
   variables:
-    JAVA_VERSION: "system@1.17"
+    JAVA_VERSION: "21.0.2-open"
     JAVA_TOOL_OPTIONS: "-Djavax.net.ssl.trustStorePassword=changeit -XX:MaxRAM=3G"
 
 Test (ASCII Doc):
@@ -355,6 +376,7 @@ Test (ASCII Doc):
   image: adorsys/arc42-tools
   variables:
     JAVA_TOOL_OPTIONS: "-Djavax.net.ssl.trustStorePassword=changeit -XX:MaxRAM=3G"
+  before_script: []
   script:
     - make pages
 
@@ -402,7 +424,7 @@ Release snapshot artifacts (support-18.x):
     - schedules
   cache: {}
   variables:
-    BUILD_JAVA_VERSION: system@1.17
+    BUILD_JAVA_VERSION: "21.0.2-open"
     JAVA_TOOL_OPTIONS: "-Djavax.net.ssl.trustStorePassword=changeit -XX:MaxRAM=3G"
   <<: *release_java_private
 
@@ -414,7 +436,7 @@ Release artifacts (tags):
     - schedules
   cache: {}
   variables:
-    BUILD_JAVA_VERSION: system@1.17
+    BUILD_JAVA_VERSION: "21.0.2-open"
     JAVA_TOOL_OPTIONS: "-Djavax.net.ssl.trustStorePassword=changeit -XX:MaxRAM=3G"
   <<: *release_java_private
 

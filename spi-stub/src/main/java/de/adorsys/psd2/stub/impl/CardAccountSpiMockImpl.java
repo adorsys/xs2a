@@ -38,6 +38,7 @@ import java.util.List;
 
 @Slf4j
 @Service
+@SuppressWarnings("PMD")
 public class CardAccountSpiMockImpl implements CardAccountSpi {
     private static final LocalDate DATE = LocalDate.of(2019, Month.JANUARY, 4);
     private static final String NAME = "Müller";
