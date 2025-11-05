@@ -1,7 +1,8 @@
-= Release notes v.20.0 [date here]
+= Release notes v.20.0 [05.11.2025]
 
 == Table of Contents
 * Migration from java 17 to java 21
+* All dependencies and vulnerability updated.
 
 == [ list of changes for this release here]
 

@@ -8,7 +8,7 @@ For upcoming versions see our xref:roadmap.adoc[Roadmap].
 
 === Mainline 18.x (Stable. Supported minimum till 24.08.2027)
 
-* xref:release_notes/Release_notes_20.0.adoc[Version 20.0 (release date: dd.mm.2025)]
+* xref:release_notes/Release_notes_20.0.adoc[Version 20.0 (release date: 05.11.2025)]
 
 === Mainline 19.x (Development. Planned to be released after 24.08.2026 as 20.0 Stable version)
 
