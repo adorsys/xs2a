@@ -1,0 +1,8 @@
+= Release notes v.20.0 [date here]
+
+== Table of Contents
+* Migration from java 17 to java 21
+
+== [ list of changes for this release here]
+
+== Service desk issue fixed.
