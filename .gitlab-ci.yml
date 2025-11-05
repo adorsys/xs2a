@@ -216,8 +216,8 @@ Lint (Docker compose):
   stage: "Lint"
   except:
     - schedules
-    - support-18.x
-    - master-18.x
+    - support-20.x
+    - master-20.x
   script:
     - apt update && apt install -y yamllint docker-compose make python3-pip python3-setuptools
     - echo "Run Docker compose lint"
@@ -229,8 +229,8 @@ Lint (Ci file):
   stage: "Lint"
   except:
     - schedules
-    - support-18.x
-    - master-18.x
+    - support-20.x
+    - master-20.x
   script:
     - apt-get update && apt-get install yamllint python3-pkg-resources -yq
     - echo "Run Gitlab ci file lint"
@@ -241,8 +241,8 @@ Lint (YAML, JSON, XML):
   stage: "Lint"
   except:
     - schedules
-    - support-18.x
-    - master-18.x
+    - support-20.x
+    - master-20.x
   script:
     - apt-get update && apt-get install jsonlint yamllint libxml2-utils make curl -yq && ln -s /usr/bin/jsonlint-php /usr/bin/jsonlint
     - echo "Run Xs2A core lint"
@@ -257,8 +257,8 @@ Lint (PMD CPD):
   stage: "Lint"
   except:
     - schedules
-    - support-18.x
-    - master-18.x
+    - support-20.x
+    - master-20.x
   script:
     - apt update && apt install make -yq
     - echo "Test java code for PMD and CPD"
@@ -285,8 +285,8 @@ Lint (dockerfiles):
     - aws
   except:
     - schedules
-    - support-18.x
-    - master-18.x
+    - support-20.x
+    - master-20.x
   variables:
     DOCKER_HOST: tcp://docker:2375
     DOCKER_TLS_CERTDIR: ""
@@ -380,7 +380,7 @@ Test (ASCII Doc):
   script:
     - make pages
 
-Build and push images to private repo (support-18.x):
+Build and push images to private repo (support-20.x):
   stage: "Package"
   services:
     - docker:dind
@@ -389,7 +389,7 @@ Build and push images to private repo (support-18.x):
   except:
     - schedules
   only:
-    - support-18.x
+    - support-20.x
   variables:
     DOCKER_HOST: tcp://docker:2375
     DOCKER_TLS_CERTDIR: ""
@@ -416,10 +416,10 @@ Build and push images to private repo (Tags):
     DOCKERHUB_NAMESPACE: "adorsys/xs2a/aspsp-xs2a"
   <<: *push_dockerhub_images_private
 
-Release snapshot artifacts (support-18.x):
+Release snapshot artifacts (support-20.x):
   stage: "Release"
   only:
-    - support-18.x
+    - support-20.x
   except:
     - schedules
   cache: {}
@@ -448,7 +448,7 @@ Release artifacts (tags):
 #  image: alpine/git:latest
 #  needs: []
 #  only:
-#    - support-18.x
+#    - support-20.x
 #    - /^release-16\..*/
 #  except:
 #    - schedules
