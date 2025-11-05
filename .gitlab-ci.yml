@@ -9,10 +9,6 @@
 
 image: "gitlab-registry.adorsys.de/adorsys/xs2a/gitlab-ci:latest"
 
-### Authentication for registry docker image for gitlab ci build
-before_script:
-  - docker --version
-  - echo "${ADORSYS_REGISTRY_PASSWORD}" | docker login -u "${ADORSYS_REGISTRY_USER}" --password-stdin gitlab-registry.adorsys.de
 # ------------------------------------------------------------------
 # stages
 # ------------------------------------------------------------------
@@ -101,6 +97,11 @@ services:
       git checkout $branch;
       git push github $branch;
       done
+
+.docker_login_before_script: &docker_login_before_script
+  before_script:
+    - docker --version
+    - echo "${ADORSYS_REGISTRY_PASSWORD}" | docker login -u "${ADORSYS_REGISTRY_USER}" --password-stdin gitlab-registry.adorsys.de
 
 # ------------------------------------------------------------------
 # jobs
@@ -396,6 +397,7 @@ Build and push images to private repo (support-20.x):
     DOCKER_TAG: support18x
     DOCKERHUB_REGISTRY: gitlab-registry.adorsys.de
     DOCKERHUB_NAMESPACE: "adorsys/xs2a/aspsp-xs2a"
+  <<: *docker_login_before_script
   <<: *push_dockerhub_images_private
 
 Build and push images to private repo (Tags):
@@ -413,6 +415,7 @@ Build and push images to private repo (Tags):
     DOCKER_TAG: $CI_COMMIT_TAG
     DOCKERHUB_REGISTRY: gitlab-registry.adorsys.de
     DOCKERHUB_NAMESPACE: "adorsys/xs2a/aspsp-xs2a"
+  <<: *docker_login_before_script
   <<: *push_dockerhub_images_private
 
 Release snapshot artifacts (support-20.x):
