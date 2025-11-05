@@ -74,7 +74,7 @@ services:
     - docker push "${DOCKERHUB_REGISTRY}/${DOCKERHUB_NAMESPACE}/${DOCKER_IMAGE_NAME_CMS_MANAGEMENT}:${DOCKER_TAG}"
     - docker push "${DOCKERHUB_REGISTRY}/${DOCKERHUB_NAMESPACE}/${DOCKER_IMAGE_NAME_ASPSP_PROFILE}:${DOCKER_TAG}"
     - docker push "${DOCKERHUB_REGISTRY}/${DOCKERHUB_NAMESPACE}/${DOCKER_IMAGE_NAME_CERTIFICATE_GENERATOR}:${DOCKER_TAG}"
-    - docker logout
+    - docker logout "$CI_REGISTRY"
 
 .release_java_private: &release_java_private
   stage: "Release"
