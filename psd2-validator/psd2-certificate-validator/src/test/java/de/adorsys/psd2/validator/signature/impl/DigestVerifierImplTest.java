@@ -26,10 +26,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 class DigestVerifierImplTest {
     private static final JsonReader jsonReader = new JsonReader();
-    private static final String CORRECT_DIGEST = "SHA-256=x2iyTnu8glTS4NQk/X7jdpga/v4+AuxVRteArO42n9c=";
-    private static final String WRONG_ALGORITHM_DIGEST = "SHA-512=x2iyTnu8glTS4NQk/X7jdpga/v4+AuxVRteArO42n9c=";
-    private static final String EMPTY_ALGORITHM_DIGEST = "jkdgfdt43x2iyTnu8glTS4NQk/X7jdpga/v4+AuxVRteArO42n9c=";
-    private static final String WRONG_DIGEST = "SHA-256=x2iyTnu8gl_wrong_digest_RteArO42n9c=";
+    private static final String CORRECT_DIGEST = "SHA-256=VJzQpqwPuSYNFHjvNH1T9cUQWceEHdv0IIMjPvvrklQ=";
+    private static final String WRONG_ALGORITHM_DIGEST = "SHA-512=VJzQpqwPuSYNFHjvNH1T9cUQWceEHdv0IIMjPvvrklQ=";
+    private static final String EMPTY_ALGORITHM_DIGEST = "jkdgfdt43VJzQpqwPuSYNFHjvNH1T9cUQWceEHdv0IIMjPvvrklQ=";
+    private static final String WRONG_DIGEST = "SHA-256=VJzQpqwPuSYN_wrong_digest_0IIMjPvvrklQ=";
 
     private DigestVerifierImpl digestVerifier;
 
