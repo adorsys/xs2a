@@ -45471,7 +45471,7 @@
 											},
 											{
 												"key": "signature",
-												"value": "keyId=\"SSN=7ceaf114,CA=OU=Information%20Technology,O=Trust%20Service%20Provider%20AG,L=Nuremberg,ST=BAVARIA,C=DE\",algorithm=\"SHA256withRSA\",headers=\"x-request-id digest psu-ip-address accept psu-id\",signature=\"TW8WqgA/vThZcbn7/JxWzthWE0zYHsf0MZpkSKh/MDjeHvuaksFuyFZaRbm0PBrt1V51bIIJrjWDTbEJItspoXO9deI5FpYBxsJ07JvxbBNUrbXu765y14gsN3IrZ4ZB7QErxAPzcH0cpoYl8ENhpCAIsqXalwt9L66OFFX9TVU5vVgQSZbzVOwVLYePf0WqLeeGKlywJynpdmWwPvFUImgALjmWrCwUtji8GYFITzKYhooATKPl+r8eCFTEIiaCQzQkUumJo+vR/1cLSuerEkcDR+5RId+PECJAMXCryUthF3jtp9EQrQhIshO7yamaNTk9RisEcZUuOtvTnAJpkA==\"",
+												"value": "keyId=\"SN=7ceaf114,CA=OU=Information%20Technology,O=Trust%20Service%20Provider%20AG,L=Nuremberg,ST=BAVARIA,C=DE\",algorithm=\"SHA256withRSA\",headers=\"x-request-id digest psu-ip-address accept psu-id\",signature=\"TW8WqgA/vThZcbn7/JxWzthWE0zYHsf0MZpkSKh/MDjeHvuaksFuyFZaRbm0PBrt1V51bIIJrjWDTbEJItspoXO9deI5FpYBxsJ07JvxbBNUrbXu765y14gsN3IrZ4ZB7QErxAPzcH0cpoYl8ENhpCAIsqXalwt9L66OFFX9TVU5vVgQSZbzVOwVLYePf0WqLeeGKlywJynpdmWwPvFUImgALjmWrCwUtji8GYFITzKYhooATKPl+r8eCFTEIiaCQzQkUumJo+vR/1cLSuerEkcDR+5RId+PECJAMXCryUthF3jtp9EQrQhIshO7yamaNTk9RisEcZUuOtvTnAJpkA==\"",
 												"type": "text"
 											},
 											{
