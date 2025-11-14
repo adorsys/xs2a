@@ -1,9 +1,9 @@
 = Release notes v.19.5 [date here]
 
-== Table of Contents
+== Table of Contents.
 *
 
-== Dependency version
+== Dependency version.
 * spring-boot-dependencies version: 3.4.7
 * spring-cloud-starter-openfeign version: 4.2.2
 * spring-security version: 6.4.7
