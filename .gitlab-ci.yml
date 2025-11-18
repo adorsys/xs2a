@@ -64,6 +64,13 @@ variables:
     - mvn -ntp -DskipITs --fail-at-end clean install -q
 
 .push_dockerhub_images_private: &push_dockerhub_images_private
+  before_script:
+    - apt-get update -qq && apt-get install -y -qq ca-certificates curl gnupg lsb-release
+    - install -m 0755 -d /etc/apt/keyrings
+    - curl -fsSL https://download.docker.com/linux/debian/gpg | gpg --dearmor -o /etc/apt/keyrings/docker.gpg
+    - chmod a+r /etc/apt/keyrings/docker.gpg
+    - echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/debian $(lsb_release -cs) stable" | tee /etc/apt/sources.list.d/docker.list > /dev/null
+    - apt-get update -qq && apt-get install -y -qq docker-ce-cli
   script:
     - docker build -t "${DOCKERHUB_REGISTRY}/${DOCKERHUB_NAMESPACE}/${DOCKER_IMAGE_NAME_CMS_MANAGEMENT}:${DOCKER_TAG}" consent-management/cms-standalone-service
     - docker build -t "${DOCKERHUB_REGISTRY}/${DOCKERHUB_NAMESPACE}/${DOCKER_IMAGE_NAME_ASPSP_PROFILE}:${DOCKER_TAG}" aspsp-profile/aspsp-profile-server
@@ -75,6 +82,13 @@ variables:
     - docker logout
 
 .push_perf_tests_dockerhub_images_private: &push_perf_tests_dockerhub_images_private
+  before_script:
+    - apt-get update -qq && apt-get install -y -qq ca-certificates curl gnupg lsb-release
+    - install -m 0755 -d /etc/apt/keyrings
+    - curl -fsSL https://download.docker.com/linux/debian/gpg | gpg --dearmor -o /etc/apt/keyrings/docker.gpg
+    - chmod a+r /etc/apt/keyrings/docker.gpg
+    - echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/debian $(lsb_release -cs) stable" | tee /etc/apt/sources.list.d/docker.list > /dev/null
+    - apt-get update -qq && apt-get install -y -qq docker-ce-cli
   script:
     - docker build -t  "${DOCKERHUB_REGISTRY}/${DOCKERHUB_NAMESPACE}/${DOCKER_IMAGE_NAME_JMETER_TEST}:${DOCKER_TAG}" --build-arg build-date=$(date -u +"%Y-%m-%dT%H:%M:%SZ") performance-test
     - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
@@ -358,10 +372,8 @@ Test (IT):
   except:
     - schedules
   before_script:
-    # Install Docker client and wait for daemon to be ready
     - apt-get update -qq && apt-get install -y -qq docker.io
     - |
-      echo "Waiting for Docker daemon..."
       for i in $(seq 1 15); do
         if docker info >/dev/null 2>&1; then
           echo "Docker daemon ready"
@@ -446,10 +458,10 @@ Build and push images to private repo (develop):
 
 Build and push images to private repo (master):
   stage: "Package"
-  tags:
-    - aws
   services:
     - docker:dind
+  tags:
+    - aws
   only:
     - master
   variables:
