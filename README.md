@@ -10,6 +10,7 @@ If you are an organisation that would like to commercially use our solutions bey
 
 ## What is it
 
+
 With **PSD2** 
 ```
 Directive (EU) 2015/2366 of the European Parliament and of the Council on Payment Services in the
