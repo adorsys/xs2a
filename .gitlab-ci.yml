@@ -350,14 +350,27 @@ Test (IT):
   stage: "Test"
   image:  maven:3.9.3-eclipse-temurin-17
   services:
-    - docker:dind
+    - name: docker:24.0.6-dind
+      alias: docker
+      command: ["--tls=false"]
   tags:
     - aws
   except:
     - schedules
+  before_script:
+    # Install Docker client and wait for daemon to be ready
+    - apt-get update -qq && apt-get install -y -qq docker.io
+    - |
+      echo "Waiting for Docker daemon..."
+      for i in $(seq 1 15); do
+        if docker info >/dev/null 2>&1; then
+          echo "Docker daemon ready"
+          break
+        fi
+        sleep 1
+      done
+      docker info || (echo "Docker daemon unavailable" && exit 1)
   script:
-#    - jabba use ${JAVA_VERSION}
-    - echo "DOCKER_HOST=${DOCKER_HOST}"
     - java -XX:+PrintFlagsFinal -version | grep -Ei "maxheapsize|maxram"
     - mvn -ntp failsafe:integration-test failsafe:verify
   variables:
