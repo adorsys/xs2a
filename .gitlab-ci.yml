@@ -439,6 +439,7 @@ Test (ASCII Doc):
 
 Build and push images to private repo (develop):
   stage: "Package"
+  image: docker
   services:
     - docker:dind
   tags:
@@ -458,6 +459,7 @@ Build and push images to private repo (develop):
 
 Build and push images to private repo (master):
   stage: "Package"
+  image: docker
   services:
     - docker:dind
   tags:
@@ -475,6 +477,7 @@ Build and push images to private repo (master):
 
 Build and push images to private repo (Tags):
   stage: "Package"
+  image: docker
   services:
     - docker:dind
   tags:
@@ -492,6 +495,7 @@ Build and push images to private repo (Tags):
 
 Build and push image to private repo (perf test):
   stage: "Package"
+  image: docker
   services:
     - docker:dind
   tags:
