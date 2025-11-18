@@ -358,34 +358,20 @@ Test (IT):
   except:
     - schedules
   before_script:
-    # Install Docker client
-    - apt-get update -qq && apt-get install -y -qq docker.io || true
-    # Wait for Docker daemon to be ready and verify connectivity
+    # Install Docker client and wait for daemon to be ready
+    - apt-get update -qq && apt-get install -y -qq docker.io
     - |
-      echo "Waiting for Docker daemon to be ready..."
-      for i in $(seq 1 30); do
+      echo "Waiting for Docker daemon..."
+      for i in $(seq 1 15); do
         if docker info >/dev/null 2>&1; then
-          echo "Docker daemon is ready!"
-          docker info
+          echo "Docker daemon ready"
           break
         fi
-        echo "Waiting for Docker daemon... ($i/30)"
         sleep 1
       done
-      docker info || (echo "Docker daemon is not available!" && exit 1)
-    # Test Docker connectivity from Java perspective
-    - |
-      echo "Testing Docker connectivity..."
-      echo "DOCKER_HOST=${DOCKER_HOST}"
-      docker ps
+      docker info || (echo "Docker daemon unavailable" && exit 1)
   script:
-#    - jabba use ${JAVA_VERSION}
-    - echo "=== Docker Environment ==="
-    - echo "DOCKER_HOST=${DOCKER_HOST}"
-    - docker version
-    - docker ps
     - java -XX:+PrintFlagsFinal -version | grep -Ei "maxheapsize|maxram"
-    - echo "=== Starting Maven Tests ==="
     - mvn -ntp failsafe:integration-test failsafe:verify
   variables:
     DOCKER_HOST: tcp://docker:2375
