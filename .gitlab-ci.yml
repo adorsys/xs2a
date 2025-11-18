@@ -364,7 +364,7 @@ Test (IT):
   stage: "Test"
   image:  maven:3.9.3-eclipse-temurin-17
   services:
-    - name: docker:dind
+    - name: docker:24.0.6-dind
       alias: docker
       command: ["--tls=false"]
   tags:
