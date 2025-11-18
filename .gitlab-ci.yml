@@ -350,7 +350,7 @@ Test (IT):
   stage: "Test"
   image:  maven:3.9.3-eclipse-temurin-17
   services:
-    - name: docker:dind
+    - name: docker:24.0.6-dind
       alias: docker
   tags:
     - aws
@@ -359,31 +359,42 @@ Test (IT):
   before_script:
     # Install Docker client
     - apt-get update -qq && apt-get install -y -qq docker.io || true
-    # Wait for Docker daemon to be ready
+    # Wait for Docker daemon to be ready and verify connectivity
     - |
       echo "Waiting for Docker daemon to be ready..."
       for i in $(seq 1 30); do
         if docker info >/dev/null 2>&1; then
           echo "Docker daemon is ready!"
+          docker info
           break
         fi
         echo "Waiting for Docker daemon... ($i/30)"
         sleep 1
       done
       docker info || (echo "Docker daemon is not available!" && exit 1)
+    # Test Docker connectivity from Java perspective
+    - |
+      echo "Testing Docker connectivity..."
+      echo "DOCKER_HOST=${DOCKER_HOST}"
+      docker ps
   script:
 #    - jabba use ${JAVA_VERSION}
+    - echo "=== Docker Environment ==="
     - echo "DOCKER_HOST=${DOCKER_HOST}"
+    - echo "TESTCONTAINERS_HOST_OVERRIDE=${TESTCONTAINERS_HOST_OVERRIDE}"
     - docker version
+    - docker ps
     - java -XX:+PrintFlagsFinal -version | grep -Ei "maxheapsize|maxram"
+    - echo "=== Starting Maven Tests ==="
     - mvn -ntp failsafe:integration-test failsafe:verify
   variables:
     DOCKER_HOST: tcp://docker:2375
     DOCKER_TLS_CERTDIR: ""
     DOCKER_DRIVER: overlay2
     JAVA_VERSION: "system@1.17"
-    JAVA_TOOL_OPTIONS: "-Djavax.net.ssl.trustStorePassword=changeit -XX:MaxRAM=3G -Ddocker.host=tcp://docker:2375"
+    JAVA_TOOL_OPTIONS: "-Djavax.net.ssl.trustStorePassword=changeit -XX:MaxRAM=3G -Ddocker.host=tcp://docker:2375 -Ddocker.tls.verify=false"
     TESTCONTAINERS_RYUK_DISABLED: "true"
+    TESTCONTAINERS_HOST_OVERRIDE: "tcp://docker:2375"
 
 Test (Javadoc):
   stage: "Test"
