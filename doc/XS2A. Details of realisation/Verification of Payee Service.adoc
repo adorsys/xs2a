@@ -25,23 +25,6 @@ XS2A currently implements the *DEDICATED* variant. The INTEGRATED variant is con
 XS2A implements VOP services according to:
 
 * *Berlin Group NextGenPSD2 Framework* version 1.3.15
-* *openFinance API Framework* Data Dictionary 2.2.6
-* *Implementation Guidelines* change document 1.3.13 → 1.3.14 (VOP introduction)
-
-Configuration in ASPSP Profile:
-[source,yaml]
-----
-vop:
-  vopxReference:
-    apiName: NextGenPSD2
-    apiDocument: https://www.berlin-group.org/nextgenpsd2-downloads
-    apiVersion: 1.3.15
-  variantSupported:
-    - DEDICATED
-  bulkBatchProcessingSupported:
-    - synchronous-mode
-    - asynchronous-mode
-----
 
 === The Current version of VOP Supports the dedicated variant with the following endpoints:
 
@@ -51,22 +34,22 @@ vop:
 |`/v1/verification-of-payee`
 |POST
 |Submit a single party verification request
-|✓ Implemented via `SingleVopSpi.performVerification()`. Requires `partyAccount` and optional `party` identification; response contains `partyNameMatch`/`partyIdMatch`.
+| Implemented via `SingleVopSpi.performVerification()`. Requires `partyAccount` and optional `party` identification; response contains `partyNameMatch`/`partyIdMatch`.
 
 |`/v1/bulk-verification-of-payee`
 |POST
 |Submit multiple party verification requests
-|✓ Implemented via `BulkVopSpi.performVerification()`. Returns HTTP 201 with `partyVerificationResponses` when processed synchronously, or HTTP 202 with `vopBulkId` when deferred (async mode not yet implemented).
+| Implemented via `BulkVopSpi.performVerification()`. Returns HTTP 201 with `partyVerificationResponses` when processed synchronously, or HTTP 202 with `vopBulkId` when deferred (async mode not yet implemented).
 
 |`/v1/bulk-verification-of-payee/{vopBulkId}`
 |GET
 |Retrieve full verification requests and results for a bulk submission
-|✓ Implemented via `BulkVopSpi.getBulkVopById()`. Response body contains `partyVerificationRequestsAndResults` with complete request and result data.
+| Implemented via `BulkVopSpi.getBulkVopById()`. Response body contains `partyVerificationRequestsAndResults` with complete request and result data.
 
 |`/v1/bulk-verification-of-payee/{vopBulkId}/status`
 |GET
 |Retrieve only the current bulk status (lightweight polling endpoint)
-|✓ Implemented via `BulkVopSpi.getBulkVopStatusById()`. Returns `vopBulkId` and `vopBulkStatus` only (optimized for polling without loading full verification results).
+| Implemented via `BulkVopSpi.getBulkVopStatusById()`. Returns `vopBulkId` and `vopBulkStatus` only (optimized for polling without loading full verification results).
 |===
 
 === Single Verification Flow
@@ -269,11 +252,13 @@ vop:
 ----
 
 *Synchronous Mode* is recommended for:
+
 * Small batches (< 100 verifications)
 * Real-time payment flows
 * Interactive user interfaces
 
 *Asynchronous Mode* is recommended for:
+
 * Large batches (100+ verifications)
 * Background batch processing
 * Non-interactive workflows
@@ -283,8 +268,8 @@ vop:
 [source,yaml]
 ----
 security:
-  SigningHttpMessageSupported: FALSE   # disables x-jws-signature, Digest validation
-  SecuringBodyMessageSupported: FALSE  # disables Body-Sig-Profile / Body-Enc-* headers
+  SigningHttpMessageSupported: FALSE   # disables x-jws-signature, Digest validation( Set to false because it is not yet implemented)
+  SecuringBodyMessageSupported: FALSE  # disables Body-Sig-Profile / Body-Enc-* headers ( Set to false because it is not yet implemented)
 ----
 
 When set to TRUE, the corresponding headers must be supplied and validated per BG 11d.
@@ -332,26 +317,53 @@ NOTE: The service validates that the DEDICATED variant is configured before proc
 
 ==== SPI Layer
 
-*VopSpi* (`de.adorsys.psd2.xs2a.spi.service.VopSpi`)
+*VopSpi* (`de.adorsys.psd2.xs2a.spi.service`)
 
-Interface that ASPSPs must implement:
+Interface that ASPSPs must implement. The VOP SPI layer consists of three interfaces:
 
+*Base Interface - VopSpi:*
 [source,java]
 ----
-public interface VopSpi {
-    SpiResponse<SpiVerificationOfPayeeResponse> verifyPayee(
-        SpiVerificationOfPayee request,
-        SpiContextData contextData
+public interface VopSpi<T extends SpiVop, R> {
+    @NotNull
+    SpiResponse<R> performVerification(@NotNull SpiVopContextData vopContextData, @NotNull T vop);
+}
+----
+
+*Single Verification - SingleVopSpi:*
+[source,java]
+----
+public interface SingleVopSpi extends VopSpi<SpiSingleVop, SpiSingleVopInitiationResponse> {
+    @NotNull
+    @Override
+    SpiResponse<SpiSingleVopInitiationResponse> performVerification(
+        @NotNull SpiVopContextData vopContextData,
+        @NotNull SpiSingleVop singleVop
+    );
+}
+----
+
+*Bulk Verification - BulkVopSpi:*
+[source,java]
+----
+public interface BulkVopSpi extends VopSpi<SpiBulkVop, SpiBulkVopInitiationResponse> {
+    @NotNull
+    @Override
+    SpiResponse<SpiBulkVopInitiationResponse> performVerification(
+        @NotNull SpiVopContextData vopContextData,
+        @NotNull SpiBulkVop bulkVop
     );
 
-    SpiResponse<SpiBulkVerificationOfPayeeResponse> bulkVerifyPayee(
-        SpiBulkVerificationOfPayee request,
-        SpiContextData contextData
+    @NotNull
+    SpiResponse<SpiGetBulkVopResponse> getBulkVopById(
+        @NotNull SpiVopContextData spiContextData,
+        @NotNull String vopId
     );
 
-    SpiResponse<SpiBulkVopStatusResponse> getBulkVerificationStatus(
-        String bulkVopId,
-        SpiContextData contextData
+    @NotNull
+    SpiResponse<SpiGetBulkVopStatusResponse> getBulkVopStatusById(
+        @NotNull SpiVopContextData spiContextData,
+        @NotNull String vopId
     );
 }
 ----
@@ -372,7 +384,6 @@ The ASPSP must implement the SPI interfaces to:
 * xref:Payment Initiation Service.adoc[Payment Initiation Service]
 * xref:core_banking_connector.adoc[Core Banking Connector]
 * Berlin Group NextGenPSD2 Specification: https://www.berlin-group.org/nextgenpsd2-downloads
-* openFinance API Framework Data Dictionary 2.2.6
 
 === Configuration Reference
 
