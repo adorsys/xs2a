@@ -379,13 +379,18 @@ Test (IT):
   before_script: []
   script:
     - echo "DOCKER_HOST=${DOCKER_HOST}"
+    - echo "DOCKER_API_VERSION=${DOCKER_API_VERSION}"
+    - export DOCKER_HOST="tcp://docker:2375"
+    - export DOCKER_API_VERSION="1.44"
     - java -XX:+PrintFlagsFinal -version | grep -Ei "maxheapsize|maxram"
+    - env | grep -E "^(DOCKER_|TESTCONTAINERS_)"
     - mvn -ntp failsafe:integration-test failsafe:verify
   variables:
     DOCKER_HOST: tcp://docker:2375
     DOCKER_TLS_CERTDIR: ""
     DOCKER_DRIVER: overlay2
     DOCKER_API_VERSION: "1.44"
+    TESTCONTAINERS_RYUK_DISABLED: "true"
     JAVA_VERSION: "21.0.2-open"
     JAVA_TOOL_OPTIONS: "-Djavax.net.ssl.trustStorePassword=changeit -XX:MaxRAM=3G"
 
