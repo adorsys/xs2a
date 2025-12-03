@@ -65,7 +65,15 @@ variables:
 
 .push_dockerhub_images_private: &push_dockerhub_images_private
   script:
-    - mvn clean package -DskipTests
+    - - apk add --no-cache openjdk17 bash curl unzip
+    - # Download and install Maven
+    - curl -fsSL https://archive.apache.org/dist/maven/maven-3/3.9.4/binaries/apache-maven-3.9.4-bin.zip -o /tmp/maven.zip
+    - unzip /tmp/maven.zip -d /usr/share/
+    - mv /usr/share/apache-maven-3.9.4 /usr/share/maven
+    - ln -s /usr/share/maven/bin/mvn /usr/bin/mvn
+    - # Verify
+    - mvn -version
+    - mvn clean package
     - docker build -t "${DOCKERHUB_REGISTRY}/${DOCKERHUB_NAMESPACE}/${DOCKER_IMAGE_NAME_CMS_MANAGEMENT}:${DOCKER_TAG}" consent-management/cms-standalone-service
     - docker build -t "${DOCKERHUB_REGISTRY}/${DOCKERHUB_NAMESPACE}/${DOCKER_IMAGE_NAME_ASPSP_PROFILE}:${DOCKER_TAG}" aspsp-profile/aspsp-profile-server
     - docker build -t "${DOCKERHUB_REGISTRY}/${DOCKERHUB_NAMESPACE}/${DOCKER_IMAGE_NAME_CERTIFICATE_GENERATOR}:${DOCKER_TAG}" certificate-generator
