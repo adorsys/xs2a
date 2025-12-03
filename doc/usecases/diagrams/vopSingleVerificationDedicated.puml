@@ -1,0 +1,53 @@
+@startuml
+actor PSU
+participant "TPP" as TPP
+participant "XS2A VOP Controller" as CTRL
+participant "XS2A VOP Service" as SVC
+participant "ASPSP VOP SPI" as SPI
+participant "Core Banking" as BANK
+|||
+== Single Verification of Payee - Dedicated Variant ==
+
+PSU -> TPP: Request verification (partyAccount + party)
+activate TPP
+
+TPP -> CTRL: POST /v1/payee-verifications
+activate CTRL
+note right
+Request JSON:
+{
+  partyAccount{iban},
+  party{name | identification}
+}
+end note
+
+CTRL -> CTRL: Validate headers + path endpoint
+CTRL -> SVC: verifyPayee()
+activate SVC
+
+SVC -> SVC: Validate body
+SVC -> SVC: Map to SPI model
+SVC -> SPI: verifyPayee(spiRequest)
+activate SPI
+
+SPI -> BANK: Lookup account by reference
+activate BANK
+BANK --> SPI: Holder identifiers/names
+SPI -> SPI: Compare against request (name/id)
+SPI --> SVC: partyNameMatch / partyIdMatch
+
+deactivate BANK
+
+deactivate SPI
+SVC -> SVC: Map response + build links
+SVC --> CTRL: XS2A response model
+
+deactivate SVC
+CTRL --> TPP: HTTP 200 with result
+TPP --> PSU: Inform verification status
+
+deactivate CTRL
+
+deactivate TPP
+
+@enduml

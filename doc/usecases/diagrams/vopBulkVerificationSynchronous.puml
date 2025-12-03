@@ -1,0 +1,62 @@
+@startuml
+actor PSU
+participant "TPP" as TPP
+participant "XS2A VOP Controller" as CTRL
+participant "XS2A VOP Service" as SVC
+participant "ASPSP VOP SPI" as SPI
+participant "Core Banking" as BANK
+|||
+== Bulk Verification of Payee - Synchronous Mode ==
+
+PSU -> TPP: Provide list of partyVerificationRequests
+activate TPP
+
+TPP -> CTRL: POST /v1/bulk-payee-verifications
+activate CTRL
+note right
+Request JSON:
+{
+  partyVerificationRequests:[
+    {uetr, partyAccount{iban}, party{...}}, ...
+  ]
+}
+end note
+
+CTRL -> CTRL: Validate headers + endpoint
+CTRL -> SVC: bulkVerifyPayee()
+activate SVC
+
+SVC -> SVC: Validate list
+SVC -> SVC: Map to SPI bulk model
+SVC -> SPI: bulkVerifyPayee(spiBulkRequest)
+activate SPI
+
+loop For each request
+    SPI -> BANK: Lookup account holder
+    activate BANK
+    BANK --> SPI: Holder details
+    deactivate BANK
+    SPI -> SPI: Compare name/id
+end
+
+SPI --> SVC: partyVerificationResponses + vopBulkStatus=completed
+note right
+Response JSON (200):
+{
+  vopBulkStatus:"completed",
+  partyVerificationResponses:[{uetr, partyNameMatch|partyIdMatch},...]
+}
+end note
+SVC -> SVC: Aggregate + enrich response
+SVC --> CTRL: Bulk response model
+
+deactivate SPI
+deactivate SVC
+CTRL --> TPP: HTTP 200 with list
+TPP --> PSU: Present verification outcome
+
+deactivate CTRL
+
+deactivate TPP
+
+@enduml
