@@ -107,6 +107,12 @@ public class PisPayment {
     @Schema(name = "End date", example = "2020-03-03")
     private LocalDate endDate;
 
+    @Schema(name = "Start date time", example = "2020-01-01T13:45:56Z")
+    private OffsetDateTime startDateTime;
+
+    @Schema(name = "End date time", example = "2020-03-03T20:12:34Z")
+    private OffsetDateTime endDateTime;
+
     @Schema(name = "Execution rule", example = "following")
     private PisExecutionRule executionRule;
 

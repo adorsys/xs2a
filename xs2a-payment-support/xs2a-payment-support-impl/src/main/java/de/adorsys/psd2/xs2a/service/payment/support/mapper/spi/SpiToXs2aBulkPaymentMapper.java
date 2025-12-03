@@ -20,11 +20,13 @@ package de.adorsys.psd2.xs2a.service.payment.support.mapper.spi;
 
 import de.adorsys.psd2.xs2a.domain.pis.BulkPayment;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiToXs2aAccountReferenceMapper;
+import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiToXs2aCategoryPurposeCodeMapper;
 import de.adorsys.psd2.xs2a.spi.domain.payment.SpiBulkPayment;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
-@Mapper(componentModel = "spring", uses = {SpiToXs2aAccountReferenceMapper.class, SpiToXs2aSinglePaymentMapper.class})
+@Mapper(componentModel = "spring", uses = { SpiToXs2aAccountReferenceMapper.class, SpiToXs2aSinglePaymentMapper.class,
+        SpiToXs2aCategoryPurposeCodeMapper.class })
 public interface SpiToXs2aBulkPaymentMapper {
 
     @Mapping(target = "creditorId", ignore = true)

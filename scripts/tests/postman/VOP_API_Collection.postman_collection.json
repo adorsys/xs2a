@@ -1,0 +1,869 @@
+{
+  "info": {
+    "name": "VOP API Collection",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": "Verification of Payee (VOP) - OpenFinance API. This collection covers Single Payee Verification, Bulk Payee Verification Initiation, and bulk status/results per the Berlin Group openFinance VOP service specification."
+  },
+  "item": [
+    {
+      "name": "Dedicated VOP",
+      "item": [
+        {
+          "name": "Single Verification",
+          "item": [
+            {
+              "name": "1. Enable signing basket support in ASPSP profile",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test(\"Status code is 200\", () => {",
+                      "    pm.response.to.have.status(200);",
+                      "});",
+                      ""
+                    ],
+                    "type": "text/javascript"
+                  }
+                }
+              ],
+              "request": {
+                "method": "PUT",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json",
+                    "type": "text"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n    \"ais\": {\n        \"consentTypes\": {\n            \"bankOfferedConsentSupported\": false,\n            \"globalConsentSupported\": false,\n            \"availableAccountsConsentSupported\": true,\n            \"accountAccessFrequencyPerDay\": 4,\n            \"notConfirmedConsentExpirationTimeMs\": 86400000,\n            \"maxConsentValidityDays\": 0\n        },\n        \"redirectLinkToOnlineBanking\": {\n            \"aisRedirectUrlToAspsp\": \"http://localhost:4200/ais/{redirect-id}/{encrypted-consent-id}\"\n        },\n        \"transactionParameters\": {\n            \"availableBookingStatuses\": [\n                \"BOOKED\",\n                \"PENDING\"\n            ],\n            \"transactionsWithoutBalancesSupported\": false,\n            \"supportedTransactionApplicationTypes\": [\n                \"application/json\"\n            ]\n        },\n        \"deltaReportSettings\": {\n            \"entryReferenceFromSupported\": false,\n            \"deltaListSupported\": false\n        },\n        \"scaRequirementsForOneTimeConsents\": {\n            \"scaByOneTimeAvailableAccountsConsentRequired\": true,\n            \"scaByOneTimeGlobalConsentRequired\": true\n        }\n    },\n    \"pis\": {\n        \"supportedPaymentTypeAndProductMatrix\": {\n            \"payments\": [\n                \"sepa-credit-transfers\",\n                \"instant-sepa-credit-transfers\"\n            ]\n        },\n        \"maxTransactionValidityDays\": 0,\n        \"notConfirmedPaymentExpirationTimeMs\": 86400000,\n        \"paymentCancellationAuthorisationMandated\": false,\n        \"redirectLinkToOnlineBanking\": {\n            \"pisRedirectUrlToAspsp\": \"http://localhost:4200/pis/{redirect-id}/{encrypted-payment-id}\",\n            \"pisPaymentCancellationRedirectUrlToAspsp\": \"http://localhost:4200/pis/cancellation/{redirect-id}/{encrypted-payment-id}\",\n            \"paymentCancellationRedirectUrlExpirationTimeMs\": 600000\n        },\n        \"countryValidationSupported\": \"DE\",\n        \"supportedTransactionStatusFormats\": [\n            \"application/json\"\n        ]\n    },\n    \"piis\": {\n        \"piisConsentSupported\": \"NOT_SUPPORTED\"\n    },\n    \"sb\": {\n        \"signingBasketSupported\": true\n    },\n    \"common\": {\n        \"scaRedirectFlow\": \"REDIRECT\",\n        \"startAuthorisationMode\": \"EXPLICIT\",\n        \"tppSignatureRequired\": false,\n        \"psuInInitialRequestMandated\": true,\n        \"redirectUrlExpirationTimeMs\": 600000,\n        \"authorisationExpirationTimeMs\": 86400000,\n        \"forceXs2aBaseLinksUrl\": false,\n        \"xs2aBaseLinksUrl\": \"http://myhost.com/\",\n        \"supportedAccountReferenceFields\": [\n            \"IBAN\"\n        ],\n        \"multicurrencyAccountLevelSupported\": \"SUBACCOUNT\",\n        \"aisPisSessionsSupported\": false,\n        \"aspspNotificationsSupported\": [\n        \t\"NONE\"\t\n        ],\n       \t\"authorisationConfirmationRequestMandated\": false,\n    \t\"authorisationConfirmationCheckByXs2a\": false, \n    \t\"checkUriComplianceToDomainSupported\": false \n   }\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{protocol}}://{{url_aspsp_profile}}/api/v1/aspsp-profile/for-debug/aspsp-settings",
+                  "protocol": "{{protocol}}",
+                  "host": [
+                    "{{url_aspsp_profile}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "aspsp-profile",
+                    "for-debug",
+                    "aspsp-settings"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+                "name": "POST 2. Single verification - full match",
+                "request": {
+                    "method": "POST",
+                    "header": [
+                        { "key": "Content-Type", "value": "application/json" },
+                        { "key": "Accept", "value": "application/json" },
+                        { "key": "X-Request-ID", "value": "{{$guid}}", "description": "required" },
+                        { "key": "PSU-ID", "value": "{{psu_id_single}}", "description": "optional" },
+                        { "key": "Digest", "value": "", "description": "optional" },
+                        { "key": "x-jws-signature", "value": "", "description": "optional" },
+                        { "key": "Body-Sig-Profile", "value": "", "description": "optional" },
+                        { "key": "Body-Enc-Profile", "value": "", "description": "optional" },
+                        { "key": "Body-Enc-List", "value": "", "description": "optional" },
+                        { "key": "Accept-Language", "value": "en", "description": "optional" },
+                        { "key": "API-Contract-ID", "value": "", "description": "optional" }
+                    ],
+                    "body": {
+                        "mode": "raw",
+                        "raw": "{\n  \"partyAccount\": {\n    \"iban\": \"DE02100100109307118603\"\n  },\n  \"party\": {\n    \"name\": \"Peter Miller Ltd\"\n  }\n}",
+                        "options": { "raw": { "language": "json" } }
+                    },
+                    "url": {
+                        "raw": "{{protocol}}://{{url_xs2a}}/v1/payee-verifications",
+                        "protocol": "{{protocol}}",
+                        "host": ["{{url_xs2a}}"],
+                        "path": ["v1", "payee-verifications"]
+                    }
+                },
+                "response": [],
+                "description": "Simulates a single party verification request where the provided name and account details result in a full match.\n\n**YAML Path:** `POST /v1/{party-verification-endpoint}`\n\n**Scenario:** This request simulates a successful verification with a full match (`MTCH`). The `partyAccount` and `party.name` in the request body are expected to correspond to a valid and matching entry in the ASPSP's system.",
+                "event": [
+                    {
+                        "listen": "test",
+                        "script": {
+                            "exec": [
+                                "pm.test(\"Status is 200\", function () { pm.response.to.have.status(200); });",
+                                "pm.test(\"Has partyVerificationResult with MTCH\", function () {",
+                                "    let body = pm.response.json();",
+                                "    pm.expect(body).to.have.property(\"partyVerificationResult\");",
+                                "    pm.expect(body.partyVerificationResult).to.have.property(\"matchCode\", \"MTCH\");",
+                                "});"
+                            ],
+                            "type": "text/javascript"
+                        }
+                    }
+                ]
+            },
+            {
+                "name": "POST 3. Single verification - partial match",
+                "request": {
+                    "method": "POST",
+                    "header": [
+                        { "key": "Content-Type", "value": "application/json" },
+                        { "key": "Accept", "value": "application/json" },
+                        { "key": "X-Request-ID", "value": "{{$guid}}", "description": "required" },
+                        { "key": "PSU-ID", "value": "{{psu_id_single}}", "description": "optional" },
+                        { "key": "Digest", "value": "", "description": "optional" },
+                        { "key": "x-jws-signature", "value": "", "description": "optional" },
+                        { "key": "Body-Sig-Profile", "value": "", "description": "optional" },
+                        { "key": "Body-Enc-Profile", "value": "", "description": "optional" },
+                        { "key": "Body-Enc-List", "value": "", "description": "optional" },
+                        { "key": "Accept-Language", "value": "en", "description": "optional" },
+                        { "key": "API-Contract-ID", "value": "", "description": "optional" }
+                    ],
+                    "body": {
+                        "mode": "raw",
+                        "raw": "{\n  \"partyAccount\": {\n    \"iban\": \"DE02100100109307118603\"\n  },\n  \"party\": {\n    \"name\": \"Peter Miller\"\n  }\n}",
+                        "options": { "raw": { "language": "json" } }
+                    },
+                    "url": {
+                        "raw": "{{protocol}}://{{url_xs2a}}/v1/payee-verifications",
+                        "protocol": "{{protocol}}",
+                        "host": ["{{url_xs2a}}"],
+                        "path": ["v1", "payee-verifications"]
+                    }
+                },
+                "response": [],
+                "description": "Simulates a single party verification request where the provided name results in a partial match.\n\n**YAML Path:** `POST /v1/{party-verification-endpoint}`\n\n**Scenario:** This request simulates a successful verification with a partial match (`PART`). The `party.name` is slightly different from the actual account holder's name ('Peter Miller' instead of 'Peter Miller Ltd').",
+                "event": [
+                    {
+                        "listen": "test",
+                        "script": {
+                            "exec": [
+                                "pm.test(\"Status is 200\", function () { pm.response.to.have.status(200); });",
+                                "pm.test(\"Has partyVerificationResult with PART\", function () {",
+                                "    let body = pm.response.json();",
+                                "    pm.expect(body).to.have.property(\"partyVerificationResult\");",
+                                "    pm.expect(body.partyVerificationResult).to.have.property(\"matchCode\", \"PART\");",
+                                "});"
+                            ],
+                            "type": "text/javascript"
+                        }
+                    }
+                ]
+            },
+            {
+                "name": "POST 4. Single verification - no match",
+                "request": {
+                    "method": "POST",
+                    "header": [
+                        { "key": "Content-Type", "value": "application/json" },
+                        { "key": "Accept", "value": "application/json" },
+                        { "key": "X-Request-ID", "value": "{{$guid}}", "description": "required" },
+                        { "key": "PSU-ID", "value": "{{psu_id_single}}", "description": "optional" },
+                        { "key": "Digest", "value": "", "description": "optional" },
+                        { "key": "x-jws-signature", "value": "", "description": "optional" },
+                        { "key": "Body-Sig-Profile", "value": "", "description": "optional" },
+                        { "key": "Body-Enc-Profile", "value": "", "description": "optional" },
+                        { "key": "Body-Enc-List", "value": "", "description": "optional" },
+                        { "key": "Accept-Language", "value": "en", "description": "optional" },
+                        { "key": "API-Contract-ID", "value": "", "description": "optional" }
+                    ],
+                    "body": {
+                        "mode": "raw",
+                        "raw": "{\n  \"partyAccount\": {\n    \"iban\": \"DE02100100109307118603\"\n  },\n  \"party\": {\n    \"name\": \"Completely Wrong Name\"\n  }\n}",
+                        "options": { "raw": { "language": "json" } }
+                    },
+                    "url": {
+                        "raw": "{{protocol}}://{{url_xs2a}}/v1/payee-verifications",
+                        "protocol": "{{protocol}}",
+                        "host": ["{{url_xs2a}}"],
+                        "path": ["v1", "payee-verifications"]
+                    }
+                },
+                "response": [],
+                "description": "Simulates a single party verification request where the provided name results in no match.\n\n**YAML Path:** `POST /v1/{party-verification-endpoint}`\n\n**Scenario:** This request simulates a failed verification with no match (`NMTC`). The `party.name` does not correspond to the account holder's name.",
+                "event": [
+                    {
+                        "listen": "test",
+                        "script": {
+                            "exec": [
+                                "pm.test(\"Status is 200\", function () { pm.response.to.have.status(200); });",
+                                "pm.test(\"Has partyVerificationResult with NMTC\", function () {",
+                                "    let body = pm.response.json();",
+                                "    pm.expect(body).to.have.property(\"partyVerificationResult\");",
+                                "    pm.expect(body.partyVerificationResult).to.have.property(\"matchCode\", \"NMTC\");",
+                                "});"
+                            ],
+                            "type": "text/javascript"
+                        }
+                    }
+                ]
+            }
+          ]
+        },
+        {
+          "name": "Bulk Verification Initiation",
+          "item": [
+            {
+              "name": "1. Enable signing basket support in ASPSP profile",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test(\"Status code is 200\", () => {",
+                      "    pm.response.to.have.status(200);",
+                      "});",
+                      ""
+                    ],
+                    "type": "text/javascript"
+                  }
+                }
+              ],
+              "request": {
+                "method": "PUT",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json",
+                    "type": "text"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n    \"ais\": {\n        \"consentTypes\": {\n            \"bankOfferedConsentSupported\": false,\n            \"globalConsentSupported\": false,\n            \"availableAccountsConsentSupported\": true,\n            \"accountAccessFrequencyPerDay\": 4,\n            \"notConfirmedConsentExpirationTimeMs\": 86400000,\n            \"maxConsentValidityDays\": 0\n        },\n        \"redirectLinkToOnlineBanking\": {\n            \"aisRedirectUrlToAspsp\": \"http://localhost:4200/ais/{redirect-id}/{encrypted-consent-id}\"\n        },\n        \"transactionParameters\": {\n            \"availableBookingStatuses\": [\n                \"BOOKED\",\n                \"PENDING\"\n            ],\n            \"transactionsWithoutBalancesSupported\": false,\n            \"supportedTransactionApplicationTypes\": [\n                \"application/json\"\n            ]\n        },\n        \"deltaReportSettings\": {\n            \"entryReferenceFromSupported\": false,\n            \"deltaListSupported\": false\n        },\n        \"scaRequirementsForOneTimeConsents\": {\n            \"scaByOneTimeAvailableAccountsConsentRequired\": true,\n            \"scaByOneTimeGlobalConsentRequired\": true\n        }\n    },\n    \"pis\": {\n        \"supportedPaymentTypeAndProductMatrix\": {\n            \"payments\": [\n                \"sepa-credit-transfers\",\n                \"instant-sepa-credit-transfers\"\n            ]\n        },\n        \"maxTransactionValidityDays\": 0,\n        \"notConfirmedPaymentExpirationTimeMs\": 86400000,\n        \"paymentCancellationAuthorisationMandated\": false,\n        \"redirectLinkToOnlineBanking\": {\n            \"pisRedirectUrlToAspsp\": \"http://localhost:4200/pis/{redirect-id}/{encrypted-payment-id}\",\n            \"pisPaymentCancellationRedirectUrlToAspsp\": \"http://localhost:4200/pis/cancellation/{redirect-id}/{encrypted-payment-id}\",\n            \"paymentCancellationRedirectUrlExpirationTimeMs\": 600000\n        },\n        \"countryValidationSupported\": \"DE\",\n        \"supportedTransactionStatusFormats\": [\n            \"application/json\"\n        ]\n    },\n    \"piis\": {\n        \"piisConsentSupported\": \"NOT_SUPPORTED\"\n    },\n    \"sb\": {\n        \"signingBasketSupported\": true\n    },\n    \"common\": {\n        \"scaRedirectFlow\": \"REDIRECT\",\n        \"startAuthorisationMode\": \"EXPLICIT\",\n        \"tppSignatureRequired\": false,\n        \"psuInInitialRequestMandated\": true,\n        \"redirectUrlExpirationTimeMs\": 600000,\n        \"authorisationExpirationTimeMs\": 86400000,\n        \"forceXs2aBaseLinksUrl\": false,\n        \"xs2aBaseLinksUrl\": \"http://myhost.com/\",\n        \"supportedAccountReferenceFields\": [\n            \"IBAN\"\n        ],\n        \"multicurrencyAccountLevelSupported\": \"SUBACCOUNT\",\n        \"aisPisSessionsSupported\": false,\n        \"aspspNotificationsSupported\": [\n        \t\"NONE\"\t\n        ],\n       \t\"authorisationConfirmationRequestMandated\": false,\n    \t\"authorisationConfirmationCheckByXs2a\": false, \n    \t\"checkUriComplianceToDomainSupported\": false \n   }\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{protocol}}://{{url_aspsp_profile}}/api/v1/aspsp-profile/for-debug/aspsp-settings",
+                  "protocol": "{{protocol}}",
+                  "host": [
+                    "{{url_aspsp_profile}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "aspsp-profile",
+                    "for-debug",
+                    "aspsp-settings"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "POST 2. Bulk verification - full match",
+              "request": {
+                "method": "POST",
+                "header": [
+                  { "key": "Content-Type", "value": "application/json" },
+                  { "key": "Accept", "value": "application/json" },
+                  { "key": "X-Request-ID", "value": "{{$guid}}", "description": "required" },
+                  { "key": "PSU-ID", "value": "{{psu_id_single}}", "description": "optional" },
+                  { "key": "Digest", "value": "", "description": "optional" },
+                  { "key": "x-jws-signature", "value": "", "description": "optional" },
+                  { "key": "Body-Sig-Profile", "value": "", "description": "optional" },
+                  { "key": "Body-Enc-Profile", "value": "", "description": "optional" },
+                  { "key": "Body-Enc-List", "value": "", "description": "optional" },
+                  { "key": "Accept-Language", "value": "en", "description": "optional" },
+                  { "key": "API-Contract-ID", "value": "", "description": "optional" }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"partyVerificationRequests\": [\n    {\n      \"partyAccount\": {\"iban\": \"DE02100100109307118603\"},\n      \"party\": {\"name\": \"Peter Miller Ltd\"}\n    },\n    {\n      \"partyAccount\": {\"iban\": \"DE02100100109307118612\"},\n      \"party\": {\"identification\": {\"organisationId\": {\"lei\": \"PetMulLTD\"}}}\n    }\n  ]\n}",
+                  "options": { "raw": { "language": "json" } }
+                },
+                "url": {
+                  "raw": "{{protocol}}://{{url_xs2a}}/v1/bulk-payee-verifications",
+                  "protocol": "{{protocol}}",
+                  "host": ["{{url_xs2a}}"],
+                  "path": ["v1", "bulk-payee-verifications"]
+                }
+              },
+              "response": [],
+              "description": "Initiates a bulk verification request with a mix of valid and invalid data.\n\n**YAML Path:** `/v1/{bulk-party-verification-endpoint}`\n\n**Scenario:** This request simulates the initiation of a bulk verification process. The response should be a 202 Accepted, and the `vopBulkId` should be captured for subsequent status and result checks.",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test(\"Status is 202\", function () { pm.response.to.have.status(202); });",
+                      "pm.test(\"Has vopBulkId\", function () {",
+                      "    let body = pm.response.json();",
+                      "    pm.expect(body).to.have.property(\"vopBulkId\");",
+                      "    pm.environment.set(\"vopBulkId\", body.vopBulkId);",
+                      "});"
+                    ],
+                    "type": "text/javascript"
+                  }
+                }
+              ]
+            },
+            {
+              "name": "POST 3. Bulk verification - partial match",
+              "request": {
+                "method": "POST",
+                "header": [
+                  { "key": "Content-Type", "value": "application/json" },
+                  { "key": "Accept", "value": "application/json" },
+                  { "key": "X-Request-ID", "value": "{{$guid}}", "description": "required" },
+                  { "key": "PSU-ID", "value": "{{psu_id_single}}", "description": "optional" },
+                  { "key": "Digest", "value": "", "description": "optional" },
+                  { "key": "x-jws-signature", "value": "", "description": "optional" },
+                  { "key": "Body-Sig-Profile", "value": "", "description": "optional" },
+                  { "key": "Body-Enc-Profile", "value": "", "description": "optional" },
+                  { "key": "Body-Enc-List", "value": "", "description": "optional" },
+                  { "key": "Accept-Language", "value": "en", "description": "optional" },
+                  { "key": "API-Contract-ID", "value": "", "description": "optional" }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"partyVerificationRequests\": [\n    {\n      \"partyAccount\": {\"iban\": \"DE02100100109307118603\"},\n      \"party\": {\"name\": \"Peter Miller\"}\n    },\n    {\n      \"partyAccount\": {\"iban\": \"DE02100100109307118612\"},\n      \"party\": {\"identification\": {\"organisationId\": {\"lei\": \"PetMul\"}}}\n    }\n  ]\n}",
+                  "options": { "raw": { "language": "json" } }
+                },
+                "url": {
+                  "raw": "{{protocol}}://{{url_xs2a}}/v1/bulk-payee-verifications",
+                  "protocol": "{{protocol}}",
+                  "host": ["{{url_xs2a}}"],
+                  "path": ["v1", "bulk-payee-verifications"]
+                }
+              },
+              "response": [],
+              "description": "Initiates a bulk verification request with data that will result in partial matches.\n\n**YAML Path:** `/v1/{bulk-party-verification-endpoint}`\n\n**Scenario:** This request simulates the initiation of a bulk verification process where the provided names are slightly different from the actual account holder's names. The response should be a 202 Accepted, and the `vopBulkId` should be captured for subsequent status and result checks.",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test(\"Status is 202\", function () { pm.response.to.have.status(202); });",
+                      "pm.test(\"Has vopBulkId\", function () {",
+                      "    let body = pm.response.json();",
+                      "    pm.expect(body).to.have.property(\"vopBulkId\");",
+                      "    pm.environment.set(\"vopBulkId\", body.vopBulkId);",
+                      "});"
+                    ],
+                    "type": "text/javascript"
+                  }
+                }
+              ]
+            },
+            {
+              "name": "POST 4. Bulk verification - no match",
+              "request": {
+                "method": "POST",
+                "header": [
+                  { "key": "Content-Type", "value": "application/json" },
+                  { "key": "Accept", "value": "application/json" },
+                  { "key": "X-Request-ID", "value": "{{$guid}}", "description": "required" },
+                  { "key": "PSU-ID", "value": "{{psu_id_single}}", "description": "optional" },
+                  { "key": "Digest", "value": "", "description": "optional" },
+                  { "key": "x-jws-signature", "value": "", "description": "optional" },
+                  { "key": "Body-Sig-Profile", "value": "", "description": "optional" },
+                  { "key": "Body-Enc-Profile", "value": "", "description": "optional" },
+                  { "key": "Body-Enc-List", "value": "", "description": "optional" },
+                  { "key": "Accept-Language", "value": "en", "description": "optional" },
+                  { "key": "API-Contract-ID", "value": "", "description": "optional" }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"partyVerificationRequests\": [\n    {\n      \"partyAccount\": {\"iban\": \"DE02100100109307118603\"},\n      \"party\": {\"name\": \"Wrong Name\"}\n    },\n    {\n      \"partyAccount\": {\"iban\": \"DE02100100109307118612\"},\n      \"party\": {\"identification\": {\"organisationId\": {\"lei\": \"WrongLei\"}}}\n    }\n  ]\n}",
+                  "options": { "raw": { "language": "json" } }
+                },
+                "url": {
+                  "raw": "{{protocol}}://{{url_xs2a}}/v1/bulk-payee-verifications",
+                  "protocol": "{{protocol}}",
+                  "host": ["{{url_xs2a}}"],
+                  "path": ["v1", "bulk-payee-verifications"]
+                }
+              },
+              "response": [],
+              "description": "Initiates a bulk verification request with data that will result in no matches.\n\n**YAML Path:** `/v1/{bulk-party-verification-endpoint}`\n\n**Scenario:** This request simulates the initiation of a bulk verification process where the provided names do not correspond to the account holders' names. The response should be a 202 Accepted, and the `vopBulkId` should be captured for subsequent status and result checks.",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test(\"Status is 202\", function () { pm.response.to.have.status(202); });",
+                      "pm.test(\"Has vopBulkId\", function () {",
+                      "    let body = pm.response.json();",
+                      "    pm.expect(body).to.have.property(\"vopBulkId\");",
+                      "    pm.environment.set(\"vopBulkId\", body.vopBulkId);",
+                      "});"
+                    ],
+                    "type": "text/javascript"
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "Bulk Status",
+          "item": [
+                      {
+                        "name": "1. Enable signing basket support in ASPSP profile",
+                        "event": [
+                          {
+                            "listen": "test",
+                            "script": {
+                              "exec": [
+                                "pm.test(\"Status code is 200\", () => {",
+                                "    pm.response.to.have.status(200);",
+                                "});",
+                                ""
+                              ],
+                              "type": "text/javascript"
+                            }
+                          }
+                        ],
+                        "request": {
+                          "method": "PUT",
+                          "header": [
+                            {
+                              "key": "Content-Type",
+                              "value": "application/json",
+                              "type": "text"
+                            }
+                          ],
+                          "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"ais\": {\n        \"consentTypes\": {\n            \"bankOfferedConsentSupported\": false,\n            \"globalConsentSupported\": false,\n            \"availableAccountsConsentSupported\": true,\n            \"accountAccessFrequencyPerDay\": 4,\n            \"notConfirmedConsentExpirationTimeMs\": 86400000,\n            \"maxConsentValidityDays\": 0\n        },\n        \"redirectLinkToOnlineBanking\": {\n            \"aisRedirectUrlToAspsp\": \"http://localhost:4200/ais/{redirect-id}/{encrypted-consent-id}\"\n        },\n        \"transactionParameters\": {\n            \"availableBookingStatuses\": [\n                \"BOOKED\",\n                \"PENDING\"\n            ],\n            \"transactionsWithoutBalancesSupported\": false,\n            \"supportedTransactionApplicationTypes\": [\n                \"application/json\"\n            ]\n        },\n        \"deltaReportSettings\": {\n            \"entryReferenceFromSupported\": false,\n            \"deltaListSupported\": false\n        },\n        \"scaRequirementsForOneTimeConsents\": {\n            \"scaByOneTimeAvailableAccountsConsentRequired\": true,\n            \"scaByOneTimeGlobalConsentRequired\": true\n        }\n    },\n    \"pis\": {\n        \"supportedPaymentTypeAndProductMatrix\": {\n            \"payments\": [\n                \"sepa-credit-transfers\",\n                \"instant-sepa-credit-transfers\"\n            ]\n        },\n        \"maxTransactionValidityDays\": 0,\n        \"notConfirmedPaymentExpirationTimeMs\": 86400000,\n        \"paymentCancellationAuthorisationMandated\": false,\n        \"redirectLinkToOnlineBanking\": {\n            \"pisRedirectUrlToAspsp\": \"http://localhost:4200/pis/{redirect-id}/{encrypted-payment-id}\",\n            \"pisPaymentCancellationRedirectUrlToAspsp\": \"http://localhost:4200/pis/cancellation/{redirect-id}/{encrypted-payment-id}\",\n            \"paymentCancellationRedirectUrlExpirationTimeMs\": 600000\n        },\n        \"countryValidationSupported\": \"DE\",\n        \"supportedTransactionStatusFormats\": [\n            \"application/json\"\n        ]\n    },\n    \"piis\": {\n        \"piisConsentSupported\": \"NOT_SUPPORTED\"\n    },\n    \"sb\": {\n        \"signingBasketSupported\": true\n    },\n    \"common\": {\n        \"scaRedirectFlow\": \"REDIRECT\",\n        \"startAuthorisationMode\": \"EXPLICIT\",\n        \"tppSignatureRequired\": false,\n        \"psuInInitialRequestMandated\": true,\n        \"redirectUrlExpirationTimeMs\": 600000,\n        \"authorisationExpirationTimeMs\": 86400000,\n        \"forceXs2aBaseLinksUrl\": false,\n        \"xs2aBaseLinksUrl\": \"http://myhost.com/\",\n        \"supportedAccountReferenceFields\": [\n            \"IBAN\"\n        ],\n        \"multicurrencyAccountLevelSupported\": \"SUBACCOUNT\",\n        \"aisPisSessionsSupported\": false,\n        \"aspspNotificationsSupported\": [\n        \t\"NONE\"\t\n        ],\n       \t\"authorisationConfirmationRequestMandated\": false,\n    \t\"authorisationConfirmationCheckByXs2a\": false, \n    \t\"checkUriComplianceToDomainSupported\": false \n   }\n}",
+                            "options": {
+                              "raw": {
+                                "language": "json"
+                              }
+                            }
+                          },
+                          "url": {
+                            "raw": "{{protocol}}://{{url_aspsp_profile}}/api/v1/aspsp-profile/for-debug/aspsp-settings",
+                            "protocol": "{{protocol}}",
+                            "host": [
+                              "{{url_aspsp_profile}}"
+                            ],
+                            "path": [
+                              "api",
+                              "v1",
+                              "aspsp-profile",
+                              "for-debug",
+                              "aspsp-settings"
+                            ]
+                          }
+                        },
+                        "response": []
+                      },
+                      {
+                        "name": "GET 2. Bulk verification status",
+                        "request": {
+                          "method": "GET",
+                          "header": [
+                            { "key": "X-Request-ID", "value": "{{$guid}}", "description": "required" },
+                            { "key": "Digest", "value": "", "description": "optional" },
+                            { "key": "x-jws-signature", "value": "", "description": "optional" },
+                            { "key": "API-Contract-ID", "value": "", "description": "optional" }
+                          ],
+                          "url": {
+                            "raw": "{{protocol}}://{{url_xs2a}}/v1/bulk-payee-verifications/{{vopBulkId}}/status",
+                            "protocol": "{{protocol}}",
+                            "host": ["{{url_xs2a}}"],
+                            "path": ["v1", "bulk-payee-verifications", "{{vopBulkId}}", "status"]
+                          }
+                        },
+                        "response": [],
+                        "description": "Checks the status of a bulk verification request.\n\n**YAML Path:** `GET /v1/{bulk-party-verification-endpoint}/{vopBulkId}/status`\n\n**Scenario:** This request retrieves the status of the bulk verification process initiated in the previous step. The `vopBulkId` captured from the initiation response is used to identify the bulk request.",
+                        "event": [
+                          {
+                            "listen": "test",
+                            "script": {
+                              "exec": [
+                                "pm.test(\"Status is 200\", function () { pm.response.to.have.status(200); });",
+                                "pm.test(\"Has vopBulkStatus\", function () {",
+                                "    let body = pm.response.json();",
+                                "    pm.expect(body).to.have.property(\"vopBulkStatus\");",
+                                "});"
+                              ],
+                              "type": "text/javascript"
+                            }
+                          }
+                        ]
+                      }
+                    ]
+        },
+        {
+          "name": "Bulk Results",
+          "item": [
+                      {
+                        "name": "1. Enable signing basket support in ASPSP profile",
+                        "event": [
+                          {
+                            "listen": "test",
+                            "script": {
+                              "exec": [
+                                "pm.test(\"Status code is 200\", () => {",
+                                "    pm.response.to.have.status(200);",
+                                "});",
+                                ""
+                              ],
+                              "type": "text/javascript"
+                            }
+                          }
+                        ],
+                        "request": {
+                          "method": "PUT",
+                          "header": [
+                            {
+                              "key": "Content-Type",
+                              "value": "application/json",
+                              "type": "text"
+                            }
+                          ],
+                          "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"ais\": {\n        \"consentTypes\": {\n            \"bankOfferedConsentSupported\": false,\n            \"globalConsentSupported\": false,\n            \"availableAccountsConsentSupported\": true,\n            \"accountAccessFrequencyPerDay\": 4,\n            \"notConfirmedConsentExpirationTimeMs\": 86400000,\n            \"maxConsentValidityDays\": 0\n        },\n        \"redirectLinkToOnlineBanking\": {\n            \"aisRedirectUrlToAspsp\": \"http://localhost:4200/ais/{redirect-id}/{encrypted-consent-id}\"\n        },\n        \"transactionParameters\": {\n            \"availableBookingStatuses\": [\n                \"BOOKED\",\n                \"PENDING\"\n            ],\n            \"transactionsWithoutBalancesSupported\": false,\n            \"supportedTransactionApplicationTypes\": [\n                \"application/json\"\n            ]\n        },\n        \"deltaReportSettings\": {\n            \"entryReferenceFromSupported\": false,\n            \"deltaListSupported\": false\n        },\n        \"scaRequirementsForOneTimeConsents\": {\n            \"scaByOneTimeAvailableAccountsConsentRequired\": true,\n            \"scaByOneTimeGlobalConsentRequired\": true\n        }\n    },\n    \"pis\": {\n        \"supportedPaymentTypeAndProductMatrix\": {\n            \"payments\": [\n                \"sepa-credit-transfers\",\n                \"instant-sepa-credit-transfers\"\n            ]\n        },\n        \"maxTransactionValidityDays\": 0,\n        \"notConfirmedPaymentExpirationTimeMs\": 86400000,\n        \"paymentCancellationAuthorisationMandated\": false,\n        \"redirectLinkToOnlineBanking\": {\n            \"pisRedirectUrlToAspsp\": \"http://localhost:4200/pis/{redirect-id}/{encrypted-payment-id}\",\n            \"pisPaymentCancellationRedirectUrlToAspsp\": \"http://localhost:4200/pis/cancellation/{redirect-id}/{encrypted-payment-id}\",\n            \"paymentCancellationRedirectUrlExpirationTimeMs\": 600000\n        },\n        \"countryValidationSupported\": \"DE\",\n        \"supportedTransactionStatusFormats\": [\n            \"application/json\"\n        ]\n    },\n    \"piis\": {\n        \"piisConsentSupported\": \"NOT_SUPPORTED\"\n    },\n    \"sb\": {\n        \"signingBasketSupported\": true\n    },\n    \"common\": {\n        \"scaRedirectFlow\": \"REDIRECT\",\n        \"startAuthorisationMode\": \"EXPLICIT\",\n        \"tppSignatureRequired\": false,\n        \"psuInInitialRequestMandated\": true,\n        \"redirectUrlExpirationTimeMs\": 600000,\n        \"authorisationExpirationTimeMs\": 86400000,\n        \"forceXs2aBaseLinksUrl\": false,\n        \"xs2aBaseLinksUrl\": \"http://myhost.com/\",\n        \"supportedAccountReferenceFields\": [\n            \"IBAN\"\n        ],\n        \"multicurrencyAccountLevelSupported\": \"SUBACCOUNT\",\n        \"aisPisSessionsSupported\": false,\n        \"aspspNotificationsSupported\": [\n        \t\"NONE\"\t\n        ],\n       \t\"authorisationConfirmationRequestMandated\": false,\n    \t\"authorisationConfirmationCheckByXs2a\": false, \n    \t\"checkUriComplianceToDomainSupported\": false \n   }\n}",
+                            "options": {
+                              "raw": {
+                                "language": "json"
+                              }
+                            }
+                          },
+                          "url": {
+                            "raw": "{{protocol}}://{{url_aspsp_profile}}/api/v1/aspsp-profile/for-debug/aspsp-settings",
+                            "protocol": "{{protocol}}",
+                            "host": [
+                              "{{url_aspsp_profile}}"
+                            ],
+                            "path": [
+                              "api",
+                              "v1",
+                              "aspsp-profile",
+                              "for-debug",
+                              "aspsp-settings"
+                            ]
+                          }
+                        },
+                        "response": []
+                      },
+                      {
+                        "name": "GET 2. Bulk verification results",
+                        "request": {
+                          "method": "GET",
+                          "header": [
+                            { "key": "X-Request-ID", "value": "{{$guid}}", "description": "required" },
+                            { "key": "Digest", "value": "", "description": "optional" },
+                            { "key": "x-jws-signature", "value": "", "description": "optional" },
+                            { "key": "API-Contract-ID", "value": "", "description": "optional" }
+                          ],
+                          "url": {
+                            "raw": "{{protocol}}://{{url_xs2a}}/v1/bulk-payee-verifications/{{vopBulkId}}",
+                            "protocol": "{{protocol}}",
+                            "host": ["{{url_xs2a}}"],
+                            "path": ["v1", "bulk-payee-verifications", "{{vopBulkId}}"]
+                          }
+                        },
+                        "response": [],
+                        "description": "Retrieves the results of a bulk verification request.\n\n**YAML Path:** `GET /v1/{bulk-party-verification-endpoint}/{vopBulkId}`\n\n**Scenario:** This request retrieves the final results of the bulk verification process. The `vopBulkId` is used to identify the bulk request.",
+                        "event": [
+                          {
+                            "listen": "test",
+                            "script": {
+                              "exec": [
+                                "pm.test(\"Status is 200\", function () { pm.response.to.have.status(200); });",
+                                "pm.test(\"Has partyVerificationResponses\", function () {",
+                                "    let body = pm.response.json();",
+                                "    pm.expect(body).to.have.property(\"partyVerificationResponses\");",
+                                "});"
+                              ],
+                              "type": "text/javascript"
+                            }
+                          }
+                        ]
+                      }
+                    ]
+        },
+        {
+          "name": "Errorful requests",
+          "item": [
+            {
+              "name": "4xx Client Errors",
+              "item": [
+                {
+                  "name": "POST Single verification - 400 Bad Request",
+                  "request": {
+                    "method": "POST",
+                    "header": [
+                      { "key": "Content-Type", "value": "application/json" },
+                      { "key": "Accept", "value": "application/json" },
+                      { "key": "X-Request-ID", "value": "{{$guid}}" }
+                    ],
+                    "body": {
+                      "mode": "raw",
+                      "raw": "{\n  \"partyAccount\": {\n    \"iban\": \"DE02100100109307118603\"\n  }\n}",
+                      "options": { "raw": { "language": "json" } }
+                    },
+                    "url": {
+                      "raw": "{{protocol}}://{{url_xs2a}}/v1/payee-verifications",
+                      "protocol": "{{protocol}}",
+                      "host": ["{{url_xs2a}}"],
+                      "path": ["v1", "payee-verifications"]
+                    }
+                  },
+                  "response": [],
+                  "description": "Simulates a 400 Bad Request error for a single party verification.\n\n**YAML Path:** `POST /v1/{party-verification-endpoint}`\n\n**Scenario:** This request simulates a 400 error by sending a malformed request body (missing the `party` object).",
+                  "event": [
+                    {
+                      "listen": "test",
+                      "script": {
+                        "exec": [
+                          "pm.test(\"Status is 400\", function () { pm.response.to.have.status(400); });",
+                          "pm.test(\"Has error object\", function () {",
+                          "    let body = pm.response.json();",
+                          "    pm.expect(body).to.have.property(\"tppMessages\");",
+                          "});"
+                        ],
+                        "type": "text/javascript"
+                      }
+                    }
+                  ]
+                },
+                {
+                  "name": "POST Single verification - 401 Unauthorized",
+                  "request": {
+                    "method": "POST",
+                    "header": [
+                      { "key": "Content-Type", "value": "application/json" },
+                      { "key": "Accept", "value": "application/json" },
+                      { "key": "X-Request-ID", "value": "{{$guid}}" }
+                    ],
+                    "body": {
+                      "mode": "raw",
+                      "raw": "{\n  \"partyAccount\": {\n    \"iban\": \"DE02100100109307118603\"\n  },\n  \"party\": {\n    \"name\": \"Peter Miller Ltd\"\n  }\n}",
+                      "options": { "raw": { "language": "json" } }
+                    },
+                    "url": {
+                      "raw": "{{protocol}}://{{url_xs2a}}/v1/payee-verifications",
+                      "protocol": "{{protocol}}",
+                      "host": ["{{url_xs2a}}"],
+                      "path": ["v1", "payee-verifications"]
+                    }
+                  },
+                  "response": [],
+                  "description": "Simulates a 401 Unauthorized error for a single party verification.\n\n**YAML Path:** `POST /v1/{party-verification-endpoint}`\n\n**Scenario:** This request simulates a 401 error by not providing a valid authorization token.",
+                  "event": [
+                    {
+                      "listen": "test",
+                      "script": {
+                        "exec": [
+                          "pm.test(\"Status is 401\", function () { pm.response.to.have.status(401); });",
+                          "pm.test(\"Error has code UNAUTHORIZED\", function () {",
+                          "    let body = pm.response.json();",
+                          "    pm.expect(body.tppMessages[0]).to.have.property(\"code\", \"UNAUTHORIZED\");",
+                          "});"
+                        ],
+                        "type": "text/javascript"
+                      }
+                    }
+                  ]
+                },
+                {
+                  "name": "POST Single verification - 403 Forbidden",
+                  "request": {
+                    "method": "POST",
+                    "header": [
+                      { "key": "Content-Type", "value": "application/json" },
+                      { "key": "Accept", "value": "application/json" },
+                      { "key": "X-Request-ID", "value": "{{$guid}}" }
+                    ],
+                    "body": {
+                      "mode": "raw",
+                      "raw": "{\n  \"partyAccount\": {\n    \"iban\": \"DE02100100109307118603\"\n  },\n  \"party\": {\n    \"name\": \"Peter Miller Ltd\"\n  }\n}",
+                      "options": { "raw": { "language": "json" } }
+                    },
+                    "url": {
+                      "raw": "{{protocol}}://{{url_xs2a}}/v1/payee-verifications",
+                      "protocol": "{{protocol}}",
+                      "host": ["{{url_xs2a}}"],
+                      "path": ["v1", "payee-verifications"]
+                    }
+                  },
+                  "response": [],
+                  "description": "Simulates a 403 Forbidden error for a single party verification.\n\n**YAML Path:** `POST /v1/{party-verification-endpoint}`\n\n**Scenario:** This request simulates a 403 error, which could occur if the TPP does not have the necessary permissions to access the endpoint.",
+                  "event": [
+                    {
+                      "listen": "test",
+                      "script": {
+                        "exec": [
+                          "pm.test(\"Status is 403\", function () { pm.response.to.have.status(403); });"
+                        ],
+                        "type": "text/javascript"
+                      }
+                    }
+                  ]
+                },
+                {
+                  "name": "POST Single verification - 404 Not Found",
+                  "request": {
+                    "method": "POST",
+                    "header": [
+                      { "key": "Content-Type", "value": "application/json" },
+                      { "key": "Accept", "value": "application/json" },
+                      { "key": "X-Request-ID", "value": "{{$guid}}" }
+                    ],
+                    "body": { "mode": "raw", "raw": "{}" },
+                    "url": {
+                      "raw": "{{protocol}}://{{url_xs2a}}/v1/payee-verifications-invalid",
+                      "protocol": "{{protocol}}",
+                      "host": ["{{url_xs2a}}"],
+                      "path": ["v1", "payee-verifications-invalid"]
+                    }
+                  },
+                  "response": [],
+                  "description": "Simulates a 404 Not Found error.",
+                  "event": [
+                    {
+                      "listen": "test",
+                      "script": { "exec": ["pm.test(\"Status is 404\", function () { pm.response.to.have.status(404); });"], "type": "text/javascript" }
+                    }
+                  ]
+                },
+                {
+                  "name": "POST Single verification - 405 Method Not Allowed",
+                  "request": {
+                    "method": "GET",
+                    "header": [],
+                    "url": {
+                      "raw": "{{protocol}}://{{url_xs2a}}/v1/payee-verifications",
+                      "protocol": "{{protocol}}",
+                      "host": ["{{url_xs2a}}"],
+                      "path": ["v1", "payee-verifications"]
+                    }
+                  },
+                  "response": [],
+                  "description": "Simulates a 405 Method Not Allowed error.",
+                  "event": [
+                    {
+                      "listen": "test",
+                      "script": { "exec": ["pm.test(\"Status is 405\", function () { pm.response.to.have.status(405); });"], "type": "text/javascript" }
+                    }
+                  ]
+                },
+                {
+                  "name": "POST Single verification - 406 Not Acceptable",
+                  "request": {
+                    "method": "POST",
+                    "header": [
+                      { "key": "Accept", "value": "application/xml" }
+                    ],
+                    "body": { "mode": "raw", "raw": "{}" },
+                    "url": {
+                      "raw": "{{protocol}}://{{url_xs2a}}/v1/payee-verifications",
+                      "protocol": "{{protocol}}",
+                      "host": ["{{url_xs2a}}"],
+                      "path": ["v1", "payee-verifications"]
+                    }
+                  },
+                  "response": [],
+                  "description": "Simulates a 406 Not Acceptable error.",
+                  "event": [
+                    {
+                      "listen": "test",
+                      "script": { "exec": ["pm.test(\"Status is 406\", function () { pm.response.to.have.status(406); });"], "type": "text/javascript" }
+                    }
+                  ]
+                },
+                {
+                  "name": "POST Single verification - 415 Unsupported Media Type",
+                  "request": {
+                    "method": "POST",
+                    "header": [
+                      { "key": "Content-Type", "value": "application/xml" }
+                    ],
+                    "body": { "mode": "raw", "raw": "" },
+                    "url": {
+                      "raw": "{{protocol}}://{{url_xs2a}}/v1/payee-verifications",
+                      "protocol": "{{protocol}}",
+                      "host": ["{{url_xs2a}}"],
+                      "path": ["v1", "payee-verifications"]
+                    }
+                  },
+                  "response": [],
+                  "description": "Simulates a 415 Unsupported Media Type error.",
+                  "event": [
+                    {
+                      "listen": "test",
+                      "script": { "exec": ["pm.test(\"Status is 415\", function () { pm.response.to.have.status(415); });"], "type": "text/javascript" }
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "name": "5xx Server Errors",
+              "item": [
+                {
+                  "name": "POST Single verification - 500 Internal Server Error",
+                  "request": {
+                    "method": "POST",
+                    "header": [
+                      { "key": "Content-Type", "value": "application/json" },
+                      { "key": "X-Request-ID", "value": "{{$guid}}" }
+                    ],
+                    "body": { "mode": "raw", "raw": "{}" },
+                    "url": {
+                      "raw": "{{protocol}}://{{url_xs2a}}/v1/payee-verifications",
+                      "protocol": "{{protocol}}",
+                      "host": ["{{url_xs2a}}"],
+                      "path": ["v1", "payee-verifications"]
+                    }
+                  },
+                  "response": [],
+                  "description": "Simulates a 500 Internal Server Error.",
+                  "event": [
+                    {
+                      "listen": "test",
+                      "script": { "exec": ["pm.test(\"Status is 500\", function () { pm.response.to.have.status(500); });"], "type": "text/javascript" }
+                    }
+                  ]
+                },
+                {
+                  "name": "POST Single verification - 503 Service Unavailable",
+                  "request": {
+                    "method": "POST",
+                    "header": [
+                      { "key": "Content-Type", "value": "application/json" },
+                      { "key": "X-Request-ID", "value": "{{$guid}}" }
+                    ],
+                    "body": { "mode": "raw", "raw": "{}" },
+                    "url": {
+                      "raw": "{{protocol}}://{{url_xs2a}}/v1/payee-verifications",
+                      "protocol": "{{protocol}}",
+                      "host": ["{{url_xs2a}}"],
+                      "path": ["v1", "payee-verifications"]
+                    }
+                  },
+                  "response": [],
+                  "description": "Simulates a 503 Service Unavailable error.",
+                  "event": [
+                    {
+                      "listen": "test",
+                      "script": { "exec": ["pm.test(\"Status is 503\", function () { pm.response.to.have.status(503); });"], "type": "text/javascript" }
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

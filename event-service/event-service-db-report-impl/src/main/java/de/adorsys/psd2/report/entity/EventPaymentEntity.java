@@ -42,4 +42,5 @@ public class EventPaymentEntity implements EventPsuDataList, Serializable {
         joinColumns = @JoinColumn(name = "pis_common_payment_id"),
         inverseJoinColumns = @JoinColumn(name = "psu_data_id"))
     private List<EventPsuData> psuDataList = new ArrayList<>();
+
 }

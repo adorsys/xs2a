@@ -28,6 +28,7 @@ import lombok.ToString;
 
 import jakarta.validation.constraints.NotNull;
 import java.time.LocalDate;
+import java.time.OffsetDateTime;
 import java.util.List;
 
 @Data
@@ -37,8 +38,10 @@ public class PeriodicPayment extends SinglePayment {
 
     @NotNull
     private LocalDate startDate;
+    private OffsetDateTime startDateTime;
     private PisExecutionRule executionRule;
     private LocalDate endDate;
+    private OffsetDateTime endDateTime;
 
     @NotNull
     private FrequencyCode frequency;

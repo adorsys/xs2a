@@ -34,7 +34,7 @@ public class ResponseObject<T> {
     private final T body;
     private final MessageError error;
 
-    private ResponseObject(ResponseBuilder<T> builder) {
+    public ResponseObject(ResponseBuilder<T> builder) {
         this.body = builder.body;
         this.error = builder.error;
     }

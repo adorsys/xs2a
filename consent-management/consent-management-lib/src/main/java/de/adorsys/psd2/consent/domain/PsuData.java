@@ -19,6 +19,7 @@
 package de.adorsys.psd2.consent.domain;
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
@@ -26,6 +27,7 @@ import org.jetbrains.annotations.NotNull;
 import jakarta.persistence.*;
 
 @Data
+@EqualsAndHashCode(callSuper = false)
 @NoArgsConstructor
 @Entity(name = "psu_data")
 @SuppressWarnings("common-java:DuplicatedBlocks")

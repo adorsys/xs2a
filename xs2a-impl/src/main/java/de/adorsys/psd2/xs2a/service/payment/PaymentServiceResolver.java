@@ -26,6 +26,7 @@ import de.adorsys.psd2.xs2a.service.payment.cancel.CancelPaymentService;
 import de.adorsys.psd2.xs2a.service.payment.create.CreatePaymentService;
 import de.adorsys.psd2.xs2a.service.payment.read.ReadPaymentService;
 import de.adorsys.psd2.xs2a.service.payment.status.ReadPaymentStatusService;
+import de.adorsys.psd2.xs2a.service.payment.status.ReadBulkPaymentExtendedStatusService;
 
 public interface PaymentServiceResolver {
     /**
@@ -49,7 +50,19 @@ public interface PaymentServiceResolver {
     /**
      * Returns definite service for payment cancellation depending on the input payment cancellation data.
      *
-     * @param paymentCancellationRequest {@link PisPaymentCancellationRequest} object
+     * @param pisCommonPaymentResponse {@link PisCommonPaymentResponse} object
+     * @return definite implementation of
+     *         {@link ReadBulkPaymentExtendedStatusService}
+     */
+    ReadBulkPaymentExtendedStatusService getReadBulkPaymentExtendedStatusService(
+            PisCommonPaymentResponse pisCommonPaymentResponse);
+
+    /**
+     * Returns definite service for payment cancellation depending on the input
+     * payment cancellation data.
+     *
+     * @param paymentCancellationRequest {@link PisPaymentCancellationRequest}
+     *                                   object
      * @return definite implementation of {@link CancelPaymentService}
      */
     CancelPaymentService getCancelPaymentService(PisPaymentCancellationRequest paymentCancellationRequest);

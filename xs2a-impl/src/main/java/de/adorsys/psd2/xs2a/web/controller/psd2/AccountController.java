@@ -61,6 +61,10 @@ import static de.adorsys.psd2.xs2a.core.domain.MessageCategory.ERROR;
 @Slf4j
 @RestController
 @AllArgsConstructor
+/**
+ * REST controller for Account Information Service (AIS) endpoints.
+ * Handles requests for account details, balances, and transactions.
+ */
 public class AccountController implements AccountApi {
 
     private final HttpServletRequest request;
@@ -116,6 +120,13 @@ public class AccountController implements AccountApi {
         }
     }
 
+    /**
+     * Downloads transactions for a specific account.
+     *
+     * @param consentId the consent ID from the header
+     * @param accountId the account ID from the path
+     * @param downloadId the download ID from the path
+     */
     @GetMapping(value = "/v1/accounts/{account-id}/transactions/download/{download-id}")
     public void downloadTransactions(@RequestHeader("Consent-ID") String consentId,
                                      @PathVariable("account-id") String accountId,

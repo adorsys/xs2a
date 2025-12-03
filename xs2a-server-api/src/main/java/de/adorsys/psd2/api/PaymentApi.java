@@ -42,6 +42,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -732,6 +733,62 @@ public interface PaymentApi {
     )) @RequestHeader(value="PSU-Http-Method", required=false) String psUHttpMethod, @Parameter(in = ParameterIn.HEADER, description = "UUID (Universally Unique Identifier) for a device, which is used by the PSU, if available. UUID identifies either a device or a device dependant application installation. In case of an installation identification this ID needs to be unaltered until removal from device. " ,schema=@Schema()) @RequestHeader(value="PSU-Device-ID", required=false) UUID psUDeviceID, @Parameter(in = ParameterIn.HEADER, description = "The forwarded Geo Location of the corresponding http request between PSU and TPP if available. " ,schema=@Schema()) @RequestHeader(value="PSU-Geo-Location", required=false) String psUGeoLocation, @Parameter(in = ParameterIn.DEFAULT, description = "", schema=@Schema()) @Valid @RequestBody(required=false) Object body ) {
         return updatePaymentPsuData(xRequestID, paymentService, paymentProduct, paymentId, authorisationId, body, digest, signature, tpPSignatureCertificate, PSU_ID, psUIDType, psUCorporateID, psUCorporateIDType, psUIPAddress, psUIPPort, psUAccept, psUAcceptCharset, psUAcceptEncoding, psUAcceptLanguage, psUUserAgent, psUHttpMethod, psUDeviceID, psUGeoLocation);
     }
+
+    //New endpoint for the Get Bulk Extended Status Request
+    @Operation(summary = "Get Bulk Extended Status Request", description = "Can check the overall status of a bulk payment initiation together with reporting rejected transactions.", security = {
+        @SecurityRequirement(name = "BearerAuthOAuth")    }, tags={ "Payment Initiation Service (PIS)" })
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "OK", content = @Content(mediaType = "application/json", schema = @Schema(implementation = BulkPaymentExtendedStatusResponse200Json.class))),
+
+        @ApiResponse(responseCode = "400", description = "Bad Request", content = @Content(mediaType = "application/json", schema = @Schema(implementation = Error400NGPIS.class))),
+
+        @ApiResponse(responseCode = "401", description = "Unauthorized", content = @Content(mediaType = "application/json", schema = @Schema(implementation = Error401NGPIS.class))),
+
+        @ApiResponse(responseCode = "403", description = "Forbidden", content = @Content(mediaType = "application/json", schema = @Schema(implementation = Error403NGPIS.class))),
+
+        @ApiResponse(responseCode = "404", description = "Not found", content = @Content(mediaType = "application/json", schema = @Schema(implementation = Error404NGPIS.class))),
+
+        @ApiResponse(responseCode = "405", description = "Method Not Allowed", content = @Content(mediaType = "application/json", schema = @Schema(implementation = Error405NGPIS.class))),
+
+        @ApiResponse(responseCode = "406", description = "Not Acceptable"),
+
+        @ApiResponse(responseCode = "408", description = "Request Timeout"),
+
+        @ApiResponse(responseCode = "409", description = "Conflict", content = @Content(mediaType = "application/json", schema = @Schema(implementation = Error409NGPIS.class))),
+
+        @ApiResponse(responseCode = "415", description = "Unsupported Media Type"),
+
+        @ApiResponse(responseCode = "429", description = "Too Many Requests"),
+
+        @ApiResponse(responseCode = "500", description = "Internal Server Error"),
+
+        @ApiResponse(responseCode = "503", description = "Service Unavailable") })
+    @RequestMapping(value = "/v1/bulk-payments/{payment-product}/{paymentId}/extended-status",
+        produces = { "application/json", "application/problem+json" },
+        method = RequestMethod.GET)
+    default ResponseEntity<BulkPaymentExtendedStatusResponse200Json> _getBulkPaymentExtendedStatus(@Parameter(in = ParameterIn.PATH, description = "The addressed payment product endpoint, e.g. for SEPA Credit Transfers (SCT). The ASPSP will publish which of the payment products/endpoints will be supported.  The following payment products are supported:   - sepa-credit-transfers   - instant-sepa-credit-transfers   - target-2-payments   - cross-border-credit-transfers   - pain.001-sepa-credit-transfers   - pain.001-instant-sepa-credit-transfers   - pain.001-target-2-payments   - pain.001-cross-border-credit-transfers  **Remark:** For all SEPA Credit Transfer based endpoints which accept XML encoding,  the XML pain.001 schemes provided by EPC are supported by the ASPSP as a minimum for the body content.  Further XML schemes might be supported by some communities.  **Remark:** For cross-border and TARGET-2 payments only community wide pain.001 schemes do exist.  There are plenty of country specific scheme variants. ", required=true, schema=@Schema(allowableValues={ "sepa-credit-transfers", "instant-sepa-credit-transfers", "target-2-payments", "cross-border-credit-transfers", "pain.001-sepa-credit-transfers", "pain.001-instant-sepa-credit-transfers", "pain.001-target-2-payments", "pain.001-cross-border-credit-transfers" }
+    )) @PathVariable("payment-product") String paymentProduct, @Parameter(in = ParameterIn.PATH, description = "Resource identification of the generated payment initiation resource.", required=true, schema=@Schema()) @PathVariable("paymentId") String paymentId, @Parameter(in = ParameterIn.HEADER, description = "ID of the request, unique to the call, as determined by the initiating party." ,required=true,schema=@Schema()) @RequestHeader(value="X-Request-ID", required=true) UUID xRequestID, @Parameter(in = ParameterIn.HEADER, description = "Is contained if and only if the \"Signature\" element is contained in the header of the request." ,schema=@Schema()) @RequestHeader(value="Digest", required=false) String digest, @Parameter(in = ParameterIn.HEADER, description = "A signature of the request by the TPP on application level. This might be mandated by ASPSP. " ,schema=@Schema()) @RequestHeader(value="Signature", required=false) String signature, @Parameter(in = ParameterIn.HEADER, description = "The certificate used for signing the request, in base64 encoding.  Must be contained if a signature is contained. " ,schema=@Schema()) @RequestHeader(value="TPP-Signature-Certificate", required=false) byte[] tpPSignatureCertificate, @Parameter(in = ParameterIn.HEADER, description = "The forwarded IP Address header field consists of the corresponding http request IP Address field between PSU and TPP. " ,schema=@Schema()) @RequestHeader(value="PSU-IP-Address", required=false) String psUIPAddress, @Parameter(in = ParameterIn.HEADER, description = "The forwarded IP Port header field consists of the corresponding HTTP request IP Port field between PSU and TPP, if available. " ,schema=@Schema()) @RequestHeader(value="PSU-IP-Port", required=false) String psUIPPort, @Parameter(in = ParameterIn.HEADER, description = "The forwarded IP Accept header fields consist of the corresponding HTTP request Accept header fields between PSU and TPP, if available. " ,schema=@Schema()) @RequestHeader(value="PSU-Accept", required=false) String psUAccept, @Parameter(in = ParameterIn.HEADER, description = "The forwarded IP Accept header fields consist of the corresponding HTTP request Accept header fields between PSU and TPP, if available. " ,schema=@Schema()) @RequestHeader(value="PSU-Accept-Charset", required=false) String psUAcceptCharset, @Parameter(in = ParameterIn.HEADER, description = "The forwarded IP Accept header fields consist of the corresponding HTTP request Accept header fields between PSU and TPP, if available. " ,schema=@Schema()) @RequestHeader(value="PSU-Accept-Encoding", required=false) String psUAcceptEncoding, @Parameter(in = ParameterIn.HEADER, description = "The forwarded IP Accept header fields consist of the corresponding HTTP request Accept header fields between PSU and TPP, if available. " ,schema=@Schema()) @RequestHeader(value="PSU-Accept-Language", required=false) String psUAcceptLanguage, @Parameter(in = ParameterIn.HEADER, description = "The forwarded Agent header field of the HTTP request between PSU and TPP, if available. " ,schema=@Schema()) @RequestHeader(value="PSU-User-Agent", required=false) String psUUserAgent, @Parameter(in = ParameterIn.HEADER, description = "HTTP method used at the PSU ? TPP interface, if available. Valid values are: * GET * POST * PUT * PATCH * DELETE " ,schema=@Schema(allowableValues={ "GET", "POST", "PUT", "PATCH", "DELETE" }
+    )) @RequestHeader(value="PSU-Http-Method", required=false) String psUHttpMethod, @Parameter(in = ParameterIn.HEADER, description = "UUID (Universally Unique Identifier) for a device, which is used by the PSU, if available. UUID identifies either a device or a device dependant application installation. In case of an installation identification this ID needs to be unaltered until removal from device. " ,schema=@Schema()) @RequestHeader(value="PSU-Device-ID", required=false) UUID psUDeviceID, @Parameter(in = ParameterIn.HEADER, description = "The forwarded Geo Location of the corresponding http request between PSU and TPP if available. " ,schema=@Schema()) @RequestHeader(value="PSU-Geo-Location", required=false) String psUGeoLocation) {
+        return getBulkPaymentExtendedStatus(paymentProduct, paymentId, xRequestID, digest, signature, tpPSignatureCertificate, psUIPAddress, psUIPPort, psUAccept, psUAcceptCharset, psUAcceptEncoding, psUAcceptLanguage, psUUserAgent, psUHttpMethod, psUDeviceID, psUGeoLocation);
+    }
+
+    // Override this method
+    default ResponseEntity<BulkPaymentExtendedStatusResponse200Json> getBulkPaymentExtendedStatus(String paymentProduct,String paymentId,UUID xRequestID,String digest,String signature,byte[] tpPSignatureCertificate,String psUIPAddress,String psUIPPort,String psUAccept,String psUAcceptCharset,String psUAcceptEncoding,String psUAcceptLanguage,String psUUserAgent,String psUHttpMethod,UUID psUDeviceID,String psUGeoLocation) {
+        if(getObjectMapper().isPresent() && getAcceptHeader().isPresent()) {
+            if (getAcceptHeader().get().contains("application/json")) {
+                try {
+                    return new ResponseEntity<>(getObjectMapper().get().readValue("{\n  \"reasonPropietary\" : \"\",\n  \"_links\" : {\n    \"scaRedirect\" : {\n      \"href\" : \"https://www.testbank.com/asdfasdfasdf\"\n    },\n    \"self\" : {\n      \"href\" : \"/psd2/v1/payments/sepa-credit-transfers/1234-wertiq-983\"\n    }\n  },\n  \"fundsAvailable\" : true,\n  \"apiClientMessages\" : [ {\n    \"path\" : \"path\",\n    \"code\" : \"code\",\n    \"text\" : \"\",\n    \"category\" : \"ERROR\"\n  }, {\n    \"path\" : \"path\",\n    \"code\" : \"code\",\n    \"text\" : \"\",\n    \"category\" : \"ERROR\"\n  } ],\n  \"transactionFees\" : {\n    \"currency\" : \"EUR\",\n    \"amount\" : \"123.21\"\n  },\n  \"ownerNames\" : [ {\n    \"role\" : \"\",\n    \"name\" : \"\"\n  }, {\n    \"role\" : \"\",\n    \"name\" : \"\"\n  } ],\n  \"groupStatus\" : \"PART\",\n  \"psuMessage\" : \"\",\n  \"reasonCode\" : \"AM04\",\n  \"originalTransactionInformationAndStatus\" : {\n    \"originalUetr\" : \"046b6c7f-0b8a-43b9-b35d-6489e6daee91\",\n    \"transactionStatus\" : \"ACCP\",\n    \"statusReasonInformationProprietary\" : \"\",\n    \"statusReasonAdditionalInformation\" : \"\",\n    \"originalInstructionId\" : \"\",\n    \"originalEndToEndId\" : \"\"\n  }\n}", BulkPaymentExtendedStatusResponse200Json.class), HttpStatus.NOT_IMPLEMENTED);
+                } catch (IOException e) {
+                    log.error("Couldn't serialize response for content type application/json", e);
+                    return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+                }
+            }
+        } else {
+            log.warn("ObjectMapper or HttpServletRequest not configured in default PaymentInitiationServicePisApi interface so no example is generated");
+        }
+        return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
+    }
+
 
     // Override this method
     default ResponseEntity<Object> updatePaymentPsuData(UUID xRequestID, String paymentService, String paymentProduct, String paymentId, String authorisationId, Object body, String digest, String signature, byte[] tpPSignatureCertificate, String PSU_ID, String psUIDType, String psUCorporateID, String psUCorporateIDType, String psUIPAddress, String psUIPPort, String psUAccept, String psUAcceptCharset, String psUAcceptEncoding, String psUAcceptLanguage, String psUUserAgent, String psUHttpMethod, UUID psUDeviceID, String psUGeoLocation) {

@@ -1,9 +1,19 @@
 {
+  "addressLines": null,
+  "department": null,
+  "subDepartment": null,
+  "streetName": "WBG Straße",
   "buildingNumber": "56",
+  "buildingName": null,
+  "floor": null,
+  "postBox": null,
+  "room": null,
+  "postCode": "90543",
   "townName": "Nürnberg",
+  "townLocationName": null,
+  "districtName": null,
+  "countrySubDivision": null,
   "country": {
     "code": "DE"
-  },
-  "postCode": "90543",
-  "streetName": "WBG Straße"
+  }
 }

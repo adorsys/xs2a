@@ -1,0 +1,33 @@
+@startuml
+'https://plantuml.com/sequence-diagram
+
+autonumber
+
+actor PSU
+entity TPP
+entity XS2A
+entity SPI
+== Submits a bulk of related party verification requests. ==
+PSU->TPP: PSU provides creditor information
+activate TPP
+TPP->XS2A: REST Call Submit Verification of Party\n"/v1/{bulk-party-verification-endpoint}
+activate XS2A
+note right of XS2A
+Resquest validator
+- validato path variables
+- validate request body
+- validate headers
+validate bulk-party-verification-endpoint content
+end note
+XS2A->SPI: Java Call SPISubmitBulkVerificationOfParty(PartyVerificationRequestList )
+activate SPI
+|||
+SPI-->XS2A: (http codes: 200)SpiBulkVerificationOfPartyResponse(complete, MTCH)
+deactivate SPI
+XS2A-->TPP: Verification of Party Response
+deactivate XS2A
+|||
+TPP-->PSU: Response to PSU
+|||
+PSU->TPP: initiate bulkPayment
+@enduml

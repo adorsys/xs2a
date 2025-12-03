@@ -39,6 +39,11 @@ import static org.springframework.http.HttpHeaders.ACCEPT;
 public class AcceptHeaderValidatorImpl extends AbstractHeaderValidatorImpl
     implements TransactionListHeaderValidator {
 
+    /**
+     * Constructs a new AcceptHeaderValidatorImpl.
+     *
+     * @param errorBuildingService service for building error messages
+     */
     @Autowired
     public AcceptHeaderValidatorImpl(ErrorBuildingService errorBuildingService) {
         super(errorBuildingService);

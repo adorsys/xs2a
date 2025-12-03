@@ -18,24 +18,90 @@
 
 package de.adorsys.psd2.xs2a.config;
 
-import de.adorsys.psd2.xs2a.config.converter.MappingJackson2TextMessageConverter;
-import org.junit.jupiter.api.Test;
-import org.springframework.http.converter.HttpMessageConverter;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.http.converter.HttpMessageConverter;
 
+import de.adorsys.psd2.consent.api.service.TppStopListService;
+import de.adorsys.psd2.logger.context.LoggingContextService;
+import de.adorsys.psd2.mapper.Xs2aObjectMapper;
+import de.adorsys.psd2.xs2a.component.logger.request.RequestResponseLogger;
+import de.adorsys.psd2.xs2a.config.converter.MappingJackson2TextMessageConverter;
+import de.adorsys.psd2.xs2a.service.RedirectIdService;
+import de.adorsys.psd2.xs2a.service.TppService;
+import de.adorsys.psd2.xs2a.service.discovery.ServiceTypeDiscoveryService;
+import de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorMapperContainer;
+import de.adorsys.psd2.xs2a.service.mapper.psd2.ServiceTypeToErrorTypeMapper;
+import de.adorsys.psd2.xs2a.web.PathParameterExtractor;
+import de.adorsys.psd2.xs2a.web.advice.Xs2aRestExceptionHandler;
+import de.adorsys.psd2.xs2a.web.interceptor.validator.PaymentParametersValidationInterceptor;
+import de.adorsys.psd2.xs2a.web.interceptor.validator.RequestValidationInterceptor;
+import de.adorsys.psd2.xs2a.web.interceptor.validator.VopParametersValidationInterceptor;
+
+@ExtendWith(MockitoExtension.class)
 class WebConfigTest {
+
+    @Mock
+    private CorsConfigurationProperties corsConfigurationProperties;
+
+    @Mock
+    private TppService tppService;
+
+    @Mock
+    private TppStopListService tppStopListService;
+
+    @Mock
+    private ServiceTypeDiscoveryService serviceTypeDiscoveryService;
+
+    @Mock
+    private ServiceTypeToErrorTypeMapper errorTypeMapper;
+
+    @Mock
+    private ErrorMapperContainer errorMapperContainer;
+
+    @Mock
+    private Xs2aObjectMapper xs2aObjectMapper;
+
+    @Mock
+    private RequestValidationInterceptor requestValidationInterceptor;
+
+    @Mock
+    private RedirectIdService redirectIdService;
+
+    @Mock
+    private RequestResponseLogger requestResponseLogger;
+
+    @Mock
+    private LoggingContextService loggingContextService;
+
+    @Mock
+    private PathParameterExtractor pathParameterExtractor;
+
+    @Mock
+    private Xs2aRestExceptionHandler xs2aRestExceptionHandler;
+
+    @Mock
+    private PaymentParametersValidationInterceptor paymentParametersValidationInterceptor;
+
+    @Mock
+    private VopParametersValidationInterceptor vopParametersValidationInterceptor;
+
     @Test
     void extendMessageConverters() {
-        WebConfig webConfig = new WebConfig(null, null,
-                                            null, null, null,
-                                            null, null, null,
-                                            null, null, null,
-                                            null, null, null);
+        WebConfig webConfig = new WebConfig(corsConfigurationProperties, tppService,
+                                            tppStopListService, serviceTypeDiscoveryService, errorTypeMapper,
+                                            errorMapperContainer, xs2aObjectMapper, requestValidationInterceptor,
+                                            redirectIdService, requestResponseLogger, loggingContextService,
+                                            pathParameterExtractor, xs2aRestExceptionHandler, paymentParametersValidationInterceptor,
+                                            vopParametersValidationInterceptor);
         List<HttpMessageConverter<?>> messageConverters = new ArrayList<>();
 
         webConfig.extendMessageConverters(messageConverters);

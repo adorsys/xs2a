@@ -25,6 +25,15 @@ import org.jetbrains.annotations.NotNull;
 
 public interface ReadPaymentStatusService {
 
+    /**
+     * Reads the payment status.
+     *
+     * @param commonPaymentData the common payment data
+     * @param spiContextData the SPI context data
+     * @param encryptedPaymentId the encrypted payment ID
+     * @param acceptMediaType the accept media type
+     * @return payment status response
+     */
     ReadPaymentStatusResponse readPaymentStatus(CommonPaymentData commonPaymentData, SpiContextData spiContextData, @NotNull String encryptedPaymentId, String acceptMediaType);
 
 }

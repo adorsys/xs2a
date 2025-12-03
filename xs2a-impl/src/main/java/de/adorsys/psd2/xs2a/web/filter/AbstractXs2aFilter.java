@@ -28,6 +28,12 @@ import jakarta.servlet.http.HttpServletRequest;
 public abstract class AbstractXs2aFilter extends GlobalAbstractExceptionFilter {
     private final Xs2aEndpointChecker xs2aEndpointChecker;
 
+    /**
+     * Constructs a new AbstractXs2aFilter.
+     *
+     * @param tppErrorMessageWriter writer for TPP error messages
+     * @param xs2aEndpointChecker checker for XS2A endpoints
+     */
     protected AbstractXs2aFilter(TppErrorMessageWriter tppErrorMessageWriter, Xs2aEndpointChecker xs2aEndpointChecker) {
         super(tppErrorMessageWriter);
         this.xs2aEndpointChecker = xs2aEndpointChecker;

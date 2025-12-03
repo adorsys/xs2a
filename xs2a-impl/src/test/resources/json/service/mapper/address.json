@@ -1,7 +1,20 @@
 {
+  "addressLines": [
+    "WBG Straße 56",
+    "Building 2, Entrance B"
+  ],
+  "department": "Mocked Department",
+  "subDepartment": "Mocked Sub-department",
+  "streetName": "WBG Straße",
   "buildingNumber": "56",
-  "townName": "Nürnberg",
-  "country": "DE",
+  "buildingName": "Mocked Building Name",
+  "floor": "2nd Floor",
+  "postBox": "PO Box 789",
+  "room": "Room 202",
   "postCode": "90543",
-  "streetName": "WBG Straße"
+  "townName": "Nürnberg",
+  "townLocationName": "Mocked Town Location",
+  "districtName": "Mocked District",
+  "countrySubDivision": "Bayern",
+  "country": "DE"
 }

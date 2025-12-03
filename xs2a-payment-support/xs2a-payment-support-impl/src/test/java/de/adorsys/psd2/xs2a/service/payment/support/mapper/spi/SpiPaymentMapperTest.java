@@ -61,7 +61,7 @@ class SpiPaymentMapperTest {
     private static final String MSISDN = "0172/1111111";
     private static final Currency CURRENCY = Currency.getInstance("EUR");
     private static final SpiAmount INSTRUCTED_AMOUNT = new SpiAmount(CURRENCY, new BigDecimal("1000.00"));
-    private static final SpiAddress ADDRESS = new SpiAddress("WBG Straße", "56", "Nürnberg", "90543", "DE");
+    private static final SpiAddress ADDRESS = new SpiAddress(  null, null,null,null,null,null,null,null,null,null,"WBG Straße", "56", "Nürnberg", "90543", "DE");
     private static final List<String> REMITTANCE_INFORMATION_UNSTRUCTURED_ARRAY = Collections.singletonList("Ref. Number TELEKOM-1222");
 
     @Mock

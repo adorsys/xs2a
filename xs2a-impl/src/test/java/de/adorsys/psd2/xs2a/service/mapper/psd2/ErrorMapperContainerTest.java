@@ -53,21 +53,14 @@ class ErrorMapperContainerTest {
         pis400ErrorMapper.messageService = messageService;
         when(messageService.getMessage(any())).thenReturn(FORMAT_ERROR);
 
-        ErrorMapperContainer errorMapperContainer = new ErrorMapperContainer(pis400ErrorMapper, null, null,
-            null, null, null,
-            null, null, null,
-            null, null, null,
-            null, null, null,
-            null, null, null,
-            null, null, null,
-            null, null, null,
-            null, null, null,
-            null, null, null,
-            null, null, null,
-            null, null, null,
-            null, null, null,
-            null, null, null,
-            null);
+        ErrorMapperContainer errorMapperContainer = new ErrorMapperContainer(
+            pis400ErrorMapper, null, null, null, null, null, null, null, null, null, null, null,  // PIS (12 total)
+            null, null, null, null, null, null, null, null, null, null, null,  // PIIS (11)
+            null, null, null,  // AIS 415, 500, 503 (3)
+            null, null, null, null, null, null, null, null, null,  // SB (9)
+            null, null, null, null, null, null, null, null,  // AIS remaining (8)
+            null, null, null, null, null, null  // VOP (6)
+        );
 
         errorMapperContainer.fillErrorMapperContainer();
 

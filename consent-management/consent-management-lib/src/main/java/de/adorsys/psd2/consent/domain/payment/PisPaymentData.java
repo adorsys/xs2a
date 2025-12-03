@@ -24,6 +24,7 @@ import de.adorsys.psd2.consent.domain.InstanceDependableEntity;
 import de.adorsys.psd2.xs2a.core.pis.PisDayOfExecution;
 import de.adorsys.psd2.xs2a.core.pis.PisExecutionRule;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
 import jakarta.persistence.*;
@@ -34,6 +35,7 @@ import java.util.Currency;
 
 @Data
 @ToString(exclude = "paymentData")
+@EqualsAndHashCode(callSuper = false)
 @Entity(name = "pis_payment_data")
 public class PisPaymentData extends InstanceDependableEntity {
     @Id
@@ -99,11 +101,17 @@ public class PisPaymentData extends InstanceDependableEntity {
     @Column(name = "start_date")
     private LocalDate startDate;
 
+    @Column(name = "start_date_time")
+    private OffsetDateTime startDateTime;
+
     @Column(name = "execution_rule")
     private PisExecutionRule executionRule;
 
     @Column(name = "end_date")
     private LocalDate endDate;
+
+    @Column(name = "end_date_time")
+    private OffsetDateTime endDateTime;
 
     private String frequency;
 

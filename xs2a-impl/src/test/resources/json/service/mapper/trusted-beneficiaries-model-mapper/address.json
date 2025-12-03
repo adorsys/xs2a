@@ -1,7 +1,20 @@
 {
-  "streetName": "mocked street name",
-  "buildingNumber": "mocked building number",
-  "townName": "mocked town name",
-  "postCode": "mocked post code",
+  "addressLines": [
+    "Mocked Street Line 1",
+    "Mocked Street Line 2"
+  ],
+  "department": "Mocked Department",
+  "subDepartment": "Mocked Sub-department",
+  "streetName": "Mocked Street Name",
+  "buildingNumber": "42A",
+  "buildingName": "Mocked Building Name",
+  "floor": "3rd Floor",
+  "postBox": "PO Box 123",
+  "room": "Room 305",
+  "postCode": "12345",
+  "townName": "Mocked Town",
+  "townLocationName": "Mocked Town Location",
+  "districtName": "Mocked District",
+  "countrySubDivision": "Mocked State",
   "country": "mocked country"
 }

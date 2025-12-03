@@ -60,6 +60,12 @@ public class EventBO {
     private String basketId;
 
     /**
+     * Id of the VOP (Verification of Payee) that can be associated with this event.
+     * Can be null if the event isn't connected with the specific VOP.
+     */
+    private String vopId;
+
+    /**
      * Indicates the origin of the event.
      */
     private EventOrigin eventOrigin;

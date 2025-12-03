@@ -40,9 +40,16 @@ import static de.adorsys.psd2.xs2a.core.error.ErrorType.AIS_400;
 import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.CONSENT_UNKNOWN_400;
 import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.FORMAT_ERROR_UNKNOWN_ACCOUNT;
 
+/**
+ * Abstract base class for balance retrieval services.
+ * Provides common functionality for retrieving account balances.
+ */
 @Slf4j
 @AllArgsConstructor
 public abstract class AbstractBalanceService {
+    /**
+     * Holder for account-related services used in balance operations.
+     */
     protected final AccountServicesHolder accountServicesHolder;
     private final Xs2aEventService xs2aEventService;
     private final LoggingContextService loggingContextService;
@@ -101,19 +108,65 @@ public abstract class AbstractBalanceService {
         return getXs2aBalancesReportResponseObject(aisConsent, accountId, consentId, requestUri, spiResponse.getPayload());
     }
 
+    /**
+     * Gets the requested account reference from the consent.
+     *
+     * @param aisConsent the AIS consent
+     * @param accountId the account ID
+     * @return the SPI account reference
+     */
     protected SpiAccountReference getRequestedAccountReference(AisConsent aisConsent, String accountId) {
         final AccountAccess access = aisConsent.getAspspAccountAccesses();
         return accountServicesHolder.findAccountReference(access.getBalances(), accountId);
     }
 
+    /**
+     * Returns the event type for this balance service.
+     *
+     * @return the event type
+     */
     protected abstract EventType getEventType();
 
+    /**
+     * Validates the common account balance request.
+     *
+     * @param accountId the account ID
+     * @param requestUri the request URI
+     * @param accountConsent the account consent
+     * @return validation result
+     */
     protected abstract ValidationResult getValidationResultForCommonAccountBalanceRequest(String accountId, String requestUri, AisConsent accountConsent);
 
+    /**
+     * Retrieves the SPI response containing account balances.
+     *
+     * @param aisConsent the AIS consent
+     * @param consentId the consent ID
+     * @param accountReference the account reference
+     * @return SPI response with list of account balances
+     */
     protected abstract SpiResponse<List<SpiAccountBalance>> getSpiResponse(AisConsent aisConsent, String consentId, SpiAccountReference accountReference);
 
+    /**
+     * Checks the SPI response and builds appropriate error response if needed.
+     *
+     * @param consentId the consent ID
+     * @param accountId the account ID
+     * @param spiResponse the SPI response to check
+     * @return response object with balances report or error
+     */
     protected abstract ResponseObject<Xs2aBalancesReport> checkSpiResponse(String consentId, String accountId, SpiResponse<List<SpiAccountBalance>> spiResponse);
 
+    /**
+     * Creates the XS2A balances report response object.
+     *
+     * @param accountConsent the account consent
+     * @param accountId the account ID
+     * @param consentId the consent ID
+     * @param requestUri the request URI
+     * @param payload the list of SPI account balances
+     * @return response object with balances report
+     */
     protected abstract ResponseObject<Xs2aBalancesReport> getXs2aBalancesReportResponseObject(AisConsent accountConsent,
                                                                                               String accountId,
                                                                                               String consentId,

@@ -59,11 +59,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.info.BuildProperties;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
@@ -121,25 +121,25 @@ class ConsentCreationSuccessfulIT {
     private MockMvc mockMvc;
     @Autowired
     private Xs2aObjectMapper xs2aObjectMapper;
-    @MockBean
+    @MockitoBean
     private AspspProfileService aspspProfileService;
-    @MockBean
+    @MockitoBean
     private TppService tppService;
-    @MockBean
+    @MockitoBean
     private TppStopListService tppStopListService;
-    @MockBean
+    @MockitoBean
     private Xs2aEventServiceEncrypted eventServiceEncrypted;
-    @MockBean
+    @MockitoBean
     private ConsentServiceEncrypted consentServiceEncrypted;
-    @MockBean
+    @MockitoBean
     private AuthorisationServiceEncrypted authorisationServiceEncrypted;
-    @MockBean
+    @MockitoBean
     private AspspDataService aspspDataService;
-    @MockBean
+    @MockitoBean
     private AisConsentServiceEncrypted aisConsentServiceEncrypted;
-    @MockBean
+    @MockitoBean
     private BuildProperties buildProperties;
-    @MockBean
+    @MockitoBean
     private UuidGeneratorService uuidGeneratorService;
 
     private final JsonReader jsonReader = new JsonReader();

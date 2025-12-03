@@ -118,9 +118,7 @@ public class SinglePaymentTypeValidatorImpl extends AbstractBodyValidatorImpl im
             validateAddress(singlePayment.getCreditorAddress(), messageError, validationConfig);
         }
 
-        if (isDateInThePast(singlePayment.getRequestedExecutionDate())) {
-            errorBuildingService.enrichMessageError(messageError, TppMessageInformation.of(EXECUTION_DATE_INVALID_IN_THE_PAST));
-        }
+        validateExecutionDateTime(singlePayment.getRequestedExecutionDate(), singlePayment.getRequestedExecutionTime(), messageError);
 
         checkFieldForMaxLength(singlePayment.getCreditorId(), "creditorId", validationConfig.getCreditorId(), messageError);
         checkFieldForMaxLength(singlePayment.getUltimateDebtor(), "ultimateDebtor", validationConfig.getUltimateDebtor(), messageError);
@@ -136,16 +134,51 @@ public class SinglePaymentTypeValidatorImpl extends AbstractBodyValidatorImpl im
         customPaymentValidationService.performCustomSingleValidation(singlePayment, messageError, validationConfig);
     }
 
+    void validateExecutionDateTime(LocalDate executionDate, java.time.OffsetDateTime executionTime, MessageError messageError) {
+        // Validate mutual exclusivity between requestedExecutionDate and requestedExecutionTime (Berlin Group Spec Section 11.1-11.3)
+        if (executionDate != null && executionTime != null) {
+            errorBuildingService.enrichMessageError(messageError,
+                TppMessageInformation.of(PARAMETER_NOT_CONSISTENT,
+                    "requestedExecutionDate, requestedExecutionTime"));
+        }
+
+        if (isDateInThePast(executionDate)) {
+            errorBuildingService.enrichMessageError(messageError, TppMessageInformation.of(EXECUTION_DATE_INVALID_IN_THE_PAST));
+        }
+
+        if (isTimeInThePast(executionTime)) {
+            errorBuildingService.enrichMessageError(messageError, TppMessageInformation.of(EXECUTION_DATE_INVALID_IN_THE_PAST));
+        }
+    }
+
     void validateAddress(Xs2aAddress address, MessageError messageError, PaymentValidationConfig validationConfig) {
+        // Validate address lines
+        if (CollectionUtils.isNotEmpty(address.getAddressLines())) {
+            address.getAddressLines().forEach(line ->
+                checkFieldForMaxLength(line, "addressLine", validationConfig.getAddressLines(), messageError)
+            );
+        }
+
+        checkFieldForMaxLength(address.getDepartment(), "department", validationConfig.getDepartment(), messageError);
+        checkFieldForMaxLength(address.getSubDepartment(), "subDepartment", validationConfig.getSubDepartment(), messageError);
         checkFieldForMaxLength(address.getStreetName(), "streetName", validationConfig.getStreetName(), messageError);
         checkFieldForMaxLength(address.getBuildingNumber(), "buildingNumber", validationConfig.getBuildingNumber(), messageError);
-        checkFieldForMaxLength(address.getTownName(), "townName", validationConfig.getTownName(), messageError);
+        checkFieldForMaxLength(address.getBuildingName(), "buildingName", validationConfig.getBuildingName(), messageError);
+        checkFieldForMaxLength(address.getFloor(), "floor", validationConfig.getFloor(), messageError);
+        checkFieldForMaxLength(address.getPostBox(), "postBox", validationConfig.getPostBox(), messageError);
+        checkFieldForMaxLength(address.getRoom(), "room", validationConfig.getRoom(), messageError);
         checkFieldForMaxLength(address.getPostCode(), "postCode", validationConfig.getPostCode(), messageError);
+        checkFieldForMaxLength(address.getTownName(), "townName", validationConfig.getTownName(), messageError);
+        checkFieldForMaxLength(address.getTownLocationName(), "townLocationName", validationConfig.getTownLocationName(), messageError);
+        checkFieldForMaxLength(address.getDistrictName(), "districtName", validationConfig.getDistrictName(), messageError);
+        checkFieldForMaxLength(address.getCountrySubDivision(), "countrySubDivision", validationConfig.getCountrySubDivision(), messageError);
 
-        if (address.getCountry() == null || StringUtils.isBlank(address.getCountry().getCode())) {
-            errorBuildingService.enrichMessageError(messageError, TppMessageInformation.of(FORMAT_ERROR_VALUE_REQUIRED, "address.country"));
-        } else if (!Arrays.asList(Locale.getISOCountries()).contains(address.getCountry().getCode())) {
-            errorBuildingService.enrichMessageError(messageError, TppMessageInformation.of(FORMAT_ERROR_ADDRESS_COUNTRY_INCORRECT));
+        // Validate country if present
+        if (address.getCountry() != null && StringUtils.isNotBlank(address.getCountry().getCode())) {
+            checkFieldForMaxLength(address.getCountry().getCode(), "country", validationConfig.getCountry(), messageError);
+            if (!Arrays.asList(Locale.getISOCountries()).contains(address.getCountry().getCode())) {
+                errorBuildingService.enrichMessageError(messageError, TppMessageInformation.of(FORMAT_ERROR_ADDRESS_COUNTRY_INCORRECT));
+            }
         }
     }
 
@@ -202,6 +235,12 @@ public class SinglePaymentTypeValidatorImpl extends AbstractBodyValidatorImpl im
     boolean isDateInThePast(LocalDate dateToCheck) {
         return Optional.ofNullable(dateToCheck)
                    .map(date -> date.isBefore(LocalDate.now()))
+                   .orElse(false);
+    }
+
+    boolean isTimeInThePast(java.time.OffsetDateTime timeToCheck) {
+        return Optional.ofNullable(timeToCheck)
+                   .map(time -> time.isBefore(java.time.OffsetDateTime.now()))
                    .orElse(false);
     }
 }

@@ -17,10 +17,10 @@
  */
 
 package de.adorsys.psd2.xs2a.web.validator.body.payment.handler.type;
-
 import de.adorsys.psd2.mapper.Xs2aObjectMapper;
 import de.adorsys.psd2.xs2a.core.domain.TppMessageInformation;
 import de.adorsys.psd2.xs2a.core.error.MessageError;
+import de.adorsys.psd2.xs2a.core.error.MessageErrorCode;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import de.adorsys.psd2.xs2a.domain.pis.PeriodicPayment;
 import de.adorsys.psd2.xs2a.service.profile.AspspProfileServiceWrapper;
@@ -35,21 +35,26 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
+import java.time.OffsetDateTime;
 import java.util.Optional;
-
-import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.*;
 
 @Component
 public class PeriodicPaymentTypeValidatorImpl extends SinglePaymentTypeValidatorImpl {
-    private CustomPaymentValidationService customPaymentValidationService;
+    private final CustomPaymentValidationService customPaymentValidationService;
 
     @Autowired
-    public PeriodicPaymentTypeValidatorImpl(ErrorBuildingService errorBuildingService, Xs2aObjectMapper xs2aObjectMapper,
-                                            PaymentMapper paymentMapper, AmountValidator amountValidator,
-                                            IbanValidator ibanValidator, CustomPaymentValidationService customPaymentValidationService,
-                                            FieldLengthValidator fieldLengthValidator, AspspProfileServiceWrapper aspspProfileServiceWrapper) {
-        super(errorBuildingService, xs2aObjectMapper, paymentMapper, amountValidator, ibanValidator, customPaymentValidationService,
-              fieldLengthValidator, aspspProfileServiceWrapper);
+    public PeriodicPaymentTypeValidatorImpl(ErrorBuildingService errorBuildingService,
+                                            Xs2aObjectMapper xs2aObjectMapper,
+                                            PaymentMapper paymentMapper,
+                                            AmountValidator amountValidator,
+                                            IbanValidator ibanValidator,
+                                            CustomPaymentValidationService customPaymentValidationService,
+                                            FieldLengthValidator fieldLengthValidator,
+                                            AspspProfileServiceWrapper aspspProfileServiceWrapper) {
+
+        super(errorBuildingService, xs2aObjectMapper, paymentMapper, amountValidator,
+            ibanValidator, customPaymentValidationService, fieldLengthValidator, aspspProfileServiceWrapper);
+
         this.customPaymentValidationService = customPaymentValidationService;
     }
 
@@ -64,50 +69,136 @@ public class PeriodicPaymentTypeValidatorImpl extends SinglePaymentTypeValidator
             doPeriodicValidation(paymentMapper.mapToPeriodicPayment(body), messageError, validationConfig);
         } catch (IllegalArgumentException e) {
             if (e.getMessage().startsWith("Unrecognized field")) {
-                errorBuildingService.enrichMessageError(messageError, TppMessageInformation.of(FORMAT_ERROR_EXTRA_FIELD, extractErrorField(e.getMessage())));
+                errorBuildingService.enrichMessageError(
+                    messageError,
+                    TppMessageInformation.of(
+                        MessageErrorCode.FORMAT_ERROR_EXTRA_FIELD,
+                        extractErrorField(e.getMessage())
+                    )
+                );
             } else {
-                errorBuildingService.enrichMessageError(messageError, TppMessageInformation.of(FORMAT_ERROR));
+                errorBuildingService.enrichMessageError(
+                    messageError,
+                    TppMessageInformation.of(MessageErrorCode.FORMAT_ERROR)
+                );
             }
         }
 
         return messageError;
     }
 
-    void doPeriodicValidation(PeriodicPayment periodicPayment, MessageError messageError, PaymentValidationConfig validationConfig) {
+    void doPeriodicValidation(PeriodicPayment periodicPayment,
+                              MessageError messageError,
+                              PaymentValidationConfig validationConfig) {
+
         super.doSingleValidation(periodicPayment, messageError, validationConfig);
 
-        if (periodicPayment.getStartDate() == null) {
-            errorBuildingService.enrichMessageError(messageError, TppMessageInformation.of(FORMAT_ERROR_NULL_VALUE, "startDate"));
-        } else {
-            validateStartDate(periodicPayment.getStartDate(), messageError);
-        }
+        validateStartDate(periodicPayment.getStartDate(), periodicPayment.getStartDateTime(), messageError);
+        validateEndDate(periodicPayment.getEndDate(), periodicPayment.getEndDateTime(), messageError);
 
         if (periodicPayment.getExecutionRule() != null) {
-            checkFieldForMaxLength(periodicPayment.getExecutionRule().getValue(), "executionRule", validationConfig.getExecutionRule(), messageError);
+            checkFieldForMaxLength(
+                periodicPayment.getExecutionRule().getValue(),
+                "executionRule",
+                validationConfig.getExecutionRule(),
+                messageError
+            );
         }
 
         if (periodicPayment.getFrequency() == null) {
-            errorBuildingService.enrichMessageError(messageError, TppMessageInformation.of(FORMAT_ERROR_NULL_VALUE, "frequency"));
+            errorBuildingService.enrichMessageError(
+                messageError,
+                TppMessageInformation.of(MessageErrorCode.FORMAT_ERROR_NULL_VALUE, "frequency")
+            );
         }
+
         if (areDatesInvalidInPeriodicPayment(periodicPayment)) {
-            errorBuildingService.enrichMessageError(messageError, TppMessageInformation.of(PERIOD_INVALID_WRONG_ORDER));
+            errorBuildingService.enrichMessageError(
+                messageError,
+                TppMessageInformation.of(MessageErrorCode.PERIOD_INVALID_WRONG_ORDER)
+            );
         }
-        if (validationConfig.getDayOfExecution().isRequired() && periodicPayment.getDayOfExecution() == null) {
-            errorBuildingService.enrichMessageError(messageError, TppMessageInformation.of(FORMAT_ERROR_NULL_VALUE, "dayOfExecution"));
+
+        if (areDateTimesInvalidInPeriodicPayment(periodicPayment)) {
+            errorBuildingService.enrichMessageError(
+                messageError,
+                TppMessageInformation.of(MessageErrorCode.PERIOD_INVALID_WRONG_ORDER)
+            );
         }
+
+        if (validationConfig.getDayOfExecution().isRequired()
+            && periodicPayment.getDayOfExecution() == null) {
+            errorBuildingService.enrichMessageError(
+                messageError,
+                TppMessageInformation.of(MessageErrorCode.FORMAT_ERROR_NULL_VALUE, "dayOfExecution")
+            );
+        }
+
         customPaymentValidationService.performCustomPeriodicValidation(periodicPayment, messageError, validationConfig);
     }
 
-    private void validateStartDate(LocalDate startDate, MessageError messageError) {
-        if (startDate.isBefore(LocalDate.now())) {
-            errorBuildingService.enrichMessageError(messageError, TppMessageInformation.of(FORMAT_ERROR_DATE_IN_THE_PAST, "startDate"));
+    private void validateStartDate(LocalDate startDate,
+                                   OffsetDateTime startDateTime,
+                                   MessageError messageError) {
+
+        if (startDate != null && startDateTime != null) {
+            errorBuildingService.enrichMessageError(
+                messageError,
+                TppMessageInformation.of(
+                    MessageErrorCode.PARAMETER_NOT_CONSISTENT,
+                    "startDate, startDateTime"
+                )
+            );
+        }
+
+        if (startDate == null && startDateTime == null) {
+            errorBuildingService.enrichMessageError(
+                messageError,
+                TppMessageInformation.of(
+                    MessageErrorCode.FORMAT_ERROR_NULL_VALUE,
+                    "startDate and startDateTime"
+                )
+            );
+        } else {
+            if (startDate != null && startDate.isBefore(LocalDate.now())) {
+                errorBuildingService.enrichMessageError(
+                    messageError,
+                    TppMessageInformation.of(
+                        MessageErrorCode.FORMAT_ERROR_DATE_IN_THE_PAST,
+                        "startDate"
+                    )
+                );
+            }
+            if (startDateTime != null && startDateTime.isBefore(OffsetDateTime.now())) {
+                errorBuildingService.enrichMessageError(
+                    messageError,
+                    TppMessageInformation.of(
+                        MessageErrorCode.FORMAT_ERROR_DATE_IN_THE_PAST,
+                        "startDateTime"
+                    )
+                );
+            }
+        }
+    }
+
+    private void validateEndDate(LocalDate endDate,
+                                 OffsetDateTime endDateTime,
+                                 MessageError messageError) {
+
+        if (endDate != null && endDateTime != null) {
+            errorBuildingService.enrichMessageError(
+                messageError,
+                TppMessageInformation.of(
+                    MessageErrorCode.PARAMETER_NOT_CONSISTENT,
+                    "endDate, endDateTime"
+                )
+            );
         }
     }
 
     private boolean areDatesInvalidInPeriodicPayment(PeriodicPayment periodicPayment) {
         LocalDate paymentStartDate = periodicPayment.getStartDate();
 
-        // Validate if start date is valid
         if (paymentStartDate == null || paymentStartDate.isBefore(LocalDate.now())) {
             return false;
         }
@@ -115,8 +206,23 @@ public class PeriodicPaymentTypeValidatorImpl extends SinglePaymentTypeValidator
         LocalDate paymentEndDate = periodicPayment.getEndDate();
 
         return isDateInThePast(paymentStartDate)
-                   || Optional.ofNullable(paymentEndDate)
-                          .map(dt -> dt.isBefore(paymentStartDate))
-                          .orElse(false);
+            || Optional.ofNullable(paymentEndDate)
+            .map(dt -> dt.isBefore(paymentStartDate))
+            .orElse(false);
+    }
+
+    private boolean areDateTimesInvalidInPeriodicPayment(PeriodicPayment periodicPayment) {
+        OffsetDateTime paymentStartDateTime = periodicPayment.getStartDateTime();
+
+        if (paymentStartDateTime == null || paymentStartDateTime.isBefore(OffsetDateTime.now())) {
+            return false;
+        }
+
+        OffsetDateTime paymentEndDateTime = periodicPayment.getEndDateTime();
+
+        return isTimeInThePast(paymentStartDateTime)
+            || Optional.ofNullable(paymentEndDateTime)
+            .map(dt -> dt.isBefore(paymentStartDateTime))
+            .orElse(false);
     }
 }

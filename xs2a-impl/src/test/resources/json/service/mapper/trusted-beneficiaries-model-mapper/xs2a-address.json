@@ -1,8 +1,21 @@
 {
+  "addressLines": [
+    "mocked address line 1",
+    "mocked address line 2"
+  ],
+  "department": "mocked department",
+  "subDepartment": "mocked sub-department",
   "streetName": "mocked street name",
   "buildingNumber": "mocked building number",
-  "townName": "mocked town name",
+  "buildingName": "mocked building name",
+  "floor": "mocked floor",
+  "postBox": "mocked post box",
+  "room": "mocked room",
   "postCode": "mocked post code",
+  "townName": "mocked town name",
+  "townLocationName": "mocked town location name",
+  "districtName": "mocked district name",
+  "countrySubDivision": "mocked country subdivision",
   "country": {
     "code": "mocked country code"
   }

@@ -39,6 +39,11 @@ public abstract class AbstractConfirmationOfFundsConsentTppValidator<T extends T
         return piisConsentTppInfoValidator;
     }
 
+    /**
+     * Sets the PIIS consent TPP info validator.
+     *
+     * @param piisConsentTppInfoValidator the validator to set
+     */
     @Autowired
     public void setPiisConsentTppInfoValidator(PiisConsentTppInfoValidator piisConsentTppInfoValidator) {
         this.piisConsentTppInfoValidator = piisConsentTppInfoValidator;

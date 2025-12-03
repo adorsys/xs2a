@@ -8,13 +8,26 @@
     "pan": "1111"
   },
   "creditorAddress": {
+    "addressLines": [
+      "Address Line 1",
+      "Address Line 2"
+    ],
+    "department": "IT Department",
+    "subDepartment": "Development",
+    "streetName": "Herrnstraße",
     "buildingNumber": "123-34",
-    "city": "Nürnberg",
+    "buildingName": "Building Name",
+    "floor": "3rd Floor",
+    "postBox": "PO Box 123",
+    "room": "Room 301",
+    "postCode": "90431",
+    "townName": "Nürnberg",
+    "townLocationName": "Town Location",
+    "districtName": "District Name",
+    "countrySubDivision": "Bavaria",
     "country": {
       "code": "49"
-    },
-    "postalCode": "90431",
-    "street": "Herrnstraße"
+    }
   },
   "creditorAgent": "BCENECEQ",
   "creditorName": "Telekom",

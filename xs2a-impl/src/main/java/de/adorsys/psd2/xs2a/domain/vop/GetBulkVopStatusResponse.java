@@ -1,0 +1,39 @@
+/*
+ * Copyright 2018-2025 adorsys GmbH & Co KG
+ *
+ * This program is free software: you can redistribute it and/or modify it
+ * under the terms of the GNU Affero General Public License as published
+ * by the Free Software Foundation, either version 3 of the License, or (at
+ * your option) any later version. This program is distributed in the hope that
+ * it will be useful, but WITHOUT ANY WARRANTY; without even the implied
+ * warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program. If not, see https://www.gnu.org/licenses/.
+ *
+ * This project is also available under a separate commercial license. You can
+ * contact us at sales@adorsys.com.
+ */
+
+package de.adorsys.psd2.xs2a.domain.vop;
+
+import de.adorsys.psd2.xs2a.core.domain.ErrorHolder;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
+
+/**
+ * Response object for getting the status of a bulk verification of party request.
+ * This class extends {@link GetCommonVopStatusResponse} and provides additional fields
+ * specific to bulk VOP status queries.
+ */
+@Data
+@NoArgsConstructor
+@EqualsAndHashCode(callSuper = true)
+public class GetBulkVopStatusResponse extends GetCommonVopStatusResponse {
+
+    public GetBulkVopStatusResponse(ErrorHolder errorHolder) {
+        super(errorHolder);
+    }
+}

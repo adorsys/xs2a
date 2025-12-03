@@ -31,6 +31,10 @@ import static de.adorsys.psd2.xs2a.core.domain.TppMessageInformation.of;
 import static de.adorsys.psd2.xs2a.core.error.ErrorType.PIS_404;
 import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.RESOURCE_UNKNOWN_404_NO_PAYMENT;
 
+/**
+ * Abstract base class for payment cancellation services.
+ * Provides common functionality for cancelling different types of payments.
+ */
 @RequiredArgsConstructor
 public abstract class AbstractCancelPaymentService implements CancelPaymentService {
 
@@ -51,5 +55,11 @@ public abstract class AbstractCancelPaymentService implements CancelPaymentServi
                                                                      paymentCancellationRequest.getTppRedirectUri());
     }
 
+    /**
+     * Creates an SPI payment object from common payment data.
+     *
+     * @param commonPaymentData the common payment data
+     * @return an Optional containing the SPI payment if successful, empty otherwise
+     */
     protected abstract Optional<SpiPayment> createSpiPayment(CommonPaymentData commonPaymentData);
 }

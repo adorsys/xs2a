@@ -41,6 +41,7 @@ public class CmsCorePaymentMapper {
                        PaymentInitiationJson payment = new PaymentInitiationJson();
                        payment.setDebtorAccount(mapToAccountReference(pisPayment.getDebtorAccount()));
                        payment.setRequestedExecutionDate(pisPayment.getRequestedExecutionDate());
+                       payment.setRequestedExecutionTime(pisPayment.getRequestedExecutionTime());
                        setCommonFields(payment, pisPayment);
                        return payment;
                    }).orElse(null);
@@ -85,6 +86,9 @@ public class CmsCorePaymentMapper {
         //Periodic
         payment.setStartDate(pisPayment.getStartDate());
         payment.setEndDate(pisPayment.getEndDate());
+        payment.setStartDateTime(pisPayment.getStartDateTime());
+        payment.setEndDate(pisPayment.getEndDate());
+        payment.setEndDateTime(pisPayment.getEndDateTime());
         payment.setExecutionRule(ExecutionRule.fromValue(pisPayment.getExecutionRule().getValue()));
         payment.setFrequency(FrequencyCode.valueOf(pisPayment.getFrequency()));
         payment.setDayOfExecution(DayOfExecution.fromValue(pisPayment.getDayOfExecution().getValue()));

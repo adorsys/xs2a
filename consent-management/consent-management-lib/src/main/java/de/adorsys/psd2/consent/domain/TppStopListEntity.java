@@ -28,6 +28,7 @@ import java.time.OffsetDateTime;
 import java.util.Optional;
 
 @Data
+@EqualsAndHashCode(callSuper = false)
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity(name = "tpp_stop_list")

@@ -32,6 +32,11 @@ import de.adorsys.psd2.aspsp.profile.domain.pis.PisAspspProfileSetting;
 import de.adorsys.psd2.aspsp.profile.domain.pis.PisRedirectLinkSetting;
 import de.adorsys.psd2.aspsp.profile.domain.sb.SbAspspProfileBankSetting;
 import de.adorsys.psd2.aspsp.profile.domain.sb.SbAspspProfileSetting;
+import de.adorsys.psd2.aspsp.profile.domain.security.SecurityAspspProfileBankSetting;
+import de.adorsys.psd2.aspsp.profile.domain.security.SecurityAspspProfileSetting;
+import de.adorsys.psd2.aspsp.profile.domain.vop.VopAspspProfileBankSetting;
+import de.adorsys.psd2.aspsp.profile.domain.vop.VopAspspProfileSetting;
+import de.adorsys.psd2.aspsp.profile.domain.vop.VopxReference;
 import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
 import de.adorsys.psd2.xs2a.core.profile.StartAuthorisationMode;
 import lombok.RequiredArgsConstructor;
@@ -41,96 +46,138 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
+@SuppressWarnings("PMD")
 @RequiredArgsConstructor
 public class AspspProfileServiceImpl implements AspspProfileService {
-    private final ProfileConfigurations profileConfigurations;
+        private final ProfileConfigurations profileConfigurations;
 
-    @Override
-    public AspspSettings getAspspSettings(String instanceId) {
-        BankProfileSetting setting = profileConfigurations.getSetting(instanceId);
+        @Override
+        public AspspSettings getAspspSettings(String instanceId) {
+                BankProfileSetting setting = profileConfigurations.getSetting(instanceId);
 
-        AisAspspProfileBankSetting aisBankSetting = setting.getAis();
-        ConsentTypeBankSetting consentTypeSetting = aisBankSetting.getConsentTypes();
-        ConsentTypeSetting consentTypes = new ConsentTypeSetting(consentTypeSetting.isBankOfferedConsentSupported(),
-                                                                 consentTypeSetting.isGlobalConsentSupported(),
-                                                                 consentTypeSetting.isAvailableAccountsConsentSupported(),
-                                                                 consentTypeSetting.getAccountAccessFrequencyPerDay(),
-                                                                 consentTypeSetting.getNotConfirmedConsentExpirationTimeMs(),
-                                                                 consentTypeSetting.getMaxConsentValidityDays(),
-                                                                 consentTypeSetting.isAccountOwnerInformationSupported(),
-                                                                 consentTypeSetting.isTrustedBeneficiariesSupported());
-        AisRedirectLinkSetting aisRedirectLinkToOnlineBanking = new AisRedirectLinkSetting(aisBankSetting.getRedirectLinkToOnlineBanking().getAisRedirectUrlToAspsp());
-        AisTransactionSetting transactionParameters = new AisTransactionSetting(aisBankSetting.getTransactionParameters().getAvailableBookingStatuses(),
-                                                                                aisBankSetting.getTransactionParameters().isTransactionsWithoutBalancesSupported(),
-                                                                                aisBankSetting.getTransactionParameters().getSupportedTransactionApplicationTypes());
-        DeltaReportSetting deltaReportSettings = new DeltaReportSetting(aisBankSetting.getDeltaReportSettings().isEntryReferenceFromSupported(),
-                                                                        aisBankSetting.getDeltaReportSettings().isDeltaListSupported());
+                AisAspspProfileBankSetting aisBankSetting = setting.getAis();
+                ConsentTypeBankSetting consentTypeSetting = aisBankSetting.getConsentTypes();
+                ConsentTypeSetting consentTypes = new ConsentTypeSetting(
+                                consentTypeSetting.isBankOfferedConsentSupported(),
+                                consentTypeSetting.isGlobalConsentSupported(),
+                                consentTypeSetting.isAvailableAccountsConsentSupported(),
+                                consentTypeSetting.getAccountAccessFrequencyPerDay(),
+                                consentTypeSetting.getNotConfirmedConsentExpirationTimeMs(),
+                                consentTypeSetting.getMaxConsentValidityDays(),
+                                consentTypeSetting.isAccountOwnerInformationSupported(),
+                                consentTypeSetting.isTrustedBeneficiariesSupported());
+                AisRedirectLinkSetting aisRedirectLinkToOnlineBanking = new AisRedirectLinkSetting(
+                                aisBankSetting.getRedirectLinkToOnlineBanking().getAisRedirectUrlToAspsp());
+                AisTransactionSetting transactionParameters = new AisTransactionSetting(
+                                aisBankSetting.getTransactionParameters().getAvailableBookingStatuses(),
+                                aisBankSetting.getTransactionParameters().isTransactionsWithoutBalancesSupported(),
+                                aisBankSetting.getTransactionParameters().getSupportedTransactionApplicationTypes());
+                DeltaReportSetting deltaReportSettings = new DeltaReportSetting(
+                                aisBankSetting.getDeltaReportSettings().isEntryReferenceFromSupported(),
+                                aisBankSetting.getDeltaReportSettings().isDeltaListSupported());
 
-        OneTimeConsentScaBankSetting scaRequirementsForOneTimeConsentsBankSetting = aisBankSetting.getScaRequirementsForOneTimeConsents();
-        OneTimeConsentScaSetting scaRequirementsForOneTimeConsents = new OneTimeConsentScaSetting(scaRequirementsForOneTimeConsentsBankSetting.isScaByOneTimeAvailableAccountsConsentRequired(), scaRequirementsForOneTimeConsentsBankSetting.isScaByOneTimeGlobalConsentRequired());
+                OneTimeConsentScaBankSetting scaRequirementsForOneTimeConsentsBankSetting = aisBankSetting
+                                .getScaRequirementsForOneTimeConsents();
+                OneTimeConsentScaSetting scaRequirementsForOneTimeConsents = new OneTimeConsentScaSetting(
+                                scaRequirementsForOneTimeConsentsBankSetting
+                                                .isScaByOneTimeAvailableAccountsConsentRequired(),
+                                scaRequirementsForOneTimeConsentsBankSetting.isScaByOneTimeGlobalConsentRequired());
 
-        AisAspspProfileSetting ais = new AisAspspProfileSetting(consentTypes, aisRedirectLinkToOnlineBanking, transactionParameters, deltaReportSettings, scaRequirementsForOneTimeConsents);
+                AisAspspProfileSetting ais = new AisAspspProfileSetting(consentTypes, aisRedirectLinkToOnlineBanking,
+                                transactionParameters, deltaReportSettings, scaRequirementsForOneTimeConsents);
 
-        PisAspspProfileBankSetting pisBankSetting = setting.getPis();
-        PisRedirectLinkSetting pisRedirectLinkToOnlineBanking = new PisRedirectLinkSetting(pisBankSetting.getRedirectLinkToOnlineBanking().getPisRedirectUrlToAspsp(),
-                                                                                           pisBankSetting.getRedirectLinkToOnlineBanking().getPisPaymentCancellationRedirectUrlToAspsp(),
-                                                                                           pisBankSetting.getRedirectLinkToOnlineBanking().getPaymentCancellationRedirectUrlExpirationTimeMs());
-        PisAspspProfileSetting pis = new PisAspspProfileSetting(pisBankSetting.getSupportedPaymentTypeAndProductMatrix(),
-                                                                pisBankSetting.getMaxTransactionValidityDays(),
-                                                                pisBankSetting.getNotConfirmedPaymentExpirationTimeMs(),
-                                                                pisBankSetting.isPaymentCancellationAuthorisationMandated(),
-                                                                pisRedirectLinkToOnlineBanking,
-                                                                pisBankSetting.getCountryValidationSupported(),
-                                                                pisBankSetting.getSupportedTransactionStatusFormats(),
-                                                                pisBankSetting.isDebtorAccountOptionalInInitialRequest());
+                PisAspspProfileBankSetting pisBankSetting = setting.getPis();
+                PisRedirectLinkSetting pisRedirectLinkToOnlineBanking = new PisRedirectLinkSetting(
+                                pisBankSetting.getRedirectLinkToOnlineBanking().getPisRedirectUrlToAspsp(),
+                                pisBankSetting.getRedirectLinkToOnlineBanking()
+                                                .getPisPaymentCancellationRedirectUrlToAspsp(),
+                                pisBankSetting.getRedirectLinkToOnlineBanking()
+                                                .getPaymentCancellationRedirectUrlExpirationTimeMs());
+                PisAspspProfileSetting pis = new PisAspspProfileSetting(
+                                pisBankSetting.getSupportedPaymentTypeAndProductMatrix(),
+                                pisBankSetting.getMaxTransactionValidityDays(),
+                                pisBankSetting.getNotConfirmedPaymentExpirationTimeMs(),
+                                pisBankSetting.isPaymentCancellationAuthorisationMandated(),
+                                pisRedirectLinkToOnlineBanking,
+                                pisBankSetting.getCountryValidationSupported(),
+                                pisBankSetting.getSupportedTransactionStatusFormats(),
+                                pisBankSetting.isDebtorAccountOptionalInInitialRequest());
 
-        PiisRedirectLinkSetting piisRedirectLinkSetting = new PiisRedirectLinkSetting(Optional.ofNullable(setting.getPiis().getRedirectLinkToOnlineBanking())
-                                                                                          .map(PiisRedirectLinkBankSetting::getPiisRedirectUrlToAspsp)
-                                                                                          .orElse(null));
-        PiisAspspProfileSetting piis = new PiisAspspProfileSetting(setting.getPiis().getPiisConsentSupported(), piisRedirectLinkSetting);
+                PiisRedirectLinkSetting piisRedirectLinkSetting = new PiisRedirectLinkSetting(
+                                Optional.ofNullable(setting.getPiis().getRedirectLinkToOnlineBanking())
+                                                .map(PiisRedirectLinkBankSetting::getPiisRedirectUrlToAspsp)
+                                                .orElse(null));
+                PiisAspspProfileSetting piis = new PiisAspspProfileSetting(setting.getPiis().getPiisConsentSupported(),
+                                piisRedirectLinkSetting);
 
-        SbAspspProfileBankSetting sbBankSetting = setting.getSb();
-        SbAspspProfileSetting sb = new SbAspspProfileSetting(sbBankSetting.isSigningBasketSupported(),
-                                                             sbBankSetting.getSigningBasketMaxEntries(),
-                                                             sbBankSetting.getNotConfirmedSigningBasketExpirationTimeMs(),
-                                                             sbBankSetting.getSbRedirectUrlToAspsp());
+                VopAspspProfileBankSetting vopBankSetting = setting.getVop();
 
-        CommonAspspProfileBankSetting commonBankSetting = setting.getCommon();
-        CommonAspspProfileSetting common = new CommonAspspProfileSetting(commonBankSetting.getScaRedirectFlow(),
-                                                                         commonBankSetting.getOauthConfigurationUrl(),
-                                                                         commonBankSetting.getStartAuthorisationMode() == null
-                                                                             ? StartAuthorisationMode.AUTO
-                                                                             : StartAuthorisationMode.getByValue(commonBankSetting.getStartAuthorisationMode()),
-                                                                         commonBankSetting.isTppSignatureRequired(),
-                                                                         commonBankSetting.isPsuInInitialRequestMandated(),
-                                                                         commonBankSetting.getRedirectUrlExpirationTimeMs(),
-                                                                         commonBankSetting.getAuthorisationExpirationTimeMs(),
-                                                                         commonBankSetting.isForceXs2aBaseLinksUrl(),
-                                                                         commonBankSetting.getXs2aBaseLinksUrl(),
-                                                                         commonBankSetting.getSupportedAccountReferenceFields(),
-                                                                         commonBankSetting.getMulticurrencyAccountLevelSupported(),
-                                                                         commonBankSetting.isAisPisSessionsSupported(),
-                                                                         commonBankSetting.isCheckTppRolesFromCertificateSupported(),
-                                                                         commonBankSetting.getAspspNotificationsSupported(),
-                                                                         commonBankSetting.isAuthorisationConfirmationRequestMandated(),
-                                                                         commonBankSetting.isAuthorisationConfirmationCheckByXs2a(),
-                                                                         commonBankSetting.isCheckUriComplianceToDomainSupported(),
-                                                                         commonBankSetting.getTppUriComplianceResponse(),
-                                                                         commonBankSetting.isPsuInInitialRequestIgnored(),
-                                                                         commonBankSetting.isIbanValidationDisabled());
+                // Map nested VopxReference object with null safety
+                VopxReference vopxReference = Optional.ofNullable(vopBankSetting)
+                                .map(VopAspspProfileBankSetting::getVopxReference)
+                                .map(ref -> new VopxReference(
+                                                ref.getApiName(),
+                                                ref.getApiDocument(),
+                                                ref.getApiVersion()))
+                                .orElse(null);
 
-        return new AspspSettings(ais, pis, piis, sb, common);
-    }
+                VopAspspProfileSetting vop = new VopAspspProfileSetting(
+                    vopxReference,
+                                Optional.ofNullable(vopBankSetting)
+                                                .map(VopAspspProfileBankSetting::getVariantSupported)
+                                                .orElse(null),
+                                Optional.ofNullable(vopBankSetting)
+                                                .map(VopAspspProfileBankSetting::getBulkBatchProcessingSupported)
+                                                .orElse(null));
 
-    @Override
-    public List<ScaApproach> getScaApproaches(String instanceId) {
-        return profileConfigurations.getSetting(instanceId)
-                   .getCommon()
-                   .getScaApproachesSupported();
-    }
+                SecurityAspspProfileBankSetting securityBankSetting = setting.getSecurity();
+                SecurityAspspProfileSetting security = new SecurityAspspProfileSetting(
+                                securityBankSetting.isSecuringBodyMessageSupported(),
+                                securityBankSetting.isSigningHttpMessageSupported());
 
-    @Override
-    public boolean isMultitenancyEnabled() {
-        return profileConfigurations.isMultitenancyEnabled();
-    }
+                SbAspspProfileBankSetting sbBankSetting = setting.getSb();
+                SbAspspProfileSetting sb = new SbAspspProfileSetting(sbBankSetting.isSigningBasketSupported(),
+                                sbBankSetting.getSigningBasketMaxEntries(),
+                                sbBankSetting.getNotConfirmedSigningBasketExpirationTimeMs(),
+                                sbBankSetting.getSbRedirectUrlToAspsp());
+
+                CommonAspspProfileBankSetting commonBankSetting = setting.getCommon();
+                CommonAspspProfileSetting common = new CommonAspspProfileSetting(commonBankSetting.getScaRedirectFlow(),
+                                commonBankSetting.getOauthConfigurationUrl(),
+                                commonBankSetting.getStartAuthorisationMode() == null
+                                                ? StartAuthorisationMode.AUTO
+                                                : StartAuthorisationMode.getByValue(
+                                                                commonBankSetting.getStartAuthorisationMode()),
+                                commonBankSetting.isTppSignatureRequired(),
+                                commonBankSetting.isPsuInInitialRequestMandated(),
+                                commonBankSetting.getRedirectUrlExpirationTimeMs(),
+                                commonBankSetting.getAuthorisationExpirationTimeMs(),
+                                commonBankSetting.isForceXs2aBaseLinksUrl(),
+                                commonBankSetting.getXs2aBaseLinksUrl(),
+                                commonBankSetting.getSupportedAccountReferenceFields(),
+                                commonBankSetting.getMulticurrencyAccountLevelSupported(),
+                                commonBankSetting.isAisPisSessionsSupported(),
+                                commonBankSetting.isCheckTppRolesFromCertificateSupported(),
+                                commonBankSetting.getAspspNotificationsSupported(),
+                                commonBankSetting.isAuthorisationConfirmationRequestMandated(),
+                                commonBankSetting.isAuthorisationConfirmationCheckByXs2a(),
+                                commonBankSetting.isCheckUriComplianceToDomainSupported(),
+                                commonBankSetting.getTppUriComplianceResponse(),
+                                commonBankSetting.isPsuInInitialRequestIgnored(),
+                                commonBankSetting.isIbanValidationDisabled());
+
+                return new AspspSettings(ais, pis, piis, vop, security, sb, common);
+        }
+
+        @Override
+        public List<ScaApproach> getScaApproaches(String instanceId) {
+                return profileConfigurations.getSetting(instanceId)
+                                .getCommon()
+                                .getScaApproachesSupported();
+        }
+
+        @Override
+        public boolean isMultitenancyEnabled() {
+                return profileConfigurations.isMultitenancyEnabled();
+        }
 }

@@ -23,6 +23,8 @@ import de.adorsys.psd2.aspsp.profile.domain.common.CommonAspspProfileBankSetting
 import de.adorsys.psd2.aspsp.profile.domain.piis.PiisAspspProfileBankSetting;
 import de.adorsys.psd2.aspsp.profile.domain.pis.PisAspspProfileBankSetting;
 import de.adorsys.psd2.aspsp.profile.domain.sb.SbAspspProfileBankSetting;
+import de.adorsys.psd2.aspsp.profile.domain.security.SecurityAspspProfileBankSetting;
+import de.adorsys.psd2.aspsp.profile.domain.vop.VopAspspProfileBankSetting;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -46,6 +48,16 @@ public class BankProfileSetting {
      * Contains all settings regarding to PIIS
      */
     private PiisAspspProfileBankSetting piis;
+
+    /**
+     * Contains all settings regarding to VOP
+     */
+    private VopAspspProfileBankSetting vop;
+
+    /**
+     * Contains all settings regarding to Security
+     */
+    private SecurityAspspProfileBankSetting security;
 
     /**
      * Contains all settings regarding to SB

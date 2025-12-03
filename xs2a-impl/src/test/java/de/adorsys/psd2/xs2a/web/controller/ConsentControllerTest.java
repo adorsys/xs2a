@@ -254,8 +254,8 @@ class ConsentControllerTest {
 
         UpdatePsuAuthenticationResponse expected = new UpdatePsuAuthenticationResponse();
         when(consentService.updateConsentPsuData(any())).thenReturn(responseObject);
-        doReturn(new ResponseEntity<>(new UpdatePsuAuthenticationResponse(), HttpStatus.OK))
-            .when(responseMapper).ok(any(), any(), any());
+        when(responseMapper.ok(any(ResponseObject.class), any(Function.class), (ResponseHeaders) isNull()))
+            .thenReturn(new ResponseEntity<>(new UpdatePsuAuthenticationResponse(), HttpStatus.OK));
 
         // When
         ResponseEntity responseEntity = consentController.updateConsentsPsuData(null, CONSENT_ID, AUTHORISATION_ID,

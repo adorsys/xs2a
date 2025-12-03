@@ -1,7 +1,20 @@
 {
+  "addressLines": [
+    "WBG Straße 56",
+    "Floor 3, Room 12"
+  ],
+  "department": "Finance Department",
+  "subDepartment": "Accounts Receivable",
   "street": "WBG Straße",
   "buildingNumber": "56",
-  "city": "Nürnberg",
+  "buildingName": "WBG Tower",
+  "floor": "3",
+  "postBox": "PO Box 1234",
+  "room": "12",
   "postalCode": "90543",
+  "city": "Nürnberg",
+  "townLocationName": "Central Business District",
+  "districtName": "Mitte",
+  "countrySubDivision": "Bayern",
   "country": "DE"
 }

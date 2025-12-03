@@ -52,6 +52,15 @@ public abstract class AbstractUpdatePisPsuDataValidator<T extends UpdatePisPsuDa
     private final PisPsuDataUpdateAuthorisationCheckerValidator pisPsuDataUpdateAuthorisationCheckerValidator;
     private final AuthorisationStageCheckValidator authorisationStageCheckValidator;
 
+    /**
+     * Constructs a new AbstractUpdatePisPsuDataValidator.
+     *
+     * @param pisEndpointAccessCheckerService service for checking PIS endpoint access
+     * @param pisAuthorisationValidator validator for PIS authorisation
+     * @param pisAuthorisationStatusValidator validator for PIS authorisation status
+     * @param pisPsuDataUpdateAuthorisationCheckerValidator validator for PSU data update authorisation
+     * @param authorisationStageCheckValidator validator for authorisation stage
+     */
     protected AbstractUpdatePisPsuDataValidator(PisEndpointAccessCheckerService pisEndpointAccessCheckerService,
                                              PisAuthorisationValidator pisAuthorisationValidator,
                                              PisAuthorisationStatusValidator pisAuthorisationStatusValidator,
@@ -125,7 +134,18 @@ public abstract class AbstractUpdatePisPsuDataValidator<T extends UpdatePisPsuDa
         return ValidationResult.valid();
     }
 
+    /**
+     * Validates the transaction status of the payment.
+     *
+     * @param paymentObject the payment object containing transaction status
+     * @return validation result
+     */
     protected abstract ValidationResult validateTransactionStatus(UpdatePisPsuDataPO paymentObject);
 
+    /**
+     * Returns the authorisation service type.
+     *
+     * @return the authorisation service type
+     */
     protected abstract AuthorisationServiceType getAuthorisationServiceType();
 }

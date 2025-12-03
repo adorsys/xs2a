@@ -31,9 +31,19 @@ import java.util.stream.Collectors;
 
 import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.CONSENT_INVALID;
 
+/**
+ * Validator for checking account access for multiple accounts scenarios.
+ */
 @Component
 public class AccountAccessMultipleAccountsValidator {
 
+    /**
+     * Validates account access for multiple accounts with balance information.
+     *
+     * @param aisConsent the AIS consent to validate
+     * @param withBalance flag indicating if balance access is requested
+     * @return validation result
+     */
     public ValidationResult validate(AisConsent aisConsent, boolean withBalance) {
         if (withBalance && aisConsent.isConsentForDedicatedAccounts()) {
             AccountAccess access = aisConsent.getAccess();
