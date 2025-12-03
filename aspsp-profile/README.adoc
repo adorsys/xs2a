@@ -142,6 +142,58 @@ Confirmation of Funds request is being passed to SPI level as is (no consent val
 |*redirectLinkToOnlineBanking:* | | |
 |piisRedirectUrlToAspsp |Link to online-banking to authorise consent with Redirect approach. Attribute is available to be configured with custom url pattern and redirectId parameter. |http://localhost:4200/piis/{redirect-id}/{encrypted-consent-id} |String
 
+|*VOP:* | | |
+|*vopxReference:* |This section contains reference information about the VOP (Verification of Payee) API implementation according to the Berlin Group NextGenPSD2 framework. | |
+|apiName |This field defines the name of the API framework being implemented for VOP services. VOP services help validate beneficiary account details before payment execution to prevent fraud and misdirected payments. |NextGenPSD2 |String
+|apiDocument |This field contains the URL reference to the official API documentation and specification downloads. |https://www.berlin-group.org/nextgenpsd2-downloads |String (URL)
+|apiVersion |This field defines the version of the NextGenPSD2 API framework being used for VOP implementation. This should match the Berlin Group specification version. |1.3.15 |String (version number)
+|variantSupported |This field defines which VOP service variants are supported by the ASPSP.
+
+DEDICATED: VOP service is provided through a dedicated endpoint separate from payment initiation. TPPs can verify account details independently before initiating a payment.
+
+INTEGRATED: VOP service is integrated within the payment initiation flow. Account verification happens automatically during payment processing.
+
+ASPSP can support both variants simultaneously to offer flexibility to TPPs. |DEDICATED, INTEGRATED |DEDICATED, INTEGRATED
+|bulkBatchProcessingSupported |This field defines the processing modes supported for bulk VOP requests when multiple account verifications need to be performed.
+
+synchronous-mode: Bulk VOP requests are processed immediately and all results are returned in the initial HTTP response. Suitable for smaller batches with low latency requirements.
+
+asynchronous-mode: Bulk VOP requests are accepted and processed later in the background. Results must be retrieved through a separate GET request using the bulk VOP ID. Suitable for large batches or when immediate processing is not required.
+
+ASPSP can support both modes simultaneously to handle different batch sizes and use cases. |synchronous-mode, asynchronous-mode |synchronous-mode, asynchronous-mode
+
+|*Security:* | | |
+|SigningHttpMessageSupported |This field controls whether HTTP message signing is supported/required by the ASPSP implementation.
+
+When set to FALSE, the following HTTP headers are *disabled* and will not be validated:
+
+* `x-jws-signature`: JWS (JSON Web Signature) that signs the entire HTTP request body to ensure message integrity and non-repudiation
+* `Digest`: Hash (typically SHA-256 or SHA-512) of the request body to detect tampering
+
+When set to TRUE, TPPs must include these headers in their requests to prove message integrity.
+
+This setting was added during VOP implementation to allow ASPSPs to disable HTTP message signing if not required for their VOP services, as VOP is typically lower-risk than payment initiation (no funds transfer occurs) and TLS/HTTPS already provides transport-level security.
+
+*Security Note:* While disabling simplifies integration, ASPSPs should carefully evaluate their risk tolerance and regulatory requirements. For production environments, consider enabling for defense-in-depth security. |FALSE |TRUE, FALSE
+|SecuringBodyMessageSupported |This field controls whether HTTP message body signing/encryption is supported/required by the ASPSP implementation.
+
+When set to FALSE, the following HTTP headers are *disabled* and will not be processed:
+
+* `Body-Sig-Profile`: Indicates the signature profile for body signing (values: JAdES_JS, XAdES, EMV_AC)
+** JAdES_JS: JSON Advanced Electronic Signatures in JSON Serialization
+** XAdES: XML Advanced Electronic Signatures
+** EMV_AC: EMV Application Cryptogram signatures
+* `Body-Enc-Profile`: Indicates the encryption profile for body encryption (values: JWE_CS, XML_ENC)
+** JWE_CS: JSON Web Encryption Compact Serialization
+** XML_ENC: XML Encryption
+* `Body-Enc-List`: Comma-separated list of JSON paths or XML elements containing encrypted information (e.g., "creditorAccount,amount,debtorAccount")
+
+When set to TRUE, TPPs can sign/encrypt parts of the request body using the specified profiles to protect sensitive data fields.
+
+This setting was added during VOP implementation to allow ASPSPs to disable advanced body security features if not required, as TLS provides transport encryption and certificate-based TPP authentication (eIDAS) remains active.
+
+*Security Note:* For VOP services (read-only verification), setting to FALSE may be acceptable. However, for PIS (Payment Initiation) and AIS (Account Information) services handling sensitive financial data, strongly consider setting to TRUE for enhanced security. |FALSE |TRUE, FALSE
+
 |*SB:* | | |
 |signingBasketSupported |This field indicates if an ASPSP supports signing basket or not.
 
@@ -245,55 +297,4 @@ If parameter = WARNING, then TPP will get correct response and warning message.
 If parameter = REJECT, then TPP will get 400 FORMAT_ERROR and text "URIs don't comply with domain from certificate" response.
 |WARNING |WARNING, REJECT
 
-|*VOP:* | | |
-|*vopxReference:* |This section contains reference information about the VOP (Verification of Payee) API implementation according to the Berlin Group NextGenPSD2 framework. | |
-|apiName |This field defines the name of the API framework being implemented for VOP services. VOP services help validate beneficiary account details before payment execution to prevent fraud and misdirected payments. |NextGenPSD2 |String
-|apiDocument |This field contains the URL reference to the official API documentation and specification downloads. |https://www.berlin-group.org/nextgenpsd2-downloads |String (URL)
-|apiVersion |This field defines the version of the NextGenPSD2 API framework being used for VOP implementation. This should match the Berlin Group specification version. |1.3.15 |String (version number)
-|variantSupported |This field defines which VOP service variants are supported by the ASPSP.
-
-DEDICATED: VOP service is provided through a dedicated endpoint separate from payment initiation. TPPs can verify account details independently before initiating a payment.
-
-INTEGRATED: VOP service is integrated within the payment initiation flow. Account verification happens automatically during payment processing.
-
-ASPSP can support both variants simultaneously to offer flexibility to TPPs. |DEDICATED, INTEGRATED |DEDICATED, INTEGRATED
-|bulkBatchProcessingSupported |This field defines the processing modes supported for bulk VOP requests when multiple account verifications need to be performed.
-
-synchronous-mode: Bulk VOP requests are processed immediately and all results are returned in the initial HTTP response. Suitable for smaller batches with low latency requirements.
-
-asynchronous-mode: Bulk VOP requests are accepted and processed later in the background. Results must be retrieved through a separate GET request using the bulk VOP ID. Suitable for large batches or when immediate processing is not required.
-
-ASPSP can support both modes simultaneously to handle different batch sizes and use cases. |synchronous-mode, asynchronous-mode |synchronous-mode, asynchronous-mode
-
-|*Security:* | | |
-|SigningHttpMessageSupported |This field controls whether HTTP message signing is supported/required by the ASPSP implementation.
-
-When set to FALSE, the following HTTP headers are *disabled* and will not be validated:
-
-* `x-jws-signature`: JWS (JSON Web Signature) that signs the entire HTTP request body to ensure message integrity and non-repudiation
-* `Digest`: Hash (typically SHA-256 or SHA-512) of the request body to detect tampering
-
-When set to TRUE, TPPs must include these headers in their requests to prove message integrity.
-
-This setting was added during VOP implementation to allow ASPSPs to disable HTTP message signing if not required for their VOP services, as VOP is typically lower-risk than payment initiation (no funds transfer occurs) and TLS/HTTPS already provides transport-level security.
-
-*Security Note:* While disabling simplifies integration, ASPSPs should carefully evaluate their risk tolerance and regulatory requirements. For production environments, consider enabling for defense-in-depth security. |FALSE |TRUE, FALSE
-|SecuringBodyMessageSupported |This field controls whether HTTP message body signing/encryption is supported/required by the ASPSP implementation.
-
-When set to FALSE, the following HTTP headers are *disabled* and will not be processed:
-
-* `Body-Sig-Profile`: Indicates the signature profile for body signing (values: JAdES_JS, XAdES, EMV_AC)
-** JAdES_JS: JSON Advanced Electronic Signatures in JSON Serialization
-** XAdES: XML Advanced Electronic Signatures
-** EMV_AC: EMV Application Cryptogram signatures
-* `Body-Enc-Profile`: Indicates the encryption profile for body encryption (values: JWE_CS, XML_ENC)
-** JWE_CS: JSON Web Encryption Compact Serialization
-** XML_ENC: XML Encryption
-* `Body-Enc-List`: Comma-separated list of JSON paths or XML elements containing encrypted information (e.g., "creditorAccount,amount,debtorAccount")
-
-When set to TRUE, TPPs can sign/encrypt parts of the request body using the specified profiles to protect sensitive data fields.
-
-This setting was added during VOP implementation to allow ASPSPs to disable advanced body security features if not required, as TLS provides transport encryption and certificate-based TPP authentication (eIDAS) remains active.
-
-*Security Note:* For VOP services (read-only verification), setting to FALSE may be acceptable. However, for PIS (Payment Initiation) and AIS (Account Information) services handling sensitive financial data, strongly consider setting to TRUE for enhanced security. |FALSE |TRUE, FALSE
 |===
