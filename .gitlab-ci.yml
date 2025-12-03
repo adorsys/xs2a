@@ -4,7 +4,14 @@
 # Global settings
 # ------------------------------------------------------------------
 
-image: "adorsys/ci-build:latest"
+#image: "adorsys/ci-build:latest"
+image: "gitlab-registry.adorsys.de/adorsys/xs2a/gitlab-ci:latest"
+
+### Authentication for registry docker image for gitlab ci build
+before_script:
+  - apt-get update && apt-get install -y docker.io
+  - docker --version
+  - echo "${ADORSYS_REGISTRY_PASSWORD}" | docker login -u "${ADORSYS_REGISTRY_USER}" --password-stdin gitlab-registry.adorsys.de
 
 # ------------------------------------------------------------------
 # stages
@@ -28,6 +35,10 @@ variables:
   DOCKER_IMAGE_NAME_ASPSP_PROFILE: "xs2a-aspsp-profile"
   DOCKER_IMAGE_NAME_CERTIFICATE_GENERATOR: "xs2a-certificate-generator"
   DOCKER_IMAGE_NAME_JMETER_TEST: "xs2a-performance-tests"
+  DOCKER_HOST: "tcp://docker:2375/"
+  DOCKER_TLS_CERTDIR: ""
+  DOCKER_DRIVER: "overlay2"
+  #JAVA_VERSION: "21.0.2-open"
 
   ###########################
   # Build variables         #
@@ -46,20 +57,25 @@ variables:
   GITHUB_SSH_SERVER_FINGERPRINT: $GITHUB_SSH_SERVER_FINGERPRINT
   GITHUB_DEPLOY_KEY_BASE64: $GITHUB_DEPLOY_KEY_BASE64  # Base64-encoded key
 
+## service for docker
+services:
+  - name: docker:dind
+    alias: docker
+
 # ------------------------------------------------------------------
 # reusable yaml anchors
 # ------------------------------------------------------------------
 
 .build_java: &build_java
   script:
-    - jabba use ${JAVA_VERSION}
+    - sdk use java ${JAVA_VERSION}
     - env BUILD_NUMBER=$CI_PIPELINE_IID ./scripts/set_xs2a_connector_version_in_swagger.sh
     - java -XX:+PrintFlagsFinal -version | grep -Ei "maxheapsize|maxram"
     - mvn -ntp -DskipITs -DskipTests -Dci.build.number=Build\:${CI_PIPELINE_ID} clean install
 
 .java_tests: &java_tests
   script:
-    - jabba use $JAVA_VERSION
+    - sdk use java $JAVA_VERSION
     - java -XX:+PrintFlagsFinal -version | grep -Ei "maxheapsize|maxram"
     - mvn -ntp -DskipITs --fail-at-end clean install -q
 
@@ -84,7 +100,7 @@ variables:
 .release_java_private: &release_java_private
   stage: "Release"
   script:
-    - jabba use $BUILD_JAVA_VERSION
+    - sdk use java $BUILD_JAVA_VERSION
     - java -XX:+PrintFlagsFinal -version | grep -Ei "maxheapsize|maxram"
     - mvn -ntp --settings scripts/mvn-release-settings.xml -Pgitlab-maven -DskipTests -U deploy
   cache:
@@ -236,16 +252,21 @@ variables:
 #-------------------------------------------------------------------
 
 Lint (Docker compose):
-  image:  maven:3.9.3-eclipse-temurin-17
+  image: maven:3.9-eclipse-temurin-21
   stage: "Lint"
   except:
     - schedules
     - develop
     - master
   script:
-    - apt update && apt install yamllint docker-compose make -yq
-    - echo "Run Docker compose lint"
-    - docker-compose -f docker-compose.yml config  -q
+    - apt update && apt install -yq yamllint curl
+    - echo "Installing Docker Compose (v2)"
+    - curl -L "https://github.com/docker/compose/releases/latest/download/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+    - chmod +x /usr/local/bin/docker-compose
+    - echo "Verify Docker Compose version"
+    - docker-compose --version
+    - echo "Run Docker Compose lint"
+    - docker-compose -f docker-compose.yml config -q
 
 Lint (Ci file):
   image: debian:stable-slim
@@ -276,7 +297,7 @@ Lint (YAML, JSON, XML):
   #     - find ./ -type f \( -iname "*.xml" ! -iname pom.xml \) -exec xmllint --noout {} \;
 
 Lint (PMD CPD):
-  image: maven:3.9.3-eclipse-temurin-17
+  image: maven:3.9-eclipse-temurin-21
   stage: "Lint"
   except:
     - schedules
@@ -295,7 +316,6 @@ Lint (PMD CPD):
       - "**/*/pmd.xml"
     name: "${CI_PROJECT_NAME}-${CI_BUILD_REF_NAME#*v}-pmd"
     expire_in: "10 day"
-
 
 Lint (dockerfiles):
   image: docker
@@ -328,7 +348,7 @@ Build XS2A:
   except:
     - schedules
   variables:
-    JAVA_VERSION: "system@1.17"
+    JAVA_VERSION: "21.0.2-open"
     JAVA_TOOL_OPTIONS: "-Djavax.net.ssl.trustStorePassword=changeit -XX:MaxRAM=3G"
   <<: *build_java
   artifacts:
@@ -349,34 +369,23 @@ Build XS2A:
 
 Test (IT):
   stage: "Test"
-  image:  maven:3.9.3-eclipse-temurin-17
+  image: maven:3.9-eclipse-temurin-21
   services:
-    - name: docker:24.0.6-dind
-      alias: docker
-      command: ["--tls=false"]
+    - docker:dind
   tags:
     - aws
   except:
     - schedules
-  before_script:
-    - apt-get update -qq && apt-get install -y -qq docker.io
-    - |
-      for i in $(seq 1 15); do
-        if docker info >/dev/null 2>&1; then
-          echo "Docker daemon ready"
-          break
-        fi
-        sleep 1
-      done
-      docker info || (echo "Docker daemon unavailable" && exit 1)
   script:
+#    - jabba use ${JAVA_VERSION}
+    - echo "DOCKER_HOST=${DOCKER_HOST}"
     - java -XX:+PrintFlagsFinal -version | grep -Ei "maxheapsize|maxram"
     - mvn -ntp failsafe:integration-test failsafe:verify
   variables:
     DOCKER_HOST: tcp://docker:2375
     DOCKER_TLS_CERTDIR: ""
     DOCKER_DRIVER: overlay2
-    JAVA_VERSION: "system@1.17"
+    JAVA_VERSION: "21.0.2-open"
     JAVA_TOOL_OPTIONS: "-Djavax.net.ssl.trustStorePassword=changeit -XX:MaxRAM=3G"
     TESTCONTAINERS_RYUK_DISABLED: "true"
 
@@ -386,9 +395,9 @@ Test (Javadoc):
     - schedules
   variables:
     JAVA_TOOL_OPTIONS: "-Djavax.net.ssl.trustStorePassword=changeit -XX:MaxRAM=3G"
-    JAVA_VERSION: "system@1.17"
+    JAVA_VERSION: "21.0.2-open"
   script:
-    - jabba use ${JAVA_VERSION}
+    - sdk use java ${JAVA_VERSION}
     - java -XX:+PrintFlagsFinal -version | grep -Ei "maxheapsize|maxram"
     - mvn -ntp -Dmaven.test.skip=true -Pjavadoc verify javadoc:javadoc
 
@@ -398,7 +407,7 @@ Test (Unit Tests):
     - schedules
   <<: *java_tests
   variables:
-    JAVA_VERSION: "system@1.17"
+    JAVA_VERSION: "21.0.2-open"
     JAVA_TOOL_OPTIONS: "-Djavax.net.ssl.trustStorePassword=changeit -XX:MaxRAM=3G"
 
 Test (ASCII Doc):
@@ -408,6 +417,7 @@ Test (ASCII Doc):
   image: adorsys/arc42-tools
   variables:
     JAVA_TOOL_OPTIONS: "-Djavax.net.ssl.trustStorePassword=changeit -XX:MaxRAM=3G"
+  before_script: []
   script:
     - make pages
 
@@ -426,7 +436,6 @@ Test (ASCII Doc):
 
 Build and push images to private repo (develop):
   stage: "Package"
-  image: docker
   services:
     - docker:dind
   tags:
@@ -446,11 +455,10 @@ Build and push images to private repo (develop):
 
 Build and push images to private repo (master):
   stage: "Package"
-  image: docker
-  services:
-    - docker:dind
   tags:
     - aws
+  services:
+    - docker:dind
   only:
     - master
   variables:
@@ -464,7 +472,6 @@ Build and push images to private repo (master):
 
 Build and push images to private repo (Tags):
   stage: "Package"
-  image: docker
   services:
     - docker:dind
   tags:
@@ -482,7 +489,6 @@ Build and push images to private repo (Tags):
 
 Build and push image to private repo (perf test):
   stage: "Package"
-  image: docker
   services:
     - docker:dind
   tags:
@@ -509,7 +515,7 @@ Release snapshot artifacts (develop):
     - schedules
   cache: {}
   variables:
-    BUILD_JAVA_VERSION: "system@1.17"
+    BUILD_JAVA_VERSION: "21.0.2-open"
     JAVA_TOOL_OPTIONS: "-Djavax.net.ssl.trustStorePassword=changeit -XX:MaxRAM=3G"
   <<: *release_java_private
 
@@ -521,7 +527,7 @@ Release snapshot artifacts (tags):
     - schedules
   cache: {}
   variables:
-    BUILD_JAVA_VERSION: "system@1.17"
+    BUILD_JAVA_VERSION: "21.0.2-open"
     JAVA_TOOL_OPTIONS: "-Djavax.net.ssl.trustStorePassword=changeit -XX:MaxRAM=3G"
   <<: *release_java_private
 
