@@ -376,6 +376,7 @@ Test (IT):
     - aws
   except:
     - schedules
+  before_script: []
   script:
     - echo "DOCKER_HOST=${DOCKER_HOST}"
     - java -XX:+PrintFlagsFinal -version | grep -Ei "maxheapsize|maxram"
