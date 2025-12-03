@@ -26,6 +26,7 @@
     <version>19.5-SNAPSHOT</version>
     <modules>
         <module>xs2a-server-api</module>
+        <module>certificate-generator</module>
         <module>xs2a-core</module>
         <module>aspsp-profile</module>
         <module>xs2a-impl</module>
