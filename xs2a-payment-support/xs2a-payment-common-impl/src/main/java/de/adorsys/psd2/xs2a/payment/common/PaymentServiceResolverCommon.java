@@ -30,6 +30,8 @@ import de.adorsys.psd2.xs2a.service.payment.read.ReadCommonPaymentService;
 import de.adorsys.psd2.xs2a.service.payment.read.ReadPaymentService;
 import de.adorsys.psd2.xs2a.service.payment.status.ReadCommonPaymentStatusService;
 import de.adorsys.psd2.xs2a.service.payment.status.ReadPaymentStatusService;
+import de.adorsys.psd2.xs2a.service.payment.status.ReadBulkPaymentExtendedStatusService;
+import de.adorsys.psd2.xs2a.service.payment.status.ReadCommonBulkPaymentExtendedStatusService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -39,6 +41,7 @@ public class PaymentServiceResolverCommon implements PaymentServiceResolver {
     private final CreateCommonPaymentService createCommonPaymentService;
     private final ReadCommonPaymentService readCommonPaymentService;
     private final ReadCommonPaymentStatusService readCommonPaymentStatusService;
+    private final ReadCommonBulkPaymentExtendedStatusService readCommonBulkPaymentExtendedStatusService;
     private final CancelPaymentService cancelCommonPaymentService;
 
     @Override
@@ -54,6 +57,11 @@ public class PaymentServiceResolverCommon implements PaymentServiceResolver {
     @Override
     public ReadPaymentStatusService getReadPaymentStatusService(PisCommonPaymentResponse pisCommonPaymentResponse) {
         return readCommonPaymentStatusService;
+    }
+
+    @Override
+    public ReadBulkPaymentExtendedStatusService getReadBulkPaymentExtendedStatusService(PisCommonPaymentResponse pisCommonPaymentResponse) {
+        return readCommonBulkPaymentExtendedStatusService;
     }
 
     @Override

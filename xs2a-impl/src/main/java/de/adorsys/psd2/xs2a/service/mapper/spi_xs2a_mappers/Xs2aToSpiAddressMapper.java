@@ -34,11 +34,21 @@ public class Xs2aToSpiAddressMapper {
         }
 
         return new SpiAddress(
-            address.getStreetName(),
-            address.getBuildingNumber(),
-            address.getTownName(),
-            address.getPostCode(),
-            Optional.ofNullable(address.getCountry()).map(Xs2aCountryCode::getCode).orElse(""));
+                address.getAddressLines(),
+                address.getDepartment(),
+                address.getSubDepartment(),
+                address.getStreetName(),
+                address.getBuildingNumber(),
+                address.getBuildingName(),
+                address.getFloor(),
+                address.getPostBox(),
+                address.getRoom(),
+                address.getPostCode(),
+                address.getTownName(),
+                address.getTownLocationName(),
+                address.getDistrictName(),
+                address.getCountrySubDivision(),
+                Optional.ofNullable(address.getCountry()).map(Xs2aCountryCode::getCode).orElse(""));
     }
 
     public Xs2aAddress mapToXs2aAddress(SpiAddress address) {
@@ -47,10 +57,20 @@ public class Xs2aToSpiAddressMapper {
         }
 
         Xs2aAddress xs2aAddress = new Xs2aAddress();
+        xs2aAddress.setAddressLines(address.getAddressLines());
+        xs2aAddress.setDepartment(address.getDepartment());
+        xs2aAddress.setSubDepartment(address.getSubDepartment());
         xs2aAddress.setStreetName(address.getStreetName());
         xs2aAddress.setBuildingNumber(address.getBuildingNumber());
-        xs2aAddress.setTownName(address.getTownName());
+        xs2aAddress.setBuildingName(address.getBuildingName());
+        xs2aAddress.setFloor(address.getFloor());
+        xs2aAddress.setPostBox(address.getPostBox());
+        xs2aAddress.setRoom(address.getRoom());
         xs2aAddress.setPostCode(address.getPostCode());
+        xs2aAddress.setTownName(address.getTownName());
+        xs2aAddress.setTownLocationName(address.getTownLocationName());
+        xs2aAddress.setDistrictName(address.getDistrictName());
+        xs2aAddress.setCountrySubDivision(address.getCountrySubDivision());
         xs2aAddress.setCountry(new Xs2aCountryCode(address.getCountry()));
 
         return xs2aAddress;

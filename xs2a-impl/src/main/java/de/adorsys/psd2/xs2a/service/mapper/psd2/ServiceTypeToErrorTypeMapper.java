@@ -77,11 +77,20 @@ public class ServiceTypeToErrorTypeMapper {
         sbHttpCodeToErrorType.put(415, SB_415);
         sbHttpCodeToErrorType.put(500, SB_500);
 
+        Map<Integer, ErrorType> vopHttpCodeToErrorType = new HashMap<>();
+        vopHttpCodeToErrorType.put(400, VOP_400);
+        vopHttpCodeToErrorType.put(401, VOP_401);
+        vopHttpCodeToErrorType.put(403, VOP_403);
+        vopHttpCodeToErrorType.put(404, VOP_404);
+        vopHttpCodeToErrorType.put(405, VOP_405);
+        vopHttpCodeToErrorType.put(409, VOP_409);
+
         serviceTypeToHttpCodeAndErrorType = new EnumMap<>(ServiceType.class);
         serviceTypeToHttpCodeAndErrorType.put(AIS, aisHttpCodeToErrorType);
         serviceTypeToHttpCodeAndErrorType.put(PIS, pisHttpCodeToErrorType);
         serviceTypeToHttpCodeAndErrorType.put(PIIS, piisHttpCodeToErrorType);
         serviceTypeToHttpCodeAndErrorType.put(SB, sbHttpCodeToErrorType);
+        serviceTypeToHttpCodeAndErrorType.put(VOP, vopHttpCodeToErrorType);
     }
 
     public ErrorType mapToErrorType(ServiceType serviceType, int httpCode) {

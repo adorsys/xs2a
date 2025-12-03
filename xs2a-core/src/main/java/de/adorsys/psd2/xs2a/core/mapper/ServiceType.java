@@ -22,5 +22,6 @@ public enum ServiceType {
     AIS,
     PIS,
     PIIS,
-    SB
+    SB,
+    VOP
 }

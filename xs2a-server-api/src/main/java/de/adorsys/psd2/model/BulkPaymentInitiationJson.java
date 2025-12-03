@@ -32,19 +32,23 @@ import java.util.List;
 import java.util.Objects;
 
 /**
- * Generic Body for a bulk payment initiation via JSON.  paymentInformationId is contained in code but commented since it is n.a.  and not all ASPSP are able to support this field now. In a later version the field will be mandatory.
+ * Generic Body for a bulk payment initiation via JSON. paymentInformationId is
+ * contained in code but commented since it is n.a. and not all ASPSP are able
+ * to support this field now. In a later version the field will be mandatory.
  */
 @Schema(description = "Generic Body for a bulk payment initiation via JSON.  paymentInformationId is contained in code but commented since it is n.a.  and not all ASPSP are able to support this field now. In a later version the field will be mandatory. ")
 @Validated
 @jakarta.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-10-25T13:15:56.196839+03:00[Europe/Kiev]")
 
-
-public class BulkPaymentInitiationJson   {
+public class BulkPaymentInitiationJson {
   @JsonProperty("batchBookingPreferred")
   private Boolean batchBookingPreferred = null;
 
   @JsonProperty("debtorAccount")
   private AccountReference debtorAccount = null;
+
+  @JsonProperty("categoryPurposeCode")
+  private CategoryPurposeCode categoryPurposeCode = null;
 
   @JsonProperty("requestedExecutionDate")
   private LocalDate requestedExecutionDate = null;
@@ -65,7 +69,11 @@ public class BulkPaymentInitiationJson   {
   }
 
   /**
-   * If this element equals 'true', the PSU prefers only one booking entry.  If this element equals 'false', the PSU prefers individual booking of all contained individual transactions.   The ASPSP will follow this preference according to contracts agreed on with the PSU.
+   * If this element equals 'true', the PSU prefers only one booking entry. If
+   * this element equals 'false', the PSU prefers individual booking of all
+   * contained individual transactions. The ASPSP will follow this preference
+   * according to contracts agreed on with the PSU.
+   * 
    * @return batchBookingPreferred
    **/
   @Schema(example = "false", description = "If this element equals 'true', the PSU prefers only one booking entry.  If this element equals 'false', the PSU prefers individual booking of all contained individual transactions.   The ASPSP will follow this preference according to contracts agreed on with the PSU. ")
@@ -86,11 +94,12 @@ public class BulkPaymentInitiationJson   {
 
   /**
    * Get debtorAccount
+   * 
    * @return debtorAccount
    **/
   @Schema(required = true, description = "")
   @JsonProperty("debtorAccount")
-    @NotNull
+  @NotNull
 
   @Valid
   public AccountReference getDebtorAccount() {
@@ -101,6 +110,28 @@ public class BulkPaymentInitiationJson   {
     this.debtorAccount = debtorAccount;
   }
 
+  public BulkPaymentInitiationJson categoryPurposeCode(CategoryPurposeCode categoryPurposeCode) {
+    this.categoryPurposeCode = categoryPurposeCode;
+    return this;
+  }
+
+  /**
+   * Get categoryPurposeCode
+   * 
+   * @return categoryPurposeCode
+   **/
+  @Schema(description = "")
+  @JsonProperty("categoryPurposeCode")
+
+  @Valid
+  public CategoryPurposeCode getCategoryPurposeCode() {
+    return categoryPurposeCode;
+  }
+
+  public void setCategoryPurposeCode(CategoryPurposeCode categoryPurposeCode) {
+    this.categoryPurposeCode = categoryPurposeCode;
+  }
+
   public BulkPaymentInitiationJson requestedExecutionDate(LocalDate requestedExecutionDate) {
     this.requestedExecutionDate = requestedExecutionDate;
     return this;
@@ -108,6 +139,7 @@ public class BulkPaymentInitiationJson   {
 
   /**
    * Get requestedExecutionDate
+   * 
    * @return requestedExecutionDate
    **/
   @Schema(description = "")
@@ -129,6 +161,7 @@ public class BulkPaymentInitiationJson   {
 
   /**
    * Get requestedExecutionTime
+   * 
    * @return requestedExecutionTime
    **/
   @Schema(description = "")
@@ -154,12 +187,14 @@ public class BulkPaymentInitiationJson   {
   }
 
   /**
-   * A list of generic JSON bodies payment initiations for bulk payments via JSON.  Note: Some fields from single payments do not occur in a bulk payment element
+   * A list of generic JSON bodies payment initiations for bulk payments via JSON.
+   * Note: Some fields from single payments do not occur in a bulk payment element
+   * 
    * @return payments
    **/
   @Schema(required = true, description = "A list of generic JSON bodies payment initiations for bulk payments via JSON.  Note: Some fields from single payments do not occur in a bulk payment element ")
   @JsonProperty("payments")
-    @NotNull
+  @NotNull
   @Valid
   public List<PaymentInitiationBulkElementJson> getPayments() {
     return payments;
@@ -176,19 +211,20 @@ public class BulkPaymentInitiationJson   {
 
   /**
    * Debtor name.
+   * 
    * @return debtorName
    **/
   @Schema(example = "Debtor Name", description = "Debtor name.")
   @JsonProperty("debtorName")
 
-@Size(max=70)   public String getDebtorName() {
+  @Size(max = 70)
+  public String getDebtorName() {
     return debtorName;
   }
 
   public void setDebtorName(String debtorName) {
     this.debtorName = debtorName;
   }
-
 
   @Override
   public boolean equals(Object o) {
@@ -201,6 +237,7 @@ public class BulkPaymentInitiationJson   {
     BulkPaymentInitiationJson bulkPaymentInitiationJson = (BulkPaymentInitiationJson) o;
     return Objects.equals(this.batchBookingPreferred, bulkPaymentInitiationJson.batchBookingPreferred) &&
         Objects.equals(this.debtorAccount, bulkPaymentInitiationJson.debtorAccount) &&
+        Objects.equals(this.categoryPurposeCode, bulkPaymentInitiationJson.categoryPurposeCode) &&
         Objects.equals(this.requestedExecutionDate, bulkPaymentInitiationJson.requestedExecutionDate) &&
         Objects.equals(this.requestedExecutionTime, bulkPaymentInitiationJson.requestedExecutionTime) &&
         Objects.equals(this.payments, bulkPaymentInitiationJson.payments) &&
@@ -209,7 +246,8 @@ public class BulkPaymentInitiationJson   {
 
   @Override
   public int hashCode() {
-    return Objects.hash(batchBookingPreferred, debtorAccount, requestedExecutionDate, requestedExecutionTime, payments, debtorName);
+    return Objects.hash(batchBookingPreferred, debtorAccount, categoryPurposeCode, requestedExecutionDate,
+        requestedExecutionTime, payments, debtorName);
   }
 
   @Override
@@ -219,6 +257,7 @@ public class BulkPaymentInitiationJson   {
 
     sb.append("    batchBookingPreferred: ").append(toIndentedString(batchBookingPreferred)).append("\n");
     sb.append("    debtorAccount: ").append(toIndentedString(debtorAccount)).append("\n");
+    sb.append("    categoryPurposeCode: ").append(toIndentedString(categoryPurposeCode)).append("\n");
     sb.append("    requestedExecutionDate: ").append(toIndentedString(requestedExecutionDate)).append("\n");
     sb.append("    requestedExecutionTime: ").append(toIndentedString(requestedExecutionTime)).append("\n");
     sb.append("    payments: ").append(toIndentedString(payments)).append("\n");

@@ -29,10 +29,22 @@ import de.adorsys.psd2.xs2a.service.mapper.cms_xs2a_mappers.Xs2aConsentAuthorisa
 
 import java.util.Optional;
 
-
+/**
+ * Abstract base class for AIS (Account Information Service) authorization services.
+ * Provides common authorization functionality for AIS consents.
+ */
 public abstract class AbstractAisAuthorizationService extends AbstractConsentAuthorizationService<AisConsent> {
     private final Xs2aAisConsentService aisConsentService;
 
+    /**
+     * Constructs a new AbstractAisAuthorizationService.
+     *
+     * @param consentService the consent service
+     * @param authorisationService the authorisation service
+     * @param consentPsuDataMapper the consent PSU data mapper
+     * @param aisConsentService the AIS consent service
+     * @param xs2aConsentAuthorisationMapper the consent authorisation mapper
+     */
     protected AbstractAisAuthorizationService(Xs2aConsentService consentService, Xs2aAuthorisationService authorisationService,
                                               ConsentPsuDataMapper consentPsuDataMapper, Xs2aAisConsentService aisConsentService,
                                               Xs2aConsentAuthorisationMapper xs2aConsentAuthorisationMapper) {

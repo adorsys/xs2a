@@ -1,0 +1,420 @@
+// toc-title definition MUST follow document title without blank line!
+== Verification of Payee (VOP) Service
+:toc-title:
+:imagesdir: ../usecases/images
+:toc: left
+
+toc::[]
+
+The Verification of Payee (VOP) service is an optional service at the XS2A interface that allows TPPs to verify beneficiary account details before initiating a payment.
+This service helps prevent fraud and misdirected payments by confirming that the account holder name matches the provided account identifier (IBAN).
+
+VOP transactions at the XS2A interface are initiated by the TPP after the PSU has requested payment verification at the PSU-TPP interface.
+The ASPSP will reject the VOP request if the TPP cannot be identified correctly at the XS2A interface and/or if it does not have the role PISP.
+
+*Note:* VOP services do NOT require Strong Customer Authentication (SCA) as they are read-only verification operations that do not transfer funds or access sensitive account information.
+
+Current version of the XS2A Interface supports the following VOP service types:
+
+* Single Verification - Verifies one beneficiary account and name
+* Bulk Verification (Synchronous Mode) - Verifies multiple accounts with immediate results
+* Bulk Verification (Asynchronous Mode) - Verifies multiple accounts with deferred results (not implemented in the current XS2A build; requests return SERVICE_NOT_SUPPORTED)
+
+=== VOP Service Variants
+
+According to the Berlin Group NextGenPSD2 Framework version 1.3.15, two VOP service variants are defined:
+
+* *DEDICATED* - VOP service provided through dedicated endpoints separate from payment initiation
+* *INTEGRATED* - VOP verification integrated within the payment initiation flow
+
+XS2A currently implements the *DEDICATED* variant. The INTEGRATED variant is configured but not yet fully implemented; no integrated payment-flow endpoints are exposed at this time.
+
+=== VOP API Reference
+
+XS2A implements VOP services according to:
+
+* *Berlin Group NextGenPSD2 Framework* version 1.3.15
+* *openFinance API Framework* Data Dictionary 2.2.6
+* *Implementation Guidelines* change document 1.3.13 → 1.3.14 (VOP introduction)
+
+Configuration in ASPSP Profile:
+[source,yaml]
+----
+vop:
+  vopxReference:
+    apiName: NextGenPSD2
+    apiDocument: https://www.berlin-group.org/nextgenpsd2-downloads
+    apiVersion: 1.3.15
+  variantSupported:
+    - DEDICATED
+  bulkBatchProcessingSupported:
+    - synchronous-mode
+    - asynchronous-mode
+----
+
+=== Endpoint Overview (per VOP PDF)
+
+|===
+|Endpoint | Method | Purpose | Notes
+
+|`/v1/payee-verifications`
+|POST
+|Submit a single party verification request.
+|Requires `partyAccount` and optional `party` identification; response contains `partyNameMatch`/`partyIdMatch`.
+
+|`/v1/bulk-payee-verifications`
+|POST
+|Submit a bulk of `partyVerificationRequests`.
+|Returns HTTP 200 with `partyVerificationResponses` when processed synchronously, or HTTP 202 with `vopBulkId` when deferred.
+
+|`/v1/bulk-payee-verifications/{vopBulkId}`
+|GET
+|Retrieve full requests + results for a bulk submission.
+|Body contains `partyVerificationRequestsAndResults` as shown in the PDF example.
+
+|`/v1/bulk-payee-verifications/{vopBulkId}/status`
+|GET
+|Retrieve only the current bulk status.
+|Returns `vopBulkStatus` (RCVD/ACTC/ACSC/RJCT). Async mode not implemented in XS2A.
+|===
+
+=== Single Verification Flow
+
+image::vopSingleVerificationDedicated.png[Single VOP Dedicated, align="center"]
+
+*Endpoint:* `POST /v1/verification-of-payee`
+
+*Request Example:*
+[source,json]
+----
+{
+  "partyAccount": {
+    "iban": "DE02100100109307118603"
+  },
+  "party": {
+    "name": "Peter Miller Ltd"
+  }
+}
+----
+
+*Response Example (Name Match):*
+[source,json]
+----
+{
+  "partyNameMatch": "MTCH"
+}
+----
+
+*Response Example (Identification Match):*
+[source,json]
+----
+{
+  "partyIdMatch": "MTCH"
+}
+----
+
+==== Verification Results
+
+The VOP service can return the following verification results:
+
+* *MATCH* - Account holder name matches exactly with the provided name
+* *NO_MATCH* - Account holder name does not match the provided name
+* *PARTIAL_MATCH* - Account holder name partially matches (fuzzy matching)
+* *NOT_AVAILABLE* - Verification service is temporarily unavailable
+
+=== Bulk Verification Flow
+
+==== Bulk VOP Request - Synchronous Mode
+
+image::vopBulkVerificationSynchronous.png[Bulk VOP Synchronous, align="center"]
+
+*Endpoint:* `POST /v1/bulk-verification-of-payee`
+
+*Request Example:*
+[source,json]
+----
+{
+  "partyVerificationRequests": [
+    {
+      "uetr": "e036f7b5-1af1-495b-a6ec-4804c703fa02",
+      "partyAccount": {
+        "iban": "DE02100100109307118603"
+      },
+      "party": {
+        "name": "Peter Miller Ltd"
+      }
+    },
+    {
+      "uetr": "32753f7e-12dd-4884-869f-b466cd6f782b",
+      "partyAccount": {
+        "iban": "DE02100100109307118612"
+      },
+      "party": {
+        "identification": {
+          "organisationId": {
+            "lei": "PetMulLTD"
+          }
+        }
+      }
+    }
+  ]
+}
+----
+
+*Response Example (HTTP 200 - results available):*
+[source,json]
+----
+{
+  "vopBulkStatus": "completed",
+  "partyVerificationResponses": [
+    {
+      "uetr": "e036f7b5-1af1-495b-a6ec-4804c703fa02",
+      "partyNameMatch": "MTCH"
+    },
+    {
+      "uetr": "32753f7e-12dd-4884-869f-b466cd6f782b",
+      "partyIdMatch": "MTCH"
+    }
+  ]
+}
+----
+
+==== Bulk VOP Request - Asynchronous Mode
+
+image::vopBulkVerificationAsynchronous.png[Bulk VOP Asynchronous (not implemented), align="center"]
+
+NOTE: Asynchronous processing is not implemented in XS2A yet; the diagram reflects the target flow.
+
+*Response Example (HTTP 202 - accepted for background processing):*
+[source,json]
+----
+{
+  "vopBulkId": "dddd1c7e-ad88-49ec-a2ad-99ddcb1f7723",
+  "vopBulkStatus": "received",
+  "_links": {
+    "status": {
+      "href": "/v1/bulk-payee-verifications/dddd1c7e-ad88-49ec-a2ad-99ddcb1f7723/status"
+    },
+    "self": {
+      "href": "/v1/bulk-payee-verifications/dddd1c7e-ad88-49ec-a2ad-99ddcb1f7723"
+    }
+  }
+}
+----
+
+==== Retrieve Bulk Verification Result (GET)
+
+*Endpoint:* `GET /v1/bulk-verification-of-payee/{vopBulkId}`
+
+*Response Example:*
+[source,json]
+----
+{
+  "vopBulkId": "dddd1c7e-ad88-49ec-a2ad-99ddcb1f7723",
+  "vopBulkStatus": "completed",
+  "partyVerificationRequestsAndResults": [
+    {
+      "uetr": "e036f7b5-1af1-495b-a6ec-4804c703fa02",
+      "partyAccount": {
+        "iban": "DE02100100109307118603"
+      },
+      "party": {
+        "name": "Peter Miller Ltd"
+      },
+      "partyNameMatch": "MTCH"
+    },
+    {
+      "uetr": "32753f7e-12dd-4884-869f-b466cd6f782b",
+      "partyAccount": {
+        "iban": "DE02100100109307118612"
+      },
+      "party": {
+        "identification": {
+          "organisationId": {
+            "lei": "PetMulLTD"
+          }
+        }
+      },
+      "partyIdMatch": "MTCH"
+    }
+  ]
+}
+----
+
+==== Get Bulk Verification Status (GET /status)
+
+*Endpoint:* `GET /v1/bulk-verification-of-payee/{vopBulkId}/status`
+
+*Response Example:*
+[source,json]
+----
+{
+  "vopBulkId": "dddd1c7e-ad88-49ec-a2ad-99ddcb1f7723",
+  "vopBulkStatus": "completed"
+}
+----
+
+==== Bulk VOP Status Codes
+
+The bulk VOP service uses the following status codes to indicate processing state:
+
+* *RCVD* - Received - bulk request has been accepted but not yet processed
+* *ACTC* - Accepted Technical Validation - processing is in progress
+* *ACSC* - Accepted Settlement Completed - all verifications completed successfully
+* *RJCT* - Rejected - bulk request has been rejected
+
+=== Processing Modes Configuration
+
+The ASPSP can configure which bulk processing modes are supported:
+
+[source,yaml]
+----
+vop:
+  bulkBatchProcessingSupported:
+    - synchronous-mode   # Immediate processing, results in response
+    - asynchronous-mode  # Deferred processing, results via GET request
+----
+
+*Synchronous Mode* is recommended for:
+* Small batches (< 100 verifications)
+* Real-time payment flows
+* Interactive user interfaces
+
+*Asynchronous Mode* is recommended for:
+* Large batches (100+ verifications)
+* Background batch processing
+* Non-interactive workflows
+
+=== Security Settings for VOP
+
+[source,yaml]
+----
+security:
+  SigningHttpMessageSupported: FALSE   # disables x-jws-signature, Digest validation
+  SecuringBodyMessageSupported: FALSE  # disables Body-Sig-Profile / Body-Enc-* headers
+----
+
+When set to TRUE, the corresponding headers must be supplied and validated per BG 11d.
+
+=== VOP Architecture
+
+==== Layer Overview
+
+image::vopArchitectureLayerOverview.png[VOP Architecture Layer Overview, align="center"]
+
+==== Controller Layer
+
+*VopController* (`de.adorsys.psd2.xs2a.web.controller.VopController`)
+
+Responsibilities:
+* HTTP request/response handling
+* TPP certificate validation (eIDAS QWAC)
+* Request ID validation
+* Request body JSON schema validation
+* Delegation to service layer
+
+Key endpoints:
+* `POST /v1/verification-of-payee` - Single verification
+* `POST /v1/bulk-verification-of-payee` - Bulk verification
+* `GET /v1/bulk-verification-of-payee/{bulkVopId}` - Bulk status
+
+==== Service Layer
+
+*VopService* (`de.adorsys.psd2.xs2a.service.VopService`)
+
+Responsibilities:
+* TPP authorization and permissions validation
+* ASPSP profile configuration checks
+* Business logic orchestration
+* Model transformation (API → Domain → SPI)
+* SPI layer invocation
+* Response link generation
+* Error handling
+
+Processing Flow:
+1. Validate TPP has PISP role
+2. Check VOP variant is supported in profile
+3. Validate account reference format
+4. Transform request to SPI model
+5. Invoke SPI implementation
+6. Transform SPI response to API model
+7. Build HATEOAS links
+8. Return response
+
+==== SPI Layer
+
+*VopSpi* (`de.adorsys.psd2.xs2a.spi.service.VopSpi`)
+
+Interface that ASPSPs must implement:
+
+[source,java]
+----
+public interface VopSpi {
+    SpiResponse<SpiVerificationOfPayeeResponse> verifyPayee(
+        SpiVerificationOfPayee request,
+        SpiContextData contextData
+    );
+
+    SpiResponse<SpiBulkVerificationOfPayeeResponse> bulkVerifyPayee(
+        SpiBulkVerificationOfPayee request,
+        SpiContextData contextData
+    );
+
+    SpiResponse<SpiBulkVopStatusResponse> getBulkVerificationStatus(
+        String bulkVopId,
+        SpiContextData contextData
+    );
+}
+----
+
+The SPI implementation should:
+* Query account database for account holder details
+* Perform name matching (exact, fuzzy, or phonetic)
+* Generate appropriate verification results
+* Return status reason codes for failures
+* Handle bulk processing (sync/async)
+
+=== Related Documentation
+
+* xref:psd2_xs2a_interface.adoc[XS2A Interface Documentation]
+* xref:Payment Initiation Service.adoc[Payment Initiation Service]
+* xref:core_banking_connector.adoc[Core Banking Connector]
+* Berlin Group NextGenPSD2 Specification: https://www.berlin-group.org/nextgenpsd2-downloads
+* openFinance API Framework Data Dictionary 2.2.6
+
+=== Configuration Reference
+
+Complete ASPSP Profile configuration for VOP:
+
+[source,yaml]
+----
+# VOP Service Configuration
+vop:
+  # API Framework Reference
+  vopxReference:
+    apiName: NextGenPSD2
+    apiDocument: https://www.berlin-group.org/nextgenpsd2-downloads
+    apiVersion: 1.3.15
+
+  # Supported VOP Service Variants
+  variantSupported:
+    - DEDICATED        # Standalone VOP endpoints (implemented)
+    # - INTEGRATED     # VOP in payment flow (not yet implemented)
+
+  # Bulk Processing Modes
+  bulkBatchProcessingSupported:
+    - synchronous-mode   # Immediate processing with results in response
+    - asynchronous-mode  # Background processing with GET status endpoint
+
+# Security Settings (added for VOP)
+security:
+  # HTTP Message Signing
+  # When FALSE: x-jws-signature and Digest headers not validated
+  # When TRUE: TPPs must sign HTTP messages
+  SigningHttpMessageSupported: FALSE
+
+  # HTTP Body Signing/Encryption
+  # When FALSE: Body-Sig-Profile, Body-Enc-Profile, Body-Enc-List not processed
+  # When TRUE: TPPs can sign/encrypt request body fields
+  SecuringBodyMessageSupported: FALSE
+----

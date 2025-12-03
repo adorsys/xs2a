@@ -50,6 +50,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.LocalDate;
+import java.time.OffsetDateTime;
 import java.util.Collections;
 
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
@@ -239,6 +240,32 @@ class SinglePaymentTypeValidatorImplTest {
     }
 
     @Test
+    void doValidation_requestedExecutionTime_inPast_error() {
+        singlePayment.setRequestedExecutionTime(OffsetDateTime.now().minusDays(1));
+
+        validator.doSingleValidation(singlePayment, messageError, validationConfig);
+        assertEquals(MessageErrorCode.EXECUTION_DATE_INVALID_IN_THE_PAST, messageError.getTppMessage().getMessageErrorCode());
+    }
+
+    @Test
+    void doValidation_requestedExecutionDateTime_bothPresent_error() {
+        singlePayment.setRequestedExecutionDate(LocalDate.now().plusDays(1));
+        singlePayment.setRequestedExecutionTime(OffsetDateTime.now().plusDays(1));
+
+        validator.doSingleValidation(singlePayment, messageError, validationConfig);
+        assertEquals(MessageErrorCode.PARAMETER_NOT_CONSISTENT, messageError.getTppMessage().getMessageErrorCode());
+        assertArrayEquals(new Object[]{"requestedExecutionDate, requestedExecutionTime"}, messageError.getTppMessage().getTextParameters());
+    }
+
+    @Test
+    void doValidation_requestedExecutionTime_valid_success() {
+        singlePayment.setRequestedExecutionTime(OffsetDateTime.now().plusDays(1));
+
+        validator.doSingleValidation(singlePayment, messageError, validationConfig);
+        assertTrue(messageError.getTppMessages().isEmpty());
+    }
+
+    @Test
     void validateAccount_success() {
         validator.validateAccount(accountReference, messageError, validationConfig);
         assertTrue(messageError.getTppMessages().isEmpty());
@@ -336,8 +363,7 @@ class SinglePaymentTypeValidatorImplTest {
         address.setCountry(null);
 
         validator.validateAddress(address, messageError, validationConfig);
-        assertEquals(MessageErrorCode.FORMAT_ERROR_VALUE_REQUIRED, messageError.getTppMessage().getMessageErrorCode());
-        assertArrayEquals(new Object[]{"address.country"}, messageError.getTppMessage().getTextParameters());
+        assertTrue(messageError.getTppMessages().isEmpty());
     }
 
     @Test
@@ -345,8 +371,7 @@ class SinglePaymentTypeValidatorImplTest {
         address.getCountry().setCode("");
 
         validator.validateAddress(address, messageError, validationConfig);
-        assertEquals(MessageErrorCode.FORMAT_ERROR_VALUE_REQUIRED, messageError.getTppMessage().getMessageErrorCode());
-        assertArrayEquals(new Object[]{"address.country"}, messageError.getTppMessage().getTextParameters());
+        assertTrue(messageError.getTppMessages().isEmpty());
     }
 
     @Test

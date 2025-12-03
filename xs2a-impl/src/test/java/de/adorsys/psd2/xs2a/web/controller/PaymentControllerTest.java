@@ -18,17 +18,56 @@
 
 package de.adorsys.psd2.xs2a.web.controller;
 
+import java.util.*;
+import java.util.function.Function;
+
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.BooleanUtils;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.*;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
+import static org.mockito.ArgumentMatchers.*;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import static org.mockito.Mockito.*;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.http.HttpStatus;
+import static org.springframework.http.HttpStatus.*;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
+
 import com.fasterxml.jackson.core.type.TypeReference;
+
 import de.adorsys.psd2.consent.api.pis.proto.PisPaymentCancellationRequest;
-import de.adorsys.psd2.model.*;
+import de.adorsys.psd2.model.Authorisations;
+import de.adorsys.psd2.model.AuthorisationsList;
+import de.adorsys.psd2.model.PaymentInitiationCancelResponse202;
+import de.adorsys.psd2.model.PaymentInitiationStatusResponse200Json;
+import de.adorsys.psd2.model.PeriodicPaymentInitiationXmlPart2StandingorderTypeJson;
+import de.adorsys.psd2.model.ScaStatusResponse;
+import de.adorsys.psd2.model.StartScaprocessResponse;
+import de.adorsys.psd2.model.UpdatePsuAuthenticationResponse;
 import de.adorsys.psd2.xs2a.core.domain.ErrorHolder;
 import de.adorsys.psd2.xs2a.core.domain.TppMessageInformation;
+import static de.adorsys.psd2.xs2a.core.domain.TppMessageInformation.of;
 import de.adorsys.psd2.xs2a.core.error.ErrorType;
+import static de.adorsys.psd2.xs2a.core.error.ErrorType.PIS_403;
+import static de.adorsys.psd2.xs2a.core.error.ErrorType.PIS_404;
 import de.adorsys.psd2.xs2a.core.error.MessageError;
 import de.adorsys.psd2.xs2a.core.error.MessageErrorCode;
+import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.FORMAT_ERROR;
+import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.PAYMENT_FAILED;
+import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.RESOURCE_UNKNOWN_403;
+import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.RESOURCE_UNKNOWN_404;
 import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
 import de.adorsys.psd2.xs2a.core.profile.NotificationSupportedMode;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
+import static de.adorsys.psd2.xs2a.core.profile.PaymentType.BULK;
+import static de.adorsys.psd2.xs2a.core.profile.PaymentType.SINGLE;
 import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
 import de.adorsys.psd2.xs2a.core.psu.AdditionalPsuIdData;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
@@ -39,46 +78,40 @@ import de.adorsys.psd2.xs2a.domain.Links;
 import de.adorsys.psd2.xs2a.domain.ResponseObject;
 import de.adorsys.psd2.xs2a.domain.authorisation.AuthorisationResponse;
 import de.adorsys.psd2.xs2a.domain.authorisation.CancellationAuthorisationResponse;
-import de.adorsys.psd2.xs2a.domain.consent.*;
+import de.adorsys.psd2.xs2a.domain.consent.Xs2aAuthorisationSubResources;
+import de.adorsys.psd2.xs2a.domain.consent.Xs2aCreatePisAuthorisationRequest;
+import de.adorsys.psd2.xs2a.domain.consent.Xs2aCreatePisAuthorisationResponse;
+import de.adorsys.psd2.xs2a.domain.consent.Xs2aPaymentCancellationAuthorisationSubResource;
+import de.adorsys.psd2.xs2a.domain.consent.Xs2aScaStatusResponse;
 import de.adorsys.psd2.xs2a.domain.consent.pis.PaymentAuthorisationParameters;
 import de.adorsys.psd2.xs2a.domain.consent.pis.Xs2aUpdatePisCommonPaymentPsuDataResponse;
-import de.adorsys.psd2.xs2a.domain.pis.*;
-import de.adorsys.psd2.xs2a.service.*;
+import de.adorsys.psd2.xs2a.domain.pis.CancelPaymentResponse;
+import de.adorsys.psd2.xs2a.domain.pis.CommonPayment;
+import de.adorsys.psd2.xs2a.domain.pis.GetBulkPaymentExtendedStatusResponse;
+import de.adorsys.psd2.xs2a.domain.pis.GetPaymentStatusResponse;
+import de.adorsys.psd2.xs2a.domain.pis.PaymentInitiationParameters;
+import de.adorsys.psd2.xs2a.domain.pis.PaymentInitiationResponse;
+import de.adorsys.psd2.xs2a.domain.pis.SinglePayment;
+import de.adorsys.psd2.xs2a.domain.pis.SinglePaymentInitiationResponse;
+import de.adorsys.psd2.xs2a.service.NotificationSupportedModeService;
+import de.adorsys.psd2.xs2a.service.PaymentAuthorisationService;
+import de.adorsys.psd2.xs2a.service.PaymentCancellationAuthorisationService;
+import de.adorsys.psd2.xs2a.service.PaymentCancellationServiceForAuthorisationImpl;
+import de.adorsys.psd2.xs2a.service.PaymentService;
+import de.adorsys.psd2.xs2a.service.PaymentServiceForAuthorisationImpl;
+import de.adorsys.psd2.xs2a.service.RequestProviderService;
 import de.adorsys.psd2.xs2a.service.mapper.ResponseMapper;
 import de.adorsys.psd2.xs2a.service.mapper.psd2.ResponseErrorMapper;
 import de.adorsys.psd2.xs2a.web.controller.psd2.PaymentController;
 import de.adorsys.psd2.xs2a.web.header.PaymentCancellationHeadersBuilder;
 import de.adorsys.psd2.xs2a.web.header.PaymentInitiationHeadersBuilder;
 import de.adorsys.psd2.xs2a.web.header.ResponseHeaders;
-import de.adorsys.psd2.xs2a.web.mapper.*;
+import de.adorsys.psd2.xs2a.web.mapper.AuthorisationMapper;
+import de.adorsys.psd2.xs2a.web.mapper.AuthorisationModelMapper;
+import de.adorsys.psd2.xs2a.web.mapper.ConsentModelMapper;
+import de.adorsys.psd2.xs2a.web.mapper.PaymentModelMapperPsd2;
+import de.adorsys.psd2.xs2a.web.mapper.PaymentModelMapperXs2a;
 import de.adorsys.xs2a.reader.JsonReader;
-import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.lang3.BooleanUtils;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.ArgumentCaptor;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
-import org.springframework.util.LinkedMultiValueMap;
-import org.springframework.util.MultiValueMap;
-
-import java.util.*;
-import java.util.function.Function;
-
-import static de.adorsys.psd2.xs2a.core.domain.TppMessageInformation.of;
-import static de.adorsys.psd2.xs2a.core.error.ErrorType.PIS_403;
-import static de.adorsys.psd2.xs2a.core.error.ErrorType.PIS_404;
-import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.*;
-import static de.adorsys.psd2.xs2a.core.profile.PaymentType.SINGLE;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
-import static org.springframework.http.HttpStatus.FORBIDDEN;
-import static org.springframework.http.HttpStatus.*;
 
 @ExtendWith(MockitoExtension.class)
 class PaymentControllerTest {
@@ -1213,6 +1246,90 @@ class PaymentControllerTest {
         verify(paymentInitiationHeadersBuilder).buildStartAuthorisationHeaders(AUTHORISATION_ID);
 
         verify(responseErrorMapper, never()).generateErrorResponse(any(), any());
+    }
+
+    @Test
+    void getBulkPaymentExtendedStatus_Success() {
+        // Given
+        GetBulkPaymentExtendedStatusResponse extendedStatusResponse = new GetBulkPaymentExtendedStatusResponse(
+                "ACCP", // groupStatus
+                null, // reasonCode
+                null, // reasonProprietary
+                null, // fundsAvailable
+                null, // originalTransactionInformationAndStatus
+                null, // transactionFees
+                null, // currencyConversionFees
+                null, // estimatedTotalAmount
+                null, // estimatedInterbankSettlementAmount
+                null, // psuMessage
+                null, // ownerNames
+                MediaType.APPLICATION_JSON, // responseContentType
+                null, // paymentStatusRaw
+                null, // links
+                null // tppMessageInformation
+        );
+
+        doReturn(new ResponseEntity<>(new Object(), HttpStatus.OK))
+                .when(responseMapper).ok(any(), any());
+        when(xs2aPaymentService.getBulkPaymentExtendedStatus(BULK, PRODUCT, CORRECT_PAYMENT_ID))
+                .thenReturn(ResponseObject.<GetBulkPaymentExtendedStatusResponse>builder()
+                        .body(extendedStatusResponse)
+                        .build());
+
+        // When
+        ResponseEntity<?> actualResponse = paymentController.getBulkPaymentExtendedStatus(
+                PRODUCT, CORRECT_PAYMENT_ID, REQUEST_ID, null, null, null,
+                PSU_IP_ADDRESS, null, null, null, null, null,
+                null, null, null, null);
+
+        // Then
+        assertThat(actualResponse.getStatusCode()).isEqualTo(OK);
+        verify(xs2aPaymentService).getBulkPaymentExtendedStatus(BULK, PRODUCT, CORRECT_PAYMENT_ID);
+        verify(responseMapper).ok(any(), any());
+    }
+
+    @Test
+    void getBulkPaymentExtendedStatus_WithError() {
+        // Given
+        MessageError messageError = createMessageError(PIS_403, RESOURCE_UNKNOWN_403);
+        when(responseErrorMapper.generateErrorResponse(messageError)).thenReturn(ResponseEntity.status(FORBIDDEN).build());
+        when(xs2aPaymentService.getBulkPaymentExtendedStatus(BULK, PRODUCT, WRONG_PAYMENT_ID))
+                .thenReturn(ResponseObject.<GetBulkPaymentExtendedStatusResponse>builder()
+                        .fail(messageError)
+                        .build());
+
+        // When
+        ResponseEntity<?> actualResponse = paymentController.getBulkPaymentExtendedStatus(
+                PRODUCT, WRONG_PAYMENT_ID, REQUEST_ID, null, null, null,
+                PSU_IP_ADDRESS, null, null, null, null, null,
+                null, null, null, null);
+
+        // Then
+        assertThat(actualResponse.getStatusCode()).isEqualTo(FORBIDDEN);
+        verify(xs2aPaymentService).getBulkPaymentExtendedStatus(BULK, PRODUCT, WRONG_PAYMENT_ID);
+        verify(responseErrorMapper).generateErrorResponse(messageError);
+    }
+
+    @Test
+    void getBulkPaymentExtendedStatus_ValidationError() {
+        // Given
+        MessageError validationError = createMessageError(ErrorType.PIS_400, FORMAT_ERROR);
+        when(responseErrorMapper.generateErrorResponse(validationError)).thenReturn(ResponseEntity.status(BAD_REQUEST).build());
+        when(xs2aPaymentService.getBulkPaymentExtendedStatus(BULK, PRODUCT, CORRECT_PAYMENT_ID))
+                .thenReturn(ResponseObject.<GetBulkPaymentExtendedStatusResponse>builder()
+                        .fail(validationError)
+                        .build());
+
+        // When
+        ResponseEntity<?> actualResponse = paymentController.getBulkPaymentExtendedStatus(
+                PRODUCT, CORRECT_PAYMENT_ID, REQUEST_ID, null, null, null,
+                PSU_IP_ADDRESS, null, null, null, null, null,
+                null, null, null, null);
+
+        // Then
+        assertThat(actualResponse.getStatusCode()).isEqualTo(BAD_REQUEST);
+        verify(xs2aPaymentService).getBulkPaymentExtendedStatus(BULK, PRODUCT, CORRECT_PAYMENT_ID);
+        verify(responseErrorMapper).generateErrorResponse(validationError);
     }
 
     private Xs2aCreatePisAuthorisationResponse buildXs2aCreatePisAuthorisationResponse() {

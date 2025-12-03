@@ -19,13 +19,23 @@
 package de.adorsys.psd2.core.payment.model;
 
 import lombok.Data;
+import java.util.List;
 
 @Data
 public class Address {
+    private List<String> addressLines;
+    private String department;
+    private String subDepartment;
     private String streetName;
     private String buildingNumber;
-    private String townName;
+    private String buildingName;
+    private String floor;
+    private String postBox;
+    private String room;
     private String postCode;
+    private String townName;
+    private String townLocationName;
+    private String districtName;
+    private String countrySubDivision;
     private String country;
 }
-

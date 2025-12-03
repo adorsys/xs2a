@@ -115,6 +115,13 @@
             <scope>test</scope>
         </dependency>
 
+        <dependency>
+            <groupId>de.adorsys.psd2</groupId>
+            <artifactId>xs2a-vop-api</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+
         <!-- other dependencies -->
         <dependency>
             <groupId>commons-validator</groupId>

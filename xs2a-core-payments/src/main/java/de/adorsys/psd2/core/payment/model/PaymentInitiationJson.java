@@ -21,6 +21,7 @@ package de.adorsys.psd2.core.payment.model;
 import lombok.Data;
 
 import java.time.LocalDate;
+import java.time.OffsetDateTime;
 import java.util.List;
 
 @Data
@@ -45,5 +46,6 @@ public class PaymentInitiationJson {
     private RemittanceInformationStructured remittanceInformationStructured;
     private List<RemittanceInformationStructured> remittanceInformationStructuredArray;
     private LocalDate requestedExecutionDate;
+    private OffsetDateTime requestedExecutionTime;
 }
 

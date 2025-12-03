@@ -18,6 +18,31 @@
 
 package de.adorsys.psd2.xs2a.service;
 
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
+import static org.mockito.Mockito.when;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.http.MediaType;
+import org.springframework.test.util.ReflectionTestUtils;
+
 import de.adorsys.psd2.consent.api.pis.CommonPaymentData;
 import de.adorsys.psd2.consent.api.pis.PisCommonPaymentResponse;
 import de.adorsys.psd2.consent.api.pis.PisPayment;
@@ -26,9 +51,22 @@ import de.adorsys.psd2.event.core.model.EventType;
 import de.adorsys.psd2.logger.context.LoggingContextService;
 import de.adorsys.psd2.xs2a.core.domain.ErrorHolder;
 import de.adorsys.psd2.xs2a.core.domain.TppMessageInformation;
+import static de.adorsys.psd2.xs2a.core.domain.TppMessageInformation.of;
 import de.adorsys.psd2.xs2a.core.error.ErrorType;
+import static de.adorsys.psd2.xs2a.core.error.ErrorType.PIS_400;
+import static de.adorsys.psd2.xs2a.core.error.ErrorType.PIS_403;
+import static de.adorsys.psd2.xs2a.core.error.ErrorType.PIS_404;
 import de.adorsys.psd2.xs2a.core.error.MessageError;
+import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.PAYMENT_FAILED;
+import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.RESOURCE_BLOCKED;
+import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.RESOURCE_UNKNOWN_403;
+import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.RESOURCE_UNKNOWN_404_NO_PAYMENT;
+import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.UNAUTHORIZED;
 import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
+import static de.adorsys.psd2.xs2a.core.pis.TransactionStatus.ACCP;
+import static de.adorsys.psd2.xs2a.core.pis.TransactionStatus.CANC;
+import static de.adorsys.psd2.xs2a.core.pis.TransactionStatus.RCVD;
+import static de.adorsys.psd2.xs2a.core.pis.TransactionStatus.RJCT;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
@@ -39,7 +77,19 @@ import de.adorsys.psd2.xs2a.core.tpp.TppRedirectUri;
 import de.adorsys.psd2.xs2a.core.tpp.TppRole;
 import de.adorsys.psd2.xs2a.domain.ContentType;
 import de.adorsys.psd2.xs2a.domain.ResponseObject;
-import de.adorsys.psd2.xs2a.domain.pis.*;
+import de.adorsys.psd2.xs2a.domain.pis.BulkPaymentInitiationResponse;
+import de.adorsys.psd2.xs2a.domain.pis.CancelPaymentResponse;
+import de.adorsys.psd2.xs2a.domain.pis.CommonPayment;
+import de.adorsys.psd2.xs2a.domain.pis.GetBulkPaymentExtendedStatusResponse;
+import de.adorsys.psd2.xs2a.domain.pis.GetPaymentStatusResponse;
+import de.adorsys.psd2.xs2a.domain.pis.PaymentInformationResponse;
+import de.adorsys.psd2.xs2a.domain.pis.PaymentInitiationParameters;
+import de.adorsys.psd2.xs2a.domain.pis.PaymentInitiationResponse;
+import de.adorsys.psd2.xs2a.domain.pis.PeriodicPaymentInitiationResponse;
+import de.adorsys.psd2.xs2a.domain.pis.ReadBulkPaymentExtendedStatusResponse;
+import de.adorsys.psd2.xs2a.domain.pis.ReadPaymentStatusResponse;
+import de.adorsys.psd2.xs2a.domain.pis.SinglePayment;
+import de.adorsys.psd2.xs2a.domain.pis.SinglePaymentInitiationResponse;
 import de.adorsys.psd2.xs2a.service.consent.Xs2aPisCommonPaymentService;
 import de.adorsys.psd2.xs2a.service.context.SpiContextDataProvider;
 import de.adorsys.psd2.xs2a.service.event.Xs2aEventService;
@@ -49,36 +99,23 @@ import de.adorsys.psd2.xs2a.service.payment.cancel.CancelPaymentService;
 import de.adorsys.psd2.xs2a.service.payment.create.CreatePaymentService;
 import de.adorsys.psd2.xs2a.service.payment.read.ReadPaymentService;
 import de.adorsys.psd2.xs2a.service.payment.status.AbstractReadPaymentStatusService;
+import de.adorsys.psd2.xs2a.service.payment.status.ReadBulkPaymentExtendedStatusService;
 import de.adorsys.psd2.xs2a.service.profile.AspspProfileServiceWrapper;
 import de.adorsys.psd2.xs2a.service.spi.InitialSpiAspspConsentDataProvider;
-import de.adorsys.psd2.xs2a.service.validator.pis.payment.*;
+import de.adorsys.psd2.xs2a.service.validator.pis.payment.CancelPaymentPO;
+import de.adorsys.psd2.xs2a.service.validator.pis.payment.CancelPaymentValidator;
+import de.adorsys.psd2.xs2a.service.validator.pis.payment.CreatePaymentValidator;
+import de.adorsys.psd2.xs2a.service.validator.pis.payment.GetBulkPaymentExtendedStatusValidator;
+import de.adorsys.psd2.xs2a.service.validator.pis.payment.GetPaymentByIdPO;
+import de.adorsys.psd2.xs2a.service.validator.pis.payment.GetPaymentByIdValidator;
+import de.adorsys.psd2.xs2a.service.validator.pis.payment.GetPaymentStatusByIdPO;
+import de.adorsys.psd2.xs2a.service.validator.pis.payment.GetPaymentStatusByIdValidator;
 import de.adorsys.psd2.xs2a.service.validator.pis.payment.dto.CreatePaymentRequestObject;
 import de.adorsys.psd2.xs2a.spi.domain.SpiContextData;
 import de.adorsys.psd2.xs2a.spi.domain.psu.SpiPsuData;
 import de.adorsys.psd2.xs2a.spi.domain.tpp.SpiTppInfo;
 import de.adorsys.psd2.xs2a.util.reader.TestSpiDataProvider;
 import de.adorsys.xs2a.reader.JsonReader;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.ArgumentCaptor;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.http.MediaType;
-import org.springframework.test.util.ReflectionTestUtils;
-
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
-
-import static de.adorsys.psd2.xs2a.core.domain.TppMessageInformation.of;
-import static de.adorsys.psd2.xs2a.core.error.ErrorType.*;
-import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.*;
-import static de.adorsys.psd2.xs2a.core.pis.TransactionStatus.*;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class PaymentServiceTest {
@@ -127,6 +164,10 @@ class PaymentServiceTest {
     private GetPaymentByIdValidator getPaymentByIdValidator;
     @Mock
     private GetPaymentStatusByIdValidator getPaymentStatusByIdValidator;
+    @Mock
+    private GetBulkPaymentExtendedStatusValidator getBulkPaymentExtendedStatusValidator;
+    @Mock
+    private ReadBulkPaymentExtendedStatusService readBulkPaymentExtendedStatusService;
     @Mock
     private CancelPaymentValidator cancelPaymentValidator;
     @Mock
@@ -1106,5 +1147,88 @@ class PaymentServiceTest {
         PisPayment pisPayment = new PisPayment();
         pisPayment.setTransactionStatus(TransactionStatus.RJCT);
         return Collections.singletonList(pisPayment);
+    }
+
+    // Tests for getBulkPaymentExtendedStatus
+    
+    @Test 
+    void getBulkPaymentExtendedStatus_Success() {
+        // Given
+        PisCommonPaymentResponse bulkPayment = buildBulkPisCommonPaymentResponse();
+        when(xs2aPisCommonPaymentService.getPisCommonPaymentById(PAYMENT_ID))
+            .thenReturn(Optional.of(bulkPayment));
+        when(getBulkPaymentExtendedStatusValidator.validate(any()))
+            .thenReturn(ValidationResult.valid());
+        when(paymentServiceResolver.getReadBulkPaymentExtendedStatusService(any()))
+            .thenReturn(readBulkPaymentExtendedStatusService);
+        
+        // Create a simple response
+        ReadBulkPaymentExtendedStatusResponse serviceResponse = 
+            new ReadBulkPaymentExtendedStatusResponse("ACCP", null, null, null, null, null, 
+                null, null, null, null, null, MediaType.APPLICATION_JSON, null, null, null);
+        when(readBulkPaymentExtendedStatusService.readBulkPaymentExtendedStatus(any(), any(), any(), any()))
+            .thenReturn(serviceResponse);
+
+        // When
+        ResponseObject<GetBulkPaymentExtendedStatusResponse> result = 
+            paymentService.getBulkPaymentExtendedStatus(PaymentType.BULK, PAYMENT_PRODUCT, PAYMENT_ID);
+
+        // Then
+        assertThat(result).isNotNull();
+        assertThat(result.hasError()).isFalse();
+        assertThat(result.getBody()).isNotNull();
+        verify(xs2aPisCommonPaymentService).getPisCommonPaymentById(PAYMENT_ID);
+        verify(getBulkPaymentExtendedStatusValidator).validate(any());
+        verify(paymentServiceResolver).getReadBulkPaymentExtendedStatusService(any());
+        verify(readBulkPaymentExtendedStatusService).readBulkPaymentExtendedStatus(any(), any(), any(), any());
+    }
+    
+    @Test
+    void getBulkPaymentExtendedStatus_PaymentNotFound_ShouldReturnError() {
+        // Given
+        when(xs2aPisCommonPaymentService.getPisCommonPaymentById(PAYMENT_ID))
+            .thenReturn(Optional.empty());
+
+        // When
+        ResponseObject<GetBulkPaymentExtendedStatusResponse> result = 
+            paymentService.getBulkPaymentExtendedStatus(PaymentType.BULK, PAYMENT_PRODUCT, PAYMENT_ID);
+
+        // Then
+        assertThat(result).isNotNull();
+        assertThat(result.hasError()).isTrue();
+        assertThat(result.getError().getErrorType()).isEqualTo(PIS_403);
+        
+        verify(xs2aPisCommonPaymentService).getPisCommonPaymentById(PAYMENT_ID);
+    }
+    
+    @Test
+    void getBulkPaymentExtendedStatus_NotBulkPayment_ShouldReturnError() {
+        // Given
+        PisCommonPaymentResponse singlePaymentResponse = new PisCommonPaymentResponse();
+        when(xs2aPisCommonPaymentService.getPisCommonPaymentById(PAYMENT_ID))
+            .thenReturn(Optional.of(singlePaymentResponse));
+        when(getBulkPaymentExtendedStatusValidator.validate(any()))
+            .thenReturn(ValidationResult.invalid(new MessageError(ErrorType.PIS_400, 
+                TppMessageInformation.of(PAYMENT_FAILED))));
+
+        // When
+        ResponseObject<GetBulkPaymentExtendedStatusResponse> result = 
+            paymentService.getBulkPaymentExtendedStatus(PaymentType.BULK, PAYMENT_PRODUCT, PAYMENT_ID);
+
+        // Then
+        assertThat(result).isNotNull();
+        assertThat(result.hasError()).isTrue();
+        assertThat(result.getError().getErrorType()).isEqualTo(PIS_400);
+        
+        verify(xs2aPisCommonPaymentService).getPisCommonPaymentById(PAYMENT_ID);
+        verify(getBulkPaymentExtendedStatusValidator).validate(any());
+    }
+    
+    // Helper methods for test setup
+    
+    private PisCommonPaymentResponse buildBulkPisCommonPaymentResponse() {
+        PisCommonPaymentResponse response = new PisCommonPaymentResponse();
+        // Only set fields that exist in PisCommonPaymentResponse
+        return response;
     }
 }

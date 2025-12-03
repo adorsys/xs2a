@@ -27,6 +27,7 @@ import jakarta.validation.constraints.Size;
 import org.springframework.validation.annotation.Validated;
 
 import java.time.LocalDate;
+import java.time.OffsetDateTime;
 import java.util.Objects;
 
 /**
@@ -97,6 +98,9 @@ public class PaymentInitiationJson   {
 
   @JsonProperty("requestedExecutionDate")
   private LocalDate requestedExecutionDate = null;
+
+  @JsonProperty("requestedExecutionTime")
+  private OffsetDateTime requestedExecutionTime = null;
 
   public PaymentInitiationJson endToEndIdentification(String endToEndIdentification) {
     this.endToEndIdentification = endToEndIdentification;
@@ -496,6 +500,11 @@ public class PaymentInitiationJson   {
     return this;
   }
 
+  public PaymentInitiationJson requestedExecutionTime(OffsetDateTime requestedExecutionTime) {
+    this.requestedExecutionTime = requestedExecutionTime;
+    return this;
+  }
+
   /**
    * Get requestedExecutionDate
    * @return requestedExecutionDate
@@ -510,6 +519,22 @@ public class PaymentInitiationJson   {
 
   public void setRequestedExecutionDate(LocalDate requestedExecutionDate) {
     this.requestedExecutionDate = requestedExecutionDate;
+  }
+
+  /**
+   * Get requestedExecutionTime
+   * @return requestedExecutionTime
+   **/
+  @Schema(description = "")
+  @JsonProperty("requestedExecutionTime")
+
+  @Valid
+  public OffsetDateTime getRequestedExecutionTime() {
+      return requestedExecutionTime;
+  }
+
+  public void setRequestedExecutionTime(OffsetDateTime requestedExecutionTime) {
+    this.requestedExecutionTime = requestedExecutionTime;
   }
 
 
@@ -541,12 +566,13 @@ public class PaymentInitiationJson   {
         Objects.equals(this.remittanceInformationUnstructuredArray, paymentInitiationJson.remittanceInformationUnstructuredArray) &&
         Objects.equals(this.remittanceInformationStructured, paymentInitiationJson.remittanceInformationStructured) &&
         Objects.equals(this.remittanceInformationStructuredArray, paymentInitiationJson.remittanceInformationStructuredArray) &&
-        Objects.equals(this.requestedExecutionDate, paymentInitiationJson.requestedExecutionDate);
+        Objects.equals(this.requestedExecutionDate, paymentInitiationJson.requestedExecutionDate) &&
+        Objects.equals(this.requestedExecutionTime, paymentInitiationJson.requestedExecutionTime);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(endToEndIdentification, instructionIdentification, debtorName, debtorAccount, ultimateDebtor, instructedAmount, creditorAccount, creditorAgent, creditorAgentName, creditorName, creditorAddress, creditorId, ultimateCreditor, purposeCode, chargeBearer, remittanceInformationUnstructured, remittanceInformationUnstructuredArray, remittanceInformationStructured, remittanceInformationStructuredArray, requestedExecutionDate);
+    return Objects.hash(endToEndIdentification, instructionIdentification, debtorName, debtorAccount, ultimateDebtor, instructedAmount, creditorAccount, creditorAgent, creditorAgentName, creditorName, creditorAddress, creditorId, ultimateCreditor, purposeCode, chargeBearer, remittanceInformationUnstructured, remittanceInformationUnstructuredArray, remittanceInformationStructured, remittanceInformationStructuredArray, requestedExecutionDate, requestedExecutionTime);
   }
 
   @Override
@@ -574,6 +600,7 @@ public class PaymentInitiationJson   {
     sb.append("    remittanceInformationStructured: ").append(toIndentedString(remittanceInformationStructured)).append("\n");
     sb.append("    remittanceInformationStructuredArray: ").append(toIndentedString(remittanceInformationStructuredArray)).append("\n");
     sb.append("    requestedExecutionDate: ").append(toIndentedString(requestedExecutionDate)).append("\n");
+    sb.append("    requestedExecutionTime: ").append(toIndentedString(requestedExecutionTime)).append("\n");
     sb.append("}");
     return sb.toString();
   }

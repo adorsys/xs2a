@@ -39,6 +39,10 @@ setting:
       - application/json
   piis:
     piisConsentSupported: NOT_SUPPORTED
+  vop:
+    xReferenceApiName: VOP API
+    xReferenceApiDocument: VOP Documentation
+    xReferenceApiVersion: 1.0
   sb:
     signingBasketSupported: FALSE
   common:

@@ -1,0 +1,39 @@
+@startuml
+actor PSU
+participant "TPP" as TPP
+participant "XS2A VOP Controller" as CTRL
+participant "XS2A VOP Service" as SVC
+participant "ASPSP VOP SPI" as SPI
+|||
+== Bulk Verification of Payee - Asynchronous Mode (not implemented) ==
+
+PSU -> TPP: Provide large partyVerificationRequests
+activate TPP
+
+TPP -> CTRL: POST /v1/bulk-payee-verifications
+activate CTRL
+note right: TPP requests async (expects 202)
+
+CTRL -> CTRL: Validate headers + detect async hint
+CTRL -> SVC: bulkVerifyPayee()
+activate SVC
+
+SVC -> SVC: Check async capability
+SVC -> SPI: bulkVerifyPayee(spiBulkRequest)
+activate SPI
+
+SPI -> SPI: Determine async unsupported
+SPI --> SVC: Error SERVICE_NOT_SUPPORTED
+
+deactivate SPI
+SVC --> CTRL: Error response
+
+deactivate SVC
+CTRL --> TPP: HTTP 500 + SERVICE_NOT_SUPPORTED
+TPP -> PSU: Inform failure
+
+deactivate CTRL
+
+deactivate TPP
+
+@enduml

@@ -73,4 +73,19 @@ class TransactionListDownloadPathParamsValidatorImplTest {
         assertFalse(messageError.getTppMessages().isEmpty());
         assertEquals(FORMAT_ERROR_PATH_PARAMETER_INVALID, messageError.getTppMessage().getMessageErrorCode());
     }
+
+    @Test
+    void validate_missingDownloadId_shouldPass() {
+        // Given
+        Map<String, String> pathParametersMap = new HashMap<>();
+        // download-id is not present in the map (null case)
+        // This validator should only apply to transaction download endpoints, not to all endpoints
+
+        // When
+        transactionListDownloadPathParamsValidator.validate(pathParametersMap, messageError);
+
+        // Then
+        // No error should be added when download-id is missing - validator should skip validation
+        assertTrue(messageError.getTppMessages().isEmpty());
+    }
 }

@@ -1,0 +1,33 @@
+@startuml
+'https://plantuml.com/sequence-diagram
+
+autonumber
+
+actor PSU
+entity TPP
+entity XS2A
+entity SPI
+== Submits a Verification of Party Request.==
+PSU->TPP: PSU provides creditor information
+activate TPP
+TPP->XS2A: REST Call Submit Verification of Party\n"POST/v1/{party-verification-endpoint}
+activate XS2A
+note right of XS2A
+Resquest validator
+- validato path variables
+- validate request body
+- validate headers
+validate party-verification-endpoint content
+end note
+XS2A->SPI: Java Call SPISubmitVerificationOfParty(IBAN, NAME, ... )
+activate SPI
+|||
+SPI-->XS2A: SpiVerificationOfPartyResponse(MTCH/NMTC/ ... )
+deactivate SPI
+XS2A-->TPP: Verification of Party Response
+deactivate XS2A
+|||
+TPP-->PSU: Response to PSU
+|||
+PSU->TPP: initiate payment
+@enduml

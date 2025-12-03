@@ -26,13 +26,16 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 import java.time.LocalDate;
+import java.time.OffsetDateTime;
 
 @Data
 @EqualsAndHashCode(callSuper = true)
 public class CmsPeriodicPayment extends CmsSinglePayment {
 
     private LocalDate startDate;
+    private OffsetDateTime startDateTime;
     private LocalDate endDate;
+    private OffsetDateTime endDateTime;
     private PisExecutionRule executionRule;
     private FrequencyCode frequency;
     private PisDayOfExecution dayOfExecution;

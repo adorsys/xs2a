@@ -26,6 +26,14 @@ import de.adorsys.psd2.xs2a.domain.pis.PaymentInitiationParameters;
 import de.adorsys.psd2.xs2a.domain.pis.PaymentInitiationResponse;
 
 public interface CreatePaymentService {
+    /**
+     * Creates a payment initiation.
+     *
+     * @param payment the payment data bytes
+     * @param paymentInitiationParameters the payment initiation parameters
+     * @param tppInfo the TPP information
+     * @return response object containing the payment initiation result
+     */
     ResponseObject<PaymentInitiationResponse> createPayment(byte[] payment, PaymentInitiationParameters paymentInitiationParameters, TppInfo tppInfo);
 
     default ResponseObject<PaymentInitiationResponse> buildErrorResponse(ErrorHolder errorHolder) {

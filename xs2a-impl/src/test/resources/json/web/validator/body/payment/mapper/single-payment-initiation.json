@@ -24,11 +24,21 @@
   "creditorId": "27ad-46db-8491-71e629d82baa",
   "creditorName": "Telekom",
   "creditorAddress": {
+    "addressLines": ["Address Line 1", "Address Line 2"],
+    "department": "Department A",
+    "subDepartment": "Sub Department B",
+    "streetName": "WBG Straße",
     "buildingNumber": "56",
-    "townName": "Nürnberg",
-    "country": "DE",
+    "buildingName": "Building Name",
+    "floor": "3",
+    "postBox": "PO Box 123",
+    "room": "Room 101",
     "postCode": "90543",
-    "streetName": "WBG Straße"
+    "townName": "Nürnberg",
+    "townLocationName": "Town Location",
+    "districtName": "District Name",
+    "countrySubDivision": "Bavaria",
+    "country": "DE"
   },
   "remittanceInformationUnstructured": "Ref. Number TELEKOM-1222",
   "remittanceInformationUnstructuredArray": [

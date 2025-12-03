@@ -31,10 +31,11 @@ import java.util.stream.Collectors;
 @Component
 @RequiredArgsConstructor
 public class Xs2aToSpiBulkPaymentMapper {
-    private final Xs2aToSpiSinglePaymentMapper xs2aToSpiSinglePaymentMapper;
     private final Xs2aToSpiAccountReferenceMapper xs2aToSpiAccountReferenceMapper;
-    private final Xs2aToSpiPsuDataMapper xs2aToSpiPsuDataMapper;
+    private final Xs2aToSpiSinglePaymentMapper xs2aToSpiSinglePaymentMapper;
+    private final Xs2aToSpiCategoryPurposeCodeMapper xs2aToSpiCategoryPurposeCodeMapper;
     private final Xs2aToSpiTransactionStatusMapper xs2aToSpiTransactionStatusMapper;
+    private final Xs2aToSpiPsuDataMapper xs2aToSpiPsuDataMapper;
 
     public SpiBulkPayment mapToSpiBulkPayment(BulkPayment payment, String paymentProduct) {
         SpiBulkPayment bulk = new SpiBulkPayment();
@@ -42,8 +43,11 @@ public class Xs2aToSpiBulkPaymentMapper {
         bulk.setBatchBookingPreferred(payment.getBatchBookingPreferred());
         bulk.setDebtorAccount(xs2aToSpiAccountReferenceMapper.mapToSpiAccountReference(payment.getDebtorAccount()));
         bulk.setDebtorName(payment.getDebtorName());
+        bulk.setCategoryPurposeCode(
+                xs2aToSpiCategoryPurposeCodeMapper.mapToSpiCategoryPurposeCode(payment.getCategoryPurposeCode()));
         if (payment.getTransactionStatus() != null) {
-            bulk.setPaymentStatus(xs2aToSpiTransactionStatusMapper.mapToSpiTransactionStatus(payment.getTransactionStatus()));
+            bulk.setPaymentStatus(
+                    xs2aToSpiTransactionStatusMapper.mapToSpiTransactionStatus(payment.getTransactionStatus()));
         }
         bulk.setPaymentProduct(paymentProduct);
         bulk.setRequestedExecutionDate(payment.getRequestedExecutionDate());
@@ -59,7 +63,7 @@ public class Xs2aToSpiBulkPaymentMapper {
 
     private List<SpiSinglePayment> mapToListSpiSinglePayment(List<SinglePayment> payments, String paymentProduct) {
         return payments.stream()
-                   .map(p -> xs2aToSpiSinglePaymentMapper.mapToSpiSinglePayment(p, paymentProduct))
-                   .collect(Collectors.toList());
+                .map(p -> xs2aToSpiSinglePaymentMapper.mapToSpiSinglePayment(p, paymentProduct))
+                .collect(Collectors.toList());
     }
 }

@@ -25,6 +25,13 @@ import de.adorsys.psd2.xs2a.domain.pis.CancelPaymentResponse;
 
 public interface CancelPaymentService {
 
+    /**
+     * Cancels a payment.
+     *
+     * @param commonPaymentData the common payment data
+     * @param paymentCancellationRequest the payment cancellation request
+     * @return response object containing the cancellation result
+     */
     ResponseObject<CancelPaymentResponse> cancelPayment(CommonPaymentData commonPaymentData,
                                                         PisPaymentCancellationRequest paymentCancellationRequest);
 }

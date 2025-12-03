@@ -39,6 +39,11 @@ public abstract class AbstractAccountTppValidator<T extends TppInfoProvider> ext
         return aisAccountTppInfoValidator;
     }
 
+    /**
+     * Sets the AIS account TPP info validator.
+     *
+     * @param aisAccountTppInfoValidator the validator to set
+     */
     @Autowired
     public void setAisAccountTppInfoValidator(AisAccountTppInfoValidator aisAccountTppInfoValidator) {
         this.aisAccountTppInfoValidator = aisAccountTppInfoValidator;

@@ -21,7 +21,6 @@ package de.adorsys.psd2.xs2a.web.converter;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -29,13 +28,14 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class LocalDateConverterTest {
     private static final String ISO_DATE_STRING = "2020-04-02";
+    private static final String ISO_OFFSET_DATE_TIME_STRING = "2020-04-02T10:15:30+02:00";
     private static final LocalDate EXPECTED_LOCAL_DATE = LocalDate.of(2020, 4, 2);
     private static final String MALFORMED_STRING = "malformed body";
 
-    private LocalDateConverter localDateConverter = new LocalDateConverter();
+    private final LocalDateConverter localDateConverter = new LocalDateConverter();
 
     @Test
-    void convert_withCorrectString_shouldReturnObject() {
+    void convert_withIsoDate_shouldReturnLocalDate() {
         // When
         LocalDate actualResult = localDateConverter.convert(ISO_DATE_STRING);
 
@@ -44,16 +44,17 @@ class LocalDateConverterTest {
     }
 
     @Test
-    void convert_withMalformedString_shouldThrowDateTimeParseException() {
-        assertThrows(DateTimeParseException.class, () -> localDateConverter.convert(MALFORMED_STRING));
+    void convert_withIsoOffsetDateTime_shouldReturnLocalDate() {
+        // When
+        LocalDate actualResult = localDateConverter.convert(ISO_OFFSET_DATE_TIME_STRING);
+
+        // Then
+        assertEquals(EXPECTED_LOCAL_DATE, actualResult);
     }
 
     @Test
-    void convert_DateTimeFormatter() {
-        LocalDate convertedDate = localDateConverter.convert("2020-04-02", DateTimeFormatter.ISO_LOCAL_DATE);
-        assertEquals(EXPECTED_LOCAL_DATE, convertedDate);
-
-        convertedDate = localDateConverter.convert("20200402", DateTimeFormatter.BASIC_ISO_DATE);
-        assertEquals(EXPECTED_LOCAL_DATE, convertedDate);
+    void convert_withMalformedString_shouldThrowDateTimeParseException() {
+        // Expect
+        assertThrows(DateTimeParseException.class, () -> localDateConverter.convert(MALFORMED_STRING));
     }
 }

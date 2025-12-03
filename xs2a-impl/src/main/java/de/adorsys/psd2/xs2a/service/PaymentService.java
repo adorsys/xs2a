@@ -41,6 +41,7 @@ import de.adorsys.psd2.xs2a.service.payment.cancel.CancelPaymentService;
 import de.adorsys.psd2.xs2a.service.payment.create.CreatePaymentService;
 import de.adorsys.psd2.xs2a.service.payment.read.ReadPaymentService;
 import de.adorsys.psd2.xs2a.service.payment.status.ReadPaymentStatusService;
+import de.adorsys.psd2.xs2a.service.payment.status.ReadBulkPaymentExtendedStatusService;
 import de.adorsys.psd2.xs2a.service.profile.AspspProfileServiceWrapper;
 import de.adorsys.psd2.xs2a.service.validator.pis.payment.*;
 import de.adorsys.psd2.xs2a.service.validator.pis.payment.dto.CreatePaymentRequestObject;
@@ -73,6 +74,7 @@ public class PaymentService {
     private final CreatePaymentValidator createPaymentValidator;
     private final GetPaymentByIdValidator getPaymentByIdValidator;
     private final GetPaymentStatusByIdValidator getPaymentStatusByIdValidator;
+    private final GetBulkPaymentExtendedStatusValidator getBulkPaymentExtendedStatusValidator;
     private final CancelPaymentValidator cancelPaymentValidator;
     private final PaymentServiceResolver paymentServiceResolver;
     private final LoggingContextService loggingContextService;
@@ -85,24 +87,29 @@ public class PaymentService {
      *
      * @param payment                     Payment information
      * @param paymentInitiationParameters Parameters for payment initiation
-     * @return Response containing information about created payment or corresponding error
+     * @return Response containing information about created payment or
+     *         corresponding error
      */
-    public ResponseObject<PaymentInitiationResponse> createPayment(byte[] payment, PaymentInitiationParameters paymentInitiationParameters) {
+    public ResponseObject<PaymentInitiationResponse> createPayment(byte[] payment,
+            PaymentInitiationParameters paymentInitiationParameters) {
         xs2aEventService.recordTppRequest(EventType.PAYMENT_INITIATION_REQUEST_RECEIVED, payment);
 
-        CreatePaymentRequestObject createPaymentRequestObject = new CreatePaymentRequestObject(payment, paymentInitiationParameters);
+        CreatePaymentRequestObject createPaymentRequestObject = new CreatePaymentRequestObject(payment,
+                paymentInitiationParameters);
 
         if (aspspProfileService.isPsuInInitialRequestIgnored()) {
-            paymentInitiationParameters.setPsuData(psuDataCleaner.clearPsuData(paymentInitiationParameters.getPsuData()));
+            paymentInitiationParameters
+                    .setPsuData(psuDataCleaner.clearPsuData(paymentInitiationParameters.getPsuData()));
         }
 
         ValidationResult validationResult = createPaymentValidator.validate(createPaymentRequestObject);
         if (validationResult.isNotValid()) {
             log.info("PaymentType [{}], PaymentProduct [{}]. Create payment - validation failed: [{}]",
-                     paymentInitiationParameters.getPaymentType(), paymentInitiationParameters.getPaymentProduct(), validationResult.getMessageError());
+                    paymentInitiationParameters.getPaymentType(), paymentInitiationParameters.getPaymentProduct(),
+                    validationResult.getMessageError());
             return ResponseObject.<PaymentInitiationResponse>builder()
-                       .fail(validationResult.getMessageError())
-                       .build();
+                    .fail(validationResult.getMessageError())
+                    .build();
         }
 
         if (isNotSupportedScaApproach(scaApproachResolver.resolveScaApproach())) {
@@ -111,66 +118,80 @@ public class PaymentService {
 
         TppInfo tppInfo = tppService.getTppInfo();
 
-        CreatePaymentService createPaymentService = paymentServiceResolver.getCreatePaymentService(paymentInitiationParameters);
-        ResponseObject<PaymentInitiationResponse> responseObject = createPaymentService.createPayment(payment, paymentInitiationParameters, tppInfo);
+        CreatePaymentService createPaymentService = paymentServiceResolver
+                .getCreatePaymentService(paymentInitiationParameters);
+        ResponseObject<PaymentInitiationResponse> responseObject = createPaymentService.createPayment(payment,
+                paymentInitiationParameters, tppInfo);
 
         if (responseObject.hasError()) {
             log.info("Create payment failed: [{}]", responseObject.getError());
             return ResponseObject.<PaymentInitiationResponse>builder()
-                       .fail(responseObject.getError())
-                       .build();
+                    .fail(responseObject.getError())
+                    .build();
         }
 
         PaymentInitiationResponse paymentInitiationResponse = responseObject.getBody();
 
-        paymentInitiationResponse.getTppMessageInformation().addAll(createPaymentValidator.buildWarningMessages(createPaymentRequestObject));
+        paymentInitiationResponse.getTppMessageInformation()
+                .addAll(createPaymentValidator.buildWarningMessages(createPaymentRequestObject));
 
-        loggingContextService.storeTransactionAndScaStatus(paymentInitiationResponse.getTransactionStatus(), paymentInitiationResponse.getScaStatus());
+        loggingContextService.storeTransactionAndScaStatus(paymentInitiationResponse.getTransactionStatus(),
+                paymentInitiationResponse.getScaStatus());
 
         return ResponseObject.<PaymentInitiationResponse>builder()
-                   .body(paymentInitiationResponse)
-                   .build();
+                .body(paymentInitiationResponse)
+                .build();
     }
 
     /**
-     * Retrieves payment from ASPSP by its ASPSP identifier, product and payment type
+     * Retrieves payment from ASPSP by its ASPSP identifier, product and payment
+     * type
      *
-     * @param paymentType        type of payment (payments, bulk-payments, periodic-payments)
-     * @param paymentProduct     payment product used for payment creation (e.g. sepa-credit-transfers, instant-sepa-credit-transfers...)
+     * @param paymentType        type of payment (payments, bulk-payments,
+     *                           periodic-payments)
+     * @param paymentProduct     payment product used for payment creation (e.g.
+     *                           sepa-credit-transfers,
+     *                           instant-sepa-credit-transfers...)
      * @param encryptedPaymentId ASPSP identifier of the payment
      * @return Response containing information about payment or corresponding error
      */
-    public ResponseObject<CommonPayment> getPaymentById(PaymentType paymentType, String paymentProduct, String encryptedPaymentId) {
+    public ResponseObject<CommonPayment> getPaymentById(PaymentType paymentType, String paymentProduct,
+            String encryptedPaymentId) {
         xs2aEventService.recordPisTppRequest(encryptedPaymentId, EventType.GET_PAYMENT_REQUEST_RECEIVED);
-        Optional<PisCommonPaymentResponse> pisCommonPaymentOptional = pisCommonPaymentService.getPisCommonPaymentById(encryptedPaymentId);
+        Optional<PisCommonPaymentResponse> pisCommonPaymentOptional = pisCommonPaymentService
+                .getPisCommonPaymentById(encryptedPaymentId);
 
         if (pisCommonPaymentOptional.isEmpty()) {
             log.info("Payment-ID [{}]. Get payment failed. PIS CommonPayment not found by ID", encryptedPaymentId);
             return ResponseObject.<CommonPayment>builder()
-                       .fail(PIS_403, TppMessageInformation.of(RESOURCE_UNKNOWN_403))
-                       .build();
+                    .fail(PIS_403, TppMessageInformation.of(RESOURCE_UNKNOWN_403))
+                    .build();
         }
 
         PisCommonPaymentResponse commonPaymentResponse = pisCommonPaymentOptional.get();
-        ValidationResult validationResult = getPaymentByIdValidator.validate(new GetPaymentByIdPO(commonPaymentResponse, paymentType, paymentProduct));
+        ValidationResult validationResult = getPaymentByIdValidator
+                .validate(new GetPaymentByIdPO(commonPaymentResponse, paymentType, paymentProduct));
         if (validationResult.isNotValid()) {
-            log.info("Payment-ID [{}]. Get payment - validation failed: {}", encryptedPaymentId, validationResult.getMessageError());
+            log.info("Payment-ID [{}]. Get payment - validation failed: {}", encryptedPaymentId,
+                    validationResult.getMessageError());
             return ResponseObject.<CommonPayment>builder()
-                       .fail(validationResult.getMessageError())
-                       .build();
+                    .fail(validationResult.getMessageError())
+                    .build();
         }
 
         PsuIdData psuIdData = getPsuIdDataFromRequest();
         ReadPaymentService readPaymentService = paymentServiceResolver.getReadPaymentService(commonPaymentResponse);
-        String contentType = Optional.ofNullable(commonPaymentResponse.getContentType()).orElseGet(requestProviderService::getAcceptHeader);
+        String contentType = Optional.ofNullable(commonPaymentResponse.getContentType())
+                .orElseGet(requestProviderService::getAcceptHeader);
         commonPaymentResponse.setContentType(contentType);
-        PaymentInformationResponse<CommonPayment> response = readPaymentService.getPayment(commonPaymentResponse, psuIdData, encryptedPaymentId, contentType);
+        PaymentInformationResponse<CommonPayment> response = readPaymentService.getPayment(commonPaymentResponse,
+                psuIdData, encryptedPaymentId, contentType);
 
         if (response.hasError()) {
             log.info("Payment-ID [{}]. Read Payment failed: {}", encryptedPaymentId, response.getErrorHolder());
             return ResponseObject.<CommonPayment>builder()
-                       .fail(response.getErrorHolder())
-                       .build();
+                    .fail(response.getErrorHolder())
+                    .build();
         }
 
         CommonPayment commonPayment = response.getPayment();
@@ -179,141 +200,229 @@ public class PaymentService {
         loggingContextService.storeTransactionStatus(commonPayment.getTransactionStatus());
 
         return ResponseObject.<CommonPayment>builder()
-                   .body(commonPayment)
-                   .build();
+                .body(commonPayment)
+                .build();
     }
 
     /**
      * Retrieves payment status from ASPSP
      *
-     * @param paymentType        The addressed payment category Single, Periodic or Bulk
-     * @param paymentProduct     payment product used for payment creation (e.g. sepa-credit-transfers, instant-sepa-credit-transfers...)
-     * @param encryptedPaymentId String representation of payment primary ASPSP identifier
+     * @param paymentType        The addressed payment category Single, Periodic or
+     *                           Bulk
+     * @param paymentProduct     payment product used for payment creation (e.g.
+     *                           sepa-credit-transfers,
+     *                           instant-sepa-credit-transfers...)
+     * @param encryptedPaymentId String representation of payment primary ASPSP
+     *                           identifier
      * @return Information about the status of a payment
      */
-    public ResponseObject<GetPaymentStatusResponse> getPaymentStatusById(PaymentType paymentType, String paymentProduct, String encryptedPaymentId) {
+    public ResponseObject<GetPaymentStatusResponse> getPaymentStatusById(PaymentType paymentType, String paymentProduct,
+            String encryptedPaymentId) {
         xs2aEventService.recordPisTppRequest(encryptedPaymentId, EventType.GET_TRANSACTION_STATUS_REQUEST_RECEIVED);
-        Optional<PisCommonPaymentResponse> pisCommonPaymentOptional = pisCommonPaymentService.getPisCommonPaymentById(encryptedPaymentId);
+        Optional<PisCommonPaymentResponse> pisCommonPaymentOptional = pisCommonPaymentService
+                .getPisCommonPaymentById(encryptedPaymentId);
 
         if (pisCommonPaymentOptional.isEmpty()) {
-            log.info("Payment-ID [{}]. Get Payment Status failed. PIS CommonPayment not found by ID", encryptedPaymentId);
+            log.info("Payment-ID [{}]. Get Payment Status failed. PIS CommonPayment not found by ID",
+                    encryptedPaymentId);
             return ResponseObject.<GetPaymentStatusResponse>builder()
-                       .fail(PIS_403, TppMessageInformation.of(RESOURCE_UNKNOWN_403))
-                       .build();
+                    .fail(PIS_403, TppMessageInformation.of(RESOURCE_UNKNOWN_403))
+                    .build();
         }
 
         PisCommonPaymentResponse pisCommonPaymentResponse = pisCommonPaymentOptional.get();
 
-        ValidationResult validationResult = getPaymentStatusByIdValidator.validate(new GetPaymentStatusByIdPO(pisCommonPaymentResponse, paymentType, paymentProduct));
+        ValidationResult validationResult = getPaymentStatusByIdValidator
+                .validate(new GetPaymentStatusByIdPO(pisCommonPaymentResponse, paymentType, paymentProduct));
         if (validationResult.isNotValid()) {
-            log.info("Payment-ID [{}]. Get payment status by ID - validation failed: {}", encryptedPaymentId, validationResult.getMessageError());
+            log.info("Payment-ID [{}]. Get payment status by ID - validation failed: {}", encryptedPaymentId,
+                    validationResult.getMessageError());
             return ResponseObject.<GetPaymentStatusResponse>builder()
-                       .fail(validationResult.getMessageError())
-                       .build();
+                    .fail(validationResult.getMessageError())
+                    .build();
         }
 
         if (pisCommonPaymentResponse.getTransactionStatus() == TransactionStatus.RJCT) {
-            return ResponseObject.<GetPaymentStatusResponse>builder().body(new GetPaymentStatusResponse(TransactionStatus.RJCT, null, MediaType.APPLICATION_JSON, null, null, null, null)).build();
+            return ResponseObject.<GetPaymentStatusResponse>builder()
+                    .body(new GetPaymentStatusResponse(TransactionStatus.RJCT, null, MediaType.APPLICATION_JSON, null,
+                            null, null, null))
+                    .build();
         }
 
         SpiContextData spiContextData = spiContextDataProvider.provideWithPsuIdData(getPsuIdDataFromRequest());
 
-        ReadPaymentStatusService readPaymentStatusService = paymentServiceResolver.getReadPaymentStatusService(pisCommonPaymentResponse);
-        ReadPaymentStatusResponse readPaymentStatusResponse = readPaymentStatusService.readPaymentStatus(pisCommonPaymentResponse, spiContextData, encryptedPaymentId, requestProviderService.getAcceptHeader());
+        ReadPaymentStatusService readPaymentStatusService = paymentServiceResolver
+                .getReadPaymentStatusService(pisCommonPaymentResponse);
+        ReadPaymentStatusResponse readPaymentStatusResponse = readPaymentStatusService.readPaymentStatus(
+                pisCommonPaymentResponse, spiContextData, encryptedPaymentId, requestProviderService.getAcceptHeader());
 
         if (readPaymentStatusResponse.hasError()) {
             ErrorHolder errorHolder = readPaymentStatusResponse.getErrorHolder();
             log.info("Payment-ID [{}]. Read Payment status failed: {}", encryptedPaymentId, errorHolder);
             return ResponseObject.<GetPaymentStatusResponse>builder()
-                       .fail(errorHolder)
-                       .build();
+                    .fail(errorHolder)
+                    .build();
         }
 
         TransactionStatus transactionStatus = readPaymentStatusResponse.getStatus();
 
         if (transactionStatus == null) {
-            log.info("Payment-ID [{}].  Get Payment Status by ID failed. Transaction status is null.", encryptedPaymentId);
+            log.info("Payment-ID [{}].  Get Payment Status by ID failed. Transaction status is null.",
+                    encryptedPaymentId);
             return ResponseObject.<GetPaymentStatusResponse>builder()
-                       .fail(PIS_403, TppMessageInformation.of(RESOURCE_UNKNOWN_403))
-                       .build();
+                    .fail(PIS_403, TppMessageInformation.of(RESOURCE_UNKNOWN_403))
+                    .build();
         }
 
         if (!updatePaymentAfterSpiService.updatePaymentStatus(encryptedPaymentId, transactionStatus)) {
             log.info("Payment ID: [{}], Transaction status: [{}]. Update of a payment status in the CMS has failed.",
-                     encryptedPaymentId, transactionStatus);
+                    encryptedPaymentId, transactionStatus);
         }
 
         loggingContextService.storeTransactionStatus(transactionStatus);
 
         GetPaymentStatusResponse response = new GetPaymentStatusResponse(transactionStatus,
-                                                                         readPaymentStatusResponse.getFundsAvailable(),
-                                                                         readPaymentStatusResponse.getResponseContentType(),
-                                                                         readPaymentStatusResponse.getPaymentStatusRaw(),
-                                                                         readPaymentStatusResponse.getPsuMessage(),
-                                                                         readPaymentStatusResponse.getLinks(),
-                                                                         readPaymentStatusResponse.getTppMessageInformation());
+                readPaymentStatusResponse.getFundsAvailable(),
+                readPaymentStatusResponse.getResponseContentType(),
+                readPaymentStatusResponse.getPaymentStatusRaw(),
+                readPaymentStatusResponse.getPsuMessage(),
+                readPaymentStatusResponse.getLinks(),
+                readPaymentStatusResponse.getTppMessageInformation());
         return ResponseObject.<GetPaymentStatusResponse>builder().body(response).build();
+    }
+
+    /**
+     * Retrieves the extended status of a bulk payment by its ASPSP identifier and
+     * payment type
+     *
+     * @param paymentType        payment type (single, periodic, bulk)
+     * @param paymentProduct     payment product used for payment creation (e.g.
+     *                           sepa-credit-transfers,
+     *                           instant-sepa-credit-transfers...)
+     * @param encryptedPaymentId String representation of payment primary ASPSP
+     *                           identifier
+     * @return Extended status information of a bulk payment
+     */
+    public ResponseObject<GetBulkPaymentExtendedStatusResponse> getBulkPaymentExtendedStatus(PaymentType paymentType,
+            String paymentProduct, String encryptedPaymentId) {
+        xs2aEventService.recordPisTppRequest(encryptedPaymentId,
+                EventType.GET_BULK_PAYMENT_EXTENDED_STATUS_REQUEST_RECEIVED);
+
+        Optional<PisCommonPaymentResponse> pisCommonPaymentOptional = pisCommonPaymentService
+                .getPisCommonPaymentById(encryptedPaymentId);
+
+        if (pisCommonPaymentOptional.isEmpty()) {
+            log.info("Payment-ID [{}]. Get Bulk Payment Extended Status failed. PIS CommonPayment not found by ID",
+                    encryptedPaymentId);
+            return ResponseObject.<GetBulkPaymentExtendedStatusResponse>builder()
+                    .fail(PIS_403, TppMessageInformation.of(RESOURCE_UNKNOWN_403))
+                    .build();
+        }
+
+        PisCommonPaymentResponse pisCommonPaymentResponse = pisCommonPaymentOptional.get();
+
+        // Validate the request
+        ValidationResult validationResult = getBulkPaymentExtendedStatusValidator.validate(
+                new GetBulkPaymentExtendedStatusPO(pisCommonPaymentResponse, paymentType, paymentProduct));
+        if (validationResult.isNotValid()) {
+            log.info("Payment-ID [{}]. Get bulk payment extended status - validation failed: {}",
+                    encryptedPaymentId, validationResult.getMessageError());
+            return ResponseObject.<GetBulkPaymentExtendedStatusResponse>builder()
+                    .fail(validationResult.getMessageError())
+                    .build();
+        }
+
+        // Use the service resolver to get the appropriate service
+        ReadBulkPaymentExtendedStatusService service = paymentServiceResolver
+                .getReadBulkPaymentExtendedStatusService(pisCommonPaymentResponse);
+
+        SpiContextData spiContextData = spiContextDataProvider.provideWithPsuIdData(getPsuIdDataFromRequest());
+        String acceptMediaType = requestProviderService.getAcceptHeader();
+
+        ReadBulkPaymentExtendedStatusResponse serviceResponse = service.readBulkPaymentExtendedStatus(
+                pisCommonPaymentResponse, spiContextData, encryptedPaymentId, acceptMediaType);
+
+        if (serviceResponse.hasError()) {
+            log.info("Payment-ID [{}]. Get bulk payment extended status by ID failed: {}",
+                    encryptedPaymentId, serviceResponse.getErrorHolder());
+            return ResponseObject.<GetBulkPaymentExtendedStatusResponse>builder()
+                    .fail(serviceResponse.getErrorHolder())
+                    .build();
+        }
+
+        GetBulkPaymentExtendedStatusResponse response = buildBulkPaymentExtendedStatusResponse(serviceResponse);
+
+        return ResponseObject.<GetBulkPaymentExtendedStatusResponse>builder().body(response).build();
     }
 
     /**
      * Cancels payment by its ASPSP identifier and payment type
      *
      * @param paymentCancellationRequest {@link PisPaymentCancellationRequest}
-     * @return Response containing information about cancelled payment or corresponding error
+     * @return Response containing information about cancelled payment or
+     *         corresponding error
      */
-    public ResponseObject<CancelPaymentResponse> cancelPayment(PisPaymentCancellationRequest paymentCancellationRequest) {
-        xs2aEventService.recordPisTppRequest(paymentCancellationRequest.getEncryptedPaymentId(), EventType.PAYMENT_CANCELLATION_REQUEST_RECEIVED);
-        Optional<PisCommonPaymentResponse> pisCommonPaymentOptional = pisCommonPaymentService.getPisCommonPaymentById(paymentCancellationRequest.getEncryptedPaymentId());
+    public ResponseObject<CancelPaymentResponse> cancelPayment(
+            PisPaymentCancellationRequest paymentCancellationRequest) {
+        xs2aEventService.recordPisTppRequest(paymentCancellationRequest.getEncryptedPaymentId(),
+                EventType.PAYMENT_CANCELLATION_REQUEST_RECEIVED);
+        Optional<PisCommonPaymentResponse> pisCommonPaymentOptional = pisCommonPaymentService
+                .getPisCommonPaymentById(paymentCancellationRequest.getEncryptedPaymentId());
 
         if (pisCommonPaymentOptional.isEmpty()) {
             log.info("Payment-ID [{}]. Cancel payment has failed. Payment not found by ID.",
-                     paymentCancellationRequest.getEncryptedPaymentId());
+                    paymentCancellationRequest.getEncryptedPaymentId());
             return ResponseObject.<CancelPaymentResponse>builder()
-                       .fail(PIS_403, TppMessageInformation.of(RESOURCE_UNKNOWN_403))
-                       .build();
+                    .fail(PIS_403, TppMessageInformation.of(RESOURCE_UNKNOWN_403))
+                    .build();
         }
 
         PisCommonPaymentResponse pisCommonPaymentResponse = pisCommonPaymentOptional.get();
-        CancelPaymentPO cancelPaymentPO = new CancelPaymentPO(pisCommonPaymentResponse, paymentCancellationRequest.getPaymentType(), paymentCancellationRequest.getPaymentProduct(), paymentCancellationRequest.getTppRedirectUri());
+        CancelPaymentPO cancelPaymentPO = new CancelPaymentPO(pisCommonPaymentResponse,
+                paymentCancellationRequest.getPaymentType(), paymentCancellationRequest.getPaymentProduct(),
+                paymentCancellationRequest.getTppRedirectUri());
 
         ValidationResult validationResult = cancelPaymentValidator.validate(cancelPaymentPO);
         if (validationResult.isNotValid()) {
             log.info("Payment-ID [{}]. Cancel payment - validation failed: [{}]",
-                     paymentCancellationRequest.getEncryptedPaymentId(), validationResult.getMessageError());
+                    paymentCancellationRequest.getEncryptedPaymentId(), validationResult.getMessageError());
             return ResponseObject.<CancelPaymentResponse>builder()
-                       .fail(validationResult.getMessageError())
-                       .build();
+                    .fail(validationResult.getMessageError())
+                    .build();
         }
 
         if (pisCommonPaymentResponse.getTransactionStatus().isFinalisedStatus()) {
             log.info("Payment-ID [{}]. Cancel payment has failed. Payment has finalised status",
-                     paymentCancellationRequest.getEncryptedPaymentId());
+                    paymentCancellationRequest.getEncryptedPaymentId());
             return ResponseObject.<CancelPaymentResponse>builder()
-                       .fail(PIS_400, TppMessageInformation.of(RESOURCE_BLOCKED))
-                       .build();
+                    .fail(PIS_400, TppMessageInformation.of(RESOURCE_BLOCKED))
+                    .build();
         }
 
-        CancelPaymentService cancelPaymentService = paymentServiceResolver.getCancelPaymentService(paymentCancellationRequest);
-        ResponseObject<CancelPaymentResponse> responseObject = cancelPaymentService.cancelPayment(pisCommonPaymentResponse, paymentCancellationRequest);
+        CancelPaymentService cancelPaymentService = paymentServiceResolver
+                .getCancelPaymentService(paymentCancellationRequest);
+        ResponseObject<CancelPaymentResponse> responseObject = cancelPaymentService
+                .cancelPayment(pisCommonPaymentResponse, paymentCancellationRequest);
 
         if (responseObject.hasError()) {
             log.info("Payment-ID: [{}]. Cancel payment failed: [{}]",
-                     paymentCancellationRequest.getEncryptedPaymentId(),
-                     responseObject.getError());
+                    paymentCancellationRequest.getEncryptedPaymentId(),
+                    responseObject.getError());
             return ResponseObject.<CancelPaymentResponse>builder()
-                       .fail(responseObject.getError())
-                       .build();
+                    .fail(responseObject.getError())
+                    .build();
         }
 
         CancelPaymentResponse cancelPaymentResponse = responseObject.getBody();
 
-        cancelPaymentResponse.getTppMessageInformation().addAll(cancelPaymentValidator.buildWarningMessages(cancelPaymentPO));
+        cancelPaymentResponse.getTppMessageInformation()
+                .addAll(cancelPaymentValidator.buildWarningMessages(cancelPaymentPO));
 
         loggingContextService.storeTransactionStatus(cancelPaymentResponse.getTransactionStatus());
 
         return ResponseObject.<CancelPaymentResponse>builder()
-                   .body(cancelPaymentResponse)
-                   .build();
+                .body(cancelPaymentResponse)
+                .build();
     }
 
     private PsuIdData getPsuIdDataFromRequest() {
@@ -332,5 +441,25 @@ public class PaymentService {
             responseContentType = MediaType.APPLICATION_JSON_VALUE;
         }
         return responseContentType;
+    }
+
+    private GetBulkPaymentExtendedStatusResponse buildBulkPaymentExtendedStatusResponse(
+            ReadBulkPaymentExtendedStatusResponse serviceResponse) {
+        return new GetBulkPaymentExtendedStatusResponse(
+                serviceResponse.getGroupStatus(),
+                serviceResponse.getReasonCode(),
+                serviceResponse.getReasonProprietary(),
+                serviceResponse.getFundsAvailable(),
+                serviceResponse.getOriginalTransactionInformationAndStatus(),
+                serviceResponse.getTransactionFees(),
+                serviceResponse.getCurrencyConversionFees(),
+                serviceResponse.getEstimatedTotalAmount(),
+                serviceResponse.getEstimatedInterbankSettlementAmount(),
+                serviceResponse.getPsuMessage(),
+                serviceResponse.getOwnerNames(),
+                serviceResponse.getResponseContentType(),
+                serviceResponse.getPaymentStatusRaw(),
+                serviceResponse.getLinks(),
+                serviceResponse.getTppMessageInformation());
     }
 }

@@ -44,7 +44,9 @@ public class TransactionListDownloadPathParamsValidatorImpl implements Transacti
     public MessageError validate(Map<String, String> queryParameterMap, MessageError messageError) {
         String downloadId = queryParameterMap.get("download-id");
 
-        if (isNonValid(downloadId)) {
+        // Only validate if download-id parameter is present (not null)
+        // This validator should only apply to transaction download endpoints
+        if (downloadId != null && isNonValid(downloadId)) {
             errorBuildingService.enrichMessageError(messageError, TppMessageInformation.of(FORMAT_ERROR_PATH_PARAMETER_INVALID));
         }
 

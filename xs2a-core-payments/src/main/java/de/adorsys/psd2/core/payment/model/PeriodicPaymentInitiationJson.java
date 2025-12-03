@@ -22,12 +22,15 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 import java.time.LocalDate;
+import java.time.OffsetDateTime;
 
 @Data
 @EqualsAndHashCode(callSuper = true)
 public class PeriodicPaymentInitiationJson extends PaymentInitiationJson {
     private LocalDate startDate;
+    private OffsetDateTime startDateTime;
     private LocalDate endDate;
+    private OffsetDateTime endDateTime;
     private ExecutionRule executionRule;
     private FrequencyCode frequency;
     private DayOfExecution dayOfExecution;

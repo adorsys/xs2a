@@ -24,7 +24,7 @@ import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.util.AntPathMatcher;
 
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 import static de.adorsys.psd2.xs2a.config.Xs2aEndpointPathConstant.*;
@@ -37,11 +37,20 @@ class ServiceTypeDiscovery {
     private static final Map<String, ServiceType> pathToServiceType;
 
     static {
-        pathToServiceType = new HashMap<>();
+        pathToServiceType = new LinkedHashMap<>();
         pathToServiceType.put(ACCOUNTS_PATH, AIS);
         pathToServiceType.put(BENEFICIARIES_PATH, AIS);
         pathToServiceType.put(CARD_ACCOUNTS_PATH, AIS);
         pathToServiceType.put(CONSENTS_PATH, AIS);
+        // VOP paths - more specific patterns must come before generic payment patterns
+        pathToServiceType.put(VOP_CREDITOR_CONFIRMATION_PATH, VOP);
+        pathToServiceType.put(VOP_PAYEE_VERIFICATIONS_PATH, VOP);
+        pathToServiceType.put(VOP_PAYER_VERIFICATIONS_PATH, VOP);
+        pathToServiceType.put(VOP_PARTY_VERIFICATIONS_PATH, VOP);
+        pathToServiceType.put(VOP_BULK_PAYEE_VERIFICATIONS_PATH, VOP);
+        pathToServiceType.put(VOP_BULK_PAYER_VERIFICATIONS_PATH, VOP);
+        pathToServiceType.put(VOP_BULK_PARTY_VERIFICATIONS_PATH, VOP);
+        // PIS paths - generic payment patterns
         pathToServiceType.put(SINGLE_PAYMENTS_PATH, PIS);
         pathToServiceType.put(PERIODIC_PAYMENTS_PATH, PIS);
         pathToServiceType.put(BULK_PAYMENTS_PATH, PIS);

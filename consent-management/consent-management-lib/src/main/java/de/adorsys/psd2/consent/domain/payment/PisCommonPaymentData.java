@@ -36,7 +36,7 @@ import java.util.List;
 import java.util.Objects;
 
 @Data
-@EqualsAndHashCode
+@EqualsAndHashCode(callSuper = false)
 @Entity(name = "pis_common_payment")
 public class PisCommonPaymentData extends InstanceDependableEntity implements Authorisable {
     @Id

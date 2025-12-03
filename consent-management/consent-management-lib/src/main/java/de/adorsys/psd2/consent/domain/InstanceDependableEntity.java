@@ -26,7 +26,7 @@ import jakarta.persistence.MappedSuperclass;
 
 @Getter
 @MappedSuperclass
-@EqualsAndHashCode
+@EqualsAndHashCode(callSuper = false)
 public abstract class InstanceDependableEntity {
     private static final String DEFAULT_SERVICE_INSTANCE_ID = "UNDEFINED";
 

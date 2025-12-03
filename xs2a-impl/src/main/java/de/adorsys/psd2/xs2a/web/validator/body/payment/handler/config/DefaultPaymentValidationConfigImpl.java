@@ -33,10 +33,21 @@ public class DefaultPaymentValidationConfigImpl implements PaymentValidationConf
     protected ValidationObject chargeBearer = new ValidationObject(Occurrence.OPTIONAL, 4);
 
     //address
+    protected ValidationObject addressLines = new ValidationObject(70);
+    protected ValidationObject department = new ValidationObject(70);
+    protected ValidationObject subDepartment = new ValidationObject(70);
     protected ValidationObject streetName = new ValidationObject(100);
     protected ValidationObject buildingNumber = new ValidationObject(20);
-    protected ValidationObject townName = new ValidationObject(100);
+    protected ValidationObject buildingName = new ValidationObject(100);
+    protected ValidationObject floor = new ValidationObject(70);
+    protected ValidationObject postBox = new ValidationObject(16);
+    protected ValidationObject room = new ValidationObject(70);
     protected ValidationObject postCode = new ValidationObject(35);
+    protected ValidationObject townName = new ValidationObject(100);
+    protected ValidationObject townLocationName = new ValidationObject(100);
+    protected ValidationObject districtName = new ValidationObject(100);
+    protected ValidationObject countrySubDivision = new ValidationObject(35);
+    protected ValidationObject country = new ValidationObject(2);
 
     //account reference
     protected ValidationObject pan = new ValidationObject(35);

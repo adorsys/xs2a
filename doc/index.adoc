@@ -15,6 +15,8 @@ architectural decisions which have been made on the system.
 xref:XS2A. Details of realisation/xs2a features description.adoc[This document] describes implementation details of XS2A Interface
 for Account Information Service, Payment Initiation Service, Payment Instrument Issuing Service, SCA Methods. Include Use-cases diagrams.
 
+* xref:XS2A. Details of realisation/Verification of Payee Service.adoc[Verification of Payee (VOP) Service]
+
 == SPI Developer Guide
 xref:SPI Developer Guide/SPI_Developer_Guide.adoc[SPI Developer Guide] provides instructions for implementing the Interfaces on the SPI level,
 describes special modes e.g. configuring Event-Service, Logging etc.
@@ -111,3 +113,22 @@ This endpoint is not directly related to credit cards as such, but the financial
 xref:XS2A. Details of realisation/Funds Confirmation Service.adoc[PIIS Consent]
 
 Functionality allows PSU to Establish Funds Confirmation Consent to TPP through XS2A interface.
+
+== Migration feature
+xref:XS2A. Details of realisation/Migration features.adoc[Migration feature]
+
+Comprehensive implementation of Migration feature specification requirements, including:
+* startDateTime and endDateTime for Standing Orders in Instant Payments
+* Avoid Local Time Without Offsets in Timestamps
+* categoryPurposeCode Attribute at Bulk Level
+* Full Structured Address Support
+* cardAcceptorName and townName Implementation
+== Migration feature
+xref:XS2A. Details of realisation/Migration features.adoc[Migration feature]
+
+Comprehensive implementation of Migration feature specification requirements, including:
+* startDateTime and endDateTime for Standing Orders in Instant Payments
+* Avoid Local Time Without Offsets in Timestamps
+* categoryPurposeCode Attribute at Bulk Level
+* Full Structured Address Support
+* cardAcceptorName and townName Implementation

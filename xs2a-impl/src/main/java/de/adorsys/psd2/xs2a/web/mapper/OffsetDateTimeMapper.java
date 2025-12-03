@@ -23,8 +23,6 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 import java.time.ZoneId;
-import java.time.ZoneOffset;
-import java.util.List;
 
 @Service
 public class OffsetDateTimeMapper {
@@ -32,8 +30,7 @@ public class OffsetDateTimeMapper {
         if (localDateTime == null) {
             return null;
         }
-        List<ZoneOffset> validOffsets = ZoneId.systemDefault().getRules().getValidOffsets(localDateTime);
-        return localDateTime.atOffset(validOffsets.get(0));
+        return localDateTime.atZone(ZoneId.systemDefault()).toOffsetDateTime();
     }
 }
 

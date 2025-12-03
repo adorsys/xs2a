@@ -45,6 +45,10 @@ import java.util.stream.Stream;
 import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.*;
 import static de.adorsys.psd2.xs2a.web.validator.constants.Xs2aRequestBodyDateFields.AIS_CONSENT_DATE_FIELDS;
 
+/**
+ * Validator for account access in consent requests.
+ * Validates account references, date fields, and other consent-related data.
+ */
 @Component
 public class AccountAccessValidatorImpl extends AbstractBodyValidatorImpl implements ConsentBodyValidator {
 
@@ -52,6 +56,16 @@ public class AccountAccessValidatorImpl extends AbstractBodyValidatorImpl implem
     private DateFieldValidator dateFieldValidator;
     private FieldExtractor fieldExtractor;
 
+    /**
+     * Constructs a new AccountAccessValidatorImpl.
+     *
+     * @param errorBuildingService service for building error messages
+     * @param xs2aObjectMapper mapper for XS2A objects
+     * @param accountReferenceValidator validator for account references
+     * @param dateFieldValidator validator for date fields
+     * @param fieldExtractor extractor for request fields
+     * @param fieldLengthValidator validator for field length
+     */
     @Autowired
     public AccountAccessValidatorImpl(ErrorBuildingService errorBuildingService, Xs2aObjectMapper xs2aObjectMapper,
                                       AccountReferenceValidator accountReferenceValidator, DateFieldValidator dateFieldValidator,

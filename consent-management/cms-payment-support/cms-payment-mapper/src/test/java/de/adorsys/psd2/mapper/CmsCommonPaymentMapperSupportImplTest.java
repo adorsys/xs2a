@@ -158,6 +158,8 @@ class CmsCommonPaymentMapperSupportImplTest {
         payment.setDayOfExecution(PisDayOfExecution.DAY_14);
         payment.setStartDate(paymentInitiationJson.getStartDate());
         payment.setEndDate(paymentInitiationJson.getEndDate());
+        payment.setStartDateTime(paymentInitiationJson.getStartDateTime());
+        payment.setEndDateTime(paymentInitiationJson.getEndDateTime());
         payment.setExecutionRule(PisExecutionRule.FOLLOWING);
         payment.setFrequency(FrequencyCode.ANNUAL);
         payment.setUltimateDebtor(paymentInitiationJson.getUltimateDebtor());

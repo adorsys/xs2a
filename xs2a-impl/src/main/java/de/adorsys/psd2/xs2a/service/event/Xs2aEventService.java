@@ -117,6 +117,30 @@ public class Xs2aEventService {
     }
 
     /**
+     * Records TPP request to the VOP in the CMS in form of TPP event for given VOP bulk id and event type
+     *
+     * @param vopBulkId VOP bulk id that will be recorded along with the event
+     * @param eventType Type of the event
+     */
+    public void recordVopTppRequest(@NotNull String vopBulkId, @NotNull EventType eventType) {
+        recordVopTppRequest(vopBulkId, eventType, null);
+    }
+
+    /**
+     * Records TPP request to the VOP in the CMS in form of TPP event for given VOP bulk id, event type and request body
+     *
+     * @param vopBulkId VOP bulk id that will be recorded along with the event
+     * @param eventType Type of the event
+     * @param body      Body of the request
+     */
+    public void recordVopTppRequest(@NotNull String vopBulkId, @NotNull EventType eventType, @Nullable Object body) {
+        EventBO event = buildTppEvent(eventType, body);
+        event.setVopId(vopBulkId);
+
+        recordEventInCms(event);
+    }
+
+    /**
      * Records generic TPP request in the CMS in form of TPP event for given event type
      *
      * @param eventType Type of event

@@ -52,6 +52,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.Arrays;
@@ -112,8 +113,10 @@ class CmsPsuPisMapperTest {
     private static final LocalDate REQUESTED_EXECUTION_DATE = LocalDate.now();
     private static final OffsetDateTime REQUESTED_EXECUTION_TIME = OffsetDateTime.now();
     private static final PisDayOfExecution DAY_OF_EXECUTION = PisDayOfExecution.DAY_1;
-    private static final LocalDate START_DATE = LocalDate.now().minus(10, ChronoUnit.DAYS);
+    private static final LocalDate START_DATE = LocalDate.now().minusDays(10);
     private static final LocalDate END_DATE = LocalDate.now();
+    private static final OffsetDateTime START_DATE_TIME = OffsetDateTime.now().minusDays(10);
+    private static final OffsetDateTime END_DATE_TIME = OffsetDateTime.now();
     private static final PisExecutionRule EXECUTION_RULE = PisExecutionRule.FOLLOWING;
     private static final String FREEQUENCY = "DAILY";
     private static final PisRemittance REMITTANCE = jsonReader.getObjectFromFile("json/remittance.json", PisRemittance.class);
@@ -342,6 +345,8 @@ class CmsPsuPisMapperTest {
         pisPaymentData.setDayOfExecution(DAY_OF_EXECUTION);
         pisPaymentData.setStartDate(START_DATE);
         pisPaymentData.setEndDate(END_DATE);
+        pisPaymentData.setStartDateTime(START_DATE_TIME);
+        pisPaymentData.setEndDateTime(END_DATE_TIME);
         pisPaymentData.setExecutionRule(EXECUTION_RULE);
         pisPaymentData.setFrequency(FREEQUENCY);
         pisPaymentData.setUltimateDebtor(ULTIMATE_DEBTOR);

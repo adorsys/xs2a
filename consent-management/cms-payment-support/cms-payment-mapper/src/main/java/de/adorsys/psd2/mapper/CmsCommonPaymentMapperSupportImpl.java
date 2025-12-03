@@ -91,6 +91,8 @@ public class CmsCommonPaymentMapperSupportImpl implements CmsCommonPaymentMapper
         periodicPayment.setDayOfExecution(mapToPisDayOfExecution(periodicPaymentInitiationJson.getDayOfExecution()));
         periodicPayment.setStartDate(periodicPaymentInitiationJson.getStartDate());
         periodicPayment.setEndDate(periodicPaymentInitiationJson.getEndDate());
+        periodicPayment.setStartDateTime(periodicPaymentInitiationJson.getStartDateTime());
+        periodicPayment.setEndDateTime(periodicPaymentInitiationJson.getEndDateTime());
         periodicPayment.setExecutionRule(mapToPisExecutionRule(periodicPaymentInitiationJson.getExecutionRule()).orElse(null));
         periodicPayment.setFrequency(mapToFrequencyCode(periodicPaymentInitiationJson.getFrequency()));
         periodicPayment.setUltimateDebtor(periodicPaymentInitiationJson.getUltimateDebtor());
@@ -135,6 +137,7 @@ public class CmsCommonPaymentMapperSupportImpl implements CmsCommonPaymentMapper
         singlePayment.setCreditorName(paymentInitiationJson.getCreditorName());
         singlePayment.setCreditorAddress(mapToCmsAddress(paymentInitiationJson.getCreditorAddress()));
         singlePayment.setRequestedExecutionDate(paymentInitiationJson.getRequestedExecutionDate());
+        singlePayment.setRequestedExecutionTime(paymentInitiationJson.getRequestedExecutionTime());
         singlePayment.setPaymentStatus(cmsCommonPayment.getTransactionStatus());
         singlePayment.setUltimateDebtor(paymentInitiationJson.getUltimateDebtor());
         singlePayment.setUltimateCreditor(paymentInitiationJson.getUltimateCreditor());
@@ -195,10 +198,20 @@ public class CmsCommonPaymentMapperSupportImpl implements CmsCommonPaymentMapper
         return Optional.ofNullable(pisAddress)
                    .map(adr -> {
                        CmsAddress cmsAddress = new CmsAddress();
+                       cmsAddress.setAddressLines(adr.getAddressLines());
+                       cmsAddress.setDepartment(adr.getDepartment());
+                       cmsAddress.setSubDepartment(adr.getSubDepartment());
                        cmsAddress.setStreetName(adr.getStreetName());
                        cmsAddress.setBuildingNumber(adr.getBuildingNumber());
-                       cmsAddress.setTownName(adr.getTownName());
+                       cmsAddress.setBuildingName(adr.getBuildingName());
+                       cmsAddress.setFloor(adr.getFloor());
+                       cmsAddress.setPostBox(adr.getPostBox());
+                       cmsAddress.setRoom(adr.getRoom());
                        cmsAddress.setPostCode(adr.getPostCode());
+                       cmsAddress.setTownName(adr.getTownName());
+                       cmsAddress.setTownLocationName(adr.getTownLocationName());
+                       cmsAddress.setDistrictName(adr.getDistrictName());
+                       cmsAddress.setCountrySubDivision(adr.getCountrySubDivision());
                        cmsAddress.setCountry(adr.getCountry());
                        return cmsAddress;
                    }).orElse(null);

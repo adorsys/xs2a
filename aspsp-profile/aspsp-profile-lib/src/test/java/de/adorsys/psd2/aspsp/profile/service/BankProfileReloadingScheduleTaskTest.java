@@ -26,6 +26,8 @@ import de.adorsys.psd2.aspsp.profile.domain.common.CommonAspspProfileBankSetting
 import de.adorsys.psd2.aspsp.profile.domain.piis.PiisAspspProfileBankSetting;
 import de.adorsys.psd2.aspsp.profile.domain.pis.PisAspspProfileBankSetting;
 import de.adorsys.psd2.aspsp.profile.domain.sb.SbAspspProfileBankSetting;
+import de.adorsys.psd2.aspsp.profile.domain.security.SecurityAspspProfileBankSetting;
+import de.adorsys.psd2.aspsp.profile.domain.vop.VopAspspProfileBankSetting;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -72,7 +74,7 @@ class BankProfileReloadingScheduleTaskTest {
 
     private ProfileConfiguration buildNewProfileConfiguration() {
         ProfileConfiguration profileConfiguration = new ProfileConfiguration();
-        profileConfiguration.setSetting(new BankProfileSetting(buildAisAspspProfileBankSetting(), buildPisAspspProfileBankSetting(), buildPiisAspspProfileBankSetting(), buildSbAspspProfileBankSetting(), buildCommonAspspProfileBankSetting()));
+        profileConfiguration.setSetting(new BankProfileSetting(buildAisAspspProfileBankSetting(), buildPisAspspProfileBankSetting(), buildPiisAspspProfileBankSetting(), buildVopAspspProfileBankSetting(), buildSecurityAspspProfileBankSetting(), buildSbAspspProfileBankSetting(), buildCommonAspspProfileBankSetting()));
         return profileConfiguration;
     }
 
@@ -90,6 +92,14 @@ class BankProfileReloadingScheduleTaskTest {
 
     private SbAspspProfileBankSetting buildSbAspspProfileBankSetting() {
         return new SbAspspProfileBankSetting();
+    }
+
+    private VopAspspProfileBankSetting buildVopAspspProfileBankSetting() {
+        return new VopAspspProfileBankSetting();
+    }
+
+    private SecurityAspspProfileBankSetting buildSecurityAspspProfileBankSetting() {
+        return new SecurityAspspProfileBankSetting();
     }
 
     private CommonAspspProfileBankSetting buildCommonAspspProfileBankSetting() {

@@ -49,7 +49,9 @@ public class Xs2aAuthorisationService {
     /**
      * Stores created authorisation
      *
+     * @param request the authorisation creation request
      * @param parentId String representation of identifier of stored parent
+     * @param authorisationType the type of authorisation
      * @return CreateAuthorisationResponse object with authorisation ID and scaStatus
      */
     public Optional<CreateAuthorisationResponse> createAuthorisation(CreateAuthorisationRequest request, String parentId, AuthorisationType authorisationType) {
@@ -144,6 +146,7 @@ public class Xs2aAuthorisationService {
      * Requests to retrieve authorisation IDs by parent ID
      *
      * @param parentId String representation of identifier of stored consent
+     * @param authorisationType the type of authorisation
      * @return list of consent authorisation IDs
      */
     public Optional<List<String>> getAuthorisationSubResources(String parentId, AuthorisationType authorisationType) {
@@ -163,8 +166,9 @@ public class Xs2aAuthorisationService {
     /**
      * Retrieves SCA status of authorisation
      *
-     * @param parentId        String representation of consent identifier
      * @param authorisationId String representation of authorisation identifier
+     * @param parentId        String representation of consent identifier
+     * @param authorisationType the type of authorisation
      * @return SCA status of the authorisation
      */
     public Optional<ScaStatus> getAuthorisationScaStatus(String authorisationId, String parentId, AuthorisationType authorisationType) {

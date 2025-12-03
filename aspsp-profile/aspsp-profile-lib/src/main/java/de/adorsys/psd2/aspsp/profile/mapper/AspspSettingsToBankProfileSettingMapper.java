@@ -28,6 +28,10 @@ import de.adorsys.psd2.aspsp.profile.domain.piis.PiisAspspProfileBankSetting;
 import de.adorsys.psd2.aspsp.profile.domain.piis.PiisAspspProfileSetting;
 import de.adorsys.psd2.aspsp.profile.domain.pis.PisAspspProfileBankSetting;
 import de.adorsys.psd2.aspsp.profile.domain.pis.PisAspspProfileSetting;
+import de.adorsys.psd2.aspsp.profile.domain.security.SecurityAspspProfileBankSetting;
+import de.adorsys.psd2.aspsp.profile.domain.security.SecurityAspspProfileSetting;
+import de.adorsys.psd2.aspsp.profile.domain.vop.VopAspspProfileBankSetting;
+import de.adorsys.psd2.aspsp.profile.domain.vop.VopAspspProfileSetting;
 import de.adorsys.psd2.xs2a.core.profile.StartAuthorisationMode;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -44,12 +48,22 @@ public interface AspspSettingsToBankProfileSettingMapper {
         return startAuthorisationMode == null ? "AUTO" : startAuthorisationMode.getValue();
     }
 
-    void updateAisAspspProfileBankSetting(AisAspspProfileSetting ais, @MappingTarget AisAspspProfileBankSetting aisAspspProfileBankSetting);
+    void updateAisAspspProfileBankSetting(AisAspspProfileSetting ais,
+            @MappingTarget AisAspspProfileBankSetting aisAspspProfileBankSetting);
 
-    void updatePisAspspProfileBankSetting(PisAspspProfileSetting pis, @MappingTarget PisAspspProfileBankSetting pisAspspProfileBankSetting);
+    void updatePisAspspProfileBankSetting(PisAspspProfileSetting pis,
+            @MappingTarget PisAspspProfileBankSetting pisAspspProfileBankSetting);
 
-    void updatePiisAspspProfileBankSetting(PiisAspspProfileSetting piis, @MappingTarget PiisAspspProfileBankSetting piisAspspProfileBankSetting);
+    void updatePiisAspspProfileBankSetting(PiisAspspProfileSetting piis,
+            @MappingTarget PiisAspspProfileBankSetting piisAspspProfileBankSetting);
+
+    void updateVopAspspProfileBankSetting(VopAspspProfileSetting vop,
+            @MappingTarget VopAspspProfileBankSetting vopAspspProfileBankSetting);
+
+    void updateSecurityAspspProfileBankSetting(SecurityAspspProfileSetting security,
+            @MappingTarget SecurityAspspProfileBankSetting securityAspspProfileBankSetting);
 
     @Mapping(target = "startAuthorisationMode", source = "startAuthorisationMode", qualifiedByName = "mapStartAuthorisationMode")
-    void updateCommonAspspProfileBankSetting(CommonAspspProfileSetting common, @MappingTarget CommonAspspProfileBankSetting commonAspspProfileBankSetting);
+    void updateCommonAspspProfileBankSetting(CommonAspspProfileSetting common,
+            @MappingTarget CommonAspspProfileBankSetting commonAspspProfileBankSetting);
 }

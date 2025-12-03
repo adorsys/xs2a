@@ -29,11 +29,37 @@ import java.util.Optional;
 
 public interface ConsentAuthorizationService extends ScaApproachServiceTypeProvider {
 
+    /**
+     * Creates a new consent authorization.
+     *
+     * @param createAuthorisationRequest the authorization creation request
+     * @return an Optional containing the authorization response if successful, empty otherwise
+     */
     Optional<CreateConsentAuthorizationResponse> createConsentAuthorization(Xs2aCreateAuthorisationRequest createAuthorisationRequest);
 
+    /**
+     * Updates consent PSU data during the authorization process.
+     *
+     * @param request the authorization parameters
+     * @param response the authorization processor response
+     * @return the updated authorization processor response
+     */
     AuthorisationProcessorResponse updateConsentPsuData(CommonAuthorisationParameters request, AuthorisationProcessorResponse response);
 
+    /**
+     * Retrieves a consent authorization by its ID.
+     *
+     * @param authorizationId the authorization ID
+     * @return an Optional containing the authorization if found, empty otherwise
+     */
     Optional<Authorisation> getConsentAuthorizationById(String authorizationId);
 
+    /**
+     * Retrieves the SCA status of an authorization.
+     *
+     * @param consentId the consent ID
+     * @param authorisationId the authorization ID
+     * @return an Optional containing the SCA status if found, empty otherwise
+     */
     Optional<ScaStatus> getAuthorisationScaStatus(String consentId, String authorisationId);
 }

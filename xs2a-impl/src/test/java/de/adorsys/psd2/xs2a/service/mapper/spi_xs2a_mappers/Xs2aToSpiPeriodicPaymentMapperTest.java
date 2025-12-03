@@ -21,13 +21,25 @@ package de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers;
 import de.adorsys.psd2.core.payment.model.PurposeCode;
 import de.adorsys.psd2.xs2a.core.domain.address.Xs2aAddress;
 import de.adorsys.psd2.xs2a.core.domain.address.Xs2aCountryCode;
-import de.adorsys.psd2.xs2a.core.pis.*;
+import de.adorsys.psd2.xs2a.core.pis.FrequencyCode;
+import de.adorsys.psd2.xs2a.core.pis.PisDayOfExecution;
+import de.adorsys.psd2.xs2a.core.pis.PisExecutionRule;
+import de.adorsys.psd2.xs2a.core.pis.Remittance;
+import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
+import de.adorsys.psd2.xs2a.core.pis.Xs2aAmount;
 import de.adorsys.psd2.xs2a.core.profile.AccountReference;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.domain.pis.PeriodicPayment;
 import de.adorsys.psd2.xs2a.spi.domain.account.SpiAccountReference;
 import de.adorsys.psd2.xs2a.spi.domain.common.SpiAmount;
-import de.adorsys.psd2.xs2a.spi.domain.payment.*;
+import de.adorsys.psd2.xs2a.spi.domain.payment.SpiAddress;
+import de.adorsys.psd2.xs2a.spi.domain.payment.SpiFrequencyCode;
+import de.adorsys.psd2.xs2a.spi.domain.payment.SpiPeriodicPayment;
+import de.adorsys.psd2.xs2a.spi.domain.payment.SpiPisDayOfExecution;
+import de.adorsys.psd2.xs2a.spi.domain.payment.SpiPisExecutionRule;
+import de.adorsys.psd2.xs2a.spi.domain.payment.SpiPurposeCode;
+import de.adorsys.psd2.xs2a.spi.domain.payment.SpiRemittance;
+import de.adorsys.psd2.xs2a.spi.domain.payment.SpiTransactionStatus;
 import de.adorsys.psd2.xs2a.spi.domain.psu.SpiPsuData;
 import de.adorsys.psd2.xs2a.web.mapper.RemittanceMapper;
 import org.junit.jupiter.api.BeforeEach;
@@ -45,7 +57,11 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Currency;
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
@@ -72,6 +88,8 @@ class Xs2aToSpiPeriodicPaymentMapperTest {
     private static final String PSU_ID_2 = "Second";
     private static final LocalDate START_DATE = LocalDate.now().minusDays(1);
     private static final LocalDate END_DATE = LocalDate.now().plusDays(1);
+    private static final OffsetDateTime START_DATE_TIME = LocalDate.now().minusDays(1).atTime(LocalTime.MIN).atZone(ZoneOffset.UTC).toOffsetDateTime();
+    private static final OffsetDateTime END_DATE_TIME = LocalDate.now().plusDays(1).atTime(LocalTime.MAX).atZone(ZoneOffset.UTC).toOffsetDateTime();
     private static final LocalDate REQUESTED_EXECUTION_DATE = LocalDate.now();
     private static final OffsetDateTime REQUESTED_EXECUTION_TIME = OffsetDateTime.now();
     private static final TransactionStatus TRANSACTION_STATUS = TransactionStatus.RCVD;
@@ -151,6 +169,8 @@ class Xs2aToSpiPeriodicPaymentMapperTest {
         SpiPeriodicPayment spiPeriodicPayment = new SpiPeriodicPayment(PAYMENT_PRODUCT);
         spiPeriodicPayment.setStartDate(START_DATE);
         spiPeriodicPayment.setEndDate(END_DATE);
+        spiPeriodicPayment.setStartDateTime(START_DATE_TIME);
+        spiPeriodicPayment.setEndDateTime(END_DATE_TIME);
         spiPeriodicPayment.setExecutionRule(SpiPisExecutionRule.PRECEDING);
         spiPeriodicPayment.setFrequency(SpiFrequencyCode.MONTHLY);
         spiPeriodicPayment.setDayOfExecution(SpiPisDayOfExecution.DAY_13);
@@ -183,6 +203,8 @@ class Xs2aToSpiPeriodicPaymentMapperTest {
         PeriodicPayment periodicPayment = new PeriodicPayment();
         periodicPayment.setStartDate(START_DATE);
         periodicPayment.setEndDate(END_DATE);
+        periodicPayment.setStartDateTime(START_DATE_TIME);
+        periodicPayment.setEndDateTime(END_DATE_TIME);
         periodicPayment.setFrequency(FrequencyCode.MONTHLY);
         periodicPayment.setExecutionRule(PisExecutionRule.PRECEDING);
         periodicPayment.setDayOfExecution(PisDayOfExecution.DAY_13);
@@ -211,7 +233,7 @@ class Xs2aToSpiPeriodicPaymentMapperTest {
     }
 
     private SpiAddress buildSpiAddress() {
-        return new SpiAddress(STREET, BUILDING_NUMBER, CITY, POSTAL_CODE, COUNTRY);
+        return new SpiAddress(null,null,null,null,null,null,null,null,null,null,STREET, BUILDING_NUMBER, CITY, POSTAL_CODE, COUNTRY);
     }
 
     private Xs2aAddress buildXs2aAddress() {

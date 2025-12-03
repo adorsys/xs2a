@@ -29,10 +29,20 @@
   "markupFeePercentage": "1",
   "cardAcceptorId": "acceptor ID",
   "cardAcceptorAddress": {
+    "addressLines": ["Address Line 1", "Address Line 2"],
+    "department": "Department A",
+    "subDepartment": "Sub Department B",
     "streetName": "WBG Straße",
     "buildingNumber": "56",
-    "townName": "Nürnberg",
+    "buildingName": "Building Name",
+    "floor": "3",
+    "postBox": "PO Box 123",
+    "room": "Room 101",
     "postCode": "90543",
+    "townName": "Nürnberg",
+    "townLocationName": "Town Location",
+    "districtName": "District Name",
+    "countrySubDivision": "Bavaria",
     "country": {
       "code": "DE"
     }

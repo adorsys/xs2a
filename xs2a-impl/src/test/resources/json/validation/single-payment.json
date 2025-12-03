@@ -1,6 +1,6 @@
 {
   "endToEndIdentification": "WBG-123456789",
-  "instructionIdentification" : "ABC/4562/2020-01-10",
+  "instructionIdentification": "ABC/4562/2020-01-10",
   "debtorAccount": {
     "currency": "EUR",
     "iban": "DE52500105173911841934"
@@ -16,13 +16,26 @@
   "creditorAgent": "AAAADEBBXXX",
   "creditorName": "WBG",
   "creditorAddress": {
+    "addressLines": [
+      "WBG Straße 56",
+      "mocked address line 2"
+    ],
+    "department": "mocked department",
+    "subDepartment": "mocked sub-department",
+    "streetName": "WBG Straße",
     "buildingNumber": "56",
+    "buildingName": "mocked building name",
+    "floor": "mocked floor",
+    "postBox": "mocked post box",
+    "room": "mocked room",
+    "postCode": "90543",
     "townName": "Nürnberg",
+    "townLocationName": "mocked town location name",
+    "districtName": "mocked district name",
+    "countrySubDivision": "Bayern",
     "country": {
       "code": "DE"
-    },
-    "postCode": "90543",
-    "streetName": "WBG Straße"
+    }
   },
   "remittanceInformationUnstructured": "Ref. Number WBG-1222"
 }

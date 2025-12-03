@@ -141,6 +141,8 @@ public class PisCommonPaymentMapper {
                        pisPayment.setPurposeCode(pm.getPurposeCode());
                        pisPayment.setStartDate(pm.getStartDate());
                        pisPayment.setEndDate(pm.getEndDate());
+                       pisPayment.setStartDateTime(pm.getStartDateTime());
+                       pisPayment.setEndDateTime(pm.getEndDateTime());
                        pisPayment.setExecutionRule(pm.getExecutionRule());
                        pisPayment.setFrequency(pm.getFrequency());
                        pisPayment.setDayOfExecution(pm.getDayOfExecution());

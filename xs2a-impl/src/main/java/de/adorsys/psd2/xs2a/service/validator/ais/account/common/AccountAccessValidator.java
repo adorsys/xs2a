@@ -30,9 +30,19 @@ import java.util.EnumSet;
 
 import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.CONSENT_INVALID;
 
+/**
+ * Validator for checking account access permissions in consents.
+ */
 @Component
 public class AccountAccessValidator {
 
+    /**
+     * Validates account access permissions.
+     *
+     * @param aisConsent the AIS consent to validate
+     * @param withBalance flag indicating if balance access is requested
+     * @return validation result
+     */
     public ValidationResult validate(AisConsent aisConsent, boolean withBalance) {
         if (withBalance) {
             AisConsentData aisConsentData = aisConsent.getConsentData();

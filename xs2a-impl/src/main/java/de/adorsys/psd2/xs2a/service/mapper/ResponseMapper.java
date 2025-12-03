@@ -21,6 +21,7 @@ package de.adorsys.psd2.xs2a.service.mapper;
 import de.adorsys.psd2.xs2a.domain.CustomContentTypeProvider;
 import de.adorsys.psd2.xs2a.domain.ResponseObject;
 import de.adorsys.psd2.xs2a.web.header.ResponseHeaders;
+import de.adorsys.psd2.xs2a.web.header.VopResponseHeaders;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -118,6 +119,32 @@ public class ResponseMapper {
     }
 
     /**
+     * Generates {@link ResponseEntity} with the response body in response to a successful resource creation request
+     *
+     * @param response        response object from the service with the body inside
+     * @param vopResponseHeaders VOP-specific headers to be returned in the response
+     * @param <T>             type of the body in the response object
+     * @return response entity with Created HTTP status, body and headers
+     */
+    public <T> ResponseEntity created(ResponseObject<T> response, VopResponseHeaders vopResponseHeaders) {
+        return generateResponseWithVopHeaders(response, CREATED, null, vopResponseHeaders);
+    }
+
+    /**
+     * Generates {@link ResponseEntity} with the response body and VOP headers in response to a generic successful request
+     *
+     * @param response        response object from the service with the body inside
+     * @param mapper          function for transforming body into another type
+     * @param vopResponseHeaders VOP-specific headers to be returned in the response
+     * @param <T>             type of the body in the response object
+     * @param <R>             type of the body after applying mapper
+     * @return response entity with OK HTTP status, body and VOP headers
+     */
+    public <T, R> ResponseEntity ok(ResponseObject<T> response, Function<T, R> mapper, VopResponseHeaders vopResponseHeaders) { //NOPMD short method name ok corresponds to status code
+        return generateResponseWithVopHeaders(response, OK, mapper, vopResponseHeaders);
+    }
+
+    /**
      * Generates {@link ResponseEntity} with the response body in response to a generic successful request
      *
      * @param response response object from the service with the body inside
@@ -212,5 +239,29 @@ public class ResponseMapper {
         return mapper == null
                    ? body
                    : mapper.apply(body);
+    }
+
+    private <T, R> ResponseEntity generateResponseWithVopHeaders(ResponseObject<T> response,
+                                                   HttpStatus positiveStatus,
+                                                   Function<T, R> mapper,
+                                                   VopResponseHeaders vopResponseHeaders) {
+        if (response.hasError()) {
+            throw new IllegalArgumentException("Response includes an error: " + response.getError());
+        }
+
+        T body = response.getBody();
+
+        ResponseEntity.BodyBuilder responseBuilder =
+            ResponseEntity
+                .status(positiveStatus);
+
+        if (body instanceof CustomContentTypeProvider) {
+            responseBuilder = responseBuilder
+                                  .contentType(((CustomContentTypeProvider) body).getCustomContentType());
+        }
+
+        return responseBuilder
+                   .headers(vopResponseHeaders.getHttpHeaders())
+                   .body(getBody(body, mapper));
     }
 }

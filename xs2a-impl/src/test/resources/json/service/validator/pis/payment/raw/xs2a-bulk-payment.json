@@ -32,13 +32,23 @@
       "creditorAgent": "AAAADEBBXXX",
       "creditorName": "WBG",
       "creditorAddress": {
+        "addressLines": ["Address Line 1", "Address Line 2"],
+        "department": "Department A",
+        "subDepartment": "Sub Department B",
+        "streetName": "WBG Straße",
         "buildingNumber": "56",
+        "buildingName": "Building Name",
+        "floor": "3",
+        "postBox": "PO Box 123",
+        "room": "Room 101",
+        "postCode": "90543",
         "townName": "Nürnberg",
+        "townLocationName": "Town Location",
+        "districtName": "District Name",
+        "countrySubDivision": "Bavaria",
         "country": {
           "code": "DE"
-        },
-        "postCode": "90543",
-        "streetName": "WBG Straße"
+        }
       },
       "remittanceInformationUnstructured": "Ref. Number WBG-1234",
       "remittanceInformationUnstructuredArray": ["Ref. Number WBG-1234"],

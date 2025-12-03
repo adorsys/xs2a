@@ -25,6 +25,15 @@ import de.adorsys.psd2.xs2a.domain.pis.PaymentInformationResponse;
 
 public interface ReadPaymentService {
 
+    /**
+     * Retrieves payment information.
+     *
+     * @param commonPaymentData the common payment data
+     * @param psuData the PSU data
+     * @param encryptedPaymentId the encrypted payment ID
+     * @param acceptMediaType the accept media type
+     * @return payment information response containing the payment details
+     */
     PaymentInformationResponse<CommonPayment> getPayment(CommonPaymentData commonPaymentData, PsuIdData psuData,
                                                          String encryptedPaymentId, String acceptMediaType);
 }

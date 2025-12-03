@@ -91,6 +91,7 @@ public class PaymentMapper {
         payment.setRemittanceInformationStructured(remittanceMapper.mapToRemittance(paymentRequest.getRemittanceInformationStructured()));
         payment.setRemittanceInformationStructuredArray(mapToRemittanceArray(paymentRequest.getRemittanceInformationStructuredArray()));
         payment.setRequestedExecutionDate(paymentRequest.getRequestedExecutionDate());
+        payment.setRequestedExecutionTime(paymentRequest.getRequestedExecutionTime());
         payment.setUltimateDebtor(paymentRequest.getUltimateDebtor());
         payment.setUltimateCreditor(paymentRequest.getUltimateCreditor());
         payment.setPurposeCode(purposeCodeMapper.mapToPurposeCode(paymentRequest.getPurposeCode()));
@@ -114,8 +115,10 @@ public class PaymentMapper {
         payment.setCreditorAddress(mapToXs2aAddress(paymentRequest.getCreditorAddress()));
 
         payment.setStartDate(paymentRequest.getStartDate());
+        payment.setStartDateTime(paymentRequest.getStartDateTime());
         payment.setExecutionRule(mapToPisExecutionRule(paymentRequest.getExecutionRule()).orElse(null));
         payment.setEndDate(paymentRequest.getEndDate());
+        payment.setEndDateTime(paymentRequest.getEndDateTime());
         payment.setFrequency(mapToFrequencyCode(paymentRequest.getFrequency()));
         payment.setDayOfExecution(mapToPisDayOfExecution(paymentRequest.getDayOfExecution()).orElse(null));
         payment.setMonthsOfExecution(mapToMonthsOfExecution(paymentRequest.getMonthsOfExecution()));
@@ -185,10 +188,20 @@ public class PaymentMapper {
         return Optional.ofNullable(address)
                    .map(a -> {
                        Xs2aAddress targetAddress = new Xs2aAddress();
+                       targetAddress.setAddressLines(a.getAddressLines());
+                       targetAddress.setDepartment(a.getDepartment());
+                       targetAddress.setSubDepartment(a.getSubDepartment());
                        targetAddress.setStreetName(a.getStreetName());
                        targetAddress.setBuildingNumber(a.getBuildingNumber());
-                       targetAddress.setTownName(a.getTownName());
+                       targetAddress.setBuildingName(a.getBuildingName());
+                       targetAddress.setFloor(a.getFloor());
+                       targetAddress.setPostBox(a.getPostBox());
+                       targetAddress.setRoom(a.getRoom());
                        targetAddress.setPostCode(a.getPostCode());
+                       targetAddress.setTownName(a.getTownName());
+                       targetAddress.setTownLocationName(a.getTownLocationName());
+                       targetAddress.setDistrictName(a.getDistrictName());
+                       targetAddress.setCountrySubDivision(a.getCountrySubDivision());
                        targetAddress.setCountry(new Xs2aCountryCode(a.getCountry()));
                        return targetAddress;
                    })
@@ -198,11 +211,24 @@ public class PaymentMapper {
     private BulkPayment mapToXs2aBulkPayment(BulkPaymentInitiationJson paymentRequest) {
         BulkPayment bulkPayment = new BulkPayment();
         bulkPayment.setBatchBookingPreferred(paymentRequest.isBatchBookingPreferred());
+        bulkPayment.setCategoryPurposeCode(mapToCoreCategoryPurposeCode(paymentRequest.getCategoryPurposeCode()));
         bulkPayment.setDebtorAccount(mapToXs2aAccountReference(paymentRequest.getDebtorAccount()));
         bulkPayment.setRequestedExecutionDate(paymentRequest.getRequestedExecutionDate());
         bulkPayment.setRequestedExecutionTime(paymentRequest.getRequestedExecutionTime());
         bulkPayment.setPayments(mapBulkPaymentToSinglePayments(paymentRequest));
         return bulkPayment;
+    }
+
+    private de.adorsys.psd2.core.payment.model.CategoryPurposeCode mapToCoreCategoryPurposeCode(de.adorsys.psd2.model.CategoryPurposeCode apiCategoryPurposeCode) {
+        if (apiCategoryPurposeCode == null) {
+            return null;
+        }
+
+        try {
+            return de.adorsys.psd2.core.payment.model.CategoryPurposeCode.valueOf(apiCategoryPurposeCode.name());
+        } catch (IllegalArgumentException e) {
+            return null;
+        }
     }
 
     private List<SinglePayment> mapBulkPaymentToSinglePayments(BulkPaymentInitiationJson paymentRequest) {

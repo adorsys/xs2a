@@ -37,16 +37,36 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Optional;
 
+/**
+ * Abstract base class for consent authorization services.
+ * Provides common authorization functionality for different types of consents.
+ *
+ * @param <T> the consent type
+ */
 @Slf4j
 @AllArgsConstructor
 public abstract class AbstractConsentAuthorizationService<T> implements ConsentAuthorizationService {
     private final Xs2aConsentService consentService;
     private final Xs2aAuthorisationService authorisationService;
     private final ConsentPsuDataMapper consentPsuDataMapper;
+    /**
+     * Mapper for converting between XS2A and CMS consent authorisation objects.
+     */
     protected final Xs2aConsentAuthorisationMapper xs2aConsentAuthorisationMapper;
 
+    /**
+     * Retrieves a consent by its ID.
+     *
+     * @param consentId the consent ID
+     * @return an Optional containing the consent if found, empty otherwise
+     */
     protected abstract Optional<T> getConsentById(String consentId);
 
+    /**
+     * Updates the consent authorisation with the provided parameters.
+     *
+     * @param mapToUpdateConsentPsuDataReq the consent authorisation parameters to update
+     */
     protected abstract void updateConsentAuthorisation(ConsentAuthorisationsParameters mapToUpdateConsentPsuDataReq);
 
     @Override
@@ -76,6 +96,15 @@ public abstract class AbstractConsentAuthorizationService<T> implements ConsentA
                    });
     }
 
+    /**
+     * Creates an authorisation request with the provided parameters.
+     *
+     * @param authorisationId the authorisation ID
+     * @param scaStatus the SCA status
+     * @param psuData the PSU data
+     * @param scaApproach the SCA approach
+     * @return the created authorisation request
+     */
     protected CreateAuthorisationRequest createAuthorisationRequest(String authorisationId, ScaStatus scaStatus, PsuIdData psuData,
                                                                     ScaApproach scaApproach) {
         return xs2aConsentAuthorisationMapper.mapToAuthorisationRequest(authorisationId,

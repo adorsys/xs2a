@@ -29,6 +29,7 @@ public interface CmsAddressMapper {
 
     Address mapToAddress(CmsAddress cmsAddress);
 
+    @Mapping(target = "addressLines", source = "addressLines")
     @Mapping(target = "postCode", source = "postalCode")
     @Mapping(target = "streetName", source = "street")
     @Mapping(target = "townName", source = "city")

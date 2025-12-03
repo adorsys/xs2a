@@ -36,16 +36,22 @@ node
 
 ### Other ###
 bin/
-.factorypath
 *.log
 logs
 log
 
 .DS_Store
-.springBeans
 
 cms-db-schema/liquibase.properties
 **/META-INF
 **/main/java/META-INF
 xs2a-server-api/.idea
 pages
+xs2a-server-api-v2/.idea/vcs.xml
+xs2a-server-api-v2/.idea/misc.xml
+xs2a-server-api-v2/.idea/jarRepositories.xml
+xs2a-server-api-v2/.idea/compiler.xml
+xs2a-server-api-v2/.idea/encodings.xml
+xs2a-server-api-v2/.idea/.gitignore
+doc/usecases/diagrams/test-grok.puml
+aspsp-profile/.idea/workspace.xml

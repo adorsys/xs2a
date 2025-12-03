@@ -39,6 +39,11 @@ public abstract class AbstractAisTppValidator<T extends TppInfoProvider> extends
         return aisConsentTppInfoValidator;
     }
 
+    /**
+     * Sets the AIS consent TPP info validator.
+     *
+     * @param aisConsentTppInfoValidator the validator to set
+     */
     @Autowired
     public void setAisConsentTppInfoValidator(AisConsentTppInfoValidator aisConsentTppInfoValidator) {
         this.aisConsentTppInfoValidator = aisConsentTppInfoValidator;

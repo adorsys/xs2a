@@ -88,6 +88,19 @@ public class PaymentModelMapperPsd2 {
         return response.getPaymentStatusRaw();
     }
 
+    public BulkPaymentExtendedStatusResponse200Json mapToBulkPaymentExtendedStatusResponse(
+            GetBulkPaymentExtendedStatusResponse response) {
+        BulkPaymentExtendedStatusResponse200Json response200Json = new BulkPaymentExtendedStatusResponse200Json();
+        response200Json.setGroupStatus(mapToGroupStatus(response.getGroupStatus()));
+        response200Json.setFundsAvailable(response.getFundsAvailable());
+        response200Json.setPsuMessage(response.getPsuMessage());
+        response200Json.setLinks(hrefLinkMapper.mapToLinksMap(response.getLinks()));
+        response200Json.setApiClientMessages(
+                tppMessageGenericMapper.mapToTppMessageGenericList(response.getTppMessageInformation()));
+
+        return response200Json;
+    }
+
     public PaymentInitiationRequestResponse201 mapToPaymentInitiationResponse(PaymentInitiationResponse response) {
         PaymentInitiationRequestResponse201 response201 = new PaymentInitiationRequestResponse201();
         response201.setTransactionStatus(mapToTransactionStatus(response.getTransactionStatus()));
@@ -169,5 +182,10 @@ public class PaymentModelMapperPsd2 {
 
     private String convertResponseToRawData(byte[] paymentData) {
         return IOUtils.toString(paymentData, Charset.defaultCharset().name());
+    }
+
+    private GroupStatus mapToGroupStatus(String groupStatusString) {
+        return Optional.ofNullable(GroupStatus.fromValue(groupStatusString))
+                .orElse(GroupStatus.ACTC);
     }
 }

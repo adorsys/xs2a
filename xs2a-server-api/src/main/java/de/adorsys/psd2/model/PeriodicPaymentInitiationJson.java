@@ -19,6 +19,7 @@
 package de.adorsys.psd2.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
@@ -27,6 +28,8 @@ import jakarta.validation.constraints.Size;
 import org.springframework.validation.annotation.Validated;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.util.Objects;
 
 /**
@@ -92,8 +95,14 @@ public class PeriodicPaymentInitiationJson   {
   @JsonProperty("startDate")
   private LocalDate startDate = null;
 
+  @JsonProperty("startDateTime")
+  private OffsetDateTime startDateTime = null;
+
   @JsonProperty("endDate")
   private LocalDate endDate = null;
+
+    @JsonProperty("endDateTime")
+    private OffsetDateTime endDateTime = null;
 
   @JsonProperty("executionRule")
   private ExecutionRule executionRule = null;
@@ -485,6 +494,25 @@ public class PeriodicPaymentInitiationJson   {
     this.endDate = endDate;
     return this;
   }
+    public PeriodicPaymentInitiationJson startDateTime(OffsetDateTime startDateTime) {
+        this.startDateTime = startDateTime;
+        return this;
+    }
+
+    /**
+     * The first applicable day and time of execution starting from this timestamp.  This attribute is only applicable to instant payments. Seconds and milli seconds might be ignored by the ASPSP. The ASPSP might restrict the implementation to startDate. This restriction will be part of the ASPSP documentation.
+     * @return startDateTime
+     **/
+    @Schema(description = "The first applicable day and time of execution starting from this timestamp.  This attribute is only applicable to instant payments. Seconds and milli seconds might be ignored by the ASPSP. The ASPSP might restrict the implementation to startDate. This restriction will be part of the ASPSP documentation. ")
+    @JsonProperty("startDateTime")
+
+    public OffsetDateTime getStartDateTime() {
+        return startDateTime;
+    }
+
+    public void setStartDateTime(OffsetDateTime startDateTime) {
+        this.startDateTime = startDateTime;
+    }
 
   /**
    * The last applicable day of execution. If not given, it is an infinite standing order.
@@ -506,6 +534,26 @@ public class PeriodicPaymentInitiationJson   {
     this.executionRule = executionRule;
     return this;
   }
+
+    public PeriodicPaymentInitiationJson endDateTime(OffsetDateTime endDateTime) {
+        this.endDateTime = endDateTime;
+        return this;
+    }
+
+    /**
+     * The last applicable day and time of requested execution. This attribute is only applicable to instant payments. If none of the attributes is given, it is an infinite standing order. The ASPSP might restrict the implementation to endDate. This restriction will be part of the ASPSP documentation.
+     * @return endDateTime
+     **/
+    @Schema(description = "The last applicable day and time of requested execution. This attribute is only applicable to instant payments. If none of the attributes is given, it is an infinite standing order. The ASPSP might restrict the implementation to endDate. This restriction will be part of the ASPSP documentation. ")
+    @JsonProperty("endDateTime")
+
+    public OffsetDateTime getEndDateTime() {
+        return endDateTime;
+    }
+
+    public void setEndDateTime(OffsetDateTime endDateTime) {
+        this.endDateTime = endDateTime;
+    }
 
   /**
    * Get executionRule
@@ -615,7 +663,9 @@ public class PeriodicPaymentInitiationJson   {
         Objects.equals(this.remittanceInformationStructured, periodicPaymentInitiationJson.remittanceInformationStructured) &&
         Objects.equals(this.remittanceInformationStructuredArray, periodicPaymentInitiationJson.remittanceInformationStructuredArray) &&
         Objects.equals(this.startDate, periodicPaymentInitiationJson.startDate) &&
+        Objects.equals(this.startDateTime, periodicPaymentInitiationJson.startDateTime) &&
         Objects.equals(this.endDate, periodicPaymentInitiationJson.endDate) &&
+        Objects.equals(this.endDateTime, periodicPaymentInitiationJson.endDateTime) &&
         Objects.equals(this.executionRule, periodicPaymentInitiationJson.executionRule) &&
         Objects.equals(this.frequency, periodicPaymentInitiationJson.frequency) &&
         Objects.equals(this.dayOfExecution, periodicPaymentInitiationJson.dayOfExecution) &&
@@ -624,7 +674,7 @@ public class PeriodicPaymentInitiationJson   {
 
   @Override
   public int hashCode() {
-    return Objects.hash(endToEndIdentification, instructionIdentification, debtorName, debtorAccount, ultimateDebtor, instructedAmount, creditorAccount, creditorAgent, creditorId, creditorName, creditorAddress, ultimateCreditor, purposeCode, remittanceInformationUnstructured, remittanceInformationUnstructuredArray, remittanceInformationStructured, remittanceInformationStructuredArray, startDate, endDate, executionRule, frequency, dayOfExecution, monthsOfExecution);
+    return Objects.hash(endToEndIdentification, instructionIdentification, debtorName, debtorAccount, ultimateDebtor, instructedAmount, creditorAccount, creditorAgent, creditorId, creditorName, creditorAddress, ultimateCreditor, purposeCode, remittanceInformationUnstructured, remittanceInformationUnstructuredArray, remittanceInformationStructured, remittanceInformationStructuredArray, startDate, startDateTime, endDate, endDateTime, executionRule, frequency, dayOfExecution, monthsOfExecution);
   }
 
   @Override
@@ -650,7 +700,9 @@ public class PeriodicPaymentInitiationJson   {
     sb.append("    remittanceInformationStructured: ").append(toIndentedString(remittanceInformationStructured)).append("\n");
     sb.append("    remittanceInformationStructuredArray: ").append(toIndentedString(remittanceInformationStructuredArray)).append("\n");
     sb.append("    startDate: ").append(toIndentedString(startDate)).append("\n");
+    sb.append("    startDateTime: ").append(toIndentedString(startDateTime)).append("\n");
     sb.append("    endDate: ").append(toIndentedString(endDate)).append("\n");
+    sb.append("    endDateTime: ").append(toIndentedString(endDateTime)).append("\n");
     sb.append("    executionRule: ").append(toIndentedString(executionRule)).append("\n");
     sb.append("    frequency: ").append(toIndentedString(frequency)).append("\n");
     sb.append("    dayOfExecution: ").append(toIndentedString(dayOfExecution)).append("\n");

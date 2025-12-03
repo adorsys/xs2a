@@ -51,6 +51,9 @@ import java.util.Optional;
 @AllArgsConstructor
 public abstract class AbstractReadPaymentService implements ReadPaymentService {
 
+    /**
+     * Provider for creating SPI context data.
+     */
     protected SpiContextDataProvider spiContextDataProvider;
 
     private final SpiErrorMapper spiErrorMapper;
@@ -102,7 +105,22 @@ public abstract class AbstractReadPaymentService implements ReadPaymentService {
         return new PaymentInformationResponse<>(xs2aPayment);
     }
 
+    /**
+     * Retrieves the SPI payment by ID from the SPI layer.
+     *
+     * @param spiContextData the SPI context data
+     * @param acceptMediaType the accept media type
+     * @param spiPayment the SPI payment object
+     * @param aspspConsentDataProvider the ASPSP consent data provider
+     * @return SPI response containing the payment data
+     */
     protected abstract SpiResponse getSpiPaymentById(SpiContextData spiContextData, String acceptMediaType, Object spiPayment, SpiAspspConsentDataProvider aspspConsentDataProvider);
 
+    /**
+     * Maps the SPI response to an XS2A payment object.
+     *
+     * @param spiResponse the SPI response
+     * @return the XS2A common payment object
+     */
     protected abstract CommonPayment getXs2aPayment(SpiResponse spiResponse);
 }

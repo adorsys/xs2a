@@ -37,6 +37,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
@@ -93,6 +94,10 @@ class CmsToXs2aPaymentMapperTest {
     private static final TransactionStatus TRANSACTION_STATUS = TransactionStatus.RCVD;
     private static final LocalDate START_DATE = LocalDate.of(2019, 2, 25);
     private static final LocalDate END_DATE = LocalDate.of(2019, 2, 28);
+
+    private static final OffsetDateTime START_DATE_TIME = LocalDateTime.of(2019, 2, 25, 0, 0, 0).atZone(ZoneOffset.UTC).toOffsetDateTime();
+    private static final OffsetDateTime END_DATE_TIME = LocalDateTime.of(2019, 2, 28, 0, 0, 0).atZone(ZoneOffset.UTC).toOffsetDateTime();
+
     private static final PisExecutionRule EXECUTION_RULE = PisExecutionRule.FOLLOWING;
     private static final String FREQUENCY = "ANNUAL";
     private static final PisDayOfExecution DAY_OF_EXECUTION = PisDayOfExecution.DAY_2;
@@ -160,6 +165,8 @@ class CmsToXs2aPaymentMapperTest {
         pisPayment.setTransactionStatus(TRANSACTION_STATUS);
         pisPayment.setStartDate(START_DATE);
         pisPayment.setEndDate(END_DATE);
+        pisPayment.setStartDateTime(START_DATE_TIME);
+        pisPayment.setEndDateTime(END_DATE_TIME);
         pisPayment.setExecutionRule(EXECUTION_RULE);
         pisPayment.setFrequency(FREQUENCY);
         pisPayment.setDayOfExecution(DAY_OF_EXECUTION);

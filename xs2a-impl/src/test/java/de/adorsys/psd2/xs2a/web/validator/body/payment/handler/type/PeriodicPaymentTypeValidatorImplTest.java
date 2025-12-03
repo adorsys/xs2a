@@ -313,8 +313,7 @@ class PeriodicPaymentTypeValidatorImplTest {
         address.setCountry(null);
 
         validator.validateAddress(address, messageError, validationConfig);
-        assertEquals(MessageErrorCode.FORMAT_ERROR_VALUE_REQUIRED, messageError.getTppMessage().getMessageErrorCode());
-        assertArrayEquals(new Object[]{"address.country"}, messageError.getTppMessage().getTextParameters());
+        assertTrue(messageError.getTppMessages().isEmpty());
     }
 
     @Test
@@ -322,8 +321,7 @@ class PeriodicPaymentTypeValidatorImplTest {
         address.getCountry().setCode("");
 
         validator.validateAddress(address, messageError, validationConfig);
-        assertEquals(MessageErrorCode.FORMAT_ERROR_VALUE_REQUIRED, messageError.getTppMessage().getMessageErrorCode());
-        assertArrayEquals(new Object[]{"address.country"}, messageError.getTppMessage().getTextParameters());
+        assertTrue(messageError.getTppMessages().isEmpty());
     }
 
     @Test
@@ -337,10 +335,11 @@ class PeriodicPaymentTypeValidatorImplTest {
     @Test
     void validatorAddress_startDate_null_error() {
         periodicPayment.setStartDate(null);
+        periodicPayment.setStartDateTime(null);
 
         validator.doPeriodicValidation(periodicPayment, messageError, validationConfig);
         assertEquals(MessageErrorCode.FORMAT_ERROR_NULL_VALUE, messageError.getTppMessage().getMessageErrorCode());
-        assertArrayEquals(new Object[]{"startDate"}, messageError.getTppMessage().getTextParameters());
+        assertArrayEquals(new Object[]{"startDate and startDateTime"}, messageError.getTppMessage().getTextParameters());
     }
 
     @Test

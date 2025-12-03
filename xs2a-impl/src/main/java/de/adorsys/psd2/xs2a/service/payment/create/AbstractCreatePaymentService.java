@@ -57,8 +57,18 @@ import static de.adorsys.psd2.xs2a.core.domain.TppMessageInformation.of;
 import static de.adorsys.psd2.xs2a.core.error.ErrorType.PIS_400;
 import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.PAYMENT_FAILED;
 
+/**
+ * Abstract base class for payment creation services.
+ * Provides common functionality for creating different types of payments.
+ *
+ * @param <P> the payment type
+ * @param <S> the payment initiation service type
+ */
 @RequiredArgsConstructor
 public abstract class AbstractCreatePaymentService<P extends CommonPayment, S extends PaymentInitiationService<P>> implements CreatePaymentService {
+    /**
+     * Service for managing common payment operations in PIS.
+     */
     protected final Xs2aPisCommonPaymentService pisCommonPaymentService;
     private final AuthorisationMethodDecider authorisationMethodDecider;
     private final Xs2aPisCommonPaymentMapper xs2aPisCommonPaymentMapper;
@@ -157,5 +167,12 @@ public abstract class AbstractCreatePaymentService<P extends CommonPayment, S ex
         }
     }
 
+    /**
+     * Creates a payment request object from raw payment data.
+     *
+     * @param payment the raw payment data bytes
+     * @param paymentInitiationParameters the payment initiation parameters
+     * @return the payment request object
+     */
     protected abstract P getPaymentRequest(byte[] payment, PaymentInitiationParameters paymentInitiationParameters);
 }

@@ -17,3 +17,40 @@ mvn clean install
 Mocked certificate in xs2a-impl uses the data provided as example in Swagger UI for the request with the following changes: commonName attribute contains empty value and roles attribute contains PISP, AISP and PIISP roles.
 
 4) Response will contain certificate and its private key
+
+== OCSP No Revocation Check Extension
+
+=== Configuration Parameter: ocspCheckNeeded
+
+The certificate generator includes an optional OCSP (Online Certificate Status Protocol) extension that can be controlled via the `ocspCheckNeeded` parameter.
+
+**Parameter Behavior:**
+* **OID**: `1.3.6.1.5.5.7.48.1.5` (RFC 6960)
+* **Purpose**: Controls whether the certificate includes OCSP No Revocation Check extension
+* **Default**: `false` (OCSP extension is added by default)
+
+[NOTE]
+====
+The `ocspCheckNeeded` parameter uses inverted logic:
+
+* `ocspCheckNeeded: false` (default) → OCSP extension **IS ADDED** to certificate
+* `ocspCheckNeeded: true` → OCSP extension **IS NOT ADDED** to certificate
+====
+
+=== When to Use
+
+**Set `ocspCheckNeeded: true` when:**
+* Generating certificates for PSD2/XS2A environments
+* Certificate parsers expect QC Statements as the primary extension
+* Avoiding potential certificate validation issues
+
+**Example configuration:**
+```json
+{
+  "authorizationNumber": "87B2AC",
+  "roles": ["PISP"],
+  "organizationName": "Example Payment Services Ltd",
+  "commonName": "Example PSP",
+  "ocspCheckNeeded": true
+}
+```

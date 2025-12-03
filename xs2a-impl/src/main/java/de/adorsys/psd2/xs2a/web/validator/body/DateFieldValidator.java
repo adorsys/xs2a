@@ -75,11 +75,19 @@ public class DateFieldValidator {
 
     private void convert(String key, String value, Xs2aBodyDateFormatter formatter, MessageError messageError) {
         try {
-            localDateConverter.convert(value, formatter.getFormatter());
-        } catch (DateTimeParseException ex) {
-            errorBuildingService.enrichMessageError(messageError, TppMessageInformation.of(FORMAT_ERROR_WRONG_FORMAT_DATE_FIELD, key, formatter.name(), formatter.getPattern()));
+            localDateConverter.convert(value);
+        } catch (DateTimeParseException ex) {errorBuildingService.enrichMessageError(
+                messageError,
+                TppMessageInformation.of(
+                    FORMAT_ERROR_WRONG_FORMAT_DATE_FIELD,
+                    key,
+                    formatter.name(),
+                    formatter.getPattern()
+                )
+            );
         }
     }
+
 
     private void validateDayOfExecutionValue(String value, MessageError messageError) {
         if (!isNumberADayOfMonth(value)) {

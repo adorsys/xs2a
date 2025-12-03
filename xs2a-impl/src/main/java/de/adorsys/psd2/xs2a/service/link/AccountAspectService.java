@@ -31,14 +31,29 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+/**
+ * Service for handling account aspect processing.
+ * Adds HATEOAS links to account-related responses.
+ */
 @Service
 public class AccountAspectService extends BaseAspectService<AccountController> {
 
+    /**
+     * Constructs a new AccountAspectService.
+     *
+     * @param aspspProfileServiceWrapper wrapper for ASPSP profile service
+     */
     @Autowired
     public AccountAspectService(AspspProfileServiceWrapper aspspProfileServiceWrapper) {
         super(aspspProfileServiceWrapper);
     }
 
+    /**
+     * Processes account details response by adding HATEOAS links.
+     *
+     * @param result the response object containing account details
+     * @return processed response object with links
+     */
     public ResponseObject<Xs2aAccountDetailsHolder> getAccountDetailsAspect(ResponseObject<Xs2aAccountDetailsHolder> result) {
         if (!result.hasError()) {
             Xs2aAccountDetailsHolder body = result.getBody();
@@ -49,6 +64,12 @@ public class AccountAspectService extends BaseAspectService<AccountController> {
         return result;
     }
 
+    /**
+     * Processes account list response by adding HATEOAS links.
+     *
+     * @param result the response object containing account list
+     * @return processed response object with links
+     */
     public ResponseObject<Xs2aAccountListHolder> getAccountDetailsListAspect(ResponseObject<Xs2aAccountListHolder> result) {
         if (!result.hasError()) {
             Xs2aAccountListHolder body = result.getBody();
