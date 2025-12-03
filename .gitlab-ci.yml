@@ -66,12 +66,12 @@ variables:
 .push_dockerhub_images_private: &push_dockerhub_images_private
   script:
     - apk add --no-cache openjdk17 bash curl unzip
-    - # Download and install Maven
+    # Download and install Maven
     - curl -fsSL https://archive.apache.org/dist/maven/maven-3/3.9.4/binaries/apache-maven-3.9.4-bin.zip -o /tmp/maven.zip
     - unzip /tmp/maven.zip -d /usr/share/
     - mv /usr/share/apache-maven-3.9.4 /usr/share/maven
     - ln -s /usr/share/maven/bin/mvn /usr/bin/mvn
-    - # Verify
+    # Verify
     - mvn -version
     - mvn clean package
     - docker build -t "${DOCKERHUB_REGISTRY}/${DOCKERHUB_NAMESPACE}/${DOCKER_IMAGE_NAME_CMS_MANAGEMENT}:${DOCKER_TAG}" consent-management/cms-standalone-service
