@@ -18,6 +18,7 @@
 
 package de.adorsys.psd2.xs2a.domain.pis;
 
+import de.adorsys.psd2.core.payment.model.CategoryPurposeCode;
 import de.adorsys.psd2.xs2a.core.profile.AccountReference;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import de.adorsys.psd2.xs2a.domain.AccountReferenceCollector;
@@ -38,6 +39,7 @@ public class BulkPayment extends CommonPayment implements AccountReferenceCollec
     @NotNull
     private AccountReference debtorAccount;
     private String debtorName;
+    private CategoryPurposeCode categoryPurposeCode;
     private LocalDate requestedExecutionDate;
     private OffsetDateTime requestedExecutionTime;
     private List<SinglePayment> payments;
@@ -46,9 +48,9 @@ public class BulkPayment extends CommonPayment implements AccountReferenceCollec
     @Override
     public Set<AccountReference> getAccountReferences() {
         Set<AccountReference> accountReferences = payments.stream()
-                                                      .map(SinglePayment::getAccountReferences)
-                                                      .flatMap(Set::stream)
-                                                      .collect(Collectors.toSet());
+                .map(SinglePayment::getAccountReferences)
+                .flatMap(Set::stream)
+                .collect(Collectors.toSet());
         accountReferences.add(debtorAccount);
 
         return accountReferences;

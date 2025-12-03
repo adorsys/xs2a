@@ -21,6 +21,8 @@ package de.adorsys.psd2.logger.context;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
 import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
+import de.adorsys.psd2.xs2a.core.vop.PartyIdentificationMatchCode;
+import de.adorsys.psd2.xs2a.core.vop.PartyNameMatchCode;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -92,6 +94,67 @@ public interface LoggingContextService {
      * @return information about the request
      */
     RequestInfo getRequestInformation();
+
+    /**
+     * Records given VOP bulk status into current context
+     *
+     * @param vopBulkStatus status to be stored
+     */
+    void storeVopBulkStatus(@NotNull String vopBulkStatus);
+
+    /**
+     * Retrieves VOP bulk status from current logging context as string
+     *
+     * @return string representation of VOP bulk status
+     */
+    String getVopBulkStatus();
+
+    /**
+     * Records given VOP bulk ID into current context
+     *
+     * @param vopBulkId bulk ID to be stored
+     */
+    void storeVopBulkId(@NotNull String vopBulkId);
+
+    /**
+     * Retrieves VOP bulk ID from current logging context as string
+     *
+     * @return string representation of VOP bulk ID
+     */
+    String getVopBulkId();
+
+    /**
+     * Records VOP verification status (party ID match and party name match) into current context
+     *
+     * @param partyIdMatch   party ID match status to be stored
+     * @param partyNameMatch party name match status to be stored
+     */
+    void storeVerificationStatus(PartyIdentificationMatchCode partyIdMatch, PartyNameMatchCode partyNameMatch);
+
+    /**
+     * Records bulk VOP verification status into current context
+     *
+     * @param vopBulkStatus the bulk verification status to be stored
+     * @param partyVerificationResponses list of individual party verification responses
+     */
+    void storeBulkVerificationStatus(@NotNull de.adorsys.psd2.xs2a.core.vop.VopBulkStatus vopBulkStatus, 
+                                      @Nullable java.util.List<de.adorsys.psd2.xs2a.core.vop.PartyVerificationResponse> partyVerificationResponses);
+
+    /**
+     * Records VOP bulk ID and status when retrieving bulk verification results
+     *
+     * @param vopBulkId the bulk verification ID to be stored
+     * @param vopBulkStatus the bulk verification status to be stored
+     */
+    void storeGetBulkVopIdAndStatus(@NotNull java.util.UUID vopBulkId, @NotNull de.adorsys.psd2.xs2a.core.vop.VopBulkStatus vopBulkStatus);
+
+    /**
+     * Records VOP bulk ID and status when retrieving bulk verification status
+     *
+     * @param vopBulkId the bulk verification ID to be stored
+     * @param vopBulkStatus the bulk verification status to be stored
+     */
+    void storeGetBulkVopStatusIdAndStatus(@NotNull java.util.UUID vopBulkId, @NotNull de.adorsys.psd2.xs2a.core.vop.VopBulkStatus vopBulkStatus);
 
     /**
      * Clears current logging context.

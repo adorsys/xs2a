@@ -115,7 +115,7 @@ public class CardAccountSpiMockImpl implements CardAccountSpi {
     }
 
     private SpiCardTransaction buildSpiCardTransactionById(String cardTransactionId) {
-        return new SpiCardTransaction(cardTransactionId,
+        return new SpiCardTransaction("Anton Bruckner",cardTransactionId,
                                       "999999999",
                                       DATE,
                                       OffsetDateTime.of(DATE, LocalTime.NOON, ZoneOffset.UTC),

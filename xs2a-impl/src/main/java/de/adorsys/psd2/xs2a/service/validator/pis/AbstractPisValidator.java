@@ -84,6 +84,11 @@ public abstract class AbstractPisValidator<T extends PaymentTypeAndInfoProvider>
      */
     protected abstract ValidationResult executeBusinessValidation(T paymentObject);
 
+    /**
+     * Sets the PIS TPP info validator.
+     *
+     * @param pisTppInfoValidator the validator to set
+     */
     @Autowired
     public void setPisValidators(PisTppInfoValidator pisTppInfoValidator) {
         this.pisTppInfoValidator = pisTppInfoValidator;

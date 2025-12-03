@@ -66,6 +66,12 @@
             <groupId>de.adorsys.psd2</groupId>
             <artifactId>xs2a-impl</artifactId>
             <version>${project.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.springdoc</groupId>
+                    <artifactId>springdoc-openapi-ui</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
         <dependency>

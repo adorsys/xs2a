@@ -40,10 +40,23 @@
       "creditorAgent": "BCENECEQ",
       "creditorName": "Telekom",
       "creditorAddress": {
-        "street": "WBG Straße",
+        "addressLines": [
+          "WBG Straße 56",
+          "Floor 3, Room 12"
+        ],
+        "department": "Finance Department",
+        "subDepartment": "Accounts Receivable",
+        "streetName": "WBG Straße",
         "buildingNumber": "56",
-        "city": "Nürnberg",
-        "postalCode": "90543",
+        "buildingName": "WBG Tower",
+        "floor": "3",
+        "postBox": "PO Box 1234",
+        "room": "12",
+        "postCode": "90543",
+        "townName": "Nürnberg",
+        "townLocationName": "Central Business District",
+        "districtName": "Mitte",
+        "countrySubDivision": "Bayern",
         "country": "DE"
       },
       "purposeCode": "",

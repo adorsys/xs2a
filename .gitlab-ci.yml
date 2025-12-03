@@ -276,7 +276,7 @@ Lint (YAML, JSON, XML):
   #     - find ./ -type f \( -iname "*.xml" ! -iname pom.xml \) -exec xmllint --noout {} \;
 
 Lint (PMD CPD):
-  image:  maven:3.9.3-eclipse-temurin-17
+  image: maven:3.9.3-eclipse-temurin-17
   stage: "Lint"
   except:
     - schedules
@@ -295,6 +295,7 @@ Lint (PMD CPD):
       - "**/*/pmd.xml"
     name: "${CI_PROJECT_NAME}-${CI_BUILD_REF_NAME#*v}-pmd"
     expire_in: "10 day"
+
 
 Lint (dockerfiles):
   image: docker

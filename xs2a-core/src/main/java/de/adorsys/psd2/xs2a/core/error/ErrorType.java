@@ -70,7 +70,16 @@ public enum ErrorType {
     SB_409(ServiceType.SB, 409),
     SB_415(ServiceType.SB, 415),
     SB_500(ServiceType.SB, 500),
-    SB_503(ServiceType.SB, 503);
+    SB_503(ServiceType.SB, 503),
+
+    VOP_400(ServiceType.VOP, 400),
+    VOP_401(ServiceType.VOP, 401),
+    VOP_403(ServiceType.VOP, 403),
+    VOP_404(ServiceType.VOP, 404),
+    VOP_405(ServiceType.VOP, 405),
+    VOP_406(ServiceType.VOP, 406),
+    VOP_409(ServiceType.VOP, 409),
+    VOP_503(ServiceType.VOP, 503);
 
     @Getter
     private ServiceType serviceType;

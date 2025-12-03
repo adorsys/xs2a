@@ -29,9 +29,22 @@ import de.adorsys.psd2.xs2a.service.mapper.cms_xs2a_mappers.Xs2aConsentAuthorisa
 
 import java.util.Optional;
 
+/**
+ * Abstract base class for PIIS (Payment Instrument Issuer Service) authorization services.
+ * Provides common authorization functionality for PIIS consents.
+ */
 public abstract class AbstractPiisAuthorizationService extends AbstractConsentAuthorizationService<PiisConsent> {
     private final Xs2aPiisConsentService piisConsentService;
 
+    /**
+     * Constructs a new AbstractPiisAuthorizationService.
+     *
+     * @param consentService the consent service
+     * @param authorisationService the authorisation service
+     * @param consentPsuDataMapper the consent PSU data mapper
+     * @param piisConsentService the PIIS consent service
+     * @param xs2aConsentAuthorisationMapper the consent authorisation mapper
+     */
     protected AbstractPiisAuthorizationService(Xs2aConsentService consentService, Xs2aAuthorisationService authorisationService,
                                                ConsentPsuDataMapper consentPsuDataMapper, Xs2aPiisConsentService piisConsentService,
                                                Xs2aConsentAuthorisationMapper xs2aConsentAuthorisationMapper) {

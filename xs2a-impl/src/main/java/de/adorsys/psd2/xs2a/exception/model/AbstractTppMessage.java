@@ -25,6 +25,10 @@ import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 import org.springframework.validation.annotation.Validated;
 
+/**
+ * Abstract base class for TPP (Third Party Provider) messages.
+ * Contains common fields for error and information messages returned to TPPs.
+ */
 @Data
 @SuperBuilder
 @Validated

@@ -18,6 +18,40 @@
 
 package de.adorsys.psd2.xs2a.config;
 
+import static de.adorsys.psd2.xs2a.config.Xs2aEndpointPathConstant.ACCOUNTS_PATH;
+import static de.adorsys.psd2.xs2a.config.Xs2aEndpointPathConstant.BENEFICIARIES_PATH;
+import static de.adorsys.psd2.xs2a.config.Xs2aEndpointPathConstant.BULK_PAYMENTS_PATH;
+import static de.adorsys.psd2.xs2a.config.Xs2aEndpointPathConstant.CARD_ACCOUNTS_PATH;
+import static de.adorsys.psd2.xs2a.config.Xs2aEndpointPathConstant.CONSENTS_PATH;
+import static de.adorsys.psd2.xs2a.config.Xs2aEndpointPathConstant.FUNDS_CONFIRMATION_PATH;
+import static de.adorsys.psd2.xs2a.config.Xs2aEndpointPathConstant.GLOBAL_PATH;
+import static de.adorsys.psd2.xs2a.config.Xs2aEndpointPathConstant.PERIODIC_PAYMENTS_PATH;
+import static de.adorsys.psd2.xs2a.config.Xs2aEndpointPathConstant.SIGNING_BASKETS_PATH;
+import static de.adorsys.psd2.xs2a.config.Xs2aEndpointPathConstant.SINGLE_PAYMENTS_PATH;
+import static de.adorsys.psd2.xs2a.config.Xs2aEndpointPathConstant.VOP_BULK_PARTY_VERIFICATIONS_PATH;
+import static de.adorsys.psd2.xs2a.config.Xs2aEndpointPathConstant.VOP_BULK_PAYEE_VERIFICATIONS_PATH;
+import static de.adorsys.psd2.xs2a.config.Xs2aEndpointPathConstant.VOP_BULK_PAYER_VERIFICATIONS_PATH;
+import static de.adorsys.psd2.xs2a.config.Xs2aEndpointPathConstant.VOP_CREDITOR_CONFIRMATION_PATH;
+import static de.adorsys.psd2.xs2a.config.Xs2aEndpointPathConstant.VOP_PARTY_VERIFICATIONS_PATH;
+import static de.adorsys.psd2.xs2a.config.Xs2aEndpointPathConstant.VOP_PAYEE_VERIFICATIONS_PATH;
+import static de.adorsys.psd2.xs2a.config.Xs2aEndpointPathConstant.VOP_PAYER_VERIFICATIONS_PATH;
+import static de.adorsys.psd2.xs2a.config.Xs2aEndpointPathConstant.getAllXs2aEndpointPaths;
+
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.EnableAspectJAutoProxy;
+import org.springframework.format.FormatterRegistry;
+import org.springframework.http.converter.HttpMessageConverter;
+import org.springframework.web.context.annotation.RequestScope;
+import org.springframework.web.servlet.HandlerExceptionResolver;
+import org.springframework.web.servlet.config.annotation.CorsRegistry;
+import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
+import org.springframework.web.servlet.config.annotation.PathMatchConfigurer;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+
 import de.adorsys.psd2.consent.api.service.TppStopListService;
 import de.adorsys.psd2.logger.context.LoggingContextService;
 import de.adorsys.psd2.mapper.Xs2aObjectMapper;
@@ -43,35 +77,22 @@ import de.adorsys.psd2.xs2a.web.interceptor.logging.*;
 import de.adorsys.psd2.xs2a.web.interceptor.tpp.TppStopListInterceptor;
 import de.adorsys.psd2.xs2a.web.interceptor.validator.PaymentParametersValidationInterceptor;
 import de.adorsys.psd2.xs2a.web.interceptor.validator.RequestValidationInterceptor;
+import de.adorsys.psd2.xs2a.web.interceptor.validator.VopParametersValidationInterceptor;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.EnableAspectJAutoProxy;
-import org.springframework.format.FormatterRegistry;
-import org.springframework.http.converter.HttpMessageConverter;
-import org.springframework.web.context.annotation.RequestScope;
-import org.springframework.web.servlet.HandlerExceptionResolver;
-import org.springframework.web.servlet.config.annotation.CorsRegistry;
-import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
-import org.springframework.web.servlet.config.annotation.PathMatchConfigurer;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import jakarta.validation.Validation;
 import jakarta.validation.Validator;
 
-import java.util.List;
-
-import static de.adorsys.psd2.xs2a.config.Xs2aEndpointPathConstant.*;
-
 @Configuration
 @RequiredArgsConstructor
 @EnableAspectJAutoProxy(proxyTargetClass = true)
+@SuppressWarnings("PMD.TooManyStaticImports")
 public class WebConfig implements WebMvcConfigurer {
 
     @Qualifier("xs2aCorsConfigProperties")
     private final CorsConfigurationProperties corsConfigurationProperties;
     private final TppService tppService;
+    @Qualifier("tppStopListServiceRemote")
     private final TppStopListService tppStopListService;
     private final ServiceTypeDiscoveryService serviceTypeDiscoveryService;
     private final ServiceTypeToErrorTypeMapper errorTypeMapper;
@@ -84,6 +105,7 @@ public class WebConfig implements WebMvcConfigurer {
     private final PathParameterExtractor pathParameterExtractor;
     private final Xs2aRestExceptionHandler xs2aRestExceptionHandler;
     private final PaymentParametersValidationInterceptor paymentParametersValidationInterceptor;
+    private final VopParametersValidationInterceptor vopParametersValidationInterceptor;
 
     @Override
     public void extendHandlerExceptionResolvers(List<HandlerExceptionResolver> resolvers) {
@@ -109,9 +131,17 @@ public class WebConfig implements WebMvcConfigurer {
         registry.addInterceptor(new TppStopListInterceptor(errorMapperContainer, tppService, tppStopListService, serviceTypeDiscoveryService, errorTypeMapper, xs2aObjectMapper))
             .addPathPatterns(getAllXs2aEndpointPaths());
 
+        // VOP-specific logging interceptor - following exact payment pattern
+        registry.addInterceptor(new VopLoggingInterceptor(tppService, loggingContextService, pathParameterExtractor)).addPathPatterns(VOP_PAYEE_VERIFICATIONS_PATH, VOP_PAYER_VERIFICATIONS_PATH, VOP_PARTY_VERIFICATIONS_PATH, VOP_BULK_PAYEE_VERIFICATIONS_PATH, VOP_BULK_PAYER_VERIFICATIONS_PATH, VOP_BULK_PARTY_VERIFICATIONS_PATH, VOP_CREDITOR_CONFIRMATION_PATH);
+
         // This interceptor cannot use some definite path from constants, as payment services have nothing common in
         // their URLs (and 'payment-service' or 'payment-type' can be broken).
         registry.addInterceptor(paymentParametersValidationInterceptor).addPathPatterns(GLOBAL_PATH);
+
+        // VOP parameters validation interceptor - validates party-verification-endpoint and bulk-party-verification-endpoint path variables
+        registry.addInterceptor(vopParametersValidationInterceptor).addPathPatterns(GLOBAL_PATH);
+
+        // Generic request validation for all XS2A endpoints (including VOP - follows exact payment pattern)
         registry.addInterceptor(requestValidationInterceptor).addPathPatterns(getAllXs2aEndpointPaths());
     }
 

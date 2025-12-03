@@ -26,8 +26,19 @@ import org.apache.commons.collections4.CollectionUtils;
 
 import java.util.List;
 
+/**
+ * HATEOAS links builder for account details responses.
+ * Constructs appropriate links based on consent permissions and account access.
+ */
 public class AccountDetailsLinks extends AbstractLinks {
 
+    /**
+     * Constructs account details links based on consent and account information.
+     *
+     * @param httpUrl the base HTTP URL
+     * @param accountId the account ID
+     * @param aisConsent the AIS consent containing access permissions
+     */
     public AccountDetailsLinks(String httpUrl, String accountId, AisConsent aisConsent) {
         super(httpUrl);
         AisConsentData consentData = aisConsent.getConsentData();

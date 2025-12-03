@@ -41,6 +41,12 @@ public class Xs2aHeaderConstant {
     public static final String TPP_REJECTION_NO_FUNDS_PREFERRED = "tpp-rejection-no funds-preferred";
     public static final String TPP_BRAND_LOGGING_INFORMATION = "tpp-brand-logging-information";
 
+    // VOP-specific headers from Berlin Group PSD2 API specification
+    public static final String DIGEST = "digest";
+    public static final String X_JWS_SIGNATURE = "x-jws-signature";
+    public static final String BODY_SIG_PROFILE = "body-sig-profile";
+    public static final String API_CONTRACT_ID = "api-contract-id";
+
     private Xs2aHeaderConstant() {
     }
 }

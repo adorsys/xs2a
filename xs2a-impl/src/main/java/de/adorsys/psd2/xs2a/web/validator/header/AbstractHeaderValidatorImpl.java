@@ -30,16 +30,35 @@ import java.util.Objects;
 
 import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.*;
 
+/**
+ * Abstract base class for header validators.
+ * Provides common functionality for validating HTTP headers.
+ */
 public abstract class AbstractHeaderValidatorImpl {
 
+    /**
+     * Service for building error messages.
+     */
     protected ErrorBuildingService errorBuildingService;
 
     AbstractHeaderValidatorImpl(ErrorBuildingService errorBuildingService) {
         this.errorBuildingService = errorBuildingService;
     }
 
+    /**
+     * Returns the name of the header to validate.
+     *
+     * @return the header name
+     */
     protected abstract String getHeaderName();
 
+    /**
+     * Validates the headers and populates error messages if validation fails.
+     *
+     * @param headers the headers to validate
+     * @param messageError the message error to populate
+     * @return the updated message error
+     */
     public MessageError validate(Map<String, String> headers, MessageError messageError) {
         ValidationResult validationResult = validate(headers);
 
@@ -50,14 +69,32 @@ public abstract class AbstractHeaderValidatorImpl {
         return messageError;
     }
 
+    /**
+     * Validates the headers.
+     *
+     * @param headers the headers to validate
+     * @return validation result
+     */
     protected ValidationResult validate(Map<String, String> headers) {
         return checkIfHeaderIsPresented(headers);
     }
 
+    /**
+     * Checks the content of the header.
+     *
+     * @param headers the headers to check
+     * @return validation result
+     */
     protected ValidationResult checkHeaderContent(Map<String, String> headers) {
         return ValidationResult.valid();
     }
 
+    /**
+     * Checks if the header is present and has a valid value.
+     *
+     * @param headers the headers to check
+     * @return validation result
+     */
     protected ValidationResult checkIfHeaderIsPresented(Map<String, String> headers) {
         if (!headers.containsKey(getHeaderName())) {
             return ValidationResult.invalid(

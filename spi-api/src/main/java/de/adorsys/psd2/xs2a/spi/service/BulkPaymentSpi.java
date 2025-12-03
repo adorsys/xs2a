@@ -24,6 +24,7 @@ import de.adorsys.psd2.xs2a.spi.domain.error.SpiMessageErrorCode;
 import de.adorsys.psd2.xs2a.spi.domain.error.SpiTppMessage;
 import de.adorsys.psd2.xs2a.spi.domain.payment.SpiBulkPayment;
 import de.adorsys.psd2.xs2a.spi.domain.payment.response.SpiBulkPaymentInitiationResponse;
+import de.adorsys.psd2.xs2a.spi.domain.payment.response.SpiBulkPaymentExtendedStatusResponse;
 import de.adorsys.psd2.xs2a.spi.domain.payment.response.SpiGetPaymentStatusResponse;
 import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponse;
 import org.jetbrains.annotations.NotNull;
@@ -54,5 +55,25 @@ public interface BulkPaymentSpi extends PaymentSpi<SpiBulkPayment, SpiBulkPaymen
         return SpiResponse.<SpiGetPaymentStatusResponse>builder()
                    .error(new SpiTppMessage(SpiMessageErrorCode.SERVICE_NOT_SUPPORTED))
                    .build();
+    }
+
+    /**
+     * Gets bulk payment extended status by ID
+     *
+     * @param contextData              holder of call's context data (e.g. about PSU
+     *                                 and TPP)
+     * @param acceptMediaType          requested by TPP response media type e.g.
+     *                                 application/json
+     * @param payment                  SpiBulkPayment payment object
+     * @param aspspConsentDataProvider Provides access to read/write encrypted data
+     *                                 to be stored in the consent management system
+     * @return Returns a response that contains the bulk payment extended status
+     *         information
+     */
+    @NotNull
+    default SpiResponse<SpiBulkPaymentExtendedStatusResponse> getBulkPaymentExtendedStatusById(@NotNull SpiContextData contextData, @NotNull String acceptMediaType, @NotNull SpiBulkPayment payment, @NotNull SpiAspspConsentDataProvider aspspConsentDataProvider) {
+        return SpiResponse.<SpiBulkPaymentExtendedStatusResponse>builder()
+                .error(new SpiTppMessage(SpiMessageErrorCode.SERVICE_NOT_SUPPORTED))
+                .build();
     }
 }

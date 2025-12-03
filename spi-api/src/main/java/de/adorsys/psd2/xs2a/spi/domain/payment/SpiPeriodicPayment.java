@@ -23,6 +23,7 @@ import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
 import java.time.LocalDate;
+import java.time.OffsetDateTime;
 import java.util.List;
 
 @Data
@@ -30,7 +31,9 @@ import java.util.List;
 @ToString(callSuper = true)
 public class SpiPeriodicPayment extends SpiSinglePayment {
     private LocalDate startDate;
+    private OffsetDateTime startDateTime;
     private LocalDate endDate;
+    private OffsetDateTime endDateTime;
     private SpiPisExecutionRule executionRule;
     private SpiFrequencyCode frequency;
     private SpiPisDayOfExecution dayOfExecution;

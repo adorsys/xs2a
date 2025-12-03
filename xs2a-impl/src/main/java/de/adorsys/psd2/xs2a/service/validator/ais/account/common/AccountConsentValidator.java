@@ -32,11 +32,21 @@ import static de.adorsys.psd2.xs2a.core.error.ErrorType.AIS_401;
 import static de.adorsys.psd2.xs2a.core.error.ErrorType.AIS_429;
 import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.*;
 
+/**
+ * Validator for checking account consent validity and access permissions.
+ */
 @Component
 @RequiredArgsConstructor
 public class AccountConsentValidator {
     private final RequestProviderService requestProviderService;
 
+    /**
+     * Validates account consent for a given request.
+     *
+     * @param aisConsent the AIS consent to validate
+     * @param requestUri the request URI
+     * @return validation result
+     */
     public ValidationResult validate(AisConsent aisConsent, String requestUri) {
         if (LocalDate.now().compareTo(aisConsent.getValidUntil()) > 0) {
             return ValidationResult.invalid(AIS_401, CONSENT_EXPIRED);

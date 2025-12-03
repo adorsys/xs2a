@@ -42,13 +42,21 @@
         "markupFeePercentage": "1",
         "cardAcceptorId": "acceptor ID",
         "cardAcceptorAddress": {
+          "addressLines": ["WBG Straße 56", "Booked Report Transaction"],
+          "department": "Card Services",
+          "subDepartment": "Transaction Processing",
           "streetName": "WBG Straße",
           "buildingNumber": "56",
-          "townName": "Nürnberg",
+          "buildingName": "Payment Terminal Building",
+          "floor": "Ground Floor",
+          "postBox": "PO Box 789",
+          "room": "Terminal Room 1",
           "postCode": "90543",
-          "country": {
-            "code": "DE"
-          }
+          "townName": "Nürnberg",
+          "townLocationName": "Nürnberg Center",
+          "districtName": "Franconia District",
+          "countrySubDivision": "Bavaria",
+          "country": { "code": "DE" }
         },
         "cardAcceptorPhone": "+61-(02)9999999999-9999",
         "merchantCategoryCode": "merchant code",
@@ -90,13 +98,21 @@
         "markupFeePercentage": "1",
         "cardAcceptorId": "acceptor ID",
         "cardAcceptorAddress": {
+          "addressLines": ["WBG Straße 56", "Pending Report Transaction"],
+          "department": "Card Services",
+          "subDepartment": "Transaction Processing",
           "streetName": "WBG Straße",
           "buildingNumber": "56",
-          "townName": "Nürnberg",
+          "buildingName": "Payment Terminal Building",
+          "floor": "1st Floor",
+          "postBox": "PO Box 789",
+          "room": "Terminal Room 2",
           "postCode": "90543",
-          "country": {
-            "code": "DE"
-          }
+          "townName": "Nürnberg",
+          "townLocationName": "Nürnberg Center",
+          "districtName": "Franconia District",
+          "countrySubDivision": "Bavaria",
+          "country": { "code": "DE" }
         },
         "cardAcceptorPhone": "+61-(02)9999999999-9999",
         "merchantCategoryCode": "merchant code",

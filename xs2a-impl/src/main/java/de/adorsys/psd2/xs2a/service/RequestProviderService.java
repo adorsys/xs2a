@@ -199,7 +199,16 @@ public class RequestProviderService {
                    .orElse(null);
     }
 
-    private String getHeader(String headerName) {
+    /**
+     * Returns the URI of the current request
+     *
+     * @return request URI (e.g., "/v1/party-verifications")
+     */
+    public String getRequestUri() {
+        return httpServletRequest.getRequestURI();
+    }
+
+    protected String getHeader(String headerName) {
         return httpServletRequest.getHeader(headerName);
     }
 

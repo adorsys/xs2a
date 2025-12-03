@@ -185,7 +185,7 @@ class Xs2aToSpiSinglePaymentMapperTest {
     }
 
     private SpiAddress buildSpiAddress() {
-        return new SpiAddress(STREET, BUILDING_NUMBER, CITY, POSTAL_CODE, COUNTRY);
+        return new SpiAddress(null,null,null,null,null,null,null,null,null,null,STREET, BUILDING_NUMBER, CITY, POSTAL_CODE, COUNTRY);
     }
 
     private Xs2aAddress buildXs2aAddress() {

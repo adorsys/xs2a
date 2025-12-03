@@ -76,7 +76,6 @@ public class CmsPsuPisMapper {
         }
     }
 
-    // todo implementation should be changed https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/1143
     public List<CmsBasePaymentResponse> mapPaymentDataToCmsPayments(@NotNull List<PisCommonPaymentData> pisCommonPaymentData) {
         return pisCommonPaymentData.stream()
                    .map(this::mapPaymentDataToCmsPayment)
@@ -110,6 +109,8 @@ public class CmsPsuPisMapper {
         periodicPayment.setDayOfExecution(pisPaymentData.getDayOfExecution());
         periodicPayment.setStartDate(pisPaymentData.getStartDate());
         periodicPayment.setEndDate(pisPaymentData.getEndDate());
+        periodicPayment.setStartDateTime(pisPaymentData.getStartDateTime());
+        periodicPayment.setEndDateTime(pisPaymentData.getEndDateTime());
         periodicPayment.setExecutionRule(pisPaymentData.getExecutionRule());
         periodicPayment.setFrequency(FrequencyCode.valueOf(pisPaymentData.getFrequency()));
         PisCommonPaymentData paymentData = pisPaymentData.getPaymentData();

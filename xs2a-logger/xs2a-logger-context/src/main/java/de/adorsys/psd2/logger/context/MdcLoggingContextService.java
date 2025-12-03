@@ -20,11 +20,17 @@ package de.adorsys.psd2.logger.context;
 
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
 import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
+import de.adorsys.psd2.xs2a.core.vop.PartyIdentificationMatchCode;
+import de.adorsys.psd2.xs2a.core.vop.PartyNameMatchCode;
+import de.adorsys.psd2.xs2a.core.vop.PartyVerificationResponse;
+import de.adorsys.psd2.xs2a.core.vop.VopBulkStatus;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.MDC;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 public class MdcLoggingContextService implements LoggingContextService {
@@ -34,6 +40,10 @@ public class MdcLoggingContextService implements LoggingContextService {
     private static final String INTERNAL_REQUEST_ID_KEY = "internal-request-id";
     private static final String X_REQUEST_ID_KEY = "x-request-id";
     private static final String INSTANCE_ID_KEY = "instance-id";
+    private static final String VOP_BULK_STATUS_KEY = "vopBulkStatus";
+    private static final String VOP_BULK_ID_KEY = "vopBulkId";
+    private static final String VOP_PARTY_ID_MATCH_KEY = "vopPartyIdMatch";
+    private static final String VOP_PARTY_NAME_MATCH_KEY = "vopPartyNameMatch";
 
     @Override
     public void storeConsentStatus(@NotNull ConsentStatus consentStatus) {
@@ -91,6 +101,88 @@ public class MdcLoggingContextService implements LoggingContextService {
         String instanceId = MDC.get(INSTANCE_ID_KEY);
 
         return new RequestInfo(internalRequestId, xRequestId, instanceId);
+    }
+
+    @Override
+    public void storeVopBulkStatus(@NotNull String vopBulkStatus) {
+        MDC.put(VOP_BULK_STATUS_KEY, vopBulkStatus);
+    }
+
+    @Override
+    public String getVopBulkStatus() {
+        return MDC.get(VOP_BULK_STATUS_KEY);
+    }
+
+    @Override
+    public void storeVopBulkId(@NotNull String vopBulkId) {
+        MDC.put(VOP_BULK_ID_KEY, vopBulkId);
+    }
+
+    @Override
+    public String getVopBulkId() {
+        return MDC.get(VOP_BULK_ID_KEY);
+    }
+
+    @Override
+    public void storeVerificationStatus(PartyIdentificationMatchCode partyIdMatch, PartyNameMatchCode partyNameMatch) {
+        if (partyIdMatch != null) {
+            MDC.put(VOP_PARTY_ID_MATCH_KEY, partyIdMatch.toString());
+        }
+        if (partyNameMatch != null) {
+            MDC.put(VOP_PARTY_NAME_MATCH_KEY, partyNameMatch.toString());
+        }
+    }
+
+    @Override
+    public void storeBulkVerificationStatus(@NotNull VopBulkStatus vopBulkStatus, 
+                                             @Nullable List<PartyVerificationResponse> partyVerificationResponses) {
+        // Store the bulk status
+        storeVopBulkStatus(vopBulkStatus.getValue());
+        
+        // Store summary information about the verification responses
+        if (partyVerificationResponses != null && !partyVerificationResponses.isEmpty()) {
+            // Count the different match results
+            long successfulMatches = partyVerificationResponses.stream()
+                .filter(response -> response.getPartyIdMatch() == PartyIdentificationMatchCode.MTCH 
+                             && response.getPartyNameMatch() == PartyNameMatchCode.MTCH)
+                .count();
+            
+            long partialMatches = partyVerificationResponses.stream()
+                .filter(response -> (response.getPartyIdMatch() == PartyIdentificationMatchCode.MTCH 
+                             || response.getPartyNameMatch() == PartyNameMatchCode.MTCH)
+                             && !(response.getPartyIdMatch() == PartyIdentificationMatchCode.MTCH 
+                             && response.getPartyNameMatch() == PartyNameMatchCode.MTCH))
+                .count();
+            
+            long noMatches = partyVerificationResponses.size() - successfulMatches - partialMatches;
+            
+            // Store the statistics in MDC
+            MDC.put("vopBulkTotalCount", String.valueOf(partyVerificationResponses.size()));
+            MDC.put("vopBulkSuccessfulMatches", String.valueOf(successfulMatches));
+            MDC.put("vopBulkPartialMatches", String.valueOf(partialMatches));
+            MDC.put("vopBulkNoMatches", String.valueOf(noMatches));
+        }
+    }
+
+    @Override
+    public void storeGetBulkVopIdAndStatus(@NotNull java.util.UUID vopBulkId, @NotNull VopBulkStatus vopBulkStatus) {
+        // Store the bulk ID as a string
+        storeVopBulkId(vopBulkId.toString());
+        
+        // Store the bulk status
+        storeVopBulkStatus(vopBulkStatus.getValue());
+    }
+
+    @Override
+    public void storeGetBulkVopStatusIdAndStatus(@NotNull java.util.UUID vopBulkId, @NotNull VopBulkStatus vopBulkStatus) {
+        // Store the bulk ID as a string for status retrieval operations
+        storeVopBulkId(vopBulkId.toString());
+        
+        // Store the bulk status
+        storeVopBulkStatus(vopBulkStatus.getValue());
+        
+        // Add a marker to distinguish status retrieval from result retrieval
+        MDC.put("vopOperationType", "STATUS_CHECK");
     }
 
     @Override

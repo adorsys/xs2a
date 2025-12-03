@@ -64,8 +64,8 @@ class Xs2aToSpiBulkPaymentMapperTest {
     private static final List<PsuIdData> psuDataList = new ArrayList<>();
     private static final List<SpiPsuData> spiPsuDataList = new ArrayList<>();
     private static final OffsetDateTime STATUS_CHANGE_TIMESTAMP = OffsetDateTime.of(REQUESTED_EXECUTION_DATE,
-                                                                                    LocalTime.NOON,
-                                                                                    ZoneOffset.UTC);
+            LocalTime.NOON,
+            ZoneOffset.UTC);
     @InjectMocks
     private Xs2aToSpiBulkPaymentMapper xs2aToSpiBulkPaymentMapper;
     @Mock
@@ -76,25 +76,29 @@ class Xs2aToSpiBulkPaymentMapperTest {
     private Xs2aToSpiAccountReferenceMapper xs2aToSpiAccountReferenceMapper;
     @Mock
     private Xs2aToSpiTransactionStatusMapper xs2aToSpiTransactionStatusMapper;
+    @Mock
+    private Xs2aToSpiCategoryPurposeCodeMapper xs2aToSpiCategoryPurposeCodeMapper;
 
     @BeforeEach
     void setUp() {
         psuDataList.addAll(Arrays.asList(buildPsu(PSU_ID_1), buildPsu(PSU_ID_2)));
         spiPsuDataList.addAll(Arrays.asList(buildSpiPsu(PSU_ID_1), buildSpiPsu(PSU_ID_2)));
         when(xs2aToSpiPsuDataMapper.mapToSpiPsuDataList(psuDataList))
-            .thenReturn(spiPsuDataList);
+                .thenReturn(spiPsuDataList);
         when(xs2aToSpiAccountReferenceMapper.mapToSpiAccountReference(buildAccountReference(DEB_ACCOUNT_ID)))
-            .thenReturn(buildSpiAccountReference());
-        when(xs2aToSpiTransactionStatusMapper.mapToSpiTransactionStatus(TRANSACTION_STATUS)).thenReturn(SPI_TRANSACTION_STATUS);
+                .thenReturn(buildSpiAccountReference());
+        when(xs2aToSpiTransactionStatusMapper.mapToSpiTransactionStatus(TRANSACTION_STATUS))
+                .thenReturn(SPI_TRANSACTION_STATUS);
+        when(xs2aToSpiCategoryPurposeCodeMapper.mapToSpiCategoryPurposeCode(null)).thenReturn(null);
     }
 
     @Test
     void mapToSpiBulkPaymentSuccess() {
-        //Given
+        // Given
         BulkPayment payment = buildBulkPayment();
-        //When
+        // When
         SpiBulkPayment spiBulkPayment = xs2aToSpiBulkPaymentMapper.mapToSpiBulkPayment(payment, PAYMENT_PRODUCT);
-        //Then
+        // Then
         assertEquals(PAYMENT_ID, spiBulkPayment.getPaymentId());
         assertTrue(spiBulkPayment.getBatchBookingPreferred());
         assertEquals(buildSpiAccountReference(), spiBulkPayment.getDebtorAccount());

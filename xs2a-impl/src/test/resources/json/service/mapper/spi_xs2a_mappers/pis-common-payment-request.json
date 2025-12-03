@@ -29,11 +29,23 @@
       "creditorAgent": "BCENECEQ",
       "creditorName": "Telekom",
       "creditorAddress": {
+        "addressLines": ["WBG Straße 56", "Additional Address Line"],
+        "department": "Finance Department",
+        "subDepartment": "Accounts Payable",
         "streetName": "WBG Straße",
         "buildingNumber": "56",
-        "townName": "Nürnberg",
+        "buildingName": "Telekom Building",
+        "floor": "2nd Floor",
+        "postBox": "PO Box 456",
+        "room": "Room 205",
         "postCode": "90543",
-        "country": "DE"
+        "townName": "Nürnberg",
+        "townLocationName": "Nürnberg Central",
+        "districtName": "Bavaria District",
+        "countrySubDivision": "Bavaria",
+        "country": {
+          "code": "DE"
+        }
       },
       "remittanceInformationUnstructured": "Ref. Number TELEKOM-1222",
       "purposeCode": ""

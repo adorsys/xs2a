@@ -36,11 +36,21 @@ public class Xs2aEndpointPathConstant {
     public static final String BULK_PAYMENTS_PATH = PREFIX_V1 + "/bulk-payments/**";
     public static final String PERIODIC_PAYMENTS_PATH = PREFIX_V1 + "/periodic-payments/**";
     public static final String SIGNING_BASKETS_PATH = PREFIX_V1 + "/signing-baskets/**";
+
+    // VOP paths - following payment pattern with /** to match both exact paths and sub-paths
+    public static final String VOP_PAYEE_VERIFICATIONS_PATH = PREFIX_V1 + "/payee-verifications/**";
+    public static final String VOP_PAYER_VERIFICATIONS_PATH = PREFIX_V1 + "/payer-verifications/**";
+    public static final String VOP_PARTY_VERIFICATIONS_PATH = PREFIX_V1 + "/party-verifications/**";
+    public static final String VOP_BULK_PAYEE_VERIFICATIONS_PATH = PREFIX_V1 + "/bulk-payee-verifications/**";
+    public static final String VOP_BULK_PAYER_VERIFICATIONS_PATH = PREFIX_V1 + "/bulk-payer-verifications/**";
+    public static final String VOP_BULK_PARTY_VERIFICATIONS_PATH = PREFIX_V1 + "/bulk-party-verifications/**";
+    public static final String VOP_CREDITOR_CONFIRMATION_PATH = PREFIX_V1 + "/**/creditor-confirmation";
+
     public static final String GLOBAL_PATH = PREFIX_V1 + "/**";
     // v2
     public static final String CONSENTS_V2_PATH = PREFIX_V2 + "/consents/**";
 
     public static String[] getAllXs2aEndpointPaths() {
-        return new String[]{ACCOUNTS_PATH, BENEFICIARIES_PATH, CARD_ACCOUNTS_PATH, CONSENTS_PATH, FUNDS_CONFIRMATION_PATH, SINGLE_PAYMENTS_PATH, BULK_PAYMENTS_PATH, PERIODIC_PAYMENTS_PATH, SIGNING_BASKETS_PATH, CONSENTS_V2_PATH};
+        return new String[]{ACCOUNTS_PATH, BENEFICIARIES_PATH, CARD_ACCOUNTS_PATH, CONSENTS_PATH, FUNDS_CONFIRMATION_PATH, SINGLE_PAYMENTS_PATH, BULK_PAYMENTS_PATH, PERIODIC_PAYMENTS_PATH, SIGNING_BASKETS_PATH, CONSENTS_V2_PATH, VOP_PAYEE_VERIFICATIONS_PATH, VOP_PAYER_VERIFICATIONS_PATH, VOP_PARTY_VERIFICATIONS_PATH, VOP_BULK_PAYEE_VERIFICATIONS_PATH, VOP_BULK_PAYER_VERIFICATIONS_PATH, VOP_BULK_PARTY_VERIFICATIONS_PATH, VOP_CREDITOR_CONFIRMATION_PATH};
     }
 }

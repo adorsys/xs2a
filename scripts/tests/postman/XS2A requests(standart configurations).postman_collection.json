@@ -46229,7 +46229,7 @@
 												],
 												"body": {
 													"mode": "raw",
-													"raw": "{\n    \"endToEndIdentification\": \"WBG-123456789\",\n    \"debtorAccount\": {\n      \"currency\": \"EUR\",\n      \"iban\": \"{{iban_multiple}}\"\n    },\n    \"instructedAmount\": {\n      \"currency\": \"EUR\",\n      \"amount\": \"0.01\"\n    },\n    \"creditorAccount\": {\n      \"currency\": \"EUR\",\n      \"iban\": \"{{iban_multiple}}\"\n    },\n    \"creditorAgent\" : \"AAAADEBBXXX\",\n    \"creditorName\": \"WBG\",\n    \"creditorAddress\": {\n      \"buildingNumber\": \"56\",\n      \"townName\": \"Nürnberg\",\n      \"country\": \"DE\",\n      \"postCode\": \"90543\",\n      \"streetName\": \"WBG Straße\"\n    },\n    \"remittanceInformationUnstructured\": \"Ref. Number WBG-1222\"\n  }"
+													"raw": "{\n    \"endToEndIdentification\": \"WBG-123456789\",\n    \"debtorAccount\": {\n      \"currency\": \"EUR\",\n      \"iban\": \"{{iban_multiple}}\"\n    },\n    \"instructedAmount\": {\n      \"currency\": \"EUR\",\n      \"amount\": \"0.01\"\n    },\n    \"creditorAccount\": {\n      \"currency\": \"EUR\",\n      \"iban\": \"{{iban_multiple}}\"\n    },\n    \"creditorAgent\" : \"AAAADEBBXXX\",\n    \"creditorName\": \"WBG\",\n    \"creditorAddress\": {\n      \"addressLines\": [\n        \"WBG Banking Solutions\",\n        \"Finance & Payment Services\"\n      ],\n      \"department\": \"Corporate Banking\",\n      \"buildingNumber\": \"56\",\n      \"streetName\": \"WBG Straße\",\n      \"buildingName\": \"WBG Financial Center\",\n      \"floor\": \"Ground Floor\",\n      \"townName\": \"Nürnberg\",\n      \"postCode\": \"90543\",\n      \"country\": \"DE\"\n    },\n    \"remittanceInformationUnstructured\": \"Ref. Number WBG-1222\"\n  }"
 												},
 												"url": {
 													"raw": "{{protocol}}://{{url_xs2a}}/v1/{{payment_service}}/{{payment_product}}",
@@ -47303,7 +47303,7 @@
 												],
 												"body": {
 													"mode": "raw",
-													"raw": "{\n    \"endToEndIdentification\": \"WBG-123456789\",\n    \"debtorAccount\": {\n      \"currency\": \"EUR\",\n      \"iban\": \"{{iban_multiple}}\"\n    },\n    \"instructedAmount\": {\n      \"currency\": \"EUR\",\n      \"amount\": \"0.01\"\n    },\n    \"creditorAccount\": {\n      \"currency\": \"EUR\",\n      \"iban\": \"{{iban_multiple}}\"\n    },\n    \"creditorAgent\" : \"AAAADEBBXXX\",\n    \"creditorName\": \"WBG\",\n    \"creditorAddress\": {\n      \"buildingNumber\": \"56\",\n      \"townName\": \"Nürnberg\",\n      \"country\": \"DE\",\n      \"postCode\": \"90543\",\n      \"streetName\": \"WBG Straße\"\n    },\n    \"remittanceInformationUnstructured\": \"Ref. Number WBG-1222\"\n  }"
+													"raw": "{\n    \"endToEndIdentification\": \"WBG-123456789\",\n    \"debtorAccount\": {\n      \"currency\": \"EUR\",\n      \"iban\": \"{{iban_multiple}}\"\n    },\n    \"instructedAmount\": {\n      \"currency\": \"EUR\",\n      \"amount\": \"0.01\"\n    },\n    \"creditorAccount\": {\n      \"currency\": \"EUR\",\n      \"iban\": \"{{iban_multiple}}\"\n    },\n    \"creditorAgent\" : \"AAAADEBBXXX\",\n    \"creditorName\": \"WBG\",\n    \"creditorAddress\": {\n      \"addressLines\": [\n        \"WBG Banking Solutions\",\n        \"Finance & Payment Services\"\n      ],\n      \"department\": \"Corporate Banking\",\n      \"buildingNumber\": \"56\",\n      \"streetName\": \"WBG Straße\",\n      \"buildingName\": \"WBG Financial Center\",\n      \"floor\": \"Ground Floor\",\n      \"townName\": \"Nürnberg\",\n      \"postCode\": \"90543\",\n      \"country\": \"DE\"\n    },\n    \"remittanceInformationUnstructured\": \"Ref. Number WBG-1222\"\n  }"
 												},
 												"url": {
 													"raw": "{{protocol}}://{{url_xs2a}}/v1/{{payment_service}}/{{payment_product}}",
@@ -47744,7 +47744,7 @@
 												],
 												"body": {
 													"mode": "raw",
-													"raw": "{\n    \"endToEndIdentification\": \"WBG-123456789\",\n    \"debtorAccount\": {\n      \"currency\": \"EUR\",\n      \"iban\": \"{{iban_none}}\"\n    },\n    \"instructedAmount\": {\n      \"currency\": \"EUR\",\n      \"amount\": \"0.01\"\n    },\n    \"creditorAccount\": {\n      \"currency\": \"EUR\",\n      \"iban\": \"{{iban_none}}\"\n    },\n    \"creditorAgent\" : \"AAAADEBBXXX\",\n    \"creditorName\": \"WBG\",\n    \"creditorAddress\": {\n      \"buildingNumber\": \"56\",\n      \"townName\": \"Nürnberg\",\n      \"country\": \"DE\",\n      \"postCode\": \"90543\",\n      \"streetName\": \"WBG Straße\"\n    },\n    \"remittanceInformationUnstructured\": \"Ref. Number WBG-1222\"\n  }"
+													"raw": "{\n    \"endToEndIdentification\": \"WBG-123456789\",\n    \"debtorAccount\": {\n      \"currency\": \"EUR\",\n      \"iban\": \"{{iban_none}}\"\n    },\n    \"instructedAmount\": {\n      \"currency\": \"EUR\",\n      \"amount\": \"0.01\"\n    },\n    \"creditorAccount\": {\n      \"currency\": \"EUR\",\n      \"iban\": \"{{iban_none}}\"\n    },\n    \"creditorAgent\" : \"AAAADEBBXXX\",\n    \"creditorName\": \"WBG\",\n    \"creditorAddress\": {\n      \"addressLines\": [\n        \"WBG Banking Solutions\",\n        \"Finance & Payment Services\"\n      ],\n      \"department\": \"Corporate Banking\",\n      \"buildingNumber\": \"56\",\n      \"streetName\": \"WBG Straße\",\n      \"buildingName\": \"WBG Financial Center\",\n      \"floor\": \"Ground Floor\",\n      \"townName\": \"Nürnberg\",\n      \"postCode\": \"90543\",\n      \"country\": \"DE\"\n    },\n    \"remittanceInformationUnstructured\": \"Ref. Number WBG-1222\"\n  }"
 												},
 												"url": {
 													"raw": "{{protocol}}://{{url_xs2a}}/v1/{{payment_service}}/{{payment_product}}",
@@ -48465,7 +48465,7 @@
 												],
 												"body": {
 													"mode": "raw",
-													"raw": "{\n    \"endToEndIdentification\": \"WBG-123456789\",\n    \"debtorAccount\": {\n      \"currency\": \"EUR\",\n      \"iban\": \"{{iban_multiple}}\"\n    },\n    \"instructedAmount\": {\n      \"currency\": \"EUR\",\n      \"amount\": \"0.01\"\n    },\n    \"creditorAccount\": {\n      \"currency\": \"EUR\",\n      \"iban\": \"{{iban_multiple}}\"\n    },\n    \"creditorAgent\" : \"AAAADEBBXXX\",\n    \"creditorName\": \"WBG\",\n    \"creditorAddress\": {\n      \"buildingNumber\": \"56\",\n      \"townName\": \"Nürnberg\",\n      \"country\": \"DE\",\n      \"postCode\": \"90543\",\n      \"streetName\": \"WBG Straße\"\n    },\n    \"remittanceInformationUnstructured\": \"Ref. Number WBG-1222\"\n  }"
+													"raw": "{\n    \"endToEndIdentification\": \"WBG-123456789\",\n    \"debtorAccount\": {\n      \"currency\": \"EUR\",\n      \"iban\": \"{{iban_multiple}}\"\n    },\n    \"instructedAmount\": {\n      \"currency\": \"EUR\",\n      \"amount\": \"0.01\"\n    },\n    \"creditorAccount\": {\n      \"currency\": \"EUR\",\n      \"iban\": \"{{iban_multiple}}\"\n    },\n    \"creditorAgent\" : \"AAAADEBBXXX\",\n    \"creditorName\": \"WBG\",\n    \"creditorAddress\": {\n      \"addressLines\": [\n        \"WBG Banking Solutions\",\n        \"Finance & Payment Services\"\n      ],\n      \"department\": \"Corporate Banking\",\n      \"buildingNumber\": \"56\",\n      \"streetName\": \"WBG Straße\",\n      \"buildingName\": \"WBG Financial Center\",\n      \"floor\": \"Ground Floor\",\n      \"townName\": \"Nürnberg\",\n      \"postCode\": \"90543\",\n      \"country\": \"DE\"\n    },\n    \"remittanceInformationUnstructured\": \"Ref. Number WBG-1222\"\n  }"
 												},
 												"url": {
 													"raw": "{{protocol}}://{{url_xs2a}}/v1/{{payment_service}}/{{payment_product}}",
@@ -48732,7 +48732,7 @@
 												],
 												"body": {
 													"mode": "raw",
-													"raw": "{\n    \"endToEndIdentification\": \"WBG-123456789\",\n    \"debtorAccount\": {\n      \"currency\": \"EUR\",\n      \"iban\": \"{{iban_multiple}}\"\n    },\n    \"instructedAmount\": {\n      \"currency\": \"EUR\",\n      \"amount\": \"0.01\"\n    },\n    \"creditorAccount\": {\n      \"currency\": \"EUR\",\n      \"iban\": \"{{iban_multiple}}\"\n    },\n    \"creditorAgent\" : \"AAAADEBBXXX\",\n    \"creditorName\": \"WBG\",\n    \"creditorAddress\": {\n      \"buildingNumber\": \"56\",\n      \"townName\": \"Nürnberg\",\n      \"country\": \"DE\",\n      \"postCode\": \"90543\",\n      \"streetName\": \"WBG Straße\"\n    },\n    \"remittanceInformationUnstructured\": \"Ref. Number WBG-1222\"\n  }"
+													"raw": "{\n    \"endToEndIdentification\": \"WBG-123456789\",\n    \"debtorAccount\": {\n      \"currency\": \"EUR\",\n      \"iban\": \"{{iban_multiple}}\"\n    },\n    \"instructedAmount\": {\n      \"currency\": \"EUR\",\n      \"amount\": \"0.01\"\n    },\n    \"creditorAccount\": {\n      \"currency\": \"EUR\",\n      \"iban\": \"{{iban_multiple}}\"\n    },\n    \"creditorAgent\" : \"AAAADEBBXXX\",\n    \"creditorName\": \"WBG\",\n    \"creditorAddress\": {\n      \"addressLines\": [\n        \"WBG Banking Solutions\",\n        \"Finance & Payment Services\"\n      ],\n      \"department\": \"Corporate Banking\",\n      \"buildingNumber\": \"56\",\n      \"streetName\": \"WBG Straße\",\n      \"buildingName\": \"WBG Financial Center\",\n      \"floor\": \"Ground Floor\",\n      \"townName\": \"Nürnberg\",\n      \"postCode\": \"90543\",\n      \"country\": \"DE\"\n    },\n    \"remittanceInformationUnstructured\": \"Ref. Number WBG-1222\"\n  }"
 												},
 												"url": {
 													"raw": "{{protocol}}://{{url_xs2a}}/v1/{{payment_service}}/{{payment_product}}",
@@ -49078,7 +49078,7 @@
 												],
 												"body": {
 													"mode": "raw",
-													"raw": "{\n    \"endToEndIdentification\": \"WBG-123456789\",\n    \"debtorAccount\": {\n      \"currency\": \"EUR\",\n      \"iban\": \"{{iban_multiple}}\"\n    },\n    \"instructedAmount\": {\n      \"currency\": \"EUR\",\n      \"amount\": \"0.01\"\n    },\n    \"creditorAccount\": {\n      \"currency\": \"EUR\",\n      \"iban\": \"{{iban_multiple}}\"\n    },\n    \"creditorAgent\" : \"AAAADEBBXXX\",\n    \"creditorName\": \"WBG\",\n    \"creditorAddress\": {\n      \"buildingNumber\": \"56\",\n      \"townName\": \"Nürnberg\",\n      \"country\": \"DE\",\n      \"postCode\": \"90543\",\n      \"streetName\": \"WBG Straße\"\n    },\n    \"remittanceInformationUnstructured\": \"Ref. Number WBG-1222\"\n  }"
+													"raw": "{\n    \"endToEndIdentification\": \"WBG-123456789\",\n    \"debtorAccount\": {\n      \"currency\": \"EUR\",\n      \"iban\": \"{{iban_multiple}}\"\n    },\n    \"instructedAmount\": {\n      \"currency\": \"EUR\",\n      \"amount\": \"0.01\"\n    },\n    \"creditorAccount\": {\n      \"currency\": \"EUR\",\n      \"iban\": \"{{iban_multiple}}\"\n    },\n    \"creditorAgent\" : \"AAAADEBBXXX\",\n    \"creditorName\": \"WBG\",\n    \"creditorAddress\": {\n      \"addressLines\": [\n        \"WBG Banking Solutions\",\n        \"Finance & Payment Services\"\n      ],\n      \"department\": \"Corporate Banking\",\n      \"buildingNumber\": \"56\",\n      \"streetName\": \"WBG Straße\",\n      \"buildingName\": \"WBG Financial Center\",\n      \"floor\": \"Ground Floor\",\n      \"townName\": \"Nürnberg\",\n      \"postCode\": \"90543\",\n      \"country\": \"DE\"\n    },\n    \"remittanceInformationUnstructured\": \"Ref. Number WBG-1222\"\n  }"
 												},
 												"url": {
 													"raw": "{{protocol}}://{{url_xs2a}}/v1/{{payment_service}}/{{payment_product}}",
@@ -49429,7 +49429,7 @@
 												],
 												"body": {
 													"mode": "raw",
-													"raw": "{\n    \"endToEndIdentification\": \"WBG-123456789\",\n    \"debtorAccount\": {\n      \"currency\": \"EUR\",\n      \"iban\": \"{{iban_multiple}}\"\n    },\n    \"instructedAmount\": {\n      \"currency\": \"EUR\",\n      \"amount\": \"0.01\"\n    },\n    \"creditorAccount\": {\n      \"currency\": \"EUR\",\n      \"iban\": \"{{iban_multiple}}\"\n    },\n    \"creditorAgent\" : \"AAAADEBBXXX\",\n    \"creditorName\": \"WBG\",\n    \"creditorAddress\": {\n      \"buildingNumber\": \"56\",\n      \"townName\": \"Nürnberg\",\n      \"country\": \"DE\",\n      \"postCode\": \"90543\",\n      \"streetName\": \"WBG Straße\"\n    },\n    \"remittanceInformationUnstructured\": \"Ref. Number WBG-1222\"\n  }"
+													"raw": "{\n    \"endToEndIdentification\": \"WBG-123456789\",\n    \"debtorAccount\": {\n      \"currency\": \"EUR\",\n      \"iban\": \"{{iban_multiple}}\"\n    },\n    \"instructedAmount\": {\n      \"currency\": \"EUR\",\n      \"amount\": \"0.01\"\n    },\n    \"creditorAccount\": {\n      \"currency\": \"EUR\",\n      \"iban\": \"{{iban_multiple}}\"\n    },\n    \"creditorAgent\" : \"AAAADEBBXXX\",\n    \"creditorName\": \"WBG\",\n    \"creditorAddress\": {\n      \"addressLines\": [\n        \"WBG Banking Solutions\",\n        \"Finance & Payment Services\"\n      ],\n      \"department\": \"Corporate Banking\",\n      \"buildingNumber\": \"56\",\n      \"streetName\": \"WBG Straße\",\n      \"buildingName\": \"WBG Financial Center\",\n      \"floor\": \"Ground Floor\",\n      \"townName\": \"Nürnberg\",\n      \"postCode\": \"90543\",\n      \"country\": \"DE\"\n    },\n    \"remittanceInformationUnstructured\": \"Ref. Number WBG-1222\"\n  }"
 												},
 												"url": {
 													"raw": "{{protocol}}://{{url_xs2a}}/v1/{{payment_service}}/{{payment_product}}",
@@ -49848,7 +49848,7 @@
 												],
 												"body": {
 													"mode": "raw",
-													"raw": "{\n    \"endToEndIdentification\": \"WBG-123456789\",\n    \"debtorAccount\": {\n      \"currency\": \"EUR\",\n      \"iban\": \"{{iban_multiple}}\"\n    },\n    \"instructedAmount\": {\n      \"currency\": \"EUR\",\n      \"amount\": \"0.01\"\n    },\n    \"creditorAccount\": {\n      \"currency\": \"EUR\",\n      \"iban\": \"{{iban_multiple}}\"\n    },\n    \"creditorAgent\" : \"AAAADEBBXXX\",\n    \"creditorName\": \"WBG\",\n    \"creditorAddress\": {\n      \"buildingNumber\": \"56\",\n      \"townName\": \"Nürnberg\",\n      \"country\": \"DE\",\n      \"postCode\": \"90543\",\n      \"streetName\": \"WBG Straße\"\n    },\n    \"remittanceInformationUnstructured\": \"Ref. Number WBG-1222\"\n  }"
+													"raw": "{\n    \"endToEndIdentification\": \"WBG-123456789\",\n    \"debtorAccount\": {\n      \"currency\": \"EUR\",\n      \"iban\": \"{{iban_multiple}}\"\n    },\n    \"instructedAmount\": {\n      \"currency\": \"EUR\",\n      \"amount\": \"0.01\"\n    },\n    \"creditorAccount\": {\n      \"currency\": \"EUR\",\n      \"iban\": \"{{iban_multiple}}\"\n    },\n    \"creditorAgent\" : \"AAAADEBBXXX\",\n    \"creditorName\": \"WBG\",\n    \"creditorAddress\": {\n      \"addressLines\": [\n        \"WBG Banking Solutions\",\n        \"Finance & Payment Services\"\n      ],\n      \"department\": \"Corporate Banking\",\n      \"buildingNumber\": \"56\",\n      \"streetName\": \"WBG Straße\",\n      \"buildingName\": \"WBG Financial Center\",\n      \"floor\": \"Ground Floor\",\n      \"townName\": \"Nürnberg\",\n      \"postCode\": \"90543\",\n      \"country\": \"DE\"\n    },\n    \"remittanceInformationUnstructured\": \"Ref. Number WBG-1222\"\n  }"
 												},
 												"url": {
 													"raw": "{{protocol}}://{{url_xs2a}}/v1/{{payment_service}}/{{payment_product}}",
@@ -50443,7 +50443,7 @@
 												],
 												"body": {
 													"mode": "raw",
-													"raw": "{\n    \"endToEndIdentification\": \"WBG-123456789\",\n    \"debtorAccount\": {\n      \"currency\": \"EUR\",\n      \"iban\": \"{{iban_multiple}}\"\n    },\n    \"instructedAmount\": {\n      \"currency\": \"EUR\",\n      \"amount\": \"0.01\"\n    },\n    \"creditorAccount\": {\n      \"currency\": \"EUR\",\n      \"iban\": \"{{iban_multiple}}\"\n    },\n    \"creditorAgent\" : \"AAAADEBBXXX\",\n    \"creditorName\": \"WBG\",\n    \"creditorAddress\": {\n      \"buildingNumber\": \"56\",\n      \"townName\": \"Nürnberg\",\n      \"country\": \"DE\",\n      \"postCode\": \"90543\",\n      \"streetName\": \"WBG Straße\"\n    },\n    \"remittanceInformationUnstructured\": \"Ref. Number WBG-1222\"\n  }"
+													"raw": "{\n    \"endToEndIdentification\": \"WBG-123456789\",\n    \"debtorAccount\": {\n      \"currency\": \"EUR\",\n      \"iban\": \"{{iban_multiple}}\"\n    },\n    \"instructedAmount\": {\n      \"currency\": \"EUR\",\n      \"amount\": \"0.01\"\n    },\n    \"creditorAccount\": {\n      \"currency\": \"EUR\",\n      \"iban\": \"{{iban_multiple}}\"\n    },\n    \"creditorAgent\" : \"AAAADEBBXXX\",\n    \"creditorName\": \"WBG\",\n    \"creditorAddress\": {\n      \"addressLines\": [\n        \"WBG Banking Solutions\",\n        \"Finance & Payment Services\"\n      ],\n      \"department\": \"Corporate Banking\",\n      \"buildingNumber\": \"56\",\n      \"streetName\": \"WBG Straße\",\n      \"buildingName\": \"WBG Financial Center\",\n      \"floor\": \"Ground Floor\",\n      \"townName\": \"Nürnberg\",\n      \"postCode\": \"90543\",\n      \"country\": \"DE\"\n    },\n    \"remittanceInformationUnstructured\": \"Ref. Number WBG-1222\"\n  }"
 												},
 												"url": {
 													"raw": "{{protocol}}://{{url_xs2a}}/v1/{{payment_service}}/{{payment_product}}",
@@ -51200,7 +51200,7 @@
 												],
 												"body": {
 													"mode": "raw",
-													"raw": "{\n    \"endToEndIdentification\": \"WBG-123456789\",\n    \"debtorAccount\": {\n      \"currency\": \"EUR\",\n      \"iban\": \"{{iban_multiple}}\"\n    },\n    \"instructedAmount\": {\n      \"currency\": \"EUR\",\n      \"amount\": \"0.01\"\n    },\n    \"creditorAccount\": {\n      \"currency\": \"EUR\",\n      \"iban\": \"{{iban_multiple}}\"\n    },\n    \"creditorAgent\" : \"AAAADEBBXXX\",\n    \"creditorName\": \"WBG\",\n    \"creditorAddress\": {\n      \"buildingNumber\": \"56\",\n      \"townName\": \"Nürnberg\",\n      \"country\": \"DE\",\n      \"postCode\": \"90543\",\n      \"streetName\": \"WBG Straße\"\n    },\n    \"remittanceInformationUnstructured\": \"Ref. Number WBG-1222\"\n  }"
+													"raw": "{\n    \"endToEndIdentification\": \"WBG-123456789\",\n    \"debtorAccount\": {\n      \"currency\": \"EUR\",\n      \"iban\": \"{{iban_multiple}}\"\n    },\n    \"instructedAmount\": {\n      \"currency\": \"EUR\",\n      \"amount\": \"0.01\"\n    },\n    \"creditorAccount\": {\n      \"currency\": \"EUR\",\n      \"iban\": \"{{iban_multiple}}\"\n    },\n    \"creditorAgent\" : \"AAAADEBBXXX\",\n    \"creditorName\": \"WBG\",\n    \"creditorAddress\": {\n      \"addressLines\": [\n        \"WBG Banking Solutions\",\n        \"Finance & Payment Services\"\n      ],\n      \"department\": \"Corporate Banking\",\n      \"buildingNumber\": \"56\",\n      \"streetName\": \"WBG Straße\",\n      \"buildingName\": \"WBG Financial Center\",\n      \"floor\": \"Ground Floor\",\n      \"townName\": \"Nürnberg\",\n      \"postCode\": \"90543\",\n      \"country\": \"DE\"\n    },\n    \"remittanceInformationUnstructured\": \"Ref. Number WBG-1222\"\n  }"
 												},
 												"url": {
 													"raw": "{{protocol}}://{{url_xs2a}}/v1/{{payment_service}}/{{payment_product}}",
@@ -51875,7 +51875,7 @@
 												],
 												"body": {
 													"mode": "raw",
-													"raw": "{\n    \"endToEndIdentification\": \"WBG-123456789\",\n    \"debtorAccount\": {\n      \"currency\": \"EUR\",\n      \"iban\": \"{{iban_multiple}}\"\n    },\n    \"instructedAmount\": {\n      \"currency\": \"EUR\",\n      \"amount\": \"0.01\"\n    },\n    \"creditorAccount\": {\n      \"currency\": \"EUR\",\n      \"iban\": \"{{iban_multiple}}\"\n    },\n    \"creditorAgent\" : \"AAAADEBBXXX\",\n    \"creditorName\": \"WBG\",\n    \"creditorAddress\": {\n      \"buildingNumber\": \"56\",\n      \"townName\": \"Nürnberg\",\n      \"country\": \"DE\",\n      \"postCode\": \"90543\",\n      \"streetName\": \"WBG Straße\"\n    },\n    \"remittanceInformationUnstructured\": \"Ref. Number WBG-1222\"\n  }"
+													"raw": "{\n    \"endToEndIdentification\": \"WBG-123456789\",\n    \"debtorAccount\": {\n      \"currency\": \"EUR\",\n      \"iban\": \"{{iban_multiple}}\"\n    },\n    \"instructedAmount\": {\n      \"currency\": \"EUR\",\n      \"amount\": \"0.01\"\n    },\n    \"creditorAccount\": {\n      \"currency\": \"EUR\",\n      \"iban\": \"{{iban_multiple}}\"\n    },\n    \"creditorAgent\" : \"AAAADEBBXXX\",\n    \"creditorName\": \"WBG\",\n    \"creditorAddress\": {\n      \"addressLines\": [\n        \"WBG Banking Solutions\",\n        \"Finance & Payment Services\"\n      ],\n      \"department\": \"Corporate Banking\",\n      \"buildingNumber\": \"56\",\n      \"streetName\": \"WBG Straße\",\n      \"buildingName\": \"WBG Financial Center\",\n      \"floor\": \"Ground Floor\",\n      \"townName\": \"Nürnberg\",\n      \"postCode\": \"90543\",\n      \"country\": \"DE\"\n    },\n    \"remittanceInformationUnstructured\": \"Ref. Number WBG-1222\"\n  }"
 												},
 												"url": {
 													"raw": "{{protocol}}://{{url_xs2a}}/v1/{{payment_service}}/{{payment_product}}",
@@ -52716,7 +52716,7 @@
 														],
 														"body": {
 															"mode": "raw",
-															"raw": "{\n    \"endToEndIdentification\": \"WBG-123456789\",\n    \"debtorAccount\": {\n      \"currency\": \"EUR\",\n      \"iban\": \"{{iban_multiple}}\"\n    },\n    \"instructedAmount\": {\n      \"currency\": \"EUR\",\n      \"amount\": \"0.01\"\n    },\n    \"creditorAccount\": {\n      \"currency\": \"EUR\",\n      \"iban\": \"{{iban_multiple}}\"\n    },\n    \"creditorAgent\" : \"AAAADEBBXXX\",\n    \"creditorName\": \"WBG\",\n    \"creditorAddress\": {\n      \"buildingNumber\": \"56\",\n      \"townName\": \"Nürnberg\",\n      \"country\": \"DE\",\n      \"postCode\": \"90543\",\n      \"streetName\": \"WBG Straße\"\n    },\n    \"remittanceInformationUnstructured\": \"Ref. Number WBG-1222\"\n  }"
+															"raw": "{\n    \"endToEndIdentification\": \"WBG-123456789\",\n    \"debtorAccount\": {\n      \"currency\": \"EUR\",\n      \"iban\": \"{{iban_multiple}}\"\n    },\n    \"instructedAmount\": {\n      \"currency\": \"EUR\",\n      \"amount\": \"0.01\"\n    },\n    \"creditorAccount\": {\n      \"currency\": \"EUR\",\n      \"iban\": \"{{iban_multiple}}\"\n    },\n    \"creditorAgent\" : \"AAAADEBBXXX\",\n    \"creditorName\": \"WBG\",\n    \"creditorAddress\": {\n      \"addressLines\": [\n        \"WBG Banking Solutions\",\n        \"Finance & Payment Services\"\n      ],\n      \"department\": \"Corporate Banking\",\n      \"buildingNumber\": \"56\",\n      \"streetName\": \"WBG Straße\",\n      \"buildingName\": \"WBG Financial Center\",\n      \"floor\": \"Ground Floor\",\n      \"townName\": \"Nürnberg\",\n      \"postCode\": \"90543\",\n      \"country\": \"DE\"\n    },\n    \"remittanceInformationUnstructured\": \"Ref. Number WBG-1222\"\n  }"
 														},
 														"url": {
 															"raw": "{{protocol}}://{{url_xs2a}}/v1/{{payment_service}}/{{payment_product}}",
@@ -53005,7 +53005,7 @@
 														],
 														"body": {
 															"mode": "raw",
-															"raw": "{\n    \"endToEndIdentification\": \"WBG-123456789\",\n    \"debtorAccount\": {\n      \"currency\": \"EUR\",\n      \"iban\": \"{{iban_multiple}}\"\n    },\n    \"instructedAmount\": {\n      \"currency\": \"EUR\",\n      \"amount\": \"0.01\"\n    },\n    \"creditorAccount\": {\n      \"currency\": \"EUR\",\n      \"iban\": \"{{iban_multiple}}\"\n    },\n    \"creditorAgent\" : \"AAAADEBBXXX\",\n    \"creditorName\": \"WBG\",\n    \"creditorAddress\": {\n      \"buildingNumber\": \"56\",\n      \"townName\": \"Nürnberg\",\n      \"country\": \"DE\",\n      \"postCode\": \"90543\",\n      \"streetName\": \"WBG Straße\"\n    },\n    \"remittanceInformationUnstructured\": \"Ref. Number WBG-1222\"\n  }"
+															"raw": "{\n    \"endToEndIdentification\": \"WBG-123456789\",\n    \"debtorAccount\": {\n      \"currency\": \"EUR\",\n      \"iban\": \"{{iban_multiple}}\"\n    },\n    \"instructedAmount\": {\n      \"currency\": \"EUR\",\n      \"amount\": \"0.01\"\n    },\n    \"creditorAccount\": {\n      \"currency\": \"EUR\",\n      \"iban\": \"{{iban_multiple}}\"\n    },\n    \"creditorAgent\" : \"AAAADEBBXXX\",\n    \"creditorName\": \"WBG\",\n    \"creditorAddress\": {\n      \"addressLines\": [\n        \"WBG Banking Solutions\",\n        \"Finance & Payment Services\"\n      ],\n      \"department\": \"Corporate Banking\",\n      \"buildingNumber\": \"56\",\n      \"streetName\": \"WBG Straße\",\n      \"buildingName\": \"WBG Financial Center\",\n      \"floor\": \"Ground Floor\",\n      \"townName\": \"Nürnberg\",\n      \"postCode\": \"90543\",\n      \"country\": \"DE\"\n    },\n    \"remittanceInformationUnstructured\": \"Ref. Number WBG-1222\"\n  }"
 														},
 														"url": {
 															"raw": "{{protocol}}://{{url_xs2a}}/v1/{{payment_service}}/{{payment_product}}",
@@ -53492,7 +53492,7 @@
 														],
 														"body": {
 															"mode": "raw",
-															"raw": "{\n    \"endToEndIdentification\": \"WBG-123456789\",\n    \"debtorAccount\": {\n      \"currency\": \"EUR\",\n      \"iban\": \"{{iban_multiple}}\"\n    },\n    \"instructedAmount\": {\n      \"currency\": \"EUR\",\n      \"amount\": \"0.01\"\n    },\n    \"creditorAccount\": {\n      \"currency\": \"EUR\",\n      \"iban\": \"{{iban_multiple}}\"\n    },\n    \"creditorAgent\" : \"AAAADEBBXXX\",\n    \"creditorName\": \"WBG\",\n    \"creditorAddress\": {\n      \"buildingNumber\": \"56\",\n      \"townName\": \"Nürnberg\",\n      \"country\": \"DE\",\n      \"postCode\": \"90543\",\n      \"streetName\": \"WBG Straße\"\n    },\n    \"remittanceInformationUnstructured\": \"Ref. Number WBG-1222\"\n  }"
+															"raw": "{\n    \"endToEndIdentification\": \"WBG-123456789\",\n    \"debtorAccount\": {\n      \"currency\": \"EUR\",\n      \"iban\": \"{{iban_multiple}}\"\n    },\n    \"instructedAmount\": {\n      \"currency\": \"EUR\",\n      \"amount\": \"0.01\"\n    },\n    \"creditorAccount\": {\n      \"currency\": \"EUR\",\n      \"iban\": \"{{iban_multiple}}\"\n    },\n    \"creditorAgent\" : \"AAAADEBBXXX\",\n    \"creditorName\": \"WBG\",\n    \"creditorAddress\": {\n      \"addressLines\": [\n        \"WBG Banking Solutions\",\n        \"Finance & Payment Services\"\n      ],\n      \"department\": \"Corporate Banking\",\n      \"buildingNumber\": \"56\",\n      \"streetName\": \"WBG Straße\",\n      \"buildingName\": \"WBG Financial Center\",\n      \"floor\": \"Ground Floor\",\n      \"townName\": \"Nürnberg\",\n      \"postCode\": \"90543\",\n      \"country\": \"DE\"\n    },\n    \"remittanceInformationUnstructured\": \"Ref. Number WBG-1222\"\n  }"
 														},
 														"url": {
 															"raw": "{{protocol}}://{{url_xs2a}}/v1/{{payment_service}}/{{payment_product}}",
@@ -53874,7 +53874,7 @@
 														],
 														"body": {
 															"mode": "raw",
-															"raw": "{\n    \"endToEndIdentification\": \"WBG-123456789\",\n    \"debtorAccount\": {\n      \"currency\": \"EUR\",\n      \"iban\": \"{{iban_multiple}}\"\n    },\n    \"instructedAmount\": {\n      \"currency\": \"EUR\",\n      \"amount\": \"0.01\"\n    },\n    \"creditorAccount\": {\n      \"currency\": \"EUR\",\n      \"iban\": \"{{iban_multiple}}\"\n    },\n    \"creditorAgent\" : \"AAAADEBBXXX\",\n    \"creditorName\": \"WBG\",\n    \"creditorAddress\": {\n      \"buildingNumber\": \"56\",\n      \"townName\": \"Nürnberg\",\n      \"country\": \"DE\",\n      \"postCode\": \"90543\",\n      \"streetName\": \"WBG Straße\"\n    },\n    \"remittanceInformationUnstructured\": \"Ref. Number WBG-1222\"\n  }"
+															"raw": "{\n    \"endToEndIdentification\": \"WBG-123456789\",\n    \"debtorAccount\": {\n      \"currency\": \"EUR\",\n      \"iban\": \"{{iban_multiple}}\"\n    },\n    \"instructedAmount\": {\n      \"currency\": \"EUR\",\n      \"amount\": \"0.01\"\n    },\n    \"creditorAccount\": {\n      \"currency\": \"EUR\",\n      \"iban\": \"{{iban_multiple}}\"\n    },\n    \"creditorAgent\" : \"AAAADEBBXXX\",\n    \"creditorName\": \"WBG\",\n    \"creditorAddress\": {\n      \"addressLines\": [\n        \"WBG Banking Solutions\",\n        \"Finance & Payment Services\"\n      ],\n      \"department\": \"Corporate Banking\",\n      \"buildingNumber\": \"56\",\n      \"streetName\": \"WBG Straße\",\n      \"buildingName\": \"WBG Financial Center\",\n      \"floor\": \"Ground Floor\",\n      \"townName\": \"Nürnberg\",\n      \"postCode\": \"90543\",\n      \"country\": \"DE\"\n    },\n    \"remittanceInformationUnstructured\": \"Ref. Number WBG-1222\"\n  }"
 														},
 														"url": {
 															"raw": "{{protocol}}://{{url_xs2a}}/v1/{{payment_service}}/{{payment_product}}",
@@ -54606,7 +54606,7 @@
 														],
 														"body": {
 															"mode": "raw",
-															"raw": "{\n    \"endToEndIdentification\": \"WBG-123456789\",\n    \"debtorAccount\": {\n      \"currency\": \"EUR\",\n      \"iban\": \"{{iban_single}}\"\n    },\n    \"instructedAmount\": {\n      \"currency\": \"EUR\",\n      \"amount\": \"0.01\"\n    },\n    \"creditorAccount\": {\n      \"currency\": \"EUR\",\n      \"iban\": \"{{iban_single}}\"\n    },\n    \"creditorAgent\" : \"AAAADEBBXXX\",\n    \"creditorName\": \"WBG\",\n    \"creditorAddress\": {\n      \"buildingNumber\": \"56\",\n      \"townName\": \"Nürnberg\",\n      \"country\": \"DE\",\n      \"postCode\": \"90543\",\n      \"streetName\": \"WBG Straße\"\n    },\n    \"remittanceInformationUnstructured\": \"Ref. Number WBG-1222\"\n  }"
+															"raw": "{\n    \"endToEndIdentification\": \"WBG-123456789\",\n    \"debtorAccount\": {\n      \"currency\": \"EUR\",\n      \"iban\": \"{{iban_single}}\"\n    },\n    \"instructedAmount\": {\n      \"currency\": \"EUR\",\n      \"amount\": \"0.01\"\n    },\n    \"creditorAccount\": {\n      \"currency\": \"EUR\",\n      \"iban\": \"{{iban_single}}\"\n    },\n    \"creditorAgent\" : \"AAAADEBBXXX\",\n    \"creditorName\": \"WBG\",\n    \"creditorAddress\": {\n      \"addressLines\": [\n        \"WBG Banking Solutions\",\n        \"Finance & Payment Services\"\n      ],\n      \"department\": \"Corporate Banking\",\n      \"buildingNumber\": \"56\",\n      \"streetName\": \"WBG Straße\",\n      \"buildingName\": \"WBG Financial Center\",\n      \"floor\": \"Ground Floor\",\n      \"townName\": \"Nürnberg\",\n      \"postCode\": \"90543\",\n      \"country\": \"DE\"\n    },\n    \"remittanceInformationUnstructured\": \"Ref. Number WBG-1222\"\n  }"
 														},
 														"url": {
 															"raw": "{{protocol}}://{{url_xs2a}}/v1/{{payment_service}}/{{payment_product}}",
@@ -55117,7 +55117,7 @@
 														],
 														"body": {
 															"mode": "raw",
-															"raw": "{\n    \"endToEndIdentification\": \"WBG-123456789\",\n    \"debtorAccount\": {\n      \"currency\": \"EUR\",\n      \"iban\": \"{{iban_single}}\"\n    },\n    \"instructedAmount\": {\n      \"currency\": \"EUR\",\n      \"amount\": \"0.01\"\n    },\n    \"creditorAccount\": {\n      \"currency\": \"EUR\",\n      \"iban\": \"{{iban_single}}\"\n    },\n    \"creditorAgent\" : \"AAAADEBBXXX\",\n    \"creditorName\": \"WBG\",\n    \"creditorAddress\": {\n      \"buildingNumber\": \"56\",\n      \"townName\": \"Nürnberg\",\n      \"country\": \"DE\",\n      \"postCode\": \"90543\",\n      \"streetName\": \"WBG Straße\"\n    },\n    \"remittanceInformationUnstructured\": \"Ref. Number WBG-1222\"\n  }"
+															"raw": "{\n    \"endToEndIdentification\": \"WBG-123456789\",\n    \"debtorAccount\": {\n      \"currency\": \"EUR\",\n      \"iban\": \"{{iban_single}}\"\n    },\n    \"instructedAmount\": {\n      \"currency\": \"EUR\",\n      \"amount\": \"0.01\"\n    },\n    \"creditorAccount\": {\n      \"currency\": \"EUR\",\n      \"iban\": \"{{iban_single}}\"\n    },\n    \"creditorAgent\" : \"AAAADEBBXXX\",\n    \"creditorName\": \"WBG\",\n    \"creditorAddress\": {\n      \"addressLines\": [\n        \"WBG Banking Solutions\",\n        \"Finance & Payment Services\"\n      ],\n      \"department\": \"Corporate Banking\",\n      \"buildingNumber\": \"56\",\n      \"streetName\": \"WBG Straße\",\n      \"buildingName\": \"WBG Financial Center\",\n      \"floor\": \"Ground Floor\",\n      \"townName\": \"Nürnberg\",\n      \"postCode\": \"90543\",\n      \"country\": \"DE\"\n    },\n    \"remittanceInformationUnstructured\": \"Ref. Number WBG-1222\"\n  }"
 														},
 														"url": {
 															"raw": "{{protocol}}://{{url_xs2a}}/v1/{{payment_service}}/{{payment_product}}",
@@ -55703,7 +55703,7 @@
 														],
 														"body": {
 															"mode": "raw",
-															"raw": "{\n    \"endToEndIdentification\": \"WBG-123456789\",\n    \"debtorAccount\": {\n      \"currency\": \"EUR\",\n      \"iban\": \"{{iban_multiple}}\"\n    },\n    \"instructedAmount\": {\n      \"currency\": \"EUR\",\n      \"amount\": \"0.01\"\n    },\n    \"creditorAccount\": {\n      \"currency\": \"EUR\",\n      \"iban\": \"{{iban_multiple}}\"\n    },\n    \"creditorAgent\" : \"AAAADEBBXXX\",\n    \"creditorName\": \"WBG\",\n    \"creditorAddress\": {\n      \"buildingNumber\": \"56\",\n      \"townName\": \"Nürnberg\",\n      \"country\": \"DE\",\n      \"postCode\": \"90543\",\n      \"streetName\": \"WBG Straße\"\n    },\n    \"remittanceInformationUnstructured\": \"Ref. Number WBG-1222\"\n  }"
+															"raw": "{\n    \"endToEndIdentification\": \"WBG-123456789\",\n    \"debtorAccount\": {\n      \"currency\": \"EUR\",\n      \"iban\": \"{{iban_multiple}}\"\n    },\n    \"instructedAmount\": {\n      \"currency\": \"EUR\",\n      \"amount\": \"0.01\"\n    },\n    \"creditorAccount\": {\n      \"currency\": \"EUR\",\n      \"iban\": \"{{iban_multiple}}\"\n    },\n    \"creditorAgent\" : \"AAAADEBBXXX\",\n    \"creditorName\": \"WBG\",\n    \"creditorAddress\": {\n      \"addressLines\": [\n        \"WBG Banking Solutions\",\n        \"Finance & Payment Services\"\n      ],\n      \"department\": \"Corporate Banking\",\n      \"buildingNumber\": \"56\",\n      \"streetName\": \"WBG Straße\",\n      \"buildingName\": \"WBG Financial Center\",\n      \"floor\": \"Ground Floor\",\n      \"townName\": \"Nürnberg\",\n      \"postCode\": \"90543\",\n      \"country\": \"DE\"\n    },\n    \"remittanceInformationUnstructured\": \"Ref. Number WBG-1222\"\n  }"
 														},
 														"url": {
 															"raw": "{{protocol}}://{{url_xs2a}}/v1/{{payment_service}}/{{payment_product}}",
@@ -56510,7 +56510,7 @@
 														],
 														"body": {
 															"mode": "raw",
-															"raw": "{\n    \"endToEndIdentification\": \"WBG-123456789\",\n    \"debtorAccount\": {\n      \"currency\": \"EUR\",\n      \"iban\": \"{{iban_multiple}}\"\n    },\n    \"instructedAmount\": {\n      \"currency\": \"EUR\",\n      \"amount\": \"0.01\"\n    },\n    \"creditorAccount\": {\n      \"currency\": \"EUR\",\n      \"iban\": \"{{iban_multiple}}\"\n    },\n    \"creditorAgent\" : \"AAAADEBBXXX\",\n    \"creditorName\": \"WBG\",\n    \"creditorAddress\": {\n      \"buildingNumber\": \"56\",\n      \"townName\": \"Nürnberg\",\n      \"country\": \"DE\",\n      \"postCode\": \"90543\",\n      \"streetName\": \"WBG Straße\"\n    },\n    \"remittanceInformationUnstructured\": \"Ref. Number WBG-1222\"\n  }"
+															"raw": "{\n    \"endToEndIdentification\": \"WBG-123456789\",\n    \"debtorAccount\": {\n      \"currency\": \"EUR\",\n      \"iban\": \"{{iban_multiple}}\"\n    },\n    \"instructedAmount\": {\n      \"currency\": \"EUR\",\n      \"amount\": \"0.01\"\n    },\n    \"creditorAccount\": {\n      \"currency\": \"EUR\",\n      \"iban\": \"{{iban_multiple}}\"\n    },\n    \"creditorAgent\" : \"AAAADEBBXXX\",\n    \"creditorName\": \"WBG\",\n    \"creditorAddress\": {\n      \"addressLines\": [\n        \"WBG Banking Solutions\",\n        \"Finance & Payment Services\"\n      ],\n      \"department\": \"Corporate Banking\",\n      \"buildingNumber\": \"56\",\n      \"streetName\": \"WBG Straße\",\n      \"buildingName\": \"WBG Financial Center\",\n      \"floor\": \"Ground Floor\",\n      \"townName\": \"Nürnberg\",\n      \"postCode\": \"90543\",\n      \"country\": \"DE\"\n    },\n    \"remittanceInformationUnstructured\": \"Ref. Number WBG-1222\"\n  }"
 														},
 														"url": {
 															"raw": "{{protocol}}://{{url_xs2a}}/v1/{{payment_service}}/{{payment_product}}",
@@ -57513,7 +57513,7 @@
 														],
 														"body": {
 															"mode": "raw",
-															"raw": "{\n    \"endToEndIdentification\": \"WBG-123456789\",\n    \"debtorAccount\": {\n      \"currency\": \"EUR\",\n      \"iban\": \"{{iban_multiple}}\"\n    },\n    \"instructedAmount\": {\n      \"currency\": \"EUR\",\n      \"amount\": \"0.01\"\n    },\n    \"creditorAccount\": {\n      \"currency\": \"EUR\",\n      \"iban\": \"{{iban_multiple}}\"\n    },\n    \"creditorAgent\" : \"AAAADEBBXXX\",\n    \"creditorName\": \"WBG\",\n    \"creditorAddress\": {\n      \"buildingNumber\": \"56\",\n      \"townName\": \"Nürnberg\",\n      \"country\": \"DE\",\n      \"postCode\": \"90543\",\n      \"streetName\": \"WBG Straße\"\n    },\n    \"remittanceInformationUnstructured\": \"Ref. Number WBG-1222\"\n  }"
+															"raw": "{\n    \"endToEndIdentification\": \"WBG-123456789\",\n    \"debtorAccount\": {\n      \"currency\": \"EUR\",\n      \"iban\": \"{{iban_multiple}}\"\n    },\n    \"instructedAmount\": {\n      \"currency\": \"EUR\",\n      \"amount\": \"0.01\"\n    },\n    \"creditorAccount\": {\n      \"currency\": \"EUR\",\n      \"iban\": \"{{iban_multiple}}\"\n    },\n    \"creditorAgent\" : \"AAAADEBBXXX\",\n    \"creditorName\": \"WBG\",\n    \"creditorAddress\": {\n      \"addressLines\": [\n        \"WBG Banking Solutions\",\n        \"Finance & Payment Services\"\n      ],\n      \"department\": \"Corporate Banking\",\n      \"buildingNumber\": \"56\",\n      \"streetName\": \"WBG Straße\",\n      \"buildingName\": \"WBG Financial Center\",\n      \"floor\": \"Ground Floor\",\n      \"townName\": \"Nürnberg\",\n      \"postCode\": \"90543\",\n      \"country\": \"DE\"\n    },\n    \"remittanceInformationUnstructured\": \"Ref. Number WBG-1222\"\n  }"
 														},
 														"url": {
 															"raw": "{{protocol}}://{{url_xs2a}}/v1/{{payment_service}}/{{payment_product}}",
@@ -58413,7 +58413,7 @@
 														],
 														"body": {
 															"mode": "raw",
-															"raw": "{\n    \"endToEndIdentification\": \"WBG-123456789\",\n    \"debtorAccount\": {\n      \"currency\": \"EUR\",\n      \"iban\": \"{{iban_multiple}}\"\n    },\n    \"instructedAmount\": {\n      \"currency\": \"EUR\",\n      \"amount\": \"0.01\"\n    },\n    \"creditorAccount\": {\n      \"currency\": \"EUR\",\n      \"iban\": \"{{iban_multiple}}\"\n    },\n    \"creditorAgent\" : \"AAAADEBBXXX\",\n    \"creditorName\": \"WBG\",\n    \"creditorAddress\": {\n      \"buildingNumber\": \"56\",\n      \"townName\": \"Nürnberg\",\n      \"country\": \"DE\",\n      \"postCode\": \"90543\",\n      \"streetName\": \"WBG Straße\"\n    },\n    \"remittanceInformationUnstructured\": \"Ref. Number WBG-1222\"\n  }"
+															"raw": "{\n    \"endToEndIdentification\": \"WBG-123456789\",\n    \"debtorAccount\": {\n      \"currency\": \"EUR\",\n      \"iban\": \"{{iban_multiple}}\"\n    },\n    \"instructedAmount\": {\n      \"currency\": \"EUR\",\n      \"amount\": \"0.01\"\n    },\n    \"creditorAccount\": {\n      \"currency\": \"EUR\",\n      \"iban\": \"{{iban_multiple}}\"\n    },\n    \"creditorAgent\" : \"AAAADEBBXXX\",\n    \"creditorName\": \"WBG\",\n    \"creditorAddress\": {\n      \"addressLines\": [\n        \"WBG Banking Solutions\",\n        \"Finance & Payment Services\"\n      ],\n      \"department\": \"Corporate Banking\",\n      \"buildingNumber\": \"56\",\n      \"streetName\": \"WBG Straße\",\n      \"buildingName\": \"WBG Financial Center\",\n      \"floor\": \"Ground Floor\",\n      \"townName\": \"Nürnberg\",\n      \"postCode\": \"90543\",\n      \"country\": \"DE\"\n    },\n    \"remittanceInformationUnstructured\": \"Ref. Number WBG-1222\"\n  }"
 														},
 														"url": {
 															"raw": "{{protocol}}://{{url_xs2a}}/v1/{{payment_service}}/{{payment_product}}",
@@ -59643,7 +59643,7 @@
 														],
 														"body": {
 															"mode": "raw",
-															"raw": "{\n    \"endToEndIdentification\": \"WBG-123456789\",\n    \"debtorAccount\": {\n      \"currency\": \"EUR\",\n      \"iban\": \"{{iban_single}}\"\n    },\n    \"instructedAmount\": {\n      \"currency\": \"EUR\",\n      \"amount\": \"0.01\"\n    },\n    \"creditorAccount\": {\n      \"currency\": \"EUR\",\n      \"iban\": \"{{iban_single}}\"\n    },\n    \"creditorAgent\" : \"AAAADEBBXXX\",\n    \"creditorName\": \"WBG\",\n    \"creditorAddress\": {\n      \"buildingNumber\": \"56\",\n      \"townName\": \"Nürnberg\",\n      \"country\": \"DE\",\n      \"postCode\": \"90543\",\n      \"streetName\": \"WBG Straße\"\n    },\n    \"remittanceInformationUnstructured\": \"Ref. Number WBG-1222\"\n  }"
+															"raw": "{\n    \"endToEndIdentification\": \"WBG-123456789\",\n    \"debtorAccount\": {\n      \"currency\": \"EUR\",\n      \"iban\": \"{{iban_single}}\"\n    },\n    \"instructedAmount\": {\n      \"currency\": \"EUR\",\n      \"amount\": \"0.01\"\n    },\n    \"creditorAccount\": {\n      \"currency\": \"EUR\",\n      \"iban\": \"{{iban_single}}\"\n    },\n    \"creditorAgent\" : \"AAAADEBBXXX\",\n    \"creditorName\": \"WBG\",\n    \"creditorAddress\": {\n      \"addressLines\": [\n        \"WBG Banking Solutions\",\n        \"Finance & Payment Services\"\n      ],\n      \"department\": \"Corporate Banking\",\n      \"buildingNumber\": \"56\",\n      \"streetName\": \"WBG Straße\",\n      \"buildingName\": \"WBG Financial Center\",\n      \"floor\": \"Ground Floor\",\n      \"townName\": \"Nürnberg\",\n      \"postCode\": \"90543\",\n      \"country\": \"DE\"\n    },\n    \"remittanceInformationUnstructured\": \"Ref. Number WBG-1222\"\n  }"
 														},
 														"url": {
 															"raw": "{{protocol}}://{{url_xs2a}}/v1/{{payment_service}}/{{payment_product}}",
@@ -60497,7 +60497,7 @@
 														],
 														"body": {
 															"mode": "raw",
-															"raw": "{\n    \"endToEndIdentification\": \"WBG-123456789\",\n    \"debtorAccount\": {\n      \"currency\": \"EUR\",\n      \"iban\": \"{{iban_single}}\"\n    },\n    \"instructedAmount\": {\n      \"currency\": \"EUR\",\n      \"amount\": \"0.01\"\n    },\n    \"creditorAccount\": {\n      \"currency\": \"EUR\",\n      \"iban\": \"{{iban_single}}\"\n    },\n    \"creditorAgent\" : \"AAAADEBBXXX\",\n    \"creditorName\": \"WBG\",\n    \"creditorAddress\": {\n      \"buildingNumber\": \"56\",\n      \"townName\": \"Nürnberg\",\n      \"country\": \"DE\",\n      \"postCode\": \"90543\",\n      \"streetName\": \"WBG Straße\"\n    },\n    \"remittanceInformationUnstructured\": \"Ref. Number WBG-1222\"\n  }"
+															"raw": "{\n    \"endToEndIdentification\": \"WBG-123456789\",\n    \"debtorAccount\": {\n      \"currency\": \"EUR\",\n      \"iban\": \"{{iban_single}}\"\n    },\n    \"instructedAmount\": {\n      \"currency\": \"EUR\",\n      \"amount\": \"0.01\"\n    },\n    \"creditorAccount\": {\n      \"currency\": \"EUR\",\n      \"iban\": \"{{iban_single}}\"\n    },\n    \"creditorAgent\" : \"AAAADEBBXXX\",\n    \"creditorName\": \"WBG\",\n    \"creditorAddress\": {\n      \"addressLines\": [\n        \"WBG Banking Solutions\",\n        \"Finance & Payment Services\"\n      ],\n      \"department\": \"Corporate Banking\",\n      \"buildingNumber\": \"56\",\n      \"streetName\": \"WBG Straße\",\n      \"buildingName\": \"WBG Financial Center\",\n      \"floor\": \"Ground Floor\",\n      \"townName\": \"Nürnberg\",\n      \"postCode\": \"90543\",\n      \"country\": \"DE\"\n    },\n    \"remittanceInformationUnstructured\": \"Ref. Number WBG-1222\"\n  }"
 														},
 														"url": {
 															"raw": "{{protocol}}://{{url_xs2a}}/v1/{{payment_service}}/{{payment_product}}",
@@ -61430,7 +61430,7 @@
 												],
 												"body": {
 													"mode": "raw",
-													"raw": "{\n    \"endToEndIdentification\": \"WBG-123456789\",\n    \"debtorAccount\": {\n      \"currency\": \"EUR\",\n      \"iban\": \"{{iban_multiple}}\"\n    },\n    \"instructedAmount\": {\n      \"currency\": \"EUR\",\n      \"amount\": \"0.01\"\n    },\n    \"creditorAccount\": {\n      \"currency\": \"EUR\",\n      \"iban\": \"{{iban_multiple}}\"\n    },\n    \"creditorAgent\" : \"AAAADEBBXXX\",\n    \"creditorName\": \"WBG\",\n    \"creditorAddress\": {\n      \"buildingNumber\": \"56\",\n      \"townName\": \"Nürnberg\",\n      \"country\": \"DE\",\n      \"postCode\": \"90543\",\n      \"streetName\": \"WBG Straße\"\n    },\n    \"remittanceInformationUnstructured\": \"Ref. Number WBG-1222\"\n  }"
+													"raw": "{\n    \"endToEndIdentification\": \"WBG-123456789\",\n    \"debtorAccount\": {\n      \"currency\": \"EUR\",\n      \"iban\": \"{{iban_multiple}}\"\n    },\n    \"instructedAmount\": {\n      \"currency\": \"EUR\",\n      \"amount\": \"0.01\"\n    },\n    \"creditorAccount\": {\n      \"currency\": \"EUR\",\n      \"iban\": \"{{iban_multiple}}\"\n    },\n    \"creditorAgent\" : \"AAAADEBBXXX\",\n    \"creditorName\": \"WBG\",\n    \"creditorAddress\": {\n      \"addressLines\": [\n        \"WBG Banking Solutions\",\n        \"Finance & Payment Services\"\n      ],\n      \"department\": \"Corporate Banking\",\n      \"buildingNumber\": \"56\",\n      \"streetName\": \"WBG Straße\",\n      \"buildingName\": \"WBG Financial Center\",\n      \"floor\": \"Ground Floor\",\n      \"townName\": \"Nürnberg\",\n      \"postCode\": \"90543\",\n      \"country\": \"DE\"\n    },\n    \"remittanceInformationUnstructured\": \"Ref. Number WBG-1222\"\n  }"
 												},
 												"url": {
 													"raw": "{{protocol}}://{{url_xs2a}}/v1/{{payment_service}}/{{payment_product}}",
@@ -61811,7 +61811,7 @@
 												],
 												"body": {
 													"mode": "raw",
-													"raw": "{\n    \"endToEndIdentification\": \"WBG-123456789\",\n    \"debtorAccount\": {\n      \"currency\": \"EUR\",\n      \"iban\": \"{{iban_multiple}}\"\n    },\n    \"instructedAmount\": {\n      \"currency\": \"EUR\",\n      \"amount\": \"0.01\"\n    },\n    \"creditorAccount\": {\n      \"currency\": \"EUR\",\n      \"iban\": \"{{iban_multiple}}\"\n    },\n    \"creditorAgent\" : \"AAAADEBBXXX\",\n    \"creditorName\": \"WBG\",\n    \"creditorAddress\": {\n      \"buildingNumber\": \"56\",\n      \"townName\": \"Nürnberg\",\n      \"country\": \"DE\",\n      \"postCode\": \"90543\",\n      \"streetName\": \"WBG Straße\"\n    },\n    \"remittanceInformationUnstructured\": \"Ref. Number WBG-1222\"\n  }"
+													"raw": "{\n    \"endToEndIdentification\": \"WBG-123456789\",\n    \"debtorAccount\": {\n      \"currency\": \"EUR\",\n      \"iban\": \"{{iban_multiple}}\"\n    },\n    \"instructedAmount\": {\n      \"currency\": \"EUR\",\n      \"amount\": \"0.01\"\n    },\n    \"creditorAccount\": {\n      \"currency\": \"EUR\",\n      \"iban\": \"{{iban_multiple}}\"\n    },\n    \"creditorAgent\" : \"AAAADEBBXXX\",\n    \"creditorName\": \"WBG\",\n    \"creditorAddress\": {\n      \"addressLines\": [\n        \"WBG Banking Solutions\",\n        \"Finance & Payment Services\"\n      ],\n      \"department\": \"Corporate Banking\",\n      \"buildingNumber\": \"56\",\n      \"streetName\": \"WBG Straße\",\n      \"buildingName\": \"WBG Financial Center\",\n      \"floor\": \"Ground Floor\",\n      \"townName\": \"Nürnberg\",\n      \"postCode\": \"90543\",\n      \"country\": \"DE\"\n    },\n    \"remittanceInformationUnstructured\": \"Ref. Number WBG-1222\"\n  }"
 												},
 												"url": {
 													"raw": "{{protocol}}://{{url_xs2a}}/v1/{{payment_service}}/{{payment_product}}",
@@ -62262,7 +62262,7 @@
 												],
 												"body": {
 													"mode": "raw",
-													"raw": "{\n    \"endToEndIdentification\": \"WBG-123456789\",\n    \"debtorAccount\": {\n      \"currency\": \"EUR\",\n      \"iban\": \"{{iban_multiple}}\"\n    },\n    \"instructedAmount\": {\n      \"currency\": \"EUR\",\n      \"amount\": \"0.01\"\n    },\n    \"creditorAccount\": {\n      \"currency\": \"EUR\",\n      \"iban\": \"{{iban_multiple}}\"\n    },\n    \"creditorAgent\" : \"AAAADEBBXXX\",\n    \"creditorName\": \"WBG\",\n    \"creditorAddress\": {\n      \"buildingNumber\": \"56\",\n      \"townName\": \"Nürnberg\",\n      \"country\": \"DE\",\n      \"postCode\": \"90543\",\n      \"streetName\": \"WBG Straße\"\n    },\n    \"remittanceInformationUnstructured\": \"Ref. Number WBG-1222\"\n  }"
+													"raw": "{\n    \"endToEndIdentification\": \"WBG-123456789\",\n    \"debtorAccount\": {\n      \"currency\": \"EUR\",\n      \"iban\": \"{{iban_multiple}}\"\n    },\n    \"instructedAmount\": {\n      \"currency\": \"EUR\",\n      \"amount\": \"0.01\"\n    },\n    \"creditorAccount\": {\n      \"currency\": \"EUR\",\n      \"iban\": \"{{iban_multiple}}\"\n    },\n    \"creditorAgent\" : \"AAAADEBBXXX\",\n    \"creditorName\": \"WBG\",\n    \"creditorAddress\": {\n      \"addressLines\": [\n        \"WBG Banking Solutions\",\n        \"Finance & Payment Services\"\n      ],\n      \"department\": \"Corporate Banking\",\n      \"buildingNumber\": \"56\",\n      \"streetName\": \"WBG Straße\",\n      \"buildingName\": \"WBG Financial Center\",\n      \"floor\": \"Ground Floor\",\n      \"townName\": \"Nürnberg\",\n      \"postCode\": \"90543\",\n      \"country\": \"DE\"\n    },\n    \"remittanceInformationUnstructured\": \"Ref. Number WBG-1222\"\n  }"
 												},
 												"url": {
 													"raw": "{{protocol}}://{{url_xs2a}}/v1/{{payment_service}}/{{payment_product}}",
@@ -63250,7 +63250,7 @@
 												],
 												"body": {
 													"mode": "raw",
-													"raw": "{\n    \"endToEndIdentification\": \"WBG-123456789\",\n    \"debtorAccount\": {\n      \"currency\": \"EUR\",\n      \"iban\": \"{{iban_multiple}}\"\n    },\n    \"instructedAmount\": {\n      \"currency\": \"EUR\",\n      \"amount\": \"0.01\"\n    },\n    \"creditorAccount\": {\n      \"currency\": \"EUR\",\n      \"iban\": \"{{iban_multiple}}\"\n    },\n    \"creditorAgent\" : \"AAAADEBBXXX\",\n    \"creditorName\": \"WBG\",\n    \"creditorAddress\": {\n      \"buildingNumber\": \"56\",\n      \"townName\": \"Nürnberg\",\n      \"country\": \"DE\",\n      \"postCode\": \"90543\",\n      \"streetName\": \"WBG Straße\"\n    },\n    \"remittanceInformationUnstructured\": \"Ref. Number WBG-1222\"\n  }"
+													"raw": "{\n    \"endToEndIdentification\": \"WBG-123456789\",\n    \"debtorAccount\": {\n      \"currency\": \"EUR\",\n      \"iban\": \"{{iban_multiple}}\"\n    },\n    \"instructedAmount\": {\n      \"currency\": \"EUR\",\n      \"amount\": \"0.01\"\n    },\n    \"creditorAccount\": {\n      \"currency\": \"EUR\",\n      \"iban\": \"{{iban_multiple}}\"\n    },\n    \"creditorAgent\" : \"AAAADEBBXXX\",\n    \"creditorName\": \"WBG\",\n    \"creditorAddress\": {\n      \"addressLines\": [\n        \"WBG Banking Solutions\",\n        \"Finance & Payment Services\"\n      ],\n      \"department\": \"Corporate Banking\",\n      \"buildingNumber\": \"56\",\n      \"streetName\": \"WBG Straße\",\n      \"buildingName\": \"WBG Financial Center\",\n      \"floor\": \"Ground Floor\",\n      \"townName\": \"Nürnberg\",\n      \"postCode\": \"90543\",\n      \"country\": \"DE\"\n    },\n    \"remittanceInformationUnstructured\": \"Ref. Number WBG-1222\"\n  }"
 												},
 												"url": {
 													"raw": "{{protocol}}://{{url_xs2a}}/v1/{{payment_service}}/{{payment_product}}",
@@ -64041,7 +64041,7 @@
 												],
 												"body": {
 													"mode": "raw",
-													"raw": "{\n    \"endToEndIdentification\": \"WBG-123456789\",\n    \"debtorAccount\": {\n      \"currency\": \"EUR\",\n      \"iban\": \"{{iban_multiple}}\"\n    },\n    \"instructedAmount\": {\n      \"currency\": \"EUR\",\n      \"amount\": \"0.01\"\n    },\n    \"creditorAccount\": {\n      \"currency\": \"EUR\",\n      \"iban\": \"{{iban_multiple}}\"\n    },\n    \"creditorAgent\" : \"AAAADEBBXXX\",\n    \"creditorName\": \"WBG\",\n    \"creditorAddress\": {\n      \"buildingNumber\": \"56\",\n      \"townName\": \"Nürnberg\",\n      \"country\": \"DE\",\n      \"postCode\": \"90543\",\n      \"streetName\": \"WBG Straße\"\n    },\n    \"remittanceInformationUnstructured\": \"Ref. Number WBG-1222\"\n  }"
+													"raw": "{\n    \"endToEndIdentification\": \"WBG-123456789\",\n    \"debtorAccount\": {\n      \"currency\": \"EUR\",\n      \"iban\": \"{{iban_multiple}}\"\n    },\n    \"instructedAmount\": {\n      \"currency\": \"EUR\",\n      \"amount\": \"0.01\"\n    },\n    \"creditorAccount\": {\n      \"currency\": \"EUR\",\n      \"iban\": \"{{iban_multiple}}\"\n    },\n    \"creditorAgent\" : \"AAAADEBBXXX\",\n    \"creditorName\": \"WBG\",\n    \"creditorAddress\": {\n      \"addressLines\": [\n        \"WBG Banking Solutions\",\n        \"Finance & Payment Services\"\n      ],\n      \"department\": \"Corporate Banking\",\n      \"buildingNumber\": \"56\",\n      \"streetName\": \"WBG Straße\",\n      \"buildingName\": \"WBG Financial Center\",\n      \"floor\": \"Ground Floor\",\n      \"townName\": \"Nürnberg\",\n      \"postCode\": \"90543\",\n      \"country\": \"DE\"\n    },\n    \"remittanceInformationUnstructured\": \"Ref. Number WBG-1222\"\n  }"
 												},
 												"url": {
 													"raw": "{{protocol}}://{{url_xs2a}}/v1/{{payment_service}}/{{payment_product}}",
@@ -64906,7 +64906,7 @@
 												],
 												"body": {
 													"mode": "raw",
-													"raw": "{\n    \"endToEndIdentification\": \"WBG-123456789\",\n    \"debtorAccount\": {\n      \"currency\": \"EUR\",\n      \"iban\": \"{{iban_multiple}}\"\n    },\n    \"instructedAmount\": {\n      \"currency\": \"EUR\",\n      \"amount\": \"0.01\"\n    },\n    \"creditorAccount\": {\n      \"currency\": \"EUR\",\n      \"iban\": \"{{iban_multiple}}\"\n    },\n    \"creditorAgent\" : \"AAAADEBBXXX\",\n    \"creditorName\": \"WBG\",\n    \"creditorAddress\": {\n      \"buildingNumber\": \"56\",\n      \"townName\": \"Nürnberg\",\n      \"country\": \"DE\",\n      \"postCode\": \"90543\",\n      \"streetName\": \"WBG Straße\"\n    },\n    \"remittanceInformationUnstructured\": \"Ref. Number WBG-1222\"\n  }"
+													"raw": "{\n    \"endToEndIdentification\": \"WBG-123456789\",\n    \"debtorAccount\": {\n      \"currency\": \"EUR\",\n      \"iban\": \"{{iban_multiple}}\"\n    },\n    \"instructedAmount\": {\n      \"currency\": \"EUR\",\n      \"amount\": \"0.01\"\n    },\n    \"creditorAccount\": {\n      \"currency\": \"EUR\",\n      \"iban\": \"{{iban_multiple}}\"\n    },\n    \"creditorAgent\" : \"AAAADEBBXXX\",\n    \"creditorName\": \"WBG\",\n    \"creditorAddress\": {\n      \"addressLines\": [\n        \"WBG Banking Solutions\",\n        \"Finance & Payment Services\"\n      ],\n      \"department\": \"Corporate Banking\",\n      \"buildingNumber\": \"56\",\n      \"streetName\": \"WBG Straße\",\n      \"buildingName\": \"WBG Financial Center\",\n      \"floor\": \"Ground Floor\",\n      \"townName\": \"Nürnberg\",\n      \"postCode\": \"90543\",\n      \"country\": \"DE\"\n    },\n    \"remittanceInformationUnstructured\": \"Ref. Number WBG-1222\"\n  }"
 												},
 												"url": {
 													"raw": "{{protocol}}://{{url_xs2a}}/v1/{{payment_service}}/{{payment_product}}",
@@ -66237,7 +66237,7 @@
 														],
 														"body": {
 															"mode": "raw",
-															"raw": "{\n    \"endToEndIdentification\": \"WBG-123456789\",\n    \"debtorAccount\": {\n      \"currency\": \"EUR\",\n      \"iban\": \"{{iban_single}}\"\n    },\n    \"instructedAmount\": {\n      \"currency\": \"EUR\",\n      \"amount\": \"0.01\"\n    },\n    \"creditorAccount\": {\n      \"currency\": \"EUR\",\n      \"iban\": \"{{iban_single}}\"\n    },\n    \"creditorAgent\" : \"AAAADEBBXXX\",\n    \"creditorName\": \"WBG\",\n    \"creditorAddress\": {\n      \"buildingNumber\": \"56\",\n      \"townName\": \"Nürnberg\",\n      \"country\": \"DE\",\n      \"postCode\": \"90543\",\n      \"streetName\": \"WBG Straße\"\n    },\n    \"remittanceInformationUnstructured\": \"Ref. Number WBG-1222\"\n  }"
+															"raw": "{\n    \"endToEndIdentification\": \"WBG-123456789\",\n    \"debtorAccount\": {\n      \"currency\": \"EUR\",\n      \"iban\": \"{{iban_single}}\"\n    },\n    \"instructedAmount\": {\n      \"currency\": \"EUR\",\n      \"amount\": \"0.01\"\n    },\n    \"creditorAccount\": {\n      \"currency\": \"EUR\",\n      \"iban\": \"{{iban_single}}\"\n    },\n    \"creditorAgent\" : \"AAAADEBBXXX\",\n    \"creditorName\": \"WBG\",\n    \"creditorAddress\": {\n      \"addressLines\": [\n        \"WBG Banking Solutions\",\n        \"Finance & Payment Services\"\n      ],\n      \"department\": \"Corporate Banking\",\n      \"buildingNumber\": \"56\",\n      \"streetName\": \"WBG Straße\",\n      \"buildingName\": \"WBG Financial Center\",\n      \"floor\": \"Ground Floor\",\n      \"townName\": \"Nürnberg\",\n      \"postCode\": \"90543\",\n      \"country\": \"DE\"\n    },\n    \"remittanceInformationUnstructured\": \"Ref. Number WBG-1222\"\n  }"
 														},
 														"url": {
 															"raw": "{{protocol}}://{{url_xs2a}}/v1/{{payment_service}}/{{payment_product}}",
@@ -66551,7 +66551,7 @@
 														],
 														"body": {
 															"mode": "raw",
-															"raw": "{\n    \"endToEndIdentification\": \"WBG-123456789\",\n    \"debtorAccount\": {\n      \"currency\": \"EUR\",\n      \"iban\": \"{{iban_single}}\"\n    },\n    \"instructedAmount\": {\n      \"currency\": \"EUR\",\n      \"amount\": \"0.01\"\n    },\n    \"creditorAccount\": {\n      \"currency\": \"EUR\",\n      \"iban\": \"{{iban_single}}\"\n    },\n    \"creditorAgent\" : \"AAAADEBBXXX\",\n    \"creditorName\": \"WBG\",\n    \"creditorAddress\": {\n      \"buildingNumber\": \"56\",\n      \"townName\": \"Nürnberg\",\n      \"country\": \"DE\",\n      \"postCode\": \"90543\",\n      \"streetName\": \"WBG Straße\"\n    },\n    \"remittanceInformationUnstructured\": \"Ref. Number WBG-1222\"\n  }"
+															"raw": "{\n    \"endToEndIdentification\": \"WBG-123456789\",\n    \"debtorAccount\": {\n      \"currency\": \"EUR\",\n      \"iban\": \"{{iban_single}}\"\n    },\n    \"instructedAmount\": {\n      \"currency\": \"EUR\",\n      \"amount\": \"0.01\"\n    },\n    \"creditorAccount\": {\n      \"currency\": \"EUR\",\n      \"iban\": \"{{iban_single}}\"\n    },\n    \"creditorAgent\" : \"AAAADEBBXXX\",\n    \"creditorName\": \"WBG\",\n    \"creditorAddress\": {\n      \"addressLines\": [\n        \"WBG Banking Solutions\",\n        \"Finance & Payment Services\"\n      ],\n      \"department\": \"Corporate Banking\",\n      \"buildingNumber\": \"56\",\n      \"streetName\": \"WBG Straße\",\n      \"buildingName\": \"WBG Financial Center\",\n      \"floor\": \"Ground Floor\",\n      \"townName\": \"Nürnberg\",\n      \"postCode\": \"90543\",\n      \"country\": \"DE\"\n    },\n    \"remittanceInformationUnstructured\": \"Ref. Number WBG-1222\"\n  }"
 														},
 														"url": {
 															"raw": "{{protocol}}://{{url_xs2a}}/v1/{{payment_service}}/{{payment_product}}",
@@ -67091,7 +67091,7 @@
 														],
 														"body": {
 															"mode": "raw",
-															"raw": "{\n    \"endToEndIdentification\": \"WBG-123456789\",\n    \"debtorAccount\": {\n      \"currency\": \"EUR\",\n      \"iban\": \"{{iban_none}}\"\n    },\n    \"instructedAmount\": {\n      \"currency\": \"EUR\",\n      \"amount\": \"0.01\"\n    },\n    \"creditorAccount\": {\n      \"currency\": \"EUR\",\n      \"iban\": \"{{iban_none}}\"\n    },\n    \"creditorAgent\" : \"AAAADEBBXXX\",\n    \"creditorName\": \"WBG\",\n    \"creditorAddress\": {\n      \"buildingNumber\": \"56\",\n      \"townName\": \"Nürnberg\",\n      \"country\": \"DE\",\n      \"postCode\": \"90543\",\n      \"streetName\": \"WBG Straße\"\n    },\n    \"remittanceInformationUnstructured\": \"Ref. Number WBG-1222\"\n  }"
+															"raw": "{\n    \"endToEndIdentification\": \"WBG-123456789\",\n    \"debtorAccount\": {\n      \"currency\": \"EUR\",\n      \"iban\": \"{{iban_none}}\"\n    },\n    \"instructedAmount\": {\n      \"currency\": \"EUR\",\n      \"amount\": \"0.01\"\n    },\n    \"creditorAccount\": {\n      \"currency\": \"EUR\",\n      \"iban\": \"{{iban_none}}\"\n    },\n    \"creditorAgent\" : \"AAAADEBBXXX\",\n    \"creditorName\": \"WBG\",\n    \"creditorAddress\": {\n      \"addressLines\": [\n        \"WBG Banking Solutions\",\n        \"Finance & Payment Services\"\n      ],\n      \"department\": \"Corporate Banking\",\n      \"buildingNumber\": \"56\",\n      \"streetName\": \"WBG Straße\",\n      \"buildingName\": \"WBG Financial Center\",\n      \"floor\": \"Ground Floor\",\n      \"townName\": \"Nürnberg\",\n      \"postCode\": \"90543\",\n      \"country\": \"DE\"\n    },\n    \"remittanceInformationUnstructured\": \"Ref. Number WBG-1222\"\n  }"
 														},
 														"url": {
 															"raw": "{{protocol}}://{{url_xs2a}}/v1/{{payment_service}}/{{payment_product}}",
@@ -67563,7 +67563,7 @@
 										],
 										"body": {
 											"mode": "raw",
-											"raw": "{\n    \"endToEndIdentification\": \"WBG-123456789\",\n    \"debtorAccount\": {\n      \"currency\": \"EUR\",\n      \"iban\": \"{{iban_single}}\"\n    },\n    \"instructedAmount\": {\n      \"currency\": \"EUR\",\n      \"amount\": \"0.01\"\n    },\n    \"creditorAccount\": {\n      \"currency\": \"EUR\",\n      \"iban\": \"{{iban_single}}\"\n    },\n    \"creditorAgent\" : \"AAAADEBBXXX\",\n    \"creditorName\": \"WBG\",\n    \"creditorAddress\": {\n      \"buildingNumber\": \"56\",\n      \"townName\": \"Nürnberg\",\n      \"country\": \"DE\",\n      \"postCode\": \"90543\",\n      \"streetName\": \"WBG Straße\"\n    },\n    \"remittanceInformationUnstructured\": \"Ref. Number WBG-1222\"\n  }"
+											"raw": "{\n    \"endToEndIdentification\": \"WBG-123456789\",\n    \"debtorAccount\": {\n      \"currency\": \"EUR\",\n      \"iban\": \"{{iban_single}}\"\n    },\n    \"instructedAmount\": {\n      \"currency\": \"EUR\",\n      \"amount\": \"0.01\"\n    },\n    \"creditorAccount\": {\n      \"currency\": \"EUR\",\n      \"iban\": \"{{iban_single}}\"\n    },\n    \"creditorAgent\" : \"AAAADEBBXXX\",\n    \"creditorName\": \"WBG\",\n    \"creditorAddress\": {\n      \"addressLines\": [\n        \"WBG Banking Solutions\",\n        \"Finance & Payment Services\"\n      ],\n      \"department\": \"Corporate Banking\",\n      \"buildingNumber\": \"56\",\n      \"streetName\": \"WBG Straße\",\n      \"buildingName\": \"WBG Financial Center\",\n      \"floor\": \"Ground Floor\",\n      \"townName\": \"Nürnberg\",\n      \"postCode\": \"90543\",\n      \"country\": \"DE\"\n    },\n    \"remittanceInformationUnstructured\": \"Ref. Number WBG-1222\"\n  }"
 										},
 										"url": {
 											"raw": "{{protocol}}://{{url_xs2a}}/v1/{{payment_service}}/{{payment_product}}",
@@ -67805,7 +67805,7 @@
 												],
 												"body": {
 													"mode": "raw",
-													"raw": "{\n    \"endToEndIdentification\": \"WBG-123456789\",\n    \"debtorAccount\": {\n      \"currency\": \"EUR\",\n      \"iban\": \"{{iban_none}}\"\n    },\n    \"instructedAmount\": {\n      \"currency\": \"EUR\",\n      \"amount\": \"0.01\"\n    },\n    \"creditorAccount\": {\n      \"currency\": \"EUR\",\n      \"iban\": \"{{iban_none}}\"\n    },\n    \"creditorAgent\" : \"AAAADEBBXXX\",\n    \"creditorName\": \"WBG\",\n    \"creditorAddress\": {\n      \"buildingNumber\": \"56\",\n      \"townName\": \"Nürnberg\",\n      \"country\": \"DE\",\n      \"postCode\": \"90543\",\n      \"streetName\": \"WBG Straße\"\n    },\n    \"remittanceInformationUnstructured\": \"Ref. Number WBG-1222\"\n  }"
+													"raw": "{\n    \"endToEndIdentification\": \"WBG-123456789\",\n    \"debtorAccount\": {\n      \"currency\": \"EUR\",\n      \"iban\": \"{{iban_none}}\"\n    },\n    \"instructedAmount\": {\n      \"currency\": \"EUR\",\n      \"amount\": \"0.01\"\n    },\n    \"creditorAccount\": {\n      \"currency\": \"EUR\",\n      \"iban\": \"{{iban_none}}\"\n    },\n    \"creditorAgent\" : \"AAAADEBBXXX\",\n    \"creditorName\": \"WBG\",\n    \"creditorAddress\": {\n      \"addressLines\": [\n        \"WBG Banking Solutions\",\n        \"Finance & Payment Services\"\n      ],\n      \"department\": \"Corporate Banking\",\n      \"buildingNumber\": \"56\",\n      \"streetName\": \"WBG Straße\",\n      \"buildingName\": \"WBG Financial Center\",\n      \"floor\": \"Ground Floor\",\n      \"townName\": \"Nürnberg\",\n      \"postCode\": \"90543\",\n      \"country\": \"DE\"\n    },\n    \"remittanceInformationUnstructured\": \"Ref. Number WBG-1222\"\n  }"
 												},
 												"url": {
 													"raw": "{{protocol}}://{{url_xs2a}}/v1/{{payment_service}}/{{payment_product}}",
@@ -68388,7 +68388,7 @@
 												],
 												"body": {
 													"mode": "raw",
-													"raw": "{\n    \"endToEndIdentification\": \"WBG-123456789\",\n    \"debtorAccount\": {\n      \"currency\": \"EUR\",\n      \"iban\": \"{{iban_single}}\"\n    },\n    \"instructedAmount\": {\n      \"currency\": \"EUR\",\n      \"amount\": \"0.01\"\n    },\n    \"creditorAccount\": {\n      \"currency\": \"EUR\",\n      \"iban\": \"{{iban_single}}\"\n    },\n    \"creditorAgent\" : \"AAAADEBBXXX\",\n    \"creditorName\": \"WBG\",\n    \"creditorAddress\": {\n      \"buildingNumber\": \"56\",\n      \"townName\": \"Nürnberg\",\n      \"country\": \"DE\",\n      \"postCode\": \"90543\",\n      \"streetName\": \"WBG Straße\"\n    },\n    \"remittanceInformationUnstructured\": \"Ref. Number WBG-1222\",\n    \"remittanceInformationUnstructuredArray\": [\"Ref. Number WBG-6666\", \"Ref. Number WBG-7777\"],\n    \"remittanceInformationStructured\": {\n            \"reference\": \"reference, remittance info structured\",\n            \"referenceType\": \"reference Type\",\n            \"referenceIssuer\": \"reference Issuer\"\n        },\n    \"remittanceInformationStructuredArray\":[\n        {\n            \"reference\": \"reference\",\n            \"referenceType\": \"reference Type\",\n            \"referenceIssuer\": \"reference Issuer\"\n        }\n    ]\n  }"
+													"raw": "{\n    \"endToEndIdentification\": \"WBG-123456789\",\n    \"debtorAccount\": {\n      \"currency\": \"EUR\",\n      \"iban\": \"{{iban_single}}\"\n    },\n    \"instructedAmount\": {\n      \"currency\": \"EUR\",\n      \"amount\": \"0.01\"\n    },\n    \"creditorAccount\": {\n      \"currency\": \"EUR\",\n      \"iban\": \"{{iban_single}}\"\n    },\n    \"creditorAgent\" : \"AAAADEBBXXX\",\n    \"creditorName\": \"WBG\",\n    \"creditorAddress\": {\n      \"addressLines\": [\n        \"WBG Banking Solutions\",\n        \"Finance & Payment Services\"\n      ],\n      \"department\": \"Corporate Banking\",\n      \"buildingNumber\": \"56\",\n      \"streetName\": \"WBG Straße\",\n      \"buildingName\": \"WBG Financial Center\",\n      \"floor\": \"Ground Floor\",\n      \"townName\": \"Nürnberg\",\n      \"postCode\": \"90543\",\n      \"country\": \"DE\"\n    },\n    \"remittanceInformationUnstructured\": \"Ref. Number WBG-1222\",\n    \"remittanceInformationUnstructuredArray\": [\"Ref. Number WBG-6666\", \"Ref. Number WBG-7777\"],\n    \"remittanceInformationStructured\": {\n            \"reference\": \"reference, remittance info structured\",\n            \"referenceType\": \"reference Type\",\n            \"referenceIssuer\": \"reference Issuer\"\n        },\n    \"remittanceInformationStructuredArray\":[\n        {\n            \"reference\": \"reference\",\n            \"referenceType\": \"reference Type\",\n            \"referenceIssuer\": \"reference Issuer\"\n        }\n    ]\n  }"
 												},
 												"url": {
 													"raw": "{{protocol}}://{{url_xs2a}}/v1/{{payment_service}}/{{payment_product}}",
@@ -69060,7 +69060,7 @@
 												],
 												"body": {
 													"mode": "raw",
-													"raw": "{\n    \"endToEndIdentification\": \"WBG-123456789\",\n    \"debtorAccount\": {\n      \"currency\": \"EUR\",\n      \"iban\": \"{{iban_single}}\"\n    },\n    \"instructedAmount\": {\n      \"currency\": \"EUR\",\n      \"amount\": \"0.01\"\n    },\n    \"creditorAccount\": {\n      \"currency\": \"EUR\",\n      \"iban\": \"{{iban_single}}\"\n    },\n    \"creditorAgent\" : \"AAAADEBBXXX\",\n    \"creditorName\": \"WBG\",\n    \"creditorAddress\": {\n      \"buildingNumber\": \"56\",\n      \"townName\": \"Nürnberg\",\n      \"country\": \"DE\",\n      \"postCode\": \"90543\",\n      \"streetName\": \"WBG Straße\"\n    },\n    \"remittanceInformationUnstructured\": \"Ref. Number WBG-1222\"\n  }"
+													"raw": "{\n    \"endToEndIdentification\": \"WBG-123456789\",\n    \"debtorAccount\": {\n      \"currency\": \"EUR\",\n      \"iban\": \"{{iban_single}}\"\n    },\n    \"instructedAmount\": {\n      \"currency\": \"EUR\",\n      \"amount\": \"0.01\"\n    },\n    \"creditorAccount\": {\n      \"currency\": \"EUR\",\n      \"iban\": \"{{iban_single}}\"\n    },\n    \"creditorAgent\" : \"AAAADEBBXXX\",\n    \"creditorName\": \"WBG\",\n    \"creditorAddress\": {\n      \"addressLines\": [\n        \"WBG Banking Solutions\",\n        \"Finance & Payment Services\"\n      ],\n      \"department\": \"Corporate Banking\",\n      \"buildingNumber\": \"56\",\n      \"streetName\": \"WBG Straße\",\n      \"buildingName\": \"WBG Financial Center\",\n      \"floor\": \"Ground Floor\",\n      \"townName\": \"Nürnberg\",\n      \"postCode\": \"90543\",\n      \"country\": \"DE\"\n    },\n    \"remittanceInformationUnstructured\": \"Ref. Number WBG-1222\"\n  }"
 												},
 												"url": {
 													"raw": "{{protocol}}://{{url_xs2a}}/v1/{{payment_service}}/{{payment_product}}",
@@ -69754,7 +69754,7 @@
 												],
 												"body": {
 													"mode": "raw",
-													"raw": "{\n    \"endToEndIdentification\": \"WBG-123456789\",\n    \"debtorAccount\": {\n      \"currency\": \"EUR\",\n      \"iban\": \"{{iban_multiple}}\"\n    },\n    \"instructedAmount\": {\n      \"currency\": \"EUR\",\n      \"amount\": \"0.01\"\n    },\n    \"creditorAccount\": {\n      \"currency\": \"EUR\",\n      \"iban\": \"{{iban_multiple}}\"\n    },\n    \"creditorAgent\" : \"AAAADEBBXXX\",\n    \"creditorName\": \"WBG\",\n    \"creditorAddress\": {\n      \"buildingNumber\": \"56\",\n      \"townName\": \"Nürnberg\",\n      \"country\": \"DE\",\n      \"postCode\": \"90543\",\n      \"streetName\": \"WBG Straße\"\n    },\n    \"remittanceInformationUnstructured\": \"Ref. Number WBG-1222\"\n  }"
+													"raw": "{\n    \"endToEndIdentification\": \"WBG-123456789\",\n    \"debtorAccount\": {\n      \"currency\": \"EUR\",\n      \"iban\": \"{{iban_multiple}}\"\n    },\n    \"instructedAmount\": {\n      \"currency\": \"EUR\",\n      \"amount\": \"0.01\"\n    },\n    \"creditorAccount\": {\n      \"currency\": \"EUR\",\n      \"iban\": \"{{iban_multiple}}\"\n    },\n    \"creditorAgent\" : \"AAAADEBBXXX\",\n    \"creditorName\": \"WBG\",\n    \"creditorAddress\": {\n      \"addressLines\": [\n        \"WBG Banking Solutions\",\n        \"Finance & Payment Services\"\n      ],\n      \"department\": \"Corporate Banking\",\n      \"buildingNumber\": \"56\",\n      \"streetName\": \"WBG Straße\",\n      \"buildingName\": \"WBG Financial Center\",\n      \"floor\": \"Ground Floor\",\n      \"townName\": \"Nürnberg\",\n      \"postCode\": \"90543\",\n      \"country\": \"DE\"\n    },\n    \"remittanceInformationUnstructured\": \"Ref. Number WBG-1222\"\n  }"
 												},
 												"url": {
 													"raw": "{{protocol}}://{{url_xs2a}}/v1/{{payment_service}}/{{payment_product}}",
@@ -70512,7 +70512,7 @@
 												],
 												"body": {
 													"mode": "raw",
-													"raw": "{\n    \"endToEndIdentification\": \"WBG-123456789\",\n    \"debtorAccount\": {\n      \"currency\": \"EUR\",\n      \"iban\": \"{{iban_none}}\"\n    },\n    \"instructedAmount\": {\n      \"currency\": \"EUR\",\n      \"amount\": \"0.01\"\n    },\n    \"creditorAccount\": {\n      \"currency\": \"EUR\",\n      \"iban\": \"{{iban_none}}\"\n    },\n    \"creditorAgent\" : \"AAAADEBBXXX\",\n    \"creditorName\": \"WBG\",\n    \"creditorAddress\": {\n      \"buildingNumber\": \"56\",\n      \"townName\": \"Nürnberg\",\n      \"country\": \"DE\",\n      \"postCode\": \"90543\",\n      \"streetName\": \"WBG Straße\"\n    },\n    \"remittanceInformationUnstructured\": \"Ref. Number WBG-1222\"\n  }"
+													"raw": "{\n    \"endToEndIdentification\": \"WBG-123456789\",\n    \"debtorAccount\": {\n      \"currency\": \"EUR\",\n      \"iban\": \"{{iban_none}}\"\n    },\n    \"instructedAmount\": {\n      \"currency\": \"EUR\",\n      \"amount\": \"0.01\"\n    },\n    \"creditorAccount\": {\n      \"currency\": \"EUR\",\n      \"iban\": \"{{iban_none}}\"\n    },\n    \"creditorAgent\" : \"AAAADEBBXXX\",\n    \"creditorName\": \"WBG\",\n    \"creditorAddress\": {\n      \"addressLines\": [\n        \"WBG Banking Solutions\",\n        \"Finance & Payment Services\"\n      ],\n      \"department\": \"Corporate Banking\",\n      \"buildingNumber\": \"56\",\n      \"streetName\": \"WBG Straße\",\n      \"buildingName\": \"WBG Financial Center\",\n      \"floor\": \"Ground Floor\",\n      \"townName\": \"Nürnberg\",\n      \"postCode\": \"90543\",\n      \"country\": \"DE\"\n    },\n    \"remittanceInformationUnstructured\": \"Ref. Number WBG-1222\"\n  }"
 												},
 												"url": {
 													"raw": "{{protocol}}://{{url_xs2a}}/v1/{{payment_service}}/{{payment_product}}",
@@ -71045,7 +71045,7 @@
 												],
 												"body": {
 													"mode": "raw",
-													"raw": "{\n    \"endToEndIdentification\": \"WBG-123456789\",\n    \"debtorAccount\": {\n      \"currency\": \"EUR\",\n      \"iban\": \"{{iban_none}}\"\n    },\n    \"instructedAmount\": {\n      \"currency\": \"EUR\",\n      \"amount\": \"0.01\"\n    },\n    \"creditorAccount\": {\n      \"currency\": \"EUR\",\n      \"iban\": \"{{iban_none}}\"\n    },\n    \"creditorAgent\" : \"AAAADEBBXXX\",\n    \"creditorName\": \"WBG\",\n    \"creditorAddress\": {\n      \"buildingNumber\": \"56\",\n      \"townName\": \"Nürnberg\",\n      \"country\": \"DE\",\n      \"postCode\": \"90543\",\n      \"streetName\": \"WBG Straße\"\n    },\n    \"remittanceInformationUnstructured\": \"Ref. Number WBG-1222\"\n  }"
+													"raw": "{\n    \"endToEndIdentification\": \"WBG-123456789\",\n    \"debtorAccount\": {\n      \"currency\": \"EUR\",\n      \"iban\": \"{{iban_none}}\"\n    },\n    \"instructedAmount\": {\n      \"currency\": \"EUR\",\n      \"amount\": \"0.01\"\n    },\n    \"creditorAccount\": {\n      \"currency\": \"EUR\",\n      \"iban\": \"{{iban_none}}\"\n    },\n    \"creditorAgent\" : \"AAAADEBBXXX\",\n    \"creditorName\": \"WBG\",\n    \"creditorAddress\": {\n      \"addressLines\": [\n        \"WBG Banking Solutions\",\n        \"Finance & Payment Services\"\n      ],\n      \"department\": \"Corporate Banking\",\n      \"buildingNumber\": \"56\",\n      \"streetName\": \"WBG Straße\",\n      \"buildingName\": \"WBG Financial Center\",\n      \"floor\": \"Ground Floor\",\n      \"townName\": \"Nürnberg\",\n      \"postCode\": \"90543\",\n      \"country\": \"DE\"\n    },\n    \"remittanceInformationUnstructured\": \"Ref. Number WBG-1222\"\n  }"
 												},
 												"url": {
 													"raw": "{{protocol}}://{{url_xs2a}}/v1/{{payment_service}}/{{payment_product}}",
@@ -71801,7 +71801,7 @@
 												],
 												"body": {
 													"mode": "raw",
-													"raw": "{\n    \"endToEndIdentification\": \"WBG-123456789\",\n    \"debtorAccount\": {\n      \"currency\": \"EUR\",\n      \"iban\": \"{{iban_none}}\"\n    },\n    \"instructedAmount\": {\n      \"currency\": \"EUR\",\n      \"amount\": \"0.01\"\n    },\n    \"creditorAccount\": {\n      \"currency\": \"EUR\",\n      \"iban\": \"{{iban_none}}\"\n    },\n    \"creditorAgent\" : \"AAAADEBBXXX\",\n    \"creditorName\": \"WBG\",\n    \"creditorAddress\": {\n      \"buildingNumber\": \"56\",\n      \"townName\": \"Nürnberg\",\n      \"country\": \"DE\",\n      \"postCode\": \"90543\",\n      \"streetName\": \"WBG Straße\"\n    },\n    \"remittanceInformationUnstructured\": \"Ref. Number WBG-1222\"\n  }"
+													"raw": "{\n    \"endToEndIdentification\": \"WBG-123456789\",\n    \"debtorAccount\": {\n      \"currency\": \"EUR\",\n      \"iban\": \"{{iban_none}}\"\n    },\n    \"instructedAmount\": {\n      \"currency\": \"EUR\",\n      \"amount\": \"0.01\"\n    },\n    \"creditorAccount\": {\n      \"currency\": \"EUR\",\n      \"iban\": \"{{iban_none}}\"\n    },\n    \"creditorAgent\" : \"AAAADEBBXXX\",\n    \"creditorName\": \"WBG\",\n    \"creditorAddress\": {\n      \"addressLines\": [\n        \"WBG Banking Solutions\",\n        \"Finance & Payment Services\"\n      ],\n      \"department\": \"Corporate Banking\",\n      \"buildingNumber\": \"56\",\n      \"streetName\": \"WBG Straße\",\n      \"buildingName\": \"WBG Financial Center\",\n      \"floor\": \"Ground Floor\",\n      \"townName\": \"Nürnberg\",\n      \"postCode\": \"90543\",\n      \"country\": \"DE\"\n    },\n    \"remittanceInformationUnstructured\": \"Ref. Number WBG-1222\"\n  }"
 												},
 												"url": {
 													"raw": "{{protocol}}://{{url_xs2a}}/v1/{{payment_service}}/{{payment_product}}",
@@ -72565,7 +72565,7 @@
 												],
 												"body": {
 													"mode": "raw",
-													"raw": "{\n    \"endToEndIdentification\": \"WBG-123456789\",\n    \"debtorAccount\": {\n      \"currency\": \"EUR\",\n      \"iban\": \"{{iban_none}}\"\n    },\n    \"instructedAmount\": {\n      \"currency\": \"EUR\",\n      \"amount\": \"0.01\"\n    },\n    \"creditorAccount\": {\n      \"currency\": \"EUR\",\n      \"iban\": \"{{iban_none}}\"\n    },\n    \"creditorAgent\" : \"AAAADEBBXXX\",\n    \"creditorName\": \"WBG\",\n    \"creditorAddress\": {\n      \"buildingNumber\": \"56\",\n      \"townName\": \"Nürnberg\",\n      \"country\": \"DE\",\n      \"postCode\": \"90543\",\n      \"streetName\": \"WBG Straße\"\n    },\n    \"remittanceInformationUnstructured\": \"Ref. Number WBG-1222\"\n  }"
+													"raw": "{\n    \"endToEndIdentification\": \"WBG-123456789\",\n    \"debtorAccount\": {\n      \"currency\": \"EUR\",\n      \"iban\": \"{{iban_none}}\"\n    },\n    \"instructedAmount\": {\n      \"currency\": \"EUR\",\n      \"amount\": \"0.01\"\n    },\n    \"creditorAccount\": {\n      \"currency\": \"EUR\",\n      \"iban\": \"{{iban_none}}\"\n    },\n    \"creditorAgent\" : \"AAAADEBBXXX\",\n    \"creditorName\": \"WBG\",\n    \"creditorAddress\": {\n      \"addressLines\": [\n        \"WBG Banking Solutions\",\n        \"Finance & Payment Services\"\n      ],\n      \"department\": \"Corporate Banking\",\n      \"buildingNumber\": \"56\",\n      \"streetName\": \"WBG Straße\",\n      \"buildingName\": \"WBG Financial Center\",\n      \"floor\": \"Ground Floor\",\n      \"townName\": \"Nürnberg\",\n      \"postCode\": \"90543\",\n      \"country\": \"DE\"\n    },\n    \"remittanceInformationUnstructured\": \"Ref. Number WBG-1222\"\n  }"
 												},
 												"url": {
 													"raw": "{{protocol}}://{{url_xs2a}}/v1/{{payment_service}}/{{payment_product}}",
@@ -73179,7 +73179,7 @@
 												],
 												"body": {
 													"mode": "raw",
-													"raw": "{\n    \"endToEndIdentification\": \"WBG-123456789\",\n    \"debtorAccount\": {\n      \"currency\": \"EUR\",\n      \"iban\": \"{{iban_single}}\"\n    },\n    \"instructedAmount\": {\n      \"currency\": \"EUR\",\n      \"amount\": \"0.01\"\n    },\n    \"creditorAccount\": {\n      \"currency\": \"EUR\",\n      \"iban\": \"{{iban_single}}\"\n    },\n    \"creditorAgent\" : \"AAAADEBBXXX\",\n    \"creditorName\": \"WBG\",\n    \"creditorAddress\": {\n      \"buildingNumber\": \"56\",\n      \"townName\": \"Nürnberg\",\n      \"country\": \"DE\",\n      \"postCode\": \"90543\",\n      \"streetName\": \"WBG Straße\"\n    },\n    \"remittanceInformationUnstructured\": \"Ref. Number WBG-1222\"\n  }"
+													"raw": "{\n    \"endToEndIdentification\": \"WBG-123456789\",\n    \"debtorAccount\": {\n      \"currency\": \"EUR\",\n      \"iban\": \"{{iban_single}}\"\n    },\n    \"instructedAmount\": {\n      \"currency\": \"EUR\",\n      \"amount\": \"0.01\"\n    },\n    \"creditorAccount\": {\n      \"currency\": \"EUR\",\n      \"iban\": \"{{iban_single}}\"\n    },\n    \"creditorAgent\" : \"AAAADEBBXXX\",\n    \"creditorName\": \"WBG\",\n    \"creditorAddress\": {\n      \"addressLines\": [\n        \"WBG Banking Solutions\",\n        \"Finance & Payment Services\"\n      ],\n      \"department\": \"Corporate Banking\",\n      \"buildingNumber\": \"56\",\n      \"streetName\": \"WBG Straße\",\n      \"buildingName\": \"WBG Financial Center\",\n      \"floor\": \"Ground Floor\",\n      \"townName\": \"Nürnberg\",\n      \"postCode\": \"90543\",\n      \"country\": \"DE\"\n    },\n    \"remittanceInformationUnstructured\": \"Ref. Number WBG-1222\"\n  }"
 												},
 												"url": {
 													"raw": "{{protocol}}://{{url_xs2a}}/v1/{{payment_service}}/{{payment_product}}",
@@ -74092,7 +74092,7 @@
 												],
 												"body": {
 													"mode": "raw",
-													"raw": "{\n    \"endToEndIdentification\": \"WBG-123456789\",\n    \"debtorAccount\": {\n      \"currency\": \"EUR\",\n      \"iban\": \"{{iban_multiple}}\"\n    },\n    \"instructedAmount\": {\n      \"currency\": \"EUR\",\n      \"amount\": \"0.01\"\n    },\n    \"creditorAccount\": {\n      \"currency\": \"EUR\",\n      \"iban\": \"{{iban_multiple}}\"\n    },\n    \"creditorAgent\" : \"AAAADEBBXXX\",\n    \"creditorName\": \"WBG\",\n    \"creditorAddress\": {\n      \"buildingNumber\": \"56\",\n      \"townName\": \"Nürnberg\",\n      \"country\": \"DE\",\n      \"postCode\": \"90543\",\n      \"streetName\": \"WBG Straße\"\n    },\n    \"remittanceInformationUnstructured\": \"Ref. Number WBG-1222\"\n  }"
+													"raw": "{\n    \"endToEndIdentification\": \"WBG-123456789\",\n    \"debtorAccount\": {\n      \"currency\": \"EUR\",\n      \"iban\": \"{{iban_multiple}}\"\n    },\n    \"instructedAmount\": {\n      \"currency\": \"EUR\",\n      \"amount\": \"0.01\"\n    },\n    \"creditorAccount\": {\n      \"currency\": \"EUR\",\n      \"iban\": \"{{iban_multiple}}\"\n    },\n    \"creditorAgent\" : \"AAAADEBBXXX\",\n    \"creditorName\": \"WBG\",\n    \"creditorAddress\": {\n      \"addressLines\": [\n        \"WBG Banking Solutions\",\n        \"Finance & Payment Services\"\n      ],\n      \"department\": \"Corporate Banking\",\n      \"buildingNumber\": \"56\",\n      \"streetName\": \"WBG Straße\",\n      \"buildingName\": \"WBG Financial Center\",\n      \"floor\": \"Ground Floor\",\n      \"townName\": \"Nürnberg\",\n      \"postCode\": \"90543\",\n      \"country\": \"DE\"\n    },\n    \"remittanceInformationUnstructured\": \"Ref. Number WBG-1222\"\n  }"
 												},
 												"url": {
 													"raw": "{{protocol}}://{{url_xs2a}}/v1/{{payment_service}}/{{payment_product}}",
@@ -74283,7 +74283,7 @@
 												],
 												"body": {
 													"mode": "raw",
-													"raw": "{\n    \"endToEndIdentification\": \"WBG-123456789\",\n    \"debtorAccount\": {\n      \"currency\": \"EUR\",\n      \"iban\": \"{{iban_multiple}}\"\n    },\n    \"instructedAmount\": {\n      \"currency\": \"EUR\",\n      \"amount\": \"0.01\"\n    },\n    \"creditorAccount\": {\n      \"currency\": \"EUR\",\n      \"iban\": \"{{iban_multiple}}\"\n    },\n    \"creditorAgent\" : \"AAAADEBBXXX\",\n    \"creditorName\": \"WBG\",\n    \"creditorAddress\": {\n      \"buildingNumber\": \"56\",\n      \"townName\": \"Nürnberg\",\n      \"country\": \"DE\",\n      \"postCode\": \"90543\",\n      \"streetName\": \"WBG Straße\"\n    },\n    \"remittanceInformationUnstructured\": \"Ref. Number WBG-1222\"\n  }"
+													"raw": "{\n    \"endToEndIdentification\": \"WBG-123456789\",\n    \"debtorAccount\": {\n      \"currency\": \"EUR\",\n      \"iban\": \"{{iban_multiple}}\"\n    },\n    \"instructedAmount\": {\n      \"currency\": \"EUR\",\n      \"amount\": \"0.01\"\n    },\n    \"creditorAccount\": {\n      \"currency\": \"EUR\",\n      \"iban\": \"{{iban_multiple}}\"\n    },\n    \"creditorAgent\" : \"AAAADEBBXXX\",\n    \"creditorName\": \"WBG\",\n    \"creditorAddress\": {\n      \"addressLines\": [\n        \"WBG Banking Solutions\",\n        \"Finance & Payment Services\"\n      ],\n      \"department\": \"Corporate Banking\",\n      \"buildingNumber\": \"56\",\n      \"streetName\": \"WBG Straße\",\n      \"buildingName\": \"WBG Financial Center\",\n      \"floor\": \"Ground Floor\",\n      \"townName\": \"Nürnberg\",\n      \"postCode\": \"90543\",\n      \"country\": \"DE\"\n    },\n    \"remittanceInformationUnstructured\": \"Ref. Number WBG-1222\"\n  }"
 												},
 												"url": {
 													"raw": "{{protocol}}://{{url_xs2a}}/v1/{{payment_service}}/{{payment_product}}",
@@ -74464,7 +74464,7 @@
 												],
 												"body": {
 													"mode": "raw",
-													"raw": "{\n    \"endToEndIdentification\": \"WBG-123456789\",\n    \"debtorAccount\": {\n      \"currency\": \"EUR\",\n      \"iban\": \"{{iban_multiple}}\"\n    },\n    \"instructedAmount\": {\n      \"currency\": \"EUR\",\n      \"amount\": \"0.01\"\n    },\n    \"creditorAccount\": {\n      \"currency\": \"EUR\",\n      \"iban\": \"{{iban_multiple}}\"\n    },\n    \"creditorAgent\" : \"AAAADEBBXXX\",\n    \"creditorName\": \"WBG\",\n    \"creditorAddress\": {\n      \"buildingNumber\": \"56\",\n      \"townName\": \"Nürnberg\",\n      \"country\": \"DE\",\n      \"postCode\": \"90543\",\n      \"streetName\": \"WBG Straße\"\n    },\n    \"remittanceInformationUnstructured\": \"Ref. Number WBG-1222\"\n  }"
+													"raw": "{\n    \"endToEndIdentification\": \"WBG-123456789\",\n    \"debtorAccount\": {\n      \"currency\": \"EUR\",\n      \"iban\": \"{{iban_multiple}}\"\n    },\n    \"instructedAmount\": {\n      \"currency\": \"EUR\",\n      \"amount\": \"0.01\"\n    },\n    \"creditorAccount\": {\n      \"currency\": \"EUR\",\n      \"iban\": \"{{iban_multiple}}\"\n    },\n    \"creditorAgent\" : \"AAAADEBBXXX\",\n    \"creditorName\": \"WBG\",\n    \"creditorAddress\": {\n      \"addressLines\": [\n        \"WBG Banking Solutions\",\n        \"Finance & Payment Services\"\n      ],\n      \"department\": \"Corporate Banking\",\n      \"buildingNumber\": \"56\",\n      \"streetName\": \"WBG Straße\",\n      \"buildingName\": \"WBG Financial Center\",\n      \"floor\": \"Ground Floor\",\n      \"townName\": \"Nürnberg\",\n      \"postCode\": \"90543\",\n      \"country\": \"DE\"\n    },\n    \"remittanceInformationUnstructured\": \"Ref. Number WBG-1222\"\n  }"
 												},
 												"url": {
 													"raw": "{{protocol}}://{{url_xs2a}}/v1/{{payment_service}}/{{payment_product}}",
@@ -74651,7 +74651,7 @@
 												],
 												"body": {
 													"mode": "raw",
-													"raw": "{\n    \"endToEndIdentification\": \"WBG-123456789\",\n    \"debtorAccount\": {\n      \"currency\": \"EUR\",\n      \"iban\": \"{{iban_multiple}}\"\n    },\n    \"instructedAmount\": {\n      \"currency\": \"EUR\",\n      \"amount\": \"0.01\"\n    },\n    \"creditorAccount\": {\n      \"currency\": \"EUR\",\n      \"iban\": \"{{iban_multiple}}\"\n    },\n    \"creditorAgent\" : \"AAAADEBBXXX\",\n    \"creditorName\": \"WBG\",\n    \"creditorAddress\": {\n      \"buildingNumber\": \"56\",\n      \"townName\": \"Nürnberg\",\n      \"country\": \"DE\",\n      \"postCode\": \"90543\",\n      \"streetName\": \"WBG Straße\"\n    },\n    \"remittanceInformationUnstructured\": \"Ref. Number WBG-1222\"\n  }"
+													"raw": "{\n    \"endToEndIdentification\": \"WBG-123456789\",\n    \"debtorAccount\": {\n      \"currency\": \"EUR\",\n      \"iban\": \"{{iban_multiple}}\"\n    },\n    \"instructedAmount\": {\n      \"currency\": \"EUR\",\n      \"amount\": \"0.01\"\n    },\n    \"creditorAccount\": {\n      \"currency\": \"EUR\",\n      \"iban\": \"{{iban_multiple}}\"\n    },\n    \"creditorAgent\" : \"AAAADEBBXXX\",\n    \"creditorName\": \"WBG\",\n    \"creditorAddress\": {\n      \"addressLines\": [\n        \"WBG Banking Solutions\",\n        \"Finance & Payment Services\"\n      ],\n      \"department\": \"Corporate Banking\",\n      \"buildingNumber\": \"56\",\n      \"streetName\": \"WBG Straße\",\n      \"buildingName\": \"WBG Financial Center\",\n      \"floor\": \"Ground Floor\",\n      \"townName\": \"Nürnberg\",\n      \"postCode\": \"90543\",\n      \"country\": \"DE\"\n    },\n    \"remittanceInformationUnstructured\": \"Ref. Number WBG-1222\"\n  }"
 												},
 												"url": {
 													"raw": "{{protocol}}://{{url_xs2a}}/v1/{{payment_service}}/{{payment_product}}",
@@ -74930,7 +74930,7 @@
 												],
 												"body": {
 													"mode": "raw",
-													"raw": "{\n    \"endToEndIdentification\": \"WBG-123456789\",\n    \"debtorAccount\": {\n      \"currency\": \"EUR\",\n      \"iban\": \"{{iban_multiple}}\"\n    },\n    \"instructedAmount\": {\n      \"currency\": \"EUR\",\n      \"amount\": \"0.01\"\n    },\n    \"creditorAccount\": {\n      \"currency\": \"EUR\",\n      \"iban\": \"{{iban_multiple}}\"\n    },\n    \"creditorAgent\" : \"AAAADEBBXXX\",\n    \"creditorName\": \"WBG\",\n    \"creditorAddress\": {\n      \"buildingNumber\": \"56\",\n      \"townName\": \"Nürnberg\",\n      \"country\": \"DE\",\n      \"postCode\": \"90543\",\n      \"streetName\": \"WBG Straße\"\n    },\n    \"remittanceInformationUnstructured\": \"Ref. Number WBG-1222\"\n  }"
+													"raw": "{\n    \"endToEndIdentification\": \"WBG-123456789\",\n    \"debtorAccount\": {\n      \"currency\": \"EUR\",\n      \"iban\": \"{{iban_multiple}}\"\n    },\n    \"instructedAmount\": {\n      \"currency\": \"EUR\",\n      \"amount\": \"0.01\"\n    },\n    \"creditorAccount\": {\n      \"currency\": \"EUR\",\n      \"iban\": \"{{iban_multiple}}\"\n    },\n    \"creditorAgent\" : \"AAAADEBBXXX\",\n    \"creditorName\": \"WBG\",\n    \"creditorAddress\": {\n      \"addressLines\": [\n        \"WBG Banking Solutions\",\n        \"Finance & Payment Services\"\n      ],\n      \"department\": \"Corporate Banking\",\n      \"buildingNumber\": \"56\",\n      \"streetName\": \"WBG Straße\",\n      \"buildingName\": \"WBG Financial Center\",\n      \"floor\": \"Ground Floor\",\n      \"townName\": \"Nürnberg\",\n      \"postCode\": \"90543\",\n      \"country\": \"DE\"\n    },\n    \"remittanceInformationUnstructured\": \"Ref. Number WBG-1222\"\n  }"
 												},
 												"url": {
 													"raw": "{{protocol}}://{{url_xs2a}}/v1/{{payment_service}}/{{payment_product}}",
@@ -76023,7 +76023,7 @@
 												],
 												"body": {
 													"mode": "raw",
-													"raw": "{\n    \"endToEndIdentification\": \"WBG-123456789\",\n    \"debtorAccount\": {\n      \"currency\": \"EUR\",\n      \"iban\": \"{{iban_none}}\"\n    },\n    \"instructedAmount\": {\n      \"currency\": \"EUR\",\n      \"amount\": \"0.01\"\n    },\n    \"creditorAccount\": {\n      \"currency\": \"EUR\",\n      \"iban\": \"{{iban_none}}\"\n    },\n    \"creditorAgent\" : \"AAAADEBBXXX\",\n    \"creditorName\": \"WBG\",\n    \"creditorAddress\": {\n      \"buildingNumber\": \"56\",\n      \"townName\": \"Nürnberg\",\n      \"country\": \"DE\",\n      \"postCode\": \"90543\",\n      \"streetName\": \"WBG Straße\"\n    },\n    \"remittanceInformationUnstructured\": \"Ref. Number WBG-1222\"\n  }"
+													"raw": "{\n    \"endToEndIdentification\": \"WBG-123456789\",\n    \"debtorAccount\": {\n      \"currency\": \"EUR\",\n      \"iban\": \"{{iban_none}}\"\n    },\n    \"instructedAmount\": {\n      \"currency\": \"EUR\",\n      \"amount\": \"0.01\"\n    },\n    \"creditorAccount\": {\n      \"currency\": \"EUR\",\n      \"iban\": \"{{iban_none}}\"\n    },\n    \"creditorAgent\" : \"AAAADEBBXXX\",\n    \"creditorName\": \"WBG\",\n    \"creditorAddress\": {\n      \"addressLines\": [\n        \"WBG Banking Solutions\",\n        \"Finance & Payment Services\"\n      ],\n      \"department\": \"Corporate Banking\",\n      \"buildingNumber\": \"56\",\n      \"streetName\": \"WBG Straße\",\n      \"buildingName\": \"WBG Financial Center\",\n      \"floor\": \"Ground Floor\",\n      \"townName\": \"Nürnberg\",\n      \"postCode\": \"90543\",\n      \"country\": \"DE\"\n    },\n    \"remittanceInformationUnstructured\": \"Ref. Number WBG-1222\"\n  }"
 												},
 												"url": {
 													"raw": "{{protocol}}://{{url_xs2a}}/v1/{{payment_service}}/{{payment_product}}",
@@ -76617,7 +76617,7 @@
 												],
 												"body": {
 													"mode": "raw",
-													"raw": "{\n    \"endToEndIdentification\": \"WBG-123456789\",\n    \"debtorAccount\": {\n      \"currency\": \"EUR\",\n      \"iban\": \"{{iban_none}}\"\n    },\n    \"instructedAmount\": {\n      \"currency\": \"EUR\",\n      \"amount\": \"0.01\"\n    },\n    \"creditorAccount\": {\n      \"currency\": \"EUR\",\n      \"iban\": \"{{iban_none}}\"\n    },\n    \"creditorAgent\" : \"AAAADEBBXXX\",\n    \"creditorName\": \"WBG\",\n    \"creditorAddress\": {\n      \"buildingNumber\": \"56\",\n      \"townName\": \"Nürnberg\",\n      \"country\": \"DE\",\n      \"postCode\": \"90543\",\n      \"streetName\": \"WBG Straße\"\n    },\n    \"remittanceInformationUnstructured\": \"Ref. Number WBG-1222\"\n  }"
+													"raw": "{\n    \"endToEndIdentification\": \"WBG-123456789\",\n    \"debtorAccount\": {\n      \"currency\": \"EUR\",\n      \"iban\": \"{{iban_none}}\"\n    },\n    \"instructedAmount\": {\n      \"currency\": \"EUR\",\n      \"amount\": \"0.01\"\n    },\n    \"creditorAccount\": {\n      \"currency\": \"EUR\",\n      \"iban\": \"{{iban_none}}\"\n    },\n    \"creditorAgent\" : \"AAAADEBBXXX\",\n    \"creditorName\": \"WBG\",\n    \"creditorAddress\": {\n      \"addressLines\": [\n        \"WBG Banking Solutions\",\n        \"Finance & Payment Services\"\n      ],\n      \"department\": \"Corporate Banking\",\n      \"buildingNumber\": \"56\",\n      \"streetName\": \"WBG Straße\",\n      \"buildingName\": \"WBG Financial Center\",\n      \"floor\": \"Ground Floor\",\n      \"townName\": \"Nürnberg\",\n      \"postCode\": \"90543\",\n      \"country\": \"DE\"\n    },\n    \"remittanceInformationUnstructured\": \"Ref. Number WBG-1222\"\n  }"
 												},
 												"url": {
 													"raw": "{{protocol}}://{{url_xs2a}}/v1/{{payment_service}}/{{payment_product}}",
@@ -77297,7 +77297,7 @@
 												],
 												"body": {
 													"mode": "raw",
-													"raw": "{\n    \"endToEndIdentification\": \"WBG-123456789\",\n    \"debtorAccount\": {\n      \"currency\": \"EUR\",\n      \"iban\": \"{{iban_multiple}}\"\n    },\n    \"instructedAmount\": {\n      \"currency\": \"EUR\",\n      \"amount\": \"0.01\"\n    },\n    \"creditorAccount\": {\n      \"currency\": \"EUR\",\n      \"iban\": \"{{iban_multiple}}\"\n    },\n    \"creditorAgent\" : \"AAAADEBBXXX\",\n    \"creditorName\": \"WBG\",\n    \"creditorAddress\": {\n      \"buildingNumber\": \"56\",\n      \"townName\": \"Nürnberg\",\n      \"country\": \"DE\",\n      \"postCode\": \"90543\",\n      \"streetName\": \"WBG Straße\"\n    },\n    \"remittanceInformationUnstructured\": \"Ref. Number WBG-1222\"\n  }"
+													"raw": "{\n    \"endToEndIdentification\": \"WBG-123456789\",\n    \"debtorAccount\": {\n      \"currency\": \"EUR\",\n      \"iban\": \"{{iban_multiple}}\"\n    },\n    \"instructedAmount\": {\n      \"currency\": \"EUR\",\n      \"amount\": \"0.01\"\n    },\n    \"creditorAccount\": {\n      \"currency\": \"EUR\",\n      \"iban\": \"{{iban_multiple}}\"\n    },\n    \"creditorAgent\" : \"AAAADEBBXXX\",\n    \"creditorName\": \"WBG\",\n    \"creditorAddress\": {\n      \"addressLines\": [\n        \"WBG Banking Solutions\",\n        \"Finance & Payment Services\"\n      ],\n      \"department\": \"Corporate Banking\",\n      \"buildingNumber\": \"56\",\n      \"streetName\": \"WBG Straße\",\n      \"buildingName\": \"WBG Financial Center\",\n      \"floor\": \"Ground Floor\",\n      \"townName\": \"Nürnberg\",\n      \"postCode\": \"90543\",\n      \"country\": \"DE\"\n    },\n    \"remittanceInformationUnstructured\": \"Ref. Number WBG-1222\"\n  }"
 												},
 												"url": {
 													"raw": "{{protocol}}://{{url_xs2a}}/v1/{{payment_service}}/{{payment_product}}",
@@ -78159,7 +78159,7 @@
 												],
 												"body": {
 													"mode": "raw",
-													"raw": "{\n    \"endToEndIdentification\": \"WBG-123456789\",\n    \"debtorAccount\": {\n      \"currency\": \"EUR\",\n      \"iban\": \"{{iban_multiple}}\"\n    },\n    \"instructedAmount\": {\n      \"currency\": \"EUR\",\n      \"amount\": \"0.01\"\n    },\n    \"creditorAccount\": {\n      \"currency\": \"EUR\",\n      \"iban\": \"{{iban_multiple}}\"\n    },\n    \"creditorAgent\" : \"AAAADEBBXXX\",\n    \"creditorName\": \"WBG\",\n    \"creditorAddress\": {\n      \"buildingNumber\": \"56\",\n      \"townName\": \"Nürnberg\",\n      \"country\": \"DE\",\n      \"postCode\": \"90543\",\n      \"streetName\": \"WBG Straße\"\n    },\n    \"remittanceInformationUnstructured\": \"Ref. Number WBG-1222\"\n  }"
+													"raw": "{\n    \"endToEndIdentification\": \"WBG-123456789\",\n    \"debtorAccount\": {\n      \"currency\": \"EUR\",\n      \"iban\": \"{{iban_multiple}}\"\n    },\n    \"instructedAmount\": {\n      \"currency\": \"EUR\",\n      \"amount\": \"0.01\"\n    },\n    \"creditorAccount\": {\n      \"currency\": \"EUR\",\n      \"iban\": \"{{iban_multiple}}\"\n    },\n    \"creditorAgent\" : \"AAAADEBBXXX\",\n    \"creditorName\": \"WBG\",\n    \"creditorAddress\": {\n      \"addressLines\": [\n        \"WBG Banking Solutions\",\n        \"Finance & Payment Services\"\n      ],\n      \"department\": \"Corporate Banking\",\n      \"buildingNumber\": \"56\",\n      \"streetName\": \"WBG Straße\",\n      \"buildingName\": \"WBG Financial Center\",\n      \"floor\": \"Ground Floor\",\n      \"townName\": \"Nürnberg\",\n      \"postCode\": \"90543\",\n      \"country\": \"DE\"\n    },\n    \"remittanceInformationUnstructured\": \"Ref. Number WBG-1222\"\n  }"
 												},
 												"url": {
 													"raw": "{{protocol}}://{{url_xs2a}}/v1/{{payment_service}}/{{payment_product}}",
@@ -79292,7 +79292,7 @@
 														],
 														"body": {
 															"mode": "raw",
-															"raw": "{\n    \"endToEndIdentification\": \"WBG-123456789\",\n    \"debtorAccount\": {\n      \"currency\": \"EUR\",\n      \"iban\": \"{{iban_none}}\"\n    },\n    \"instructedAmount\": {\n      \"currency\": \"EUR\",\n      \"amount\": \"0.01\"\n    },\n    \"creditorAccount\": {\n      \"currency\": \"EUR\",\n      \"iban\": \"{{iban_none}}\"\n    },\n    \"creditorAgent\" : \"AAAADEBBXXX\",\n    \"creditorName\": \"WBG\",\n    \"creditorAddress\": {\n      \"buildingNumber\": \"56\",\n      \"townName\": \"Nürnberg\",\n      \"country\": \"DE\",\n      \"postCode\": \"90543\",\n      \"streetName\": \"WBG Straße\"\n    },\n    \"remittanceInformationUnstructured\": \"Ref. Number WBG-1222\"\n  }"
+															"raw": "{\n    \"endToEndIdentification\": \"WBG-123456789\",\n    \"debtorAccount\": {\n      \"currency\": \"EUR\",\n      \"iban\": \"{{iban_none}}\"\n    },\n    \"instructedAmount\": {\n      \"currency\": \"EUR\",\n      \"amount\": \"0.01\"\n    },\n    \"creditorAccount\": {\n      \"currency\": \"EUR\",\n      \"iban\": \"{{iban_none}}\"\n    },\n    \"creditorAgent\" : \"AAAADEBBXXX\",\n    \"creditorName\": \"WBG\",\n    \"creditorAddress\": {\n      \"addressLines\": [\n        \"WBG Banking Solutions\",\n        \"Finance & Payment Services\"\n      ],\n      \"department\": \"Corporate Banking\",\n      \"buildingNumber\": \"56\",\n      \"streetName\": \"WBG Straße\",\n      \"buildingName\": \"WBG Financial Center\",\n      \"floor\": \"Ground Floor\",\n      \"townName\": \"Nürnberg\",\n      \"postCode\": \"90543\",\n      \"country\": \"DE\"\n    },\n    \"remittanceInformationUnstructured\": \"Ref. Number WBG-1222\"\n  }"
 														},
 														"url": {
 															"raw": "{{protocol}}://{{url_xs2a}}/v1/{{payment_service}}/{{payment_product}}",
@@ -79734,7 +79734,7 @@
 														],
 														"body": {
 															"mode": "raw",
-															"raw": "{\n    \"endToEndIdentification\": \"WBG-123456789\",\n    \"debtorAccount\": {\n      \"currency\": \"EUR\",\n      \"iban\": \"{{iban_none}}\"\n    },\n    \"instructedAmount\": {\n      \"currency\": \"EUR\",\n      \"amount\": \"0.01\"\n    },\n    \"creditorAccount\": {\n      \"currency\": \"EUR\",\n      \"iban\": \"{{iban_none}}\"\n    },\n    \"creditorAgent\" : \"AAAADEBBXXX\",\n    \"creditorName\": \"WBG\",\n    \"creditorAddress\": {\n      \"buildingNumber\": \"56\",\n      \"townName\": \"Nürnberg\",\n      \"country\": \"DE\",\n      \"postCode\": \"90543\",\n      \"streetName\": \"WBG Straße\"\n    },\n    \"remittanceInformationUnstructured\": \"Ref. Number WBG-1222\"\n  }"
+															"raw": "{\n    \"endToEndIdentification\": \"WBG-123456789\",\n    \"debtorAccount\": {\n      \"currency\": \"EUR\",\n      \"iban\": \"{{iban_none}}\"\n    },\n    \"instructedAmount\": {\n      \"currency\": \"EUR\",\n      \"amount\": \"0.01\"\n    },\n    \"creditorAccount\": {\n      \"currency\": \"EUR\",\n      \"iban\": \"{{iban_none}}\"\n    },\n    \"creditorAgent\" : \"AAAADEBBXXX\",\n    \"creditorName\": \"WBG\",\n    \"creditorAddress\": {\n      \"addressLines\": [\n        \"WBG Banking Solutions\",\n        \"Finance & Payment Services\"\n      ],\n      \"department\": \"Corporate Banking\",\n      \"buildingNumber\": \"56\",\n      \"streetName\": \"WBG Straße\",\n      \"buildingName\": \"WBG Financial Center\",\n      \"floor\": \"Ground Floor\",\n      \"townName\": \"Nürnberg\",\n      \"postCode\": \"90543\",\n      \"country\": \"DE\"\n    },\n    \"remittanceInformationUnstructured\": \"Ref. Number WBG-1222\"\n  }"
 														},
 														"url": {
 															"raw": "{{protocol}}://{{url_xs2a}}/v1/{{payment_service}}/{{payment_product}}",
@@ -80160,7 +80160,7 @@
 														],
 														"body": {
 															"mode": "raw",
-															"raw": "{\n    \"endToEndIdentification\": \"WBG-123456789\",\n    \"debtorAccount\": {\n      \"currency\": \"EUR\",\n      \"iban\": \"{{iban_none}}\"\n    },\n    \"instructedAmount\": {\n      \"currency\": \"EUR\",\n      \"amount\": \"0.01\"\n    },\n    \"creditorAccount\": {\n      \"currency\": \"EUR\",\n      \"iban\": \"{{iban_none}}\"\n    },\n    \"creditorAgent\" : \"AAAADEBBXXX\",\n    \"creditorName\": \"WBG\",\n    \"creditorAddress\": {\n      \"buildingNumber\": \"56\",\n      \"townName\": \"Nürnberg\",\n      \"country\": \"DE\",\n      \"postCode\": \"90543\",\n      \"streetName\": \"WBG Straße\"\n    },\n    \"remittanceInformationUnstructured\": \"Ref. Number WBG-1222\"\n  }"
+															"raw": "{\n    \"endToEndIdentification\": \"WBG-123456789\",\n    \"debtorAccount\": {\n      \"currency\": \"EUR\",\n      \"iban\": \"{{iban_none}}\"\n    },\n    \"instructedAmount\": {\n      \"currency\": \"EUR\",\n      \"amount\": \"0.01\"\n    },\n    \"creditorAccount\": {\n      \"currency\": \"EUR\",\n      \"iban\": \"{{iban_none}}\"\n    },\n    \"creditorAgent\" : \"AAAADEBBXXX\",\n    \"creditorName\": \"WBG\",\n    \"creditorAddress\": {\n      \"addressLines\": [\n        \"WBG Banking Solutions\",\n        \"Finance & Payment Services\"\n      ],\n      \"department\": \"Corporate Banking\",\n      \"buildingNumber\": \"56\",\n      \"streetName\": \"WBG Straße\",\n      \"buildingName\": \"WBG Financial Center\",\n      \"floor\": \"Ground Floor\",\n      \"townName\": \"Nürnberg\",\n      \"postCode\": \"90543\",\n      \"country\": \"DE\"\n    },\n    \"remittanceInformationUnstructured\": \"Ref. Number WBG-1222\"\n  }"
 														},
 														"url": {
 															"raw": "{{protocol}}://{{url_xs2a}}/v1/{{payment_service}}/{{payment_product}}",
@@ -80652,7 +80652,7 @@
 												],
 												"body": {
 													"mode": "raw",
-													"raw": "{\n    \"endToEndIdentification\": \"WBG-123456789\",\n    \"debtorAccount\": {\n      \"currency\": \"EUR\",\n      \"iban\": \"{{iban_none}}\"\n    },\n    \"instructedAmount\": {\n      \"currency\": \"EUR\",\n      \"amount\": \"0.01\"\n    },\n    \"creditorAccount\": {\n      \"currency\": \"EUR\",\n      \"iban\": \"{{iban_none}}\"\n    },\n    \"creditorAgent\" : \"AAAADEBBXXX\",\n    \"creditorName\": \"WBG\",\n    \"creditorAddress\": {\n      \"buildingNumber\": \"56\",\n      \"townName\": \"Nürnberg\",\n      \"country\": \"DE\",\n      \"postCode\": \"90543\",\n      \"streetName\": \"WBG Straße\"\n    },\n    \"remittanceInformationUnstructured\": \"Ref. Number WBG-1222\"\n  }"
+													"raw": "{\n    \"endToEndIdentification\": \"WBG-123456789\",\n    \"debtorAccount\": {\n      \"currency\": \"EUR\",\n      \"iban\": \"{{iban_none}}\"\n    },\n    \"instructedAmount\": {\n      \"currency\": \"EUR\",\n      \"amount\": \"0.01\"\n    },\n    \"creditorAccount\": {\n      \"currency\": \"EUR\",\n      \"iban\": \"{{iban_none}}\"\n    },\n    \"creditorAgent\" : \"AAAADEBBXXX\",\n    \"creditorName\": \"WBG\",\n    \"creditorAddress\": {\n      \"addressLines\": [\n        \"WBG Banking Solutions\",\n        \"Finance & Payment Services\"\n      ],\n      \"department\": \"Corporate Banking\",\n      \"buildingNumber\": \"56\",\n      \"streetName\": \"WBG Straße\",\n      \"buildingName\": \"WBG Financial Center\",\n      \"floor\": \"Ground Floor\",\n      \"townName\": \"Nürnberg\",\n      \"postCode\": \"90543\",\n      \"country\": \"DE\"\n    },\n    \"remittanceInformationUnstructured\": \"Ref. Number WBG-1222\"\n  }"
 												},
 												"url": {
 													"raw": "{{protocol}}://{{url_xs2a}}/v1/{{payment_service}}/{{payment_product}}",
@@ -81008,7 +81008,7 @@
 												],
 												"body": {
 													"mode": "raw",
-													"raw": "{\n    \"endToEndIdentification\": \"WBG-123456789\",\n    \"debtorAccount\": {\n      \"currency\": \"EUR\",\n      \"iban\": \"{{iban_single}}\"\n    },\n    \"instructedAmount\": {\n      \"currency\": \"EUR\",\n      \"amount\": \"0.01\"\n    },\n    \"creditorAccount\": {\n      \"currency\": \"EUR\",\n      \"iban\": \"{{iban_single}}\"\n    },\n    \"creditorAgent\" : \"AAAADEBBXXX\",\n    \"creditorName\": \"WBG\",\n    \"creditorAddress\": {\n      \"buildingNumber\": \"56\",\n      \"townName\": \"Nürnberg\",\n      \"country\": \"DE\",\n      \"postCode\": \"90543\",\n      \"streetName\": \"WBG Straße\"\n    },\n    \"remittanceInformationUnstructured\": \"Ref. Number WBG-1222\"\n  }"
+													"raw": "{\n    \"endToEndIdentification\": \"WBG-123456789\",\n    \"debtorAccount\": {\n      \"currency\": \"EUR\",\n      \"iban\": \"{{iban_single}}\"\n    },\n    \"instructedAmount\": {\n      \"currency\": \"EUR\",\n      \"amount\": \"0.01\"\n    },\n    \"creditorAccount\": {\n      \"currency\": \"EUR\",\n      \"iban\": \"{{iban_single}}\"\n    },\n    \"creditorAgent\" : \"AAAADEBBXXX\",\n    \"creditorName\": \"WBG\",\n    \"creditorAddress\": {\n      \"addressLines\": [\n        \"WBG Banking Solutions\",\n        \"Finance & Payment Services\"\n      ],\n      \"department\": \"Corporate Banking\",\n      \"buildingNumber\": \"56\",\n      \"streetName\": \"WBG Straße\",\n      \"buildingName\": \"WBG Financial Center\",\n      \"floor\": \"Ground Floor\",\n      \"townName\": \"Nürnberg\",\n      \"postCode\": \"90543\",\n      \"country\": \"DE\"\n    },\n    \"remittanceInformationUnstructured\": \"Ref. Number WBG-1222\"\n  }"
 												},
 												"url": {
 													"raw": "{{protocol}}://{{url_xs2a}}/v1/{{payment_service}}/target-2-payments",
@@ -81669,7 +81669,7 @@
 												],
 												"body": {
 													"mode": "raw",
-													"raw": "{\n    \"endToEndIdentification\": \"WBG-123456789\",\n    \"debtorAccount\": {\n      \"currency\": \"EUR\",\n      \"iban\": \"{{iban_single}}\"\n    },\n    \"instructedAmount\": {\n      \"currency\": \"EUR\",\n      \"amount\": \"0.01\"\n    },\n    \"creditorAccount\": {\n      \"currency\": \"EUR\",\n      \"iban\": \"{{iban_single}}\"\n    },\n    \"creditorAgent\" : \"AAAADEBBXXX\",\n    \"creditorName\": \"WBG\",\n    \"creditorAddress\": {\n      \"buildingNumber\": \"56\",\n      \"townName\": \"Nürnberg\",\n      \"country\": \"DE\",\n      \"postCode\": \"90543\",\n      \"streetName\": \"WBG Straße\"\n    },\n    \"remittanceInformationUnstructured\": \"Ref. Number WBG-1222\"\n  }"
+													"raw": "{\n    \"endToEndIdentification\": \"WBG-123456789\",\n    \"debtorAccount\": {\n      \"currency\": \"EUR\",\n      \"iban\": \"{{iban_single}}\"\n    },\n    \"instructedAmount\": {\n      \"currency\": \"EUR\",\n      \"amount\": \"0.01\"\n    },\n    \"creditorAccount\": {\n      \"currency\": \"EUR\",\n      \"iban\": \"{{iban_single}}\"\n    },\n    \"creditorAgent\" : \"AAAADEBBXXX\",\n    \"creditorName\": \"WBG\",\n    \"creditorAddress\": {\n      \"addressLines\": [\n        \"WBG Banking Solutions\",\n        \"Finance & Payment Services\"\n      ],\n      \"department\": \"Corporate Banking\",\n      \"buildingNumber\": \"56\",\n      \"streetName\": \"WBG Straße\",\n      \"buildingName\": \"WBG Financial Center\",\n      \"floor\": \"Ground Floor\",\n      \"townName\": \"Nürnberg\",\n      \"postCode\": \"90543\",\n      \"country\": \"DE\"\n    },\n    \"remittanceInformationUnstructured\": \"Ref. Number WBG-1222\"\n  }"
 												},
 												"url": {
 													"raw": "{{protocol}}://{{url_xs2a}}/v1/{{payment_service}}/instant-sepa-credit-transfers",
@@ -82317,7 +82317,7 @@
 												],
 												"body": {
 													"mode": "raw",
-													"raw": "{\n    \"endToEndIdentification\": \"WBG-123456789\",\n    \"debtorAccount\": {\n      \"currency\": \"EUR\",\n      \"iban\": \"{{iban_none}}\"\n    },\n    \"instructedAmount\": {\n      \"currency\": \"EUR\",\n      \"amount\": \"0.01\"\n    },\n    \"creditorAccount\": {\n      \"currency\": \"EUR\",\n      \"iban\": \"{{iban_none}}\"\n    },\n    \"creditorAgent\" : \"AAAADEBBXXX\",\n    \"creditorName\": \"WBG\",\n    \"creditorAddress\": {\n      \"buildingNumber\": \"56\",\n      \"townName\": \"Nürnberg\",\n      \"country\": \"DE\",\n      \"postCode\": \"90543\",\n      \"streetName\": \"WBG Straße\"\n    },\n    \"remittanceInformationUnstructured\": \"Ref. Number WBG-1222\"\n  }"
+													"raw": "{\n    \"endToEndIdentification\": \"WBG-123456789\",\n    \"debtorAccount\": {\n      \"currency\": \"EUR\",\n      \"iban\": \"{{iban_none}}\"\n    },\n    \"instructedAmount\": {\n      \"currency\": \"EUR\",\n      \"amount\": \"0.01\"\n    },\n    \"creditorAccount\": {\n      \"currency\": \"EUR\",\n      \"iban\": \"{{iban_none}}\"\n    },\n    \"creditorAgent\" : \"AAAADEBBXXX\",\n    \"creditorName\": \"WBG\",\n    \"creditorAddress\": {\n      \"addressLines\": [\n        \"WBG Banking Solutions\",\n        \"Finance & Payment Services\"\n      ],\n      \"department\": \"Corporate Banking\",\n      \"buildingNumber\": \"56\",\n      \"streetName\": \"WBG Straße\",\n      \"buildingName\": \"WBG Financial Center\",\n      \"floor\": \"Ground Floor\",\n      \"townName\": \"Nürnberg\",\n      \"postCode\": \"90543\",\n      \"country\": \"DE\"\n    },\n    \"remittanceInformationUnstructured\": \"Ref. Number WBG-1222\"\n  }"
 												},
 												"url": {
 													"raw": "{{protocol}}://{{url_xs2a}}/v1/{{payment_service}}/{{payment_product}}",
@@ -82779,7 +82779,7 @@
 												],
 												"body": {
 													"mode": "raw",
-													"raw": "{\n    \"endToEndIdentification\": \"WBG-123456789\",\n    \"debtorAccount\": {\n      \"currency\": \"EUR\",\n      \"iban\": \"{{iban_single}}\"\n    },\n    \"instructedAmount\": {\n      \"currency\": \"EUR\",\n      \"amount\": \"0.01\"\n    },\n    \"creditorAccount\": {\n      \"currency\": \"EUR\",\n      \"iban\": \"{{iban_single}}\"\n    },\n    \"creditorAgent\" : \"AAAADEBBXXX\",\n    \"creditorName\": \"WBG\",\n    \"creditorAddress\": {\n      \"buildingNumber\": \"56\",\n      \"townName\": \"Nürnberg\",\n      \"country\": \"DE\",\n      \"postCode\": \"90543\",\n      \"streetName\": \"WBG Straße\"\n    },\n    \"remittanceInformationUnstructured\": \"Ref. Number WBG-1222\"\n  }"
+													"raw": "{\n    \"endToEndIdentification\": \"WBG-123456789\",\n    \"debtorAccount\": {\n      \"currency\": \"EUR\",\n      \"iban\": \"{{iban_single}}\"\n    },\n    \"instructedAmount\": {\n      \"currency\": \"EUR\",\n      \"amount\": \"0.01\"\n    },\n    \"creditorAccount\": {\n      \"currency\": \"EUR\",\n      \"iban\": \"{{iban_single}}\"\n    },\n    \"creditorAgent\" : \"AAAADEBBXXX\",\n    \"creditorName\": \"WBG\",\n    \"creditorAddress\": {\n      \"addressLines\": [\n        \"WBG Banking Solutions\",\n        \"Finance & Payment Services\"\n      ],\n      \"department\": \"Corporate Banking\",\n      \"buildingNumber\": \"56\",\n      \"streetName\": \"WBG Straße\",\n      \"buildingName\": \"WBG Financial Center\",\n      \"floor\": \"Ground Floor\",\n      \"townName\": \"Nürnberg\",\n      \"postCode\": \"90543\",\n      \"country\": \"DE\"\n    },\n    \"remittanceInformationUnstructured\": \"Ref. Number WBG-1222\"\n  }"
 												},
 												"url": {
 													"raw": "{{protocol}}://{{url_xs2a}}/v1/{{payment_service}}/{{payment_product}}",
@@ -83338,7 +83338,7 @@
 												],
 												"body": {
 													"mode": "raw",
-													"raw": "{\n    \"endToEndIdentification\": \"WBG-123456789\",\n    \"debtorAccount\": {\n      \"currency\": \"EUR\",\n      \"iban\": \"{{iban_multiple}}\"\n    },\n    \"instructedAmount\": {\n      \"currency\": \"EUR\",\n      \"amount\": \"0.01\"\n    },\n    \"creditorAccount\": {\n      \"currency\": \"EUR\",\n      \"iban\": \"{{iban_multiple}}\"\n    },\n    \"creditorAgent\" : \"AAAADEBBXXX\",\n    \"creditorName\": \"WBG\",\n    \"creditorAddress\": {\n      \"buildingNumber\": \"56\",\n      \"townName\": \"Nürnberg\",\n      \"country\": \"DE\",\n      \"postCode\": \"90543\",\n      \"streetName\": \"WBG Straße\"\n    },\n    \"remittanceInformationUnstructured\": \"Ref. Number WBG-1222\"\n  }"
+													"raw": "{\n    \"endToEndIdentification\": \"WBG-123456789\",\n    \"debtorAccount\": {\n      \"currency\": \"EUR\",\n      \"iban\": \"{{iban_multiple}}\"\n    },\n    \"instructedAmount\": {\n      \"currency\": \"EUR\",\n      \"amount\": \"0.01\"\n    },\n    \"creditorAccount\": {\n      \"currency\": \"EUR\",\n      \"iban\": \"{{iban_multiple}}\"\n    },\n    \"creditorAgent\" : \"AAAADEBBXXX\",\n    \"creditorName\": \"WBG\",\n    \"creditorAddress\": {\n      \"addressLines\": [\n        \"WBG Banking Solutions\",\n        \"Finance & Payment Services\"\n      ],\n      \"department\": \"Corporate Banking\",\n      \"buildingNumber\": \"56\",\n      \"streetName\": \"WBG Straße\",\n      \"buildingName\": \"WBG Financial Center\",\n      \"floor\": \"Ground Floor\",\n      \"townName\": \"Nürnberg\",\n      \"postCode\": \"90543\",\n      \"country\": \"DE\"\n    },\n    \"remittanceInformationUnstructured\": \"Ref. Number WBG-1222\"\n  }"
 												},
 												"url": {
 													"raw": "{{protocol}}://{{url_xs2a}}/v1/{{payment_service}}/{{payment_product}}",
@@ -84014,7 +84014,7 @@
 												],
 												"body": {
 													"mode": "raw",
-													"raw": "{\n\"endToEndIdentification\": \"RI-1234567890\",\n\"debtorAccount\": {\n  \"currency\": \"EUR\",\n  \"iban\": \"{{iban_none}}\"\n },\n\"instructedAmount\": {\n  \"amount\": 0,\n  \"currency\": \"EUR\"\n },\n\"creditorAccount\": {\n  \"currency\": \"EUR\",\n  \"iban\": \"{{iban_none}}\"\n },\n\"creditorAgent\": \"AAAADEBBXXX\",\n\"creditorName\": \"Telekom\",\n \"creditorAddress\": {\n  \"buildingNumber\": \"123-34\",\n  \"townName\": \"Nürnberg\",\n  \"country\": \"DE\",\n  \"postCode\": 90431,\n  \"streetName\": \"Herrnstraße\"\n },\n \"remittanceInformationUnstructured\": \"Ref. Number TELEKOM-1222\"\n }"
+													"raw": "{\n\"endToEndIdentification\": \"RI-1234567890\",\n\"debtorAccount\": {\n  \"currency\": \"EUR\",\n  \"iban\": \"{{iban_none}}\"\n },\n\"instructedAmount\": {\n  \"amount\": 0,\n  \"currency\": \"EUR\"\n },\n\"creditorAccount\": {\n  \"currency\": \"EUR\",\n  \"iban\": \"{{iban_none}}\"\n },\n\"creditorAgent\": \"AAAADEBBXXX\",\n\"creditorName\": \"Telekom\",\n \"creditorAddress\": {\n  \"addressLines\": [\n    \"Heritage Banking Corporation\",\n    \"Traditional Financial Services\"\n  ],\n  \"department\": \"Classical Banking Division\",\n  \"buildingNumber\": \"123-34\",\n  \"streetName\": \"Herrnstraße\",\n  \"buildingName\": \"Heritage Financial Center\",\n  \"floor\": \"Main Banking Floor\",\n  \"townName\": \"Nürnberg\",\n  \"postCode\": 90431,\n  \"country\": \"DE\"\n },\n \"remittanceInformationUnstructured\": \"Ref. Number TELEKOM-1222\"\n }"
 												},
 												"url": {
 													"raw": "{{protocol}}://{{url_xs2a}}/v1/{{payment_service}}/{{payment_product}}",
@@ -84342,7 +84342,7 @@
 												],
 												"body": {
 													"mode": "raw",
-													"raw": "{\n\"endToEndIdentification\": \"RI-1234567890\",\n\"debtorAccount\": {\n  \"currency\": \"EUR\",\n  \"iban\": \"{{iban_single}}\"\n },\n\"instructedAmount\": {\n  \"amount\": 0,\n  \"currency\": \"EUR\"\n },\n\"creditorAccount\": {\n  \"currency\": \"EUR\",\n  \"iban\": \"{{iban_single}}\"\n },\n\"creditorAgent\": \"AAAADEBBXXX\",\n\"creditorName\": \"Telekom\",\n \"creditorAddress\": {\n  \"buildingNumber\": \"123-34\",\n  \"townName\": \"Nürnberg\",\n  \"country\": \"DE\",\n  \"postCode\": 90431,\n  \"streetName\": \"Herrnstraße\"\n },\n \"remittanceInformationUnstructured\": \"Ref. Number TELEKOM-1222\"\n }"
+													"raw": "{\n\"endToEndIdentification\": \"RI-1234567890\",\n\"debtorAccount\": {\n  \"currency\": \"EUR\",\n  \"iban\": \"{{iban_single}}\"\n },\n\"instructedAmount\": {\n  \"amount\": 0,\n  \"currency\": \"EUR\"\n },\n\"creditorAccount\": {\n  \"currency\": \"EUR\",\n  \"iban\": \"{{iban_single}}\"\n },\n\"creditorAgent\": \"AAAADEBBXXX\",\n\"creditorName\": \"Telekom\",\n \"creditorAddress\": {\n  \"addressLines\": [\n    \"Heritage Banking Corporation\",\n    \"Traditional Financial Services\"\n  ],\n  \"department\": \"Classical Banking Division\",\n  \"buildingNumber\": \"123-34\",\n  \"streetName\": \"Herrnstraße\",\n  \"buildingName\": \"Heritage Financial Center\",\n  \"floor\": \"Main Banking Floor\",\n  \"townName\": \"Nürnberg\",\n  \"postCode\": 90431,\n  \"country\": \"DE\"\n },\n \"remittanceInformationUnstructured\": \"Ref. Number TELEKOM-1222\"\n }"
 												},
 												"url": {
 													"raw": "{{protocol}}://{{url_xs2a}}/v1/{{payment_service}}/{{payment_product}}",
@@ -84663,7 +84663,7 @@
 												],
 												"body": {
 													"mode": "raw",
-													"raw": "{\n\"endToEndIdentification\": \"RI-1234567890\",\n\"debtorAccount\": {\n  \"currency\": \"EUR\",\n  \"iban\": \"{{iban_multiple}}\"\n },\n\"instructedAmount\": {\n  \"amount\": 0,\n  \"currency\": \"EUR\"\n },\n\"creditorAccount\": {\n  \"currency\": \"EUR\",\n  \"iban\": \"{{iban_multiple}}\"\n },\n\"creditorAgent\": \"AAAADEBBXXX\",\n\"creditorName\": \"Telekom\",\n \"creditorAddress\": {\n  \"buildingNumber\": \"123-34\",\n  \"townName\": \"Nürnberg\",\n  \"country\": \"DE\",\n  \"postCode\": 90431,\n  \"streetName\": \"Herrnstraße\"\n },\n \"remittanceInformationUnstructured\": \"Ref. Number TELEKOM-1222\"\n }"
+													"raw": "{\n\"endToEndIdentification\": \"RI-1234567890\",\n\"debtorAccount\": {\n  \"currency\": \"EUR\",\n  \"iban\": \"{{iban_multiple}}\"\n },\n\"instructedAmount\": {\n  \"amount\": 0,\n  \"currency\": \"EUR\"\n },\n\"creditorAccount\": {\n  \"currency\": \"EUR\",\n  \"iban\": \"{{iban_multiple}}\"\n },\n\"creditorAgent\": \"AAAADEBBXXX\",\n\"creditorName\": \"Telekom\",\n \"creditorAddress\": {\n  \"addressLines\": [\n    \"Heritage Banking Corporation\",\n    \"Traditional Financial Services\"\n  ],\n  \"department\": \"Classical Banking Division\",\n  \"buildingNumber\": \"123-34\",\n  \"streetName\": \"Herrnstraße\",\n  \"buildingName\": \"Heritage Financial Center\",\n  \"floor\": \"Main Banking Floor\",\n  \"townName\": \"Nürnberg\",\n  \"postCode\": 90431,\n  \"country\": \"DE\"\n },\n \"remittanceInformationUnstructured\": \"Ref. Number TELEKOM-1222\"\n }"
 												},
 												"url": {
 													"raw": "{{protocol}}://{{url_xs2a}}/v1/{{payment_service}}/{{payment_product}}",
@@ -84916,7 +84916,7 @@
 														],
 														"body": {
 															"mode": "raw",
-															"raw": "{\n    \"endToEndIdentification\": \"WBG-123456789\",\n    \"debtorAccount\": {\n      \"currency\": \"EUR\",\n      \"iban\": \"{{iban_none}}\"\n    },\n    \"instructedAmount\": {\n      \"currency\": \"EUR\",\n      \"amount\": \"0.01\"\n    },\n    \"creditorAccount\": {\n      \"currency\": \"EUR\",\n      \"iban\": \"{{iban_none}}\"\n    },\n    \"creditorAgent\" : \"AAAADEBBXXX\",\n    \"creditorName\": \"WBG\",\n    \"creditorAddress\": {\n      \"buildingNumber\": \"56\",\n      \"townName\": \"Nürnberg\",\n      \"country\": \"DE\",\n      \"postCode\": \"90543\",\n      \"streetName\": \"WBG Straße\"\n    },\n    \"remittanceInformationUnstructured\": \"Ref. Number WBG-1222\"\n  }"
+															"raw": "{\n    \"endToEndIdentification\": \"WBG-123456789\",\n    \"debtorAccount\": {\n      \"currency\": \"EUR\",\n      \"iban\": \"{{iban_none}}\"\n    },\n    \"instructedAmount\": {\n      \"currency\": \"EUR\",\n      \"amount\": \"0.01\"\n    },\n    \"creditorAccount\": {\n      \"currency\": \"EUR\",\n      \"iban\": \"{{iban_none}}\"\n    },\n    \"creditorAgent\" : \"AAAADEBBXXX\",\n    \"creditorName\": \"WBG\",\n    \"creditorAddress\": {\n      \"addressLines\": [\n        \"WBG Banking Solutions\",\n        \"Finance & Payment Services\"\n      ],\n      \"department\": \"Corporate Banking\",\n      \"buildingNumber\": \"56\",\n      \"streetName\": \"WBG Straße\",\n      \"buildingName\": \"WBG Financial Center\",\n      \"floor\": \"Ground Floor\",\n      \"townName\": \"Nürnberg\",\n      \"postCode\": \"90543\",\n      \"country\": \"DE\"\n    },\n    \"remittanceInformationUnstructured\": \"Ref. Number WBG-1222\"\n  }"
 														},
 														"url": {
 															"raw": "{{protocol}}://{{url_xs2a}}/v1/{{payment_service}}/{{payment_product}}",
@@ -85250,7 +85250,7 @@
 														],
 														"body": {
 															"mode": "raw",
-															"raw": "{\n    \"endToEndIdentification\": \"WBG-123456789\",\n    \"debtorAccount\": {\n      \"currency\": \"EUR\",\n      \"iban\": \"{{iban_none}}\"\n    },\n    \"instructedAmount\": {\n      \"currency\": \"EUR\",\n      \"amount\": \"0.01\"\n    },\n    \"creditorAccount\": {\n      \"currency\": \"EUR\",\n      \"iban\": \"{{iban_none}}\"\n    },\n    \"creditorAgent\" : \"AAAADEBBXXX\",\n    \"creditorName\": \"WBG\",\n    \"creditorAddress\": {\n      \"buildingNumber\": \"56\",\n      \"townName\": \"Nürnberg\",\n      \"country\": \"DE\",\n      \"postCode\": \"90543\",\n      \"streetName\": \"WBG Straße\"\n    },\n    \"remittanceInformationUnstructured\": \"Ref. Number WBG-1222\"\n  }"
+															"raw": "{\n    \"endToEndIdentification\": \"WBG-123456789\",\n    \"debtorAccount\": {\n      \"currency\": \"EUR\",\n      \"iban\": \"{{iban_none}}\"\n    },\n    \"instructedAmount\": {\n      \"currency\": \"EUR\",\n      \"amount\": \"0.01\"\n    },\n    \"creditorAccount\": {\n      \"currency\": \"EUR\",\n      \"iban\": \"{{iban_none}}\"\n    },\n    \"creditorAgent\" : \"AAAADEBBXXX\",\n    \"creditorName\": \"WBG\",\n    \"creditorAddress\": {\n      \"addressLines\": [\n        \"WBG Banking Solutions\",\n        \"Finance & Payment Services\"\n      ],\n      \"department\": \"Corporate Banking\",\n      \"buildingNumber\": \"56\",\n      \"streetName\": \"WBG Straße\",\n      \"buildingName\": \"WBG Financial Center\",\n      \"floor\": \"Ground Floor\",\n      \"townName\": \"Nürnberg\",\n      \"postCode\": \"90543\",\n      \"country\": \"DE\"\n    },\n    \"remittanceInformationUnstructured\": \"Ref. Number WBG-1222\"\n  }"
 														},
 														"url": {
 															"raw": "{{protocol}}://{{url_xs2a}}/v1/{{payment_service}}/{{payment_product}}",
@@ -85585,7 +85585,7 @@
 														],
 														"body": {
 															"mode": "raw",
-															"raw": "{\n    \"endToEndIdentification\": \"WBG-123456789\",\n    \"debtorAccount\": {\n      \"currency\": \"EUR\",\n      \"iban\": \"{{iban_none}}\"\n    },\n    \"instructedAmount\": {\n      \"currency\": \"EUR\",\n      \"amount\": \"0.01\"\n    },\n    \"creditorAccount\": {\n      \"currency\": \"EUR\",\n      \"iban\": \"{{iban_none}}\"\n    },\n    \"creditorAgent\" : \"AAAADEBBXXX\",\n    \"creditorName\": \"WBG\",\n    \"creditorAddress\": {\n      \"buildingNumber\": \"56\",\n      \"townName\": \"Nürnberg\",\n      \"country\": \"DE\",\n      \"postCode\": \"90543\",\n      \"streetName\": \"WBG Straße\"\n    },\n    \"remittanceInformationUnstructured\": \"Ref. Number WBG-1222\"\n  }"
+															"raw": "{\n    \"endToEndIdentification\": \"WBG-123456789\",\n    \"debtorAccount\": {\n      \"currency\": \"EUR\",\n      \"iban\": \"{{iban_none}}\"\n    },\n    \"instructedAmount\": {\n      \"currency\": \"EUR\",\n      \"amount\": \"0.01\"\n    },\n    \"creditorAccount\": {\n      \"currency\": \"EUR\",\n      \"iban\": \"{{iban_none}}\"\n    },\n    \"creditorAgent\" : \"AAAADEBBXXX\",\n    \"creditorName\": \"WBG\",\n    \"creditorAddress\": {\n      \"addressLines\": [\n        \"WBG Banking Solutions\",\n        \"Finance & Payment Services\"\n      ],\n      \"department\": \"Corporate Banking\",\n      \"buildingNumber\": \"56\",\n      \"streetName\": \"WBG Straße\",\n      \"buildingName\": \"WBG Financial Center\",\n      \"floor\": \"Ground Floor\",\n      \"townName\": \"Nürnberg\",\n      \"postCode\": \"90543\",\n      \"country\": \"DE\"\n    },\n    \"remittanceInformationUnstructured\": \"Ref. Number WBG-1222\"\n  }"
 														},
 														"url": {
 															"raw": "{{protocol}}://{{url_xs2a}}/v1/{{payment_service}}/{{payment_product}}",
@@ -85849,7 +85849,7 @@
 														],
 														"body": {
 															"mode": "raw",
-															"raw": "{\n    \"endToEndIdentification\": \"WBG-123456789\",\n    \"debtorAccount\": {\n      \"currency\": \"EUR\",\n      \"iban\": \"{{iban_none}}\"\n    },\n    \"instructedAmount\": {\n      \"currency\": \"EUR\",\n      \"amount\": \"0.01\"\n    },\n    \"creditorAccount\": {\n      \"currency\": \"EUR\",\n      \"iban\": \"{{iban_none}}\"\n    },\n    \"creditorAgent\" : \"AAAADEBBXXX\",\n    \"creditorName\": \"WBG\",\n    \"creditorAddress\": {\n      \"buildingNumber\": \"56\",\n      \"townName\": \"Nürnberg\",\n      \"country\": \"DE\",\n      \"postCode\": \"90543\",\n      \"streetName\": \"WBG Straße\"\n    },\n    \"remittanceInformationUnstructured\": \"Ref. Number WBG-1222\"\n  }"
+															"raw": "{\n    \"endToEndIdentification\": \"WBG-123456789\",\n    \"debtorAccount\": {\n      \"currency\": \"EUR\",\n      \"iban\": \"{{iban_none}}\"\n    },\n    \"instructedAmount\": {\n      \"currency\": \"EUR\",\n      \"amount\": \"0.01\"\n    },\n    \"creditorAccount\": {\n      \"currency\": \"EUR\",\n      \"iban\": \"{{iban_none}}\"\n    },\n    \"creditorAgent\" : \"AAAADEBBXXX\",\n    \"creditorName\": \"WBG\",\n    \"creditorAddress\": {\n      \"addressLines\": [\n        \"WBG Banking Solutions\",\n        \"Finance & Payment Services\"\n      ],\n      \"department\": \"Corporate Banking\",\n      \"buildingNumber\": \"56\",\n      \"streetName\": \"WBG Straße\",\n      \"buildingName\": \"WBG Financial Center\",\n      \"floor\": \"Ground Floor\",\n      \"townName\": \"Nürnberg\",\n      \"postCode\": \"90543\",\n      \"country\": \"DE\"\n    },\n    \"remittanceInformationUnstructured\": \"Ref. Number WBG-1222\"\n  }"
 														},
 														"url": {
 															"raw": "{{protocol}}://{{url_xs2a}}/v1/{{payment_service}}/{{payment_product}}",
@@ -86229,7 +86229,7 @@
 														],
 														"body": {
 															"mode": "raw",
-															"raw": "{\n    \"endToEndIdentification\": \"WBG-123456789\",\n    \"debtorAccount\": {\n      \"currency\": \"EUR\",\n      \"iban\": \"{{iban_none}}\"\n    },\n    \"instructedAmount\": {\n      \"currency\": \"EUR\",\n      \"amount\": \"0.01\"\n    },\n    \"creditorAccount\": {\n      \"currency\": \"EUR\",\n      \"iban\": \"{{iban_none}}\"\n    },\n    \"creditorAgent\" : \"AAAADEBBXXX\",\n    \"creditorName\": \"WBG\",\n    \"creditorAddress\": {\n      \"buildingNumber\": \"56\",\n      \"townName\": \"Nürnberg\",\n      \"country\": \"DE\",\n      \"postCode\": \"90543\",\n      \"streetName\": \"WBG Straße\"\n    },\n    \"remittanceInformationUnstructured\": \"Ref. Number WBG-1222\"\n  }"
+															"raw": "{\n    \"endToEndIdentification\": \"WBG-123456789\",\n    \"debtorAccount\": {\n      \"currency\": \"EUR\",\n      \"iban\": \"{{iban_none}}\"\n    },\n    \"instructedAmount\": {\n      \"currency\": \"EUR\",\n      \"amount\": \"0.01\"\n    },\n    \"creditorAccount\": {\n      \"currency\": \"EUR\",\n      \"iban\": \"{{iban_none}}\"\n    },\n    \"creditorAgent\" : \"AAAADEBBXXX\",\n    \"creditorName\": \"WBG\",\n    \"creditorAddress\": {\n      \"addressLines\": [\n        \"WBG Banking Solutions\",\n        \"Finance & Payment Services\"\n      ],\n      \"department\": \"Corporate Banking\",\n      \"buildingNumber\": \"56\",\n      \"streetName\": \"WBG Straße\",\n      \"buildingName\": \"WBG Financial Center\",\n      \"floor\": \"Ground Floor\",\n      \"townName\": \"Nürnberg\",\n      \"postCode\": \"90543\",\n      \"country\": \"DE\"\n    },\n    \"remittanceInformationUnstructured\": \"Ref. Number WBG-1222\"\n  }"
 														},
 														"url": {
 															"raw": "{{protocol}}://{{url_xs2a}}/v1/{{payment_service}}/{{payment_product}}",
@@ -86654,7 +86654,7 @@
 												],
 												"body": {
 													"mode": "raw",
-													"raw": "{\n    \"endToEndIdentification\": \"WBG-123456789\",\n    \"debtorAccount\": {\n      \"currency\": \"EUR\",\n      \"iban\": \"{{iban_none}}\"\n    },\n    \"instructedAmount\": {\n      \"currency\": \"EUR\",\n      \"amount\": \"0.01\"\n    },\n    \"creditorAccount\": {\n      \"currency\": \"EUR\",\n      \"iban\": \"{{iban_none}}\"\n    },\n    \"creditorAgent\" : \"AAAADEBBXXX\",\n    \"creditorName\": \"WBG\",\n    \"creditorAddress\": {\n      \"buildingNumber\": \"56\",\n      \"townName\": \"Nürnberg\",\n      \"country\": \"DE\",\n      \"postCode\": \"90543\",\n      \"streetName\": \"WBG Straße\"\n    },\n    \"remittanceInformationUnstructured\": \"Ref. Number WBG-1222\"\n  }"
+													"raw": "{\n    \"endToEndIdentification\": \"WBG-123456789\",\n    \"debtorAccount\": {\n      \"currency\": \"EUR\",\n      \"iban\": \"{{iban_none}}\"\n    },\n    \"instructedAmount\": {\n      \"currency\": \"EUR\",\n      \"amount\": \"0.01\"\n    },\n    \"creditorAccount\": {\n      \"currency\": \"EUR\",\n      \"iban\": \"{{iban_none}}\"\n    },\n    \"creditorAgent\" : \"AAAADEBBXXX\",\n    \"creditorName\": \"WBG\",\n    \"creditorAddress\": {\n      \"addressLines\": [\n        \"WBG Banking Solutions\",\n        \"Finance & Payment Services\"\n      ],\n      \"department\": \"Corporate Banking\",\n      \"buildingNumber\": \"56\",\n      \"streetName\": \"WBG Straße\",\n      \"buildingName\": \"WBG Financial Center\",\n      \"floor\": \"Ground Floor\",\n      \"townName\": \"Nürnberg\",\n      \"postCode\": \"90543\",\n      \"country\": \"DE\"\n    },\n    \"remittanceInformationUnstructured\": \"Ref. Number WBG-1222\"\n  }"
 												},
 												"url": {
 													"raw": "{{protocol}}://{{url_xs2a}}/v1/{{payment_service}}/{{payment_product}}",
@@ -87224,7 +87224,7 @@
 												],
 												"body": {
 													"mode": "raw",
-													"raw": "{\n    \"endToEndIdentification\": \"WBG-123456789\",\n    \"debtorAccount\": {\n      \"currency\": \"EUR\",\n      \"iban\": \"{{iban_none}}\"\n    },\n    \"instructedAmount\": {\n      \"currency\": \"EUR\",\n      \"amount\": \"0.01\"\n    },\n    \"creditorAccount\": {\n      \"currency\": \"EUR\",\n      \"iban\": \"{{iban_none}}\"\n    },\n    \"creditorAgent\" : \"AAAADEBBXXX\",\n    \"creditorName\": \"WBG\",\n    \"creditorAddress\": {\n      \"buildingNumber\": \"56\",\n      \"townName\": \"Nürnberg\",\n      \"country\": \"DE\",\n      \"postCode\": \"90543\",\n      \"streetName\": \"WBG Straße\"\n    },\n    \"remittanceInformationUnstructured\": \"Ref. Number WBG-1222\"\n  }"
+													"raw": "{\n    \"endToEndIdentification\": \"WBG-123456789\",\n    \"debtorAccount\": {\n      \"currency\": \"EUR\",\n      \"iban\": \"{{iban_none}}\"\n    },\n    \"instructedAmount\": {\n      \"currency\": \"EUR\",\n      \"amount\": \"0.01\"\n    },\n    \"creditorAccount\": {\n      \"currency\": \"EUR\",\n      \"iban\": \"{{iban_none}}\"\n    },\n    \"creditorAgent\" : \"AAAADEBBXXX\",\n    \"creditorName\": \"WBG\",\n    \"creditorAddress\": {\n      \"addressLines\": [\n        \"WBG Banking Solutions\",\n        \"Finance & Payment Services\"\n      ],\n      \"department\": \"Corporate Banking\",\n      \"buildingNumber\": \"56\",\n      \"streetName\": \"WBG Straße\",\n      \"buildingName\": \"WBG Financial Center\",\n      \"floor\": \"Ground Floor\",\n      \"townName\": \"Nürnberg\",\n      \"postCode\": \"90543\",\n      \"country\": \"DE\"\n    },\n    \"remittanceInformationUnstructured\": \"Ref. Number WBG-1222\"\n  }"
 												},
 												"url": {
 													"raw": "{{protocol}}://{{url_xs2a}}/v1/{{payment_service}}/{{payment_product}}",
@@ -87366,7 +87366,7 @@
 												],
 												"body": {
 													"mode": "raw",
-													"raw": "{\n    \"endToEndIdentification\": \"WBG-123456789\",\n    \"debtorAccount\": {\n      \"currency\": \"EUR\",\n      \"iban\": \"{{iban_none}}\"\n    },\n    \"instructedAmount\": {\n      \"currency\": \"EUR\",\n      \"amount\": \"0.01\"\n    },\n    \"creditorAccount\": {\n      \"currency\": \"EUR\",\n      \"iban\": \"{{iban_none}}\"\n    },\n    \"creditorAgent\" : \"AAAADEBBXXX\",\n    \"creditorName\": \"WBG\",\n    \"creditorAddress\": {\n      \"buildingNumber\": \"56\",\n      \"townName\": \"Nürnberg\",\n      \"country\": \"DE\",\n      \"postCode\": \"90543\",\n      \"streetName\": \"WBG Straße\"\n    },\n    \"remittanceInformationUnstructured\": \"Ref. Number WBG-1222\"\n  }"
+													"raw": "{\n    \"endToEndIdentification\": \"WBG-123456789\",\n    \"debtorAccount\": {\n      \"currency\": \"EUR\",\n      \"iban\": \"{{iban_none}}\"\n    },\n    \"instructedAmount\": {\n      \"currency\": \"EUR\",\n      \"amount\": \"0.01\"\n    },\n    \"creditorAccount\": {\n      \"currency\": \"EUR\",\n      \"iban\": \"{{iban_none}}\"\n    },\n    \"creditorAgent\" : \"AAAADEBBXXX\",\n    \"creditorName\": \"WBG\",\n    \"creditorAddress\": {\n      \"addressLines\": [\n        \"WBG Banking Solutions\",\n        \"Finance & Payment Services\"\n      ],\n      \"department\": \"Corporate Banking\",\n      \"buildingNumber\": \"56\",\n      \"streetName\": \"WBG Straße\",\n      \"buildingName\": \"WBG Financial Center\",\n      \"floor\": \"Ground Floor\",\n      \"townName\": \"Nürnberg\",\n      \"postCode\": \"90543\",\n      \"country\": \"DE\"\n    },\n    \"remittanceInformationUnstructured\": \"Ref. Number WBG-1222\"\n  }"
 												},
 												"url": {
 													"raw": "{{protocol}}://{{url_xs2a}}/v1/{{payment_service}}/{{payment_product}}",
@@ -87622,7 +87622,7 @@
 												],
 												"body": {
 													"mode": "raw",
-													"raw": "{\n    \"endToEndIdentification\": \"WBG-123456789\",\n    \"debtorAccount\": {\n      \"currency\": \"EUR\",\n      \"iban\": \"{{iban_none}}\"\n    },\n    \"instructedAmount\": {\n      \"currency\": \"EUR\",\n      \"amount\": \"0.01\"\n    },\n    \"creditorAccount\": {\n      \"currency\": \"EUR\",\n      \"iban\": \"{{iban_none}}\"\n    },\n    \"creditorAgent\" : \"AAAADEBBXXX\",\n    \"creditorName\": \"WBG\",\n    \"creditorAddress\": {\n      \"buildingNumber\": \"56\",\n      \"townName\": \"Nürnberg\",\n      \"country\": \"DE\",\n      \"postCode\": \"90543\",\n      \"streetName\": \"WBG Straße\"\n    },\n    \"remittanceInformationUnstructured\": \"Ref. Number WBG-1222\"\n  }"
+													"raw": "{\n    \"endToEndIdentification\": \"WBG-123456789\",\n    \"debtorAccount\": {\n      \"currency\": \"EUR\",\n      \"iban\": \"{{iban_none}}\"\n    },\n    \"instructedAmount\": {\n      \"currency\": \"EUR\",\n      \"amount\": \"0.01\"\n    },\n    \"creditorAccount\": {\n      \"currency\": \"EUR\",\n      \"iban\": \"{{iban_none}}\"\n    },\n    \"creditorAgent\" : \"AAAADEBBXXX\",\n    \"creditorName\": \"WBG\",\n    \"creditorAddress\": {\n      \"addressLines\": [\n        \"WBG Banking Solutions\",\n        \"Finance & Payment Services\"\n      ],\n      \"department\": \"Corporate Banking\",\n      \"buildingNumber\": \"56\",\n      \"streetName\": \"WBG Straße\",\n      \"buildingName\": \"WBG Financial Center\",\n      \"floor\": \"Ground Floor\",\n      \"townName\": \"Nürnberg\",\n      \"postCode\": \"90543\",\n      \"country\": \"DE\"\n    },\n    \"remittanceInformationUnstructured\": \"Ref. Number WBG-1222\"\n  }"
 												},
 												"url": {
 													"raw": "{{protocol}}://{{url_xs2a}}/v1/{{payment_service}}/{{payment_product}}",
@@ -87838,7 +87838,7 @@
 												],
 												"body": {
 													"mode": "raw",
-													"raw": "{\n    \"endToEndIdentification\": \"WBG-123456789\",\n    \"debtorAccount\": {\n      \"currency\": \"EUR\",\n      \"iban\": \"{{iban_single}}\"\n    },\n    \"instructedAmount\": {\n      \"currency\": \"EUR\",\n      \"amount\": \"0.01\"\n    },\n    \"creditorAccount\": {\n      \"currency\": \"EUR\",\n      \"iban\": \"{{iban_single}}\"\n    },\n    \"creditorAgent\" : \"AAAADEBBXXX\",\n    \"creditorName\": \"WBG\",\n    \"creditorAddress\": {\n      \"buildingNumber\": \"56\",\n      \"townName\": \"Nürnberg\",\n      \"country\": \"DE\",\n      \"postCode\": \"90543\",\n      \"streetName\": \"WBG Straße\"\n    },\n    \"remittanceInformationUnstructured\": \"Ref. Number WBG-1222\"\n  }"
+													"raw": "{\n    \"endToEndIdentification\": \"WBG-123456789\",\n    \"debtorAccount\": {\n      \"currency\": \"EUR\",\n      \"iban\": \"{{iban_single}}\"\n    },\n    \"instructedAmount\": {\n      \"currency\": \"EUR\",\n      \"amount\": \"0.01\"\n    },\n    \"creditorAccount\": {\n      \"currency\": \"EUR\",\n      \"iban\": \"{{iban_single}}\"\n    },\n    \"creditorAgent\" : \"AAAADEBBXXX\",\n    \"creditorName\": \"WBG\",\n    \"creditorAddress\": {\n      \"addressLines\": [\n        \"WBG Banking Solutions\",\n        \"Finance & Payment Services\"\n      ],\n      \"department\": \"Corporate Banking\",\n      \"buildingNumber\": \"56\",\n      \"streetName\": \"WBG Straße\",\n      \"buildingName\": \"WBG Financial Center\",\n      \"floor\": \"Ground Floor\",\n      \"townName\": \"Nürnberg\",\n      \"postCode\": \"90543\",\n      \"country\": \"DE\"\n    },\n    \"remittanceInformationUnstructured\": \"Ref. Number WBG-1222\"\n  }"
 												},
 												"url": {
 													"raw": "{{protocol}}://{{url_xs2a}}/v1/{{payment_service}}/{{payment_product}}",
@@ -88408,7 +88408,7 @@
 										],
 										"body": {
 											"mode": "raw",
-											"raw": "{\n      \"batchBookingPreferred\": \"false\",\n      \"requestedExecutionDate\": \"2030-02-02\",\n      \"debtorAccount\": {\n        \"currency\": \"EUR\",\n\t\t\"iban\": \"{{iban_none}}\"\n      },\n      \"payments\": [\n        {\n          \"endToEndIdentification\": \"WBG-123456789\",\n          \"instructedAmount\": {\n            \"amount\": \"520.00\",\n            \"currency\": \"EUR\"\n          },\n          \"creditorAccount\": {\n            \"currency\": \"EUR\",\n\t\t\t\"iban\": \"{{iban_none}}\"\n          },\n          \"creditorAgent\": \"AAAADEBBXXX\",\n          \"creditorName\": \"WBG\",\n          \"creditorAddress\": {\n            \"buildingNumber\": \"56\",\n            \"townName\": \"Nürnberg\",\n            \"country\": \"DE\",\n            \"postCode\": \"90543\",\n            \"streetName\": \"WBG Straße\"\n          },\n          \"remittanceInformationUnstructured\": \"Ref. Number WBG-1222\",\n          \"remittanceInformationUnstructuredArray\": [\"Ref. Number WBG-6666\", \"Ref. Number WBG-7777\"],\n          \"remittanceInformationStructured\": {\n            \"reference\": \"reference, remittance info structured\",\n            \"referenceType\": \"reference Type\",\n            \"referenceIssuer\": \"reference Issuer\"\n          },\n        \"remittanceInformationStructuredArray\":[\n            {\n              \"reference\": \"reference\",\n              \"referenceType\": \"reference Type\",\n              \"referenceIssuer\": \"reference Issuer\"\n            }\n          ]\n        },\n        {\n          \"endToEndIdentification\": \"RI-234567890\",\n          \"instructedAmount\": {\n            \"amount\": \"71.07\",\n            \"currency\": \"EUR\"\n          },\n          \"creditorAccount\": {\n            \"currency\": \"EUR\",\n            \"iban\": \"{{iban_none}}\"\n          },\n          \"creditorAgent\": \"AAAADEBBXXX\",\n          \"creditorName\": \"Grünstrom\",\n          \"creditorAddress\": {\n            \"buildingNumber\": \"74\",\n            \"townName\": \"Dresden\",\n            \"country\": \"DE\",\n            \"postCode\": \"01067\",\n            \"streetName\": \"Kaisergasse\"\n          },\n          \"remittanceInformationUnstructured\": \"Ref. Number GRUENSTROM-2444\",\n          \"remittanceInformationStructured\": {\n              \"reference\": \"Ref. Number GRUENSTROM-2444\",\n              \"referenceType\": \"reference type\",\n              \"referenceIssuer\": \"reference isuuer\" \n              }\n        }\n      ]\n    }"
+											"raw": "{\n      \"batchBookingPreferred\": \"false\",\n      \"requestedExecutionDate\": \"2030-02-02\",\n      \"categoryPurposeCode\": \"SALA\",\n      \"debtorAccount\": {\n        \"currency\": \"EUR\",\n\t\t\"iban\": \"{{iban_none}}\"\n      },\n      \"payments\": [\n        {\n          \"endToEndIdentification\": \"WBG-123456789\",\n          \"instructedAmount\": {\n            \"amount\": \"520.00\",\n            \"currency\": \"EUR\"\n          },\n          \"creditorAccount\": {\n            \"currency\": \"EUR\",\n\t\t\t\"iban\": \"{{iban_none}}\"\n          },\n          \"creditorAgent\": \"AAAADEBBXXX\",\n          \"creditorName\": \"WBG\",\n          \"creditorAddress\": {\n            \"addressLines\": [\n              \"WBG Banking Solutions\",\n              \"Specialized Payment Services\"\n            ],\n            \"department\": \"Advanced Banking Operations\",\n            \"buildingNumber\": \"56\",\n            \"streetName\": \"WBG Straße\",\n            \"buildingName\": \"WBG Operations Center\",\n            \"floor\": \"Operations Floor\",\n            \"townName\": \"Nürnberg\",\n            \"postCode\": \"90543\",\n            \"country\": \"DE\"\n          },\n          \"remittanceInformationUnstructured\": \"Ref. Number WBG-1222\",\n          \"remittanceInformationUnstructuredArray\": [\"Ref. Number WBG-6666\", \"Ref. Number WBG-7777\"],\n          \"remittanceInformationStructured\": {\n            \"reference\": \"reference, remittance info structured\",\n            \"referenceType\": \"reference Type\",\n            \"referenceIssuer\": \"reference Issuer\"\n          },\n        \"remittanceInformationStructuredArray\":[\n            {\n              \"reference\": \"reference\",\n              \"referenceType\": \"reference Type\",\n              \"referenceIssuer\": \"reference Issuer\"\n            }\n          ]\n        },\n        {\n          \"endToEndIdentification\": \"RI-234567890\",\n          \"instructedAmount\": {\n            \"amount\": \"71.07\",\n            \"currency\": \"EUR\"\n          },\n          \"creditorAccount\": {\n            \"currency\": \"EUR\",\n            \"iban\": \"{{iban_none}}\"\n          },\n          \"creditorAgent\": \"AAAADEBBXXX\",\n          \"creditorName\": \"Grünstrom\",\n          \"creditorAddress\": {\n            \"addressLines\": [\n              \"Kaiser Financial Group\",\n              \"Dresden Banking Services\"\n            ],\n            \"department\": \"Dresden Regional Banking\",\n            \"buildingNumber\": \"74\",\n            \"streetName\": \"Kaisergasse\",\n            \"buildingName\": \"Kaiser Financial Plaza\",\n            \"floor\": \"Corporate Banking Floor\",\n            \"townName\": \"Dresden\",\n            \"postCode\": \"01067\",\n            \"country\": \"DE\"\n          },\n          \"remittanceInformationUnstructured\": \"Ref. Number GRUENSTROM-2444\",\n          \"remittanceInformationStructured\": {\n              \"reference\": \"Ref. Number GRUENSTROM-2444\",\n              \"referenceType\": \"reference type\",\n              \"referenceIssuer\": \"reference isuuer\" \n              }\n        }\n      ]\n    }"
 										},
 										"url": {
 											"raw": "{{protocol}}://{{url_xs2a}}/v1/bulk-payments/{{payment_product}}",
@@ -88744,6 +88744,73 @@
 										"description": "Check the transaction status of a payment initiation."
 									},
 									"response": []
+								},
+								{
+									"name": "9. Get Bulk Extended Status Request",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"pm.test(\"Status code is 200\", function () {",
+													"    pm.response.to.have.status(200);",
+													"});",
+													"",
+													"const jsonData = pm.response.json();",
+													"",
+													"pm.test(\"Group status is ACTC\", () => {",
+													"    //pm.expect(jsonData).to.have.property('transactionStatus', 'ACTC');",
+													"});",
+													"",
+													"pm.test(\"Each payment has required fields\", () => {",
+													"    if (jsonData.payments && jsonData.payments.length > 0) {",
+													"        jsonData.payments.forEach((payment) => {",
+													"            pm.expect(payment).to.have.property('paymentId');",
+													"            pm.expect(payment).to.have.property('transactionStatus');",
+													"        });",
+													"    }",
+													"});",
+													"",
+													"pm.test(\"Response may contain rejected payments\", () => {",
+													"    // rejectedPayments is optional, but if present should be an array",
+													"    if (jsonData.rejectedPayments) {",
+													"        pm.expect(jsonData.rejectedPayments).to.be.an('array');",
+													"    }",
+													"});"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"method": "GET",
+										"header": [
+											{
+												"key": "Accept",
+												"value": "application/json"
+											},
+											{
+												"key": "X-Request-ID",
+												"value": "{{x_request_id}}"
+											}
+										],
+										"url": {
+											"raw": "{{protocol}}://{{url_xs2a}}/v1/bulk-payments/{{payment_product}}/{{payment_id}}/extended-status",
+											"protocol": "{{protocol}}",
+											"host": [
+												"{{url_xs2a}}"
+											],
+											"path": [
+												"v1",
+												"bulk-payments",
+												"{{payment_product}}",
+												"{{payment_id}}",
+												"extended-status"
+											]
+										},
+										"description": "Can check the overall status of a bulk payment initiation together with reporting rejected transactions. This endpoint provides detailed information about the status of each individual payment within the bulk payment, including any payments that may have been rejected during processing."
+									},
+									"response": []
 								}
 							]
 						},
@@ -88925,7 +88992,7 @@
 										],
 										"body": {
 											"mode": "raw",
-											"raw": "{\n      \"batchBookingPreferred\": \"false\",\n      \"requestedExecutionDate\": \"2030-02-02\",\n      \"debtorAccount\": {\n        \"currency\": \"EUR\",\n\t\t\"iban\": \"{{iban_none}}\"\n      },\n      \"payments\": [\n        {\n          \"endToEndIdentification\": \"WBG-123456789\",\n          \"instructedAmount\": {\n            \"amount\": \"520.00\",\n            \"currency\": \"EUR\"\n          },\n          \"creditorAccount\": {\n            \"currency\": \"EUR\",\n\t\t\t\"iban\": \"{{iban_none}}\"\n          },\n          \"creditorAgent\": \"AAAADEBBXXX\",\n          \"creditorName\": \"WBG\",\n          \"creditorAddress\": {\n            \"buildingNumber\": \"56\",\n            \"townName\": \"Nürnberg\",\n            \"country\": \"DE\",\n            \"postCode\": \"90543\",\n            \"streetName\": \"WBG Straße\"\n          },\n          \"remittanceInformationUnstructured\": \"Ref. Number WBG-1234\"\n        },\n        {\n          \"endToEndIdentification\": \"RI-234567890\",\n          \"instructedAmount\": {\n            \"amount\": \"71.07\",\n            \"currency\": \"EUR\"\n          },\n          \"creditorAccount\": {\n            \"currency\": \"EUR\",\n            \"iban\": \"{{iban_none}}\"\n          },\n          \"creditorAgent\": \"AAAADEBBXXX\",\n          \"creditorName\": \"Grünstrom\",\n          \"creditorAddress\": {\n            \"buildingNumber\": \"74\",\n            \"townName\": \"Dresden\",\n            \"country\": \"DE\",\n            \"postCode\": \"01067\",\n            \"streetName\": \"Kaisergasse\"\n          },\n          \"remittanceInformationUnstructured\": \"Ref. Number GRUENSTROM-2444\"\n        }\n      ]\n    }"
+											"raw": "{\n      \"batchBookingPreferred\": \"false\",\n      \"requestedExecutionDate\": \"2030-02-02\",\n      \"categoryPurposeCode\": \"SALA\",\n      \"debtorAccount\": {\n        \"currency\": \"EUR\",\n\t\t\"iban\": \"{{iban_none}}\"\n      },\n      \"payments\": [\n        {\n          \"endToEndIdentification\": \"WBG-123456789\",\n          \"instructedAmount\": {\n            \"amount\": \"520.00\",\n            \"currency\": \"EUR\"\n          },\n          \"creditorAccount\": {\n            \"currency\": \"EUR\",\n\t\t\t\"iban\": \"{{iban_none}}\"\n          },\n          \"creditorAgent\": \"AAAADEBBXXX\",\n          \"creditorName\": \"WBG\",\n          \"creditorAddress\": {\n            \"addressLines\": [\"WBG Straße 56\", \"Instant Payments Division\"],\n            \"department\": \"Instant Processing Unit\",\n            \"streetName\": \"WBG Straße\",\n            \"buildingNumber\": \"56\",\n            \"buildingName\": \"WBG Instant Payment Hub\",\n            \"floor\": \"Express Floor\",\n            \"townName\": \"Nürnberg\",\n            \"postCode\": \"90543\",\n            \"country\": \"DE\"\n          },\n          \"remittanceInformationUnstructured\": \"Ref. Number WBG-1234\"\n        },\n        {\n          \"endToEndIdentification\": \"RI-234567890\",\n          \"instructedAmount\": {\n            \"amount\": \"71.07\",\n            \"currency\": \"EUR\"\n          },\n          \"creditorAccount\": {\n            \"currency\": \"EUR\",\n            \"iban\": \"{{iban_none}}\"\n          },\n          \"creditorAgent\": \"AAAADEBBXXX\",\n          \"creditorName\": \"Grünstrom\",\n          \"creditorAddress\": {\n            \"addressLines\": [\"Kaisergasse 74\", \"Renewable Energy Billing\"],\n            \"department\": \"Instant Billing Dept\",\n            \"streetName\": \"Kaisergasse\",\n            \"buildingNumber\": \"74\",\n            \"buildingName\": \"Green Energy Plaza\",\n            \"floor\": \"Sustainable Floor\",\n            \"townName\": \"Dresden\",\n            \"postCode\": \"01067\",\n            \"country\": \"DE\"\n          },\n          \"remittanceInformationUnstructured\": \"Ref. Number GRUENSTROM-2444\"\n        }\n      ]\n    }"
 										},
 										"url": {
 											"raw": "{{protocol}}://{{url_xs2a}}/v1/bulk-payments/instant-sepa-credit-transfers",
@@ -89251,6 +89318,73 @@
 										"description": "Check the transaction status of a payment initiation."
 									},
 									"response": []
+								},
+								{
+									"name": "9. Get Bulk Extended Status Request",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"pm.test(\"Status code is 200\", function () {",
+													"    pm.response.to.have.status(200);",
+													"});",
+													"",
+													"const jsonData = pm.response.json();",
+													"",
+													"pm.test(\"Group status is ACTC\", () => {",
+													"    //pm.expect(jsonData).to.have.property('transactionStatus', 'ACTC');",
+													"});",
+													"",
+													"pm.test(\"Each payment has required fields\", () => {",
+													"    if (jsonData.payments && jsonData.payments.length > 0) {",
+													"        jsonData.payments.forEach((payment) => {",
+													"            pm.expect(payment).to.have.property('paymentId');",
+													"            pm.expect(payment).to.have.property('transactionStatus');",
+													"        });",
+													"    }",
+													"});",
+													"",
+													"pm.test(\"Response may contain rejected payments\", () => {",
+													"    // rejectedPayments is optional, but if present should be an array",
+													"    if (jsonData.rejectedPayments) {",
+													"        pm.expect(jsonData.rejectedPayments).to.be.an('array');",
+													"    }",
+													"});"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"method": "GET",
+										"header": [
+											{
+												"key": "Accept",
+												"value": "application/json"
+											},
+											{
+												"key": "X-Request-ID",
+												"value": "{{x_request_id}}"
+											}
+										],
+										"url": {
+											"raw": "{{protocol}}://{{url_xs2a}}/v1/bulk-payments/instant-sepa-credit-transfers/{{payment_id}}/extended-status",
+											"protocol": "{{protocol}}",
+											"host": [
+												"{{url_xs2a}}"
+											],
+											"path": [
+												"v1",
+												"bulk-payments",
+												"instant-sepa-credit-transfers",
+												"{{payment_id}}",
+												"extended-status"
+											]
+										},
+										"description": "Can check the overall status of a bulk payment initiation together with reporting rejected transactions. This endpoint provides detailed information about the status of each individual payment within the bulk payment, including any payments that may have been rejected during processing."
+									},
+									"response": []
 								}
 							]
 						},
@@ -89432,7 +89566,7 @@
 										],
 										"body": {
 											"mode": "raw",
-											"raw": "{\n      \"batchBookingPreferred\": \"false\",\n      \"requestedExecutionDate\": \"2030-02-02\",\n      \"debtorAccount\": {\n        \"currency\": \"EUR\",\n\t\t\"iban\": \"{{iban_none}}\"\n      },\n      \"payments\": [\n        {\n          \"endToEndIdentification\": \"WBG-123456789\",\n          \"instructedAmount\": {\n            \"amount\": \"520.00\",\n            \"currency\": \"EUR\"\n          },\n          \"creditorAccount\": {\n            \"currency\": \"EUR\",\n\t\t\t\"iban\": \"{{iban_none}}\"\n          },\n          \"creditorAgent\": \"AAAADEBBXXX\",\n          \"creditorName\": \"WBG\",\n          \"creditorAddress\": {\n            \"buildingNumber\": \"56\",\n            \"townName\": \"Nürnberg\",\n            \"country\": \"DE\",\n            \"postCode\": \"90543\",\n            \"streetName\": \"WBG Straße\"\n          },\n          \"remittanceInformationUnstructured\": \"Ref. Number WBG-1234\"\n        },\n        {\n          \"endToEndIdentification\": \"RI-234567890\",\n          \"instructedAmount\": {\n            \"amount\": \"71.07\",\n            \"currency\": \"EUR\"\n          },\n          \"creditorAccount\": {\n            \"currency\": \"EUR\",\n            \"iban\": \"{{iban_none}}\"\n          },\n          \"creditorAgent\": \"AAAADEBBXXX\",\n          \"creditorName\": \"Grünstrom\",\n          \"creditorAddress\": {\n            \"buildingNumber\": \"74\",\n            \"townName\": \"Dresden\",\n            \"country\": \"DE\",\n            \"postCode\": \"01067\",\n            \"streetName\": \"Kaisergasse\"\n          },\n          \"remittanceInformationUnstructured\": \"Ref. Number GRUENSTROM-2444\"\n        }\n      ]\n    }"
+											"raw": "{\n      \"batchBookingPreferred\": \"false\",\n      \"requestedExecutionDate\": \"2030-02-02\",\n      \"categoryPurposeCode\": \"SALA\",\n      \"debtorAccount\": {\n        \"currency\": \"EUR\",\n\t\t\"iban\": \"{{iban_none}}\"\n      },\n      \"payments\": [\n        {\n          \"endToEndIdentification\": \"WBG-123456789\",\n          \"instructedAmount\": {\n            \"amount\": \"520.00\",\n            \"currency\": \"EUR\"\n          },\n          \"creditorAccount\": {\n            \"currency\": \"EUR\",\n\t\t\t\"iban\": \"{{iban_none}}\"\n          },\n          \"creditorAgent\": \"AAAADEBBXXX\",\n          \"creditorName\": \"WBG\",\n          \"creditorAddress\": {\n            \"addressLines\": [\n              \"WBG Banking Solutions\",\n              \"Specialized Payment Services\"\n            ],\n            \"department\": \"Advanced Banking Operations\",\n            \"buildingNumber\": \"56\",\n            \"streetName\": \"WBG Straße\",\n            \"buildingName\": \"WBG Operations Center\",\n            \"floor\": \"Operations Floor\",\n            \"townName\": \"Nürnberg\",\n            \"postCode\": \"90543\",\n            \"country\": \"DE\"\n          },\n          \"remittanceInformationUnstructured\": \"Ref. Number WBG-1234\"\n        },\n        {\n          \"endToEndIdentification\": \"RI-234567890\",\n          \"instructedAmount\": {\n            \"amount\": \"71.07\",\n            \"currency\": \"EUR\"\n          },\n          \"creditorAccount\": {\n            \"currency\": \"EUR\",\n            \"iban\": \"{{iban_none}}\"\n          },\n          \"creditorAgent\": \"AAAADEBBXXX\",\n          \"creditorName\": \"Grünstrom\",\n          \"creditorAddress\": {\n            \"addressLines\": [\n              \"Kaiser Financial Group\",\n              \"Dresden Banking Services\"\n            ],\n            \"department\": \"Dresden Regional Banking\",\n            \"buildingNumber\": \"74\",\n            \"streetName\": \"Kaisergasse\",\n            \"buildingName\": \"Kaiser Financial Plaza\",\n            \"floor\": \"Corporate Banking Floor\",\n            \"townName\": \"Dresden\",\n            \"postCode\": \"01067\",\n            \"country\": \"DE\"\n          },\n          \"remittanceInformationUnstructured\": \"Ref. Number GRUENSTROM-2444\"\n        }\n      ]\n    }"
 										},
 										"url": {
 											"raw": "{{protocol}}://{{url_xs2a}}/v1/bulk-payments/target-2-payments",
@@ -89758,6 +89892,73 @@
 										"description": "Check the transaction status of a payment initiation."
 									},
 									"response": []
+								},
+								{
+									"name": "9. Get Bulk Extended Status Request",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"pm.test(\"Status code is 200\", function () {",
+													"    pm.response.to.have.status(200);",
+													"});",
+													"",
+													"const jsonData = pm.response.json();",
+													"",
+													"pm.test(\"Group status is ACTC\", () => {",
+													"    //pm.expect(jsonData).to.have.property('transactionStatus', 'ACTC');",
+													"});",
+													"",
+													"pm.test(\"Each payment has required fields\", () => {",
+													"    if (jsonData.payments && jsonData.payments.length > 0) {",
+													"        jsonData.payments.forEach((payment) => {",
+													"            pm.expect(payment).to.have.property('paymentId');",
+													"            pm.expect(payment).to.have.property('transactionStatus');",
+													"        });",
+													"    }",
+													"});",
+													"",
+													"pm.test(\"Response may contain rejected payments\", () => {",
+													"    // rejectedPayments is optional, but if present should be an array",
+													"    if (jsonData.rejectedPayments) {",
+													"        pm.expect(jsonData.rejectedPayments).to.be.an('array');",
+													"    }",
+													"});"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"method": "GET",
+										"header": [
+											{
+												"key": "Accept",
+												"value": "application/json"
+											},
+											{
+												"key": "X-Request-ID",
+												"value": "{{x_request_id}}"
+											}
+										],
+										"url": {
+											"raw": "{{protocol}}://{{url_xs2a}}/v1/bulk-payments/target-2-payments/{{payment_id}}/extended-status",
+											"protocol": "{{protocol}}",
+											"host": [
+												"{{url_xs2a}}"
+											],
+											"path": [
+												"v1",
+												"bulk-payments",
+												"target-2-payments",
+												"{{payment_id}}",
+												"extended-status"
+											]
+										},
+										"description": "Can check the overall status of a bulk payment initiation together with reporting rejected transactions. This endpoint provides detailed information about the status of each individual payment within the bulk payment, including any payments that may have been rejected during processing."
+									},
+									"response": []
 								}
 							]
 						}
@@ -89942,7 +90143,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{ \n\t\"creditorAccount\": {\n\t\t\"currency\": \"EUR\",\n\t\t\"iban\": \"{{iban_none}}\"\n\t},\n\t\"creditorAddress\": {\n\t\t\"streetName\": \"Breite Gasse\",\n\t\t\"buildingNumber\": \"34\",\n\t\t\"townName\": \"Nürnberg\",\n\t\t\"postCode\": \"90457\",\n\t\t\"country\": \"DE\"\n\t},\n\t\"creditorAgent\": \"BCENEVOD\", \n\t\"creditorName\": \"Vodafone\", \n\t\"dayOfExecution\": \"14\",\n    \"monthsOfExecution\": [\"1\",\"2\",\"3\",\"4\",\"5\",\"12\"],\n    \"purposeCode\" : \"BKFM\",\n\t\"debtorAccount\": { \n\t\t\"currency\": \"EUR\",\n\t\t\"iban\": \"{{iban_none}}\"\n\t},\n\t\"endDate\": \"2029-04-03\", \n\t\"endToEndIdentification\": \"VOD-123456789\",\n\t\"executionRule\": \"following\", \n\t\"frequency\": \"MonthlyVariable\", \n\t\"instructedAmount\": { \n\t\t\"amount\": \"44.99\",\n\t\t\"currency\": \"EUR\" \n\t},\n\t\"remittanceInformationUnstructured\": \"Ref. Number Vodafone-1222\",\n\t\"startDate\": \"2027-04-03\" \n}"
+									"raw": "{ \n\t\"creditorAccount\": {\n\t\t\"currency\": \"EUR\",\n\t\t\"iban\": \"{{iban_none}}\"\n\t},\n\t\"creditorAddress\": {\n\t\t\"addressLines\": [\"Breite Gasse 34\", \"Financial Services Department\"],\n\t\t\"department\": \"Billing Department\",\n\t\t\"streetName\": \"Breite Gasse\",\n\t\t\"buildingNumber\": \"34\",\n\t\t\"buildingName\": \"Vodafone Tower\",\n\t\t\"floor\": \"3rd Floor\",\n\t\t\"townName\": \"Nürnberg\",\n\t\t\"postCode\": \"90457\",\n\t\t\"country\": \"DE\"\n\t},\n\t\"creditorAgent\": \"BCENEVOD\", \n\t\"creditorName\": \"Vodafone\", \n\t\"dayOfExecution\": \"14\",\n    \"monthsOfExecution\": [\"1\",\"2\",\"3\",\"4\",\"5\",\"12\"],\n    \"purposeCode\" : \"BKFM\",\n\t\"debtorAccount\": { \n\t\t\"currency\": \"EUR\",\n\t\t\"iban\": \"{{iban_none}}\"\n\t},\n\t\"endDate\": \"2029-04-03\", \n\t\"endToEndIdentification\": \"VOD-123456789\",\n\t\"executionRule\": \"following\", \n\t\"frequency\": \"MonthlyVariable\", \n\t\"instructedAmount\": { \n\t\t\"amount\": \"44.99\",\n\t\t\"currency\": \"EUR\" \n\t},\n\t\"remittanceInformationUnstructured\": \"Ref. Number Vodafone-1222\",\n\t\"startDate\": \"2027-04-03\", \n\t\"startDateTime\": \"2025-01-01T10:00:00\",\n\t\"endDateTime\": \"2025-12-31T23:59:59\" \n}"
 								},
 								"url": {
 									"raw": "{{protocol}}://{{url_xs2a}}/v1/periodic-payments/{{payment_product}}",
@@ -90221,7 +90422,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{ \n\t\"endToEndIdentification\": \"WBG-123456789\",\n\t\"debtorAccount\": { \n\t\t\"currency\": \"EUR\",\n\t\t\"iban\": \"{{iban_none}}\"\n\t}, \n\t\"instructedAmount\": { \n\t\t\"currency\": \"EUR\",\n\t\t\"amount\": \"0.01\"\n\t},\n\t\"creditorAccount\": { \n\t\t\"currency\": \"EUR\",\n\t\t\"iban\": \"{{iban_none}}\"\n\t},\n\t\"creditorAgent\" : \"AAAADEBBXXX\",\n\t\"creditorName\": \"WBG\", \n\t\"creditorAddress\": { \n\t\t\"buildingNumber\": \"56\", \n\t\t\"townName\": \"Nürnberg\", \n\t\t\"country\": \"DE\", \n\t\t\"postCode\": \"90543\", \n\t\t\"streetName\": \"WBG Straße\" \n\t},\n\t\"requestedExecutionDate\": \"2030-02-02\", \n\t\"remittanceInformationUnstructured\": \"Ref. Number WBG-1222\"\n}"
+									"raw": "{ \n\t\"endToEndIdentification\": \"WBG-123456789\",\n\t\"debtorAccount\": { \n\t\t\"currency\": \"EUR\",\n\t\t\"iban\": \"{{iban_none}}\"\n\t}, \n\t\"instructedAmount\": { \n\t\t\"currency\": \"EUR\",\n\t\t\"amount\": \"0.01\"\n\t},\n\t\"creditorAccount\": { \n\t\t\"currency\": \"EUR\",\n\t\t\"iban\": \"{{iban_none}}\"\n\t},\n\t\"creditorAgent\" : \"AAAADEBBXXX\",\n\t\"creditorName\": \"WBG\", \n\t\"creditorAddress\": { \n\t\t\"addressLines\": [\"WBG Straße 56\", \"Future Payments Unit\"],\n\t\t\"department\": \"Future Dated Payments\",\n\t\t\"streetName\": \"WBG Straße\",\n\t\t\"buildingNumber\": \"56\",\n\t\t\"buildingName\": \"WBG Future Payment Center\",\n\t\t\"floor\": \"2nd Floor\", \n\t\t\"townName\": \"Nürnberg\", \n\t\t\"postCode\": \"90543\", \n\t\t\"country\": \"DE\" \n\t},\n\t\"requestedExecutionDate\": \"2030-02-02\", \n\t\"remittanceInformationUnstructured\": \"Ref. Number WBG-1222\"\n}"
 								},
 								"url": {
 									"raw": "{{protocol}}://{{url_xs2a}}/v1/{{payment_service}}/{{payment_product}}",
@@ -97553,7 +97754,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\n    \"endToEndIdentification\": \"WBG-123456789\",\n    \"debtorAccount\": {\n      \"currency\": \"EUR\",\n      \"iban\": \"{{iban_multilevel}}\"\n    },\n    \"instructedAmount\": {\n      \"currency\": \"EUR\",\n      \"amount\": \"0.01\"\n    },\n    \"creditorAccount\": {\n      \"currency\": \"EUR\",\n      \"iban\": \"{{iban_multilevel}}\"\n    },\n    \"creditorAgent\" : \"AAAADEBBXXX\",\n    \"creditorName\": \"WBG\",\n    \"creditorAddress\": {\n      \"buildingNumber\": \"56\",\n      \"townName\": \"Nürnberg\",\n      \"country\": \"DE\",\n      \"postCode\": \"90543\",\n      \"streetName\": \"WBG Straße\"\n    },\n    \"remittanceInformationUnstructured\": \"Ref. Number WBG-1222\"\n  }"
+									"raw": "{\n    \"endToEndIdentification\": \"WBG-123456789\",\n    \"debtorAccount\": {\n      \"currency\": \"EUR\",\n      \"iban\": \"{{iban_multilevel}}\"\n    },\n    \"instructedAmount\": {\n      \"currency\": \"EUR\",\n      \"amount\": \"0.01\"\n    },\n    \"creditorAccount\": {\n      \"currency\": \"EUR\",\n      \"iban\": \"{{iban_multilevel}}\"\n    },\n    \"creditorAgent\" : \"AAAADEBBXXX\",\n    \"creditorName\": \"WBG\",\n    \"creditorAddress\": {\n      \"addressLines\": [\n        \"WBG Banking Solutions\",\n        \"Finance & Payment Services\"\n      ],\n      \"department\": \"Corporate Banking\",\n      \"buildingNumber\": \"56\",\n      \"streetName\": \"WBG Straße\",\n      \"buildingName\": \"WBG Financial Center\",\n      \"floor\": \"Ground Floor\",\n      \"townName\": \"Nürnberg\",\n      \"postCode\": \"90543\",\n      \"country\": \"DE\"\n    },\n    \"remittanceInformationUnstructured\": \"Ref. Number WBG-1222\"\n  }"
 								},
 								"url": {
 									"raw": "{{protocol}}://{{url_xs2a}}/v1/{{payment_service}}/{{payment_product}}",
@@ -98464,7 +98665,7 @@
 										],
 										"body": {
 											"mode": "raw",
-											"raw": "{\n    \"endToEndIdentification\": \"WBG-123456789\",\n    \"debtorAccount\": {\n      \"currency\": \"EUR\",\n      \"iban\": \"{{iban_single}}\"\n    },\n    \"instructedAmount\": {\n      \"currency\": \"EUR\",\n      \"amount\": \"0.01\"\n    },\n    \"creditorAccount\": {\n      \"currency\": \"EUR\",\n      \"iban\": \"{{iban_single}}\"\n    },\n    \"creditorAgent\" : \"AAAADEBBXXX\",\n    \"creditorName\": \"WBG\",\n    \"creditorAddress\": {\n      \"buildingNumber\": \"56\",\n      \"townName\": \"Nürnberg\",\n      \"country\": \"DE\",\n      \"postCode\": \"90543\",\n      \"streetName\": \"WBG Straße\"\n    },\n    \"remittanceInformationUnstructured\": \"Ref. Number WBG-1222\"\n  }"
+											"raw": "{\n    \"endToEndIdentification\": \"WBG-123456789\",\n    \"debtorAccount\": {\n      \"currency\": \"EUR\",\n      \"iban\": \"{{iban_single}}\"\n    },\n    \"instructedAmount\": {\n      \"currency\": \"EUR\",\n      \"amount\": \"0.01\"\n    },\n    \"creditorAccount\": {\n      \"currency\": \"EUR\",\n      \"iban\": \"{{iban_single}}\"\n    },\n    \"creditorAgent\" : \"AAAADEBBXXX\",\n    \"creditorName\": \"WBG\",\n    \"creditorAddress\": {\n      \"addressLines\": [\n        \"WBG Banking Solutions\",\n        \"Finance & Payment Services\"\n      ],\n      \"department\": \"Corporate Banking\",\n      \"buildingNumber\": \"56\",\n      \"streetName\": \"WBG Straße\",\n      \"buildingName\": \"WBG Financial Center\",\n      \"floor\": \"Ground Floor\",\n      \"townName\": \"Nürnberg\",\n      \"postCode\": \"90543\",\n      \"country\": \"DE\"\n    },\n    \"remittanceInformationUnstructured\": \"Ref. Number WBG-1222\"\n  }"
 										},
 										"url": {
 											"raw": "{{protocol}}://{{url_xs2a}}/v1/{{payment_service}}/{{payment_product}}",
@@ -98603,7 +98804,7 @@
 										],
 										"body": {
 											"mode": "raw",
-											"raw": "{\n    \"endToEndIdentification\": \"WBG-123456789\",\n    \"debtorAccount\": {\n      \"currency\": \"EUR\",\n      \"iban\": \"{{iban_single}}\"\n    },\n    \"instructedAmount\": {\n      \"currency\": \"EUR\",\n      \"amount\": \"0.01\"\n    },\n    \"creditorAccount\": {\n      \"currency\": \"EUR\",\n      \"iban\": \"{{iban_single}}\"\n    },\n    \"creditorAgent\" : \"AAAADEBBXXX\",\n    \"creditorName\": \"WBG\",\n    \"creditorAddress\": {\n      \"buildingNumber\": \"56\",\n      \"townName\": \"Nürnberg\",\n      \"country\": \"DE\",\n      \"postCode\": \"90543\",\n      \"streetName\": \"WBG Straße\"\n    },\n    \"remittanceInformationUnstructured\": \"Ref. Number WBG-1222\"\n  }"
+											"raw": "{\n    \"endToEndIdentification\": \"WBG-123456789\",\n    \"debtorAccount\": {\n      \"currency\": \"EUR\",\n      \"iban\": \"{{iban_single}}\"\n    },\n    \"instructedAmount\": {\n      \"currency\": \"EUR\",\n      \"amount\": \"0.01\"\n    },\n    \"creditorAccount\": {\n      \"currency\": \"EUR\",\n      \"iban\": \"{{iban_single}}\"\n    },\n    \"creditorAgent\" : \"AAAADEBBXXX\",\n    \"creditorName\": \"WBG\",\n    \"creditorAddress\": {\n      \"addressLines\": [\n        \"WBG Banking Solutions\",\n        \"Finance & Payment Services\"\n      ],\n      \"department\": \"Corporate Banking\",\n      \"buildingNumber\": \"56\",\n      \"streetName\": \"WBG Straße\",\n      \"buildingName\": \"WBG Financial Center\",\n      \"floor\": \"Ground Floor\",\n      \"townName\": \"Nürnberg\",\n      \"postCode\": \"90543\",\n      \"country\": \"DE\"\n    },\n    \"remittanceInformationUnstructured\": \"Ref. Number WBG-1222\"\n  }"
 										},
 										"url": {
 											"raw": "{{protocol}}://{{url_xs2a}}/v1/{{payment_service}}/{{payment_product}}",
@@ -98819,7 +99020,7 @@
 										],
 										"body": {
 											"mode": "raw",
-											"raw": "{\n    \"endToEndIdentification\": \"WBG-123456789\",\n    \"debtorAccount\": {\n      \"currency\": \"EUR\",\n      \"iban\": \"{{iban_single}}\"\n    },\n    \"instructedAmount\": {\n      \"currency\": \"EUR\",\n      \"amount\": \"0.01\"\n    },\n    \"creditorAccount\": {\n      \"currency\": \"EUR\",\n      \"iban\": \"{{iban_single}}\"\n    },\n    \"creditorAgent\" : \"AAAADEBBXXX\",\n    \"creditorName\": \"WBG\",\n    \"creditorAddress\": {\n      \"buildingNumber\": \"56\",\n      \"townName\": \"Nürnberg\",\n      \"country\": \"DE\",\n      \"postCode\": \"90543\",\n      \"streetName\": \"WBG Straße\"\n    },\n    \"remittanceInformationUnstructured\": \"Ref. Number WBG-1222\"\n  }"
+											"raw": "{\n    \"endToEndIdentification\": \"WBG-123456789\",\n    \"debtorAccount\": {\n      \"currency\": \"EUR\",\n      \"iban\": \"{{iban_single}}\"\n    },\n    \"instructedAmount\": {\n      \"currency\": \"EUR\",\n      \"amount\": \"0.01\"\n    },\n    \"creditorAccount\": {\n      \"currency\": \"EUR\",\n      \"iban\": \"{{iban_single}}\"\n    },\n    \"creditorAgent\" : \"AAAADEBBXXX\",\n    \"creditorName\": \"WBG\",\n    \"creditorAddress\": {\n      \"addressLines\": [\n        \"WBG Banking Solutions\",\n        \"Finance & Payment Services\"\n      ],\n      \"department\": \"Corporate Banking\",\n      \"buildingNumber\": \"56\",\n      \"streetName\": \"WBG Straße\",\n      \"buildingName\": \"WBG Financial Center\",\n      \"floor\": \"Ground Floor\",\n      \"townName\": \"Nürnberg\",\n      \"postCode\": \"90543\",\n      \"country\": \"DE\"\n    },\n    \"remittanceInformationUnstructured\": \"Ref. Number WBG-1222\"\n  }"
 										},
 										"url": {
 											"raw": "{{protocol}}://{{url_xs2a}}/v1/{{payment_service}}/{{payment_product}}",
@@ -98956,7 +99157,7 @@
 										],
 										"body": {
 											"mode": "raw",
-											"raw": "{\n    \"endToEndIdentification\": \"WBG-123456789\",\n    \"debtorAccount\": {\n      \"currency\": \"EUR\",\n      \"iban\": \"{{iban_single}}\"\n    },\n    \"instructedAmount\": {\n      \"currency\": \"EUR\",\n      \"amount\": \"0.01\"\n    },\n    \"creditorAccount\": {\n      \"currency\": \"EUR\",\n      \"iban\": \"{{iban_single}}\"\n    },\n    \"creditorAgent\" : \"AAAADEBBXXX\",\n    \"creditorName\": \"WBG\",\n    \"creditorAddress\": {\n      \"buildingNumber\": \"56\",\n      \"townName\": \"Nürnberg\",\n      \"country\": \"DE\",\n      \"postCode\": \"90543\",\n      \"streetName\": \"WBG Straße\"\n    },\n    \"remittanceInformationUnstructured\": \"Ref. Number WBG-1222\"\n  }"
+											"raw": "{\n    \"endToEndIdentification\": \"WBG-123456789\",\n    \"debtorAccount\": {\n      \"currency\": \"EUR\",\n      \"iban\": \"{{iban_single}}\"\n    },\n    \"instructedAmount\": {\n      \"currency\": \"EUR\",\n      \"amount\": \"0.01\"\n    },\n    \"creditorAccount\": {\n      \"currency\": \"EUR\",\n      \"iban\": \"{{iban_single}}\"\n    },\n    \"creditorAgent\" : \"AAAADEBBXXX\",\n    \"creditorName\": \"WBG\",\n    \"creditorAddress\": {\n      \"addressLines\": [\n        \"WBG Banking Solutions\",\n        \"Finance & Payment Services\"\n      ],\n      \"department\": \"Corporate Banking\",\n      \"buildingNumber\": \"56\",\n      \"streetName\": \"WBG Straße\",\n      \"buildingName\": \"WBG Financial Center\",\n      \"floor\": \"Ground Floor\",\n      \"townName\": \"Nürnberg\",\n      \"postCode\": \"90543\",\n      \"country\": \"DE\"\n    },\n    \"remittanceInformationUnstructured\": \"Ref. Number WBG-1222\"\n  }"
 										},
 										"url": {
 											"raw": "{{protocol}}://{{url_xs2a}}/v1/{{payment_service}}/{{payment_product}}",
@@ -99195,7 +99396,7 @@
 										],
 										"body": {
 											"mode": "raw",
-											"raw": "{\n    \"endToEndIdentification\": \"WBG-123456789\",\n    \"debtorAccount\": {\n      \"currency\": \"EUR\",\n      \"iban\": \"{{iban_single}}\"\n    },\n    \"instructedAmount\": {\n      \"currency\": \"EUR\",\n      \"amount\": \"0.01\"\n    },\n    \"creditorAccount\": {\n      \"currency\": \"EUR\",\n      \"iban\": \"{{iban_single}}\"\n    },\n    \"creditorAgent\" : \"AAAADEBBXXX\",\n    \"creditorName\": \"WBG\",\n    \"creditorAddress\": {\n      \"buildingNumber\": \"56\",\n      \"townName\": \"Nürnberg\",\n      \"country\": \"DE\",\n      \"postCode\": \"90543\",\n      \"streetName\": \"WBG Straße\"\n    },\n    \"remittanceInformationUnstructured\": \"Ref. Number WBG-1222\"\n  }"
+											"raw": "{\n    \"endToEndIdentification\": \"WBG-123456789\",\n    \"debtorAccount\": {\n      \"currency\": \"EUR\",\n      \"iban\": \"{{iban_single}}\"\n    },\n    \"instructedAmount\": {\n      \"currency\": \"EUR\",\n      \"amount\": \"0.01\"\n    },\n    \"creditorAccount\": {\n      \"currency\": \"EUR\",\n      \"iban\": \"{{iban_single}}\"\n    },\n    \"creditorAgent\" : \"AAAADEBBXXX\",\n    \"creditorName\": \"WBG\",\n    \"creditorAddress\": {\n      \"addressLines\": [\n        \"WBG Banking Solutions\",\n        \"Finance & Payment Services\"\n      ],\n      \"department\": \"Corporate Banking\",\n      \"buildingNumber\": \"56\",\n      \"streetName\": \"WBG Straße\",\n      \"buildingName\": \"WBG Financial Center\",\n      \"floor\": \"Ground Floor\",\n      \"townName\": \"Nürnberg\",\n      \"postCode\": \"90543\",\n      \"country\": \"DE\"\n    },\n    \"remittanceInformationUnstructured\": \"Ref. Number WBG-1222\"\n  }"
 										},
 										"url": {
 											"raw": "{{protocol}}://{{url_xs2a}}/v1/{{payment_service}}/{{payment_product}}",
@@ -99332,7 +99533,7 @@
 										],
 										"body": {
 											"mode": "raw",
-											"raw": "{\n    \"endToEndIdentification\": \"WBG-123456789\",\n    \"debtorAccount\": {\n      \"currency\": \"EUR\",\n      \"iban\": \"{{iban_single}}\"\n    },\n    \"instructedAmount\": {\n      \"currency\": \"EUR\",\n      \"amount\": \"0.01\"\n    },\n    \"creditorAccount\": {\n      \"currency\": \"EUR\",\n      \"iban\": \"{{iban_single}}\"\n    },\n    \"creditorAgent\" : \"AAAADEBBXXX\",\n    \"creditorName\": \"WBG\",\n    \"creditorAddress\": {\n      \"buildingNumber\": \"56\",\n      \"townName\": \"Nürnberg\",\n      \"country\": \"DE\",\n      \"postCode\": \"90543\",\n      \"streetName\": \"WBG Straße\"\n    },\n    \"remittanceInformationUnstructured\": \"Ref. Number WBG-1222\"\n  }"
+											"raw": "{\n    \"endToEndIdentification\": \"WBG-123456789\",\n    \"debtorAccount\": {\n      \"currency\": \"EUR\",\n      \"iban\": \"{{iban_single}}\"\n    },\n    \"instructedAmount\": {\n      \"currency\": \"EUR\",\n      \"amount\": \"0.01\"\n    },\n    \"creditorAccount\": {\n      \"currency\": \"EUR\",\n      \"iban\": \"{{iban_single}}\"\n    },\n    \"creditorAgent\" : \"AAAADEBBXXX\",\n    \"creditorName\": \"WBG\",\n    \"creditorAddress\": {\n      \"addressLines\": [\n        \"WBG Banking Solutions\",\n        \"Finance & Payment Services\"\n      ],\n      \"department\": \"Corporate Banking\",\n      \"buildingNumber\": \"56\",\n      \"streetName\": \"WBG Straße\",\n      \"buildingName\": \"WBG Financial Center\",\n      \"floor\": \"Ground Floor\",\n      \"townName\": \"Nürnberg\",\n      \"postCode\": \"90543\",\n      \"country\": \"DE\"\n    },\n    \"remittanceInformationUnstructured\": \"Ref. Number WBG-1222\"\n  }"
 										},
 										"url": {
 											"raw": "{{protocol}}://{{url_xs2a}}/v1/{{payment_service}}/{{payment_product}}",
@@ -113221,7 +113422,7 @@
 												],
 												"body": {
 													"mode": "raw",
-													"raw": "{\n\"endToEndIdentification\": \"RI-1234567890\",\n\"debtorAccount\": {\n  \"currency\": \"EUR\",\n  \"iban\": \"{{iban_none}}\"\n },\n\"instructedAmount\": {\n  \"amount\": 1000,\n  \"currency\": \"EUR\"\n },\n\"creditorAccount\": {\n  \"currency\": \"EUR\",\n  \"iban\": \"{{iban_none}}\"\n },\n\"creditorAgent\": \"AAAADEBBXXX\",\n\"creditorName\": \"Telekom\",\n \"creditorAddress\": {\n  \"buildingNumber\": \"123-34\",\n  \"townName\": \"Nürnberg\",\n  \"country\": \"DE\",\n  \"postCode\": 90431,\n  \"streetName\": \"Herrnstraße\"\n },\n \"remittanceInformationUnstructured\": \"Ref. Number TELEKOM-1222\"\n }"
+													"raw": "{\n\"endToEndIdentification\": \"RI-1234567890\",\n\"debtorAccount\": {\n  \"currency\": \"EUR\",\n  \"iban\": \"{{iban_none}}\"\n },\n\"instructedAmount\": {\n  \"amount\": 1000,\n  \"currency\": \"EUR\"\n },\n\"creditorAccount\": {\n  \"currency\": \"EUR\",\n  \"iban\": \"{{iban_none}}\"\n },\n\"creditorAgent\": \"AAAADEBBXXX\",\n\"creditorName\": \"Telekom\",\n \"creditorAddress\": {\n  \"addressLines\": [\n    \"Heritage Banking Corporation\",\n    \"Traditional Financial Services\"\n  ],\n  \"department\": \"Classical Banking Division\",\n  \"buildingNumber\": \"123-34\",\n  \"streetName\": \"Herrnstraße\",\n  \"buildingName\": \"Heritage Financial Center\",\n  \"floor\": \"Main Banking Floor\",\n  \"townName\": \"Nürnberg\",\n  \"postCode\": 90431,\n  \"country\": \"DE\"\n },\n \"remittanceInformationUnstructured\": \"Ref. Number TELEKOM-1222\"\n }"
 												},
 												"url": {
 													"raw": "{{protocol}}://{{url_xs2a}}/v1/{{payment_service}}/{{payment_product}}",
@@ -118019,7 +118220,7 @@
 												],
 												"body": {
 													"mode": "raw",
-													"raw": "{\n\"endToEndIdentification\": \"RI-1234567890\",\n\"debtorAccount\": {\n  \"currency\": \"EUR\",\n  \"iban\": \"{{iban_none}}\"\n },\n\"instructedAmount\": {\n  \"amount\": 1000,\n  \"currency\": \"EUR\"\n },\n\"creditorAccount\": {\n  \"currency\": \"EUR\",\n  \"iban\": \"{{iban_none}}\"\n },\n\"creditorAgent\": \"AAAADEBBXXX\",\n\"creditorName\": \"Telekom\",\n \"creditorAddress\": {\n  \"buildingNumber\": \"123-34\",\n  \"townName\": \"Nürnberg\",\n  \"country\": \"DE\",\n  \"postCode\": 90431,\n  \"streetName\": \"Herrnstraße\"\n },\n \"remittanceInformationUnstructured\": \"Ref. Number TELEKOM-1222\"\n }"
+													"raw": "{\n\"endToEndIdentification\": \"RI-1234567890\",\n\"debtorAccount\": {\n  \"currency\": \"EUR\",\n  \"iban\": \"{{iban_none}}\"\n },\n\"instructedAmount\": {\n  \"amount\": 1000,\n  \"currency\": \"EUR\"\n },\n\"creditorAccount\": {\n  \"currency\": \"EUR\",\n  \"iban\": \"{{iban_none}}\"\n },\n\"creditorAgent\": \"AAAADEBBXXX\",\n\"creditorName\": \"Telekom\",\n \"creditorAddress\": {\n  \"addressLines\": [\n    \"Heritage Banking Corporation\",\n    \"Traditional Financial Services\"\n  ],\n  \"department\": \"Classical Banking Division\",\n  \"buildingNumber\": \"123-34\",\n  \"streetName\": \"Herrnstraße\",\n  \"buildingName\": \"Heritage Financial Center\",\n  \"floor\": \"Main Banking Floor\",\n  \"townName\": \"Nürnberg\",\n  \"postCode\": 90431,\n  \"country\": \"DE\"\n },\n \"remittanceInformationUnstructured\": \"Ref. Number TELEKOM-1222\"\n }"
 												},
 												"url": {
 													"raw": "{{protocol}}://{{url_xs2a}}/v1/{{payment_service}}/{{payment_product}}",
@@ -121260,7 +121461,7 @@
 												],
 												"body": {
 													"mode": "raw",
-													"raw": "{\n\"endToEndIdentification\": \"RI-1234567890\",\n\"debtorAccount\": {\n  \"currency\": \"EUR\",\n  \"iban\": \"{{iban_none}}\"\n },\n \"debtorName\": \"name of the debtor\",\n\"instructedAmount\": {\n  \"amount\": 1000,\n  \"currency\": \"EUR\"\n },\n\"creditorAccount\": {\n  \"currency\": \"EUR\",\n  \"iban\": \"{{iban_none}}\"\n },\n\"creditorAgent\": \"AAAADEBBXXX\",\n\"creditorName\": \"Telekom\",\n \"creditorAddress\": {\n  \"buildingNumber\": \"123-34\",\n  \"townName\": \"Nürnberg\",\n  \"country\": \"DE\",\n  \"postCode\": 90431,\n  \"streetName\": \"Herrnstraße\"\n },\n \"remittanceInformationUnstructured\": \"Ref. Number TELEKOM-1222\"\n }"
+													"raw": "{\n\"endToEndIdentification\": \"RI-1234567890\",\n\"debtorAccount\": {\n  \"currency\": \"EUR\",\n  \"iban\": \"{{iban_none}}\"\n },\n \"debtorName\": \"name of the debtor\",\n\"instructedAmount\": {\n  \"amount\": 1000,\n  \"currency\": \"EUR\"\n },\n\"creditorAccount\": {\n  \"currency\": \"EUR\",\n  \"iban\": \"{{iban_none}}\"\n },\n\"creditorAgent\": \"AAAADEBBXXX\",\n\"creditorName\": \"Telekom\",\n \"creditorAddress\": {\n  \"addressLines\": [\n    \"Heritage Banking Corporation\",\n    \"Traditional Financial Services\"\n  ],\n  \"department\": \"Classical Banking Division\",\n  \"buildingNumber\": \"123-34\",\n  \"streetName\": \"Herrnstraße\",\n  \"buildingName\": \"Heritage Financial Center\",\n  \"floor\": \"Main Banking Floor\",\n  \"townName\": \"Nürnberg\",\n  \"postCode\": 90431,\n  \"country\": \"DE\"\n },\n \"remittanceInformationUnstructured\": \"Ref. Number TELEKOM-1222\"\n }"
 												},
 												"url": {
 													"raw": "{{protocol}}://{{url_cms}}/psu-api/v1/payment/paymentzzzzzz/{{payment_product}}/{{payment_id}}",
@@ -121458,7 +121659,7 @@
 												],
 												"body": {
 													"mode": "raw",
-													"raw": "{\n\"endToEndIdentification\": \"RI-1234567890\",\n\"debtorAccount\": {\n  \"currency\": \"EUR\",\n  \"iban\": \"{{iban_none}}\"\n },\n\"instructedAmount\": {\n  \"amount\": 1000,\n  \"currency\": \"EUR\"\n },\n\"creditorAccount\": {\n  \"currency\": \"EUR\",\n  \"iban\": \"{{iban_none}}\"\n },\n\"creditorAgent\": \"AAAADEBBXXX\",\n\"creditorName\": \"Telekom\",\n \"creditorAddress\": {\n  \"buildingNumber\": \"123-34\",\n  \"townName\": \"Nürnberg\",\n  \"country\": \"DE\",\n  \"postCode\": 90431,\n  \"streetName\": \"Herrnstraße\"\n },\n \"remittanceInformationUnstructured\": \"Ref. Number TELEKOM-1222\"\n }"
+													"raw": "{\n\"endToEndIdentification\": \"RI-1234567890\",\n\"debtorAccount\": {\n  \"currency\": \"EUR\",\n  \"iban\": \"{{iban_none}}\"\n },\n\"instructedAmount\": {\n  \"amount\": 1000,\n  \"currency\": \"EUR\"\n },\n\"creditorAccount\": {\n  \"currency\": \"EUR\",\n  \"iban\": \"{{iban_none}}\"\n },\n\"creditorAgent\": \"AAAADEBBXXX\",\n\"creditorName\": \"Telekom\",\n \"creditorAddress\": {\n  \"addressLines\": [\n    \"Heritage Banking Corporation\",\n    \"Traditional Financial Services\"\n  ],\n  \"department\": \"Classical Banking Division\",\n  \"buildingNumber\": \"123-34\",\n  \"streetName\": \"Herrnstraße\",\n  \"buildingName\": \"Heritage Financial Center\",\n  \"floor\": \"Main Banking Floor\",\n  \"townName\": \"Nürnberg\",\n  \"postCode\": 90431,\n  \"country\": \"DE\"\n },\n \"remittanceInformationUnstructured\": \"Ref. Number TELEKOM-1222\"\n }"
 												},
 												"url": {
 													"raw": "{{protocol}}://{{url_xs2a}}/v1/{{payment_service}}/{{payment_product}}",
@@ -122137,7 +122338,7 @@
 												],
 												"body": {
 													"mode": "raw",
-													"raw": "{\n\"endToEndIdentification\": \"RI-1234567890\",\n\"debtorAccount\": {\n  \"currency\": \"EUR\",\n  \"iban\": \"{{iban_none}}\"\n },\n\"instructedAmount\": {\n  \"amount\": 1000,\n  \"currency\": \"EUR\"\n },\n\"creditorAccount\": {\n  \"currency\": \"EUR\",\n  \"iban\": \"{{iban_none}}\"\n },\n\"creditorAgent\": \"AAAADEBBXXX\",\n\"creditorName\": \"Telekom\",\n \"creditorAddress\": {\n  \"buildingNumber\": \"123-34\",\n  \"townName\": \"Nürnberg\",\n  \"country\": \"DE\",\n  \"postCode\": 90431,\n  \"streetName\": \"Herrnstraße\"\n },\n \"remittanceInformationUnstructured\": \"Ref. Number TELEKOM-1222\"\n }"
+													"raw": "{\n\"endToEndIdentification\": \"RI-1234567890\",\n\"debtorAccount\": {\n  \"currency\": \"EUR\",\n  \"iban\": \"{{iban_none}}\"\n },\n\"instructedAmount\": {\n  \"amount\": 1000,\n  \"currency\": \"EUR\"\n },\n\"creditorAccount\": {\n  \"currency\": \"EUR\",\n  \"iban\": \"{{iban_none}}\"\n },\n\"creditorAgent\": \"AAAADEBBXXX\",\n\"creditorName\": \"Telekom\",\n \"creditorAddress\": {\n  \"addressLines\": [\n    \"Heritage Banking Corporation\",\n    \"Traditional Financial Services\"\n  ],\n  \"department\": \"Classical Banking Division\",\n  \"buildingNumber\": \"123-34\",\n  \"streetName\": \"Herrnstraße\",\n  \"buildingName\": \"Heritage Financial Center\",\n  \"floor\": \"Main Banking Floor\",\n  \"townName\": \"Nürnberg\",\n  \"postCode\": 90431,\n  \"country\": \"DE\"\n },\n \"remittanceInformationUnstructured\": \"Ref. Number TELEKOM-1222\"\n }"
 												},
 												"url": {
 													"raw": "{{protocol}}://{{url_xs2a}}/v1/{{payment_service}}/{{payment_product}}",
@@ -122411,7 +122612,7 @@
 												],
 												"body": {
 													"mode": "raw",
-													"raw": "{\n\"endToEndIdentification\": \"RI-1234567890\",\n\"debtorAccount\": {\n  \"currency\": \"EUR\",\n  \"iban\": \"{{iban_none}}\"\n },\n\"instructedAmount\": {\n  \"amount\": 1000,\n  \"currency\": \"EUR\"\n },\n\"creditorAccount\": {\n  \"currency\": \"EUR\",\n  \"iban\": \"{{iban_none}}\"\n },\n\"creditorAgent\": \"AAAADEBBXXX\",\n\"creditorName\": \"Telekom\",\n \"creditorAddress\": {\n  \"buildingNumber\": \"123-34\",\n  \"townName\": \"Nürnberg\",\n  \"country\": \"DE\",\n  \"postCode\": 90431,\n  \"streetName\": \"Herrnstraße\"\n },\n \"remittanceInformationUnstructured\": \"Ref. Number TELEKOM-1222\"\n }"
+													"raw": "{\n\"endToEndIdentification\": \"RI-1234567890\",\n\"debtorAccount\": {\n  \"currency\": \"EUR\",\n  \"iban\": \"{{iban_none}}\"\n },\n\"instructedAmount\": {\n  \"amount\": 1000,\n  \"currency\": \"EUR\"\n },\n\"creditorAccount\": {\n  \"currency\": \"EUR\",\n  \"iban\": \"{{iban_none}}\"\n },\n\"creditorAgent\": \"AAAADEBBXXX\",\n\"creditorName\": \"Telekom\",\n \"creditorAddress\": {\n  \"addressLines\": [\n    \"Heritage Banking Corporation\",\n    \"Traditional Financial Services\"\n  ],\n  \"department\": \"Classical Banking Division\",\n  \"buildingNumber\": \"123-34\",\n  \"streetName\": \"Herrnstraße\",\n  \"buildingName\": \"Heritage Financial Center\",\n  \"floor\": \"Main Banking Floor\",\n  \"townName\": \"Nürnberg\",\n  \"postCode\": 90431,\n  \"country\": \"DE\"\n },\n \"remittanceInformationUnstructured\": \"Ref. Number TELEKOM-1222\"\n }"
 												},
 												"url": {
 													"raw": "{{protocol}}://{{url_xs2a}}/v1/{{payment_service}}/{{payment_product}}/{{payment_id}}",
@@ -122662,7 +122863,7 @@
 												],
 												"body": {
 													"mode": "raw",
-													"raw": "{\n\"endToEndIdentification\": \"RI-1234567890\",\n\n\"instructedAmount\": {\n  \"amount\": 1000,\n  \"currency\": \"EUR\"\n },\n\"creditorAccount\": {\n  \"currency\": \"EUR\",\n  \"iban\": \"{{iban_none}}\"\n },\n\"creditorAgent\": \"AAAADEBBXXX\",\n\"creditorName\": \"Telekom\",\n \"creditorAddress\": {\n  \"buildingNumber\": \"123-34\",\n  \"townName\": \"Nürnberg\",\n  \"country\": \"DE\",\n  \"postCode\": 90431,\n  \"streetName\": \"Herrnstraße\"\n },\n \"remittanceInformationUnstructured\": \"Ref. Number TELEKOM-1222\"\n }"
+													"raw": "{\n\"endToEndIdentification\": \"RI-1234567890\",\n\n\"instructedAmount\": {\n  \"amount\": 1000,\n  \"currency\": \"EUR\"\n },\n\"creditorAccount\": {\n  \"currency\": \"EUR\",\n  \"iban\": \"{{iban_none}}\"\n },\n\"creditorAgent\": \"AAAADEBBXXX\",\n\"creditorName\": \"Telekom\",\n \"creditorAddress\": {\n  \"addressLines\": [\n    \"Heritage Banking Corporation\",\n    \"Traditional Financial Services\"\n  ],\n  \"department\": \"Classical Banking Division\",\n  \"buildingNumber\": \"123-34\",\n  \"streetName\": \"Herrnstraße\",\n  \"buildingName\": \"Heritage Financial Center\",\n  \"floor\": \"Main Banking Floor\",\n  \"townName\": \"Nürnberg\",\n  \"postCode\": 90431,\n  \"country\": \"DE\"\n },\n \"remittanceInformationUnstructured\": \"Ref. Number TELEKOM-1222\"\n }"
 												},
 												"url": {
 													"raw": "{{protocol}}://{{url_xs2a}}/v1/{{payment_service}}/{{payment_product}}",
@@ -122805,7 +123006,7 @@
 												],
 												"body": {
 													"mode": "raw",
-													"raw": "{\n\"endToEndIdentification\": \"RI-1234567890\",\n\"debtorAccount\": {\n  \"currency\": \"EUR\",\n  \"iban\": \"{{iban_none}}\"\n },\n \"debtorName\": \"name of the debtor\",\n\"instructedAmount\": {\n  \"amount\": 1000,\n  \"currency\": \"EUR\"\n },\n\"creditorAccount\": {\n  \"currency\": \"EUR\",\n  \"iban\": \"{{iban_none}}\"\n },\n\"creditorAgent\": \"AAAADEBBXXX\",\n\"creditorName\": \"Telekom\",\n \"creditorAddress\": {\n  \"buildingNumber\": \"123-34\",\n  \"townName\": \"Nürnberg\",\n  \"country\": \"DE\",\n  \"postCode\": 90431,\n  \"streetName\": \"Herrnstraße\"\n },\n \"remittanceInformationUnstructured\": \"Ref. Number TELEKOM-1222\"\n }"
+													"raw": "{\n\"endToEndIdentification\": \"RI-1234567890\",\n\"debtorAccount\": {\n  \"currency\": \"EUR\",\n  \"iban\": \"{{iban_none}}\"\n },\n \"debtorName\": \"name of the debtor\",\n\"instructedAmount\": {\n  \"amount\": 1000,\n  \"currency\": \"EUR\"\n },\n\"creditorAccount\": {\n  \"currency\": \"EUR\",\n  \"iban\": \"{{iban_none}}\"\n },\n\"creditorAgent\": \"AAAADEBBXXX\",\n\"creditorName\": \"Telekom\",\n \"creditorAddress\": {\n  \"addressLines\": [\n    \"Heritage Banking Corporation\",\n    \"Traditional Financial Services\"\n  ],\n  \"department\": \"Classical Banking Division\",\n  \"buildingNumber\": \"123-34\",\n  \"streetName\": \"Herrnstraße\",\n  \"buildingName\": \"Heritage Financial Center\",\n  \"floor\": \"Main Banking Floor\",\n  \"townName\": \"Nürnberg\",\n  \"postCode\": 90431,\n  \"country\": \"DE\"\n },\n \"remittanceInformationUnstructured\": \"Ref. Number TELEKOM-1222\"\n }"
 												},
 												"url": {
 													"raw": "{{protocol}}://{{url_cms}}/psu-api/v1/payment/{{payment_service}}/{{payment_product}}/{{payment_id}}",

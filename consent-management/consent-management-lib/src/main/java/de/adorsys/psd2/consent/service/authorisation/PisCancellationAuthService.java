@@ -46,7 +46,6 @@ public class PisCancellationAuthService extends PisAbstractAuthService {
 
     @Override
     public Optional<Authorisable> getNotFinalisedAuthorisationParent(String parentId) {
-        // todo implementation should be changed https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/1143
         Optional<PisCommonPaymentData> commonPaymentData = commonPaymentService.findByPaymentId(parentId)
                                                                .filter(CollectionUtils::isNotEmpty)
                                                                .map(list -> list.get(0).getPaymentData());

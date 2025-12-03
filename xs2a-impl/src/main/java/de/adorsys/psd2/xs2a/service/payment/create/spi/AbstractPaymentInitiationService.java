@@ -64,8 +64,25 @@ public abstract class AbstractPaymentInitiationService<T extends CommonPayment, 
         return mapToXs2aResponse(spiResponse.getPayload(), aspspConsentDataProvider, payment.getPaymentType());
     }
 
+    /**
+     * Initiates a payment at the SPI layer.
+     *
+     * @param spiContextData the SPI context data
+     * @param payment the payment to initiate
+     * @param paymentProduct the payment product
+     * @param aspspConsentDataProvider the ASPSP consent data provider
+     * @return SPI response containing the payment initiation result
+     */
     protected abstract SpiResponse<R> initiateSpiPayment(SpiContextData spiContextData, T payment, String paymentProduct,
                                                          InitialSpiAspspConsentDataProvider aspspConsentDataProvider);
 
+    /**
+     * Maps the SPI response to XS2A payment initiation response.
+     *
+     * @param spiResponse the SPI response
+     * @param provider the ASPSP consent data provider
+     * @param paymentType the payment type
+     * @return the XS2A payment initiation response
+     */
     protected abstract PaymentInitiationResponse mapToXs2aResponse(R spiResponse, InitialSpiAspspConsentDataProvider provider, PaymentType paymentType);
 }

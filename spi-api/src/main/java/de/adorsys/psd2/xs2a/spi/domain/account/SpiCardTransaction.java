@@ -30,6 +30,7 @@ import java.util.List;
 @Data
 @RequiredArgsConstructor
 public class SpiCardTransaction {
+    private final String cardAcceptorName;
     private final String cardTransactionId;
     private final String terminalId;
     private final LocalDate transactionDate;

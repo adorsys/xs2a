@@ -5,24 +5,37 @@
     "transactionDate": "2020-01-27",
     "transactionAmount": {
       "currency": "EUR",
-      "amount": 30000.00
+      "amount": 30000.0
     },
     "currencyExchange": null,
     "originalAmount": {
       "currency": "EUR",
-      "amount": 30000.00
+      "amount": 30000.0
     },
     "markupFee": {
       "currency": "EUR",
-      "amount": 30000.00
+      "amount": 30000.0
     },
     "markupFeePercentage": "markupFeePercentage",
     "cardAcceptorId": null,
     "cardAcceptorAddress": {
+      "addressLines": [
+        "Address Line 1",
+        "Address Line 2"
+      ],
+      "department": "IT Department",
+      "subDepartment": "Development",
       "streetName": "street",
       "buildingNumber": "buildNum",
-      "townName": "town",
+      "buildingName": "Building Name",
+      "floor": "3rd Floor",
+      "postBox": "PO Box 123",
+      "room": "Room 301",
       "postCode": "post",
+      "townName": "town",
+      "townLocationName": "Town Location",
+      "districtName": "District Name",
+      "countrySubDivision": "Region",
       "country": "EU"
     },
     "merchantCategoryCode": "merchantCategoryCode",
@@ -37,24 +50,37 @@
     "transactionDate": "2020-01-24",
     "transactionAmount": {
       "currency": "EUR",
-      "amount": 30000.00
+      "amount": 30000.0
     },
     "currencyExchange": null,
     "originalAmount": {
       "currency": "EUR",
-      "amount": 30000.00
+      "amount": 30000.0
     },
     "markupFee": {
       "currency": "EUR",
-      "amount": 30000.00
+      "amount": 30000.0
     },
     "markupFeePercentage": "markupFeePercentage",
     "cardAcceptorId": null,
     "cardAcceptorAddress": {
+      "addressLines": [
+        "Address Line 1",
+        "Address Line 2"
+      ],
+      "department": "IT Department",
+      "subDepartment": "Development",
       "streetName": "street",
       "buildingNumber": "buildNum",
-      "townName": "town",
+      "buildingName": "Building Name",
+      "floor": "3rd Floor",
+      "postBox": "PO Box 123",
+      "room": "Room 301",
       "postCode": "post",
+      "townName": "town",
+      "townLocationName": "Town Location",
+      "districtName": "District Name",
+      "countrySubDivision": "Region",
       "country": "EU"
     },
     "merchantCategoryCode": "merchantCategoryCode",
@@ -69,24 +95,37 @@
     "transactionDate": "2020-01-21",
     "transactionAmount": {
       "currency": "EUR",
-      "amount": 30000.00
+      "amount": 30000.0
     },
     "currencyExchange": null,
     "originalAmount": {
       "currency": "EUR",
-      "amount": 30000.00
+      "amount": 30000.0
     },
     "markupFee": {
       "currency": "EUR",
-      "amount": 30000.00
+      "amount": 30000.0
     },
     "markupFeePercentage": "markupFeePercentage",
     "cardAcceptorId": null,
     "cardAcceptorAddress": {
+      "addressLines": [
+        "Address Line 1",
+        "Address Line 2"
+      ],
+      "department": "IT Department",
+      "subDepartment": "Development",
       "streetName": "street",
       "buildingNumber": "buildNum",
-      "townName": "town",
+      "buildingName": "Building Name",
+      "floor": "3rd Floor",
+      "postBox": "PO Box 123",
+      "room": "Room 301",
       "postCode": "post",
+      "townName": "town",
+      "townLocationName": "Town Location",
+      "districtName": "District Name",
+      "countrySubDivision": "Region",
       "country": "EU"
     },
     "merchantCategoryCode": "merchantCategoryCode",
@@ -101,24 +140,37 @@
     "transactionDate": "2020-01-21",
     "transactionAmount": {
       "currency": "EUR",
-      "amount": 30000.00
+      "amount": 30000.0
     },
     "currencyExchange": null,
     "originalAmount": {
       "currency": "EUR",
-      "amount": 30000.00
+      "amount": 30000.0
     },
     "markupFee": {
       "currency": "EUR",
-      "amount": 30000.00
+      "amount": 30000.0
     },
     "markupFeePercentage": "markupFeePercentage",
     "cardAcceptorId": null,
     "cardAcceptorAddress": {
+      "addressLines": [
+        "Address Line 1",
+        "Address Line 2"
+      ],
+      "department": "IT Department",
+      "subDepartment": "Development",
       "streetName": "street",
       "buildingNumber": "buildNum",
-      "townName": "town",
+      "buildingName": "Building Name",
+      "floor": "3rd Floor",
+      "postBox": "PO Box 123",
+      "room": "Room 301",
       "postCode": "post",
+      "townName": "town",
+      "townLocationName": "Town Location",
+      "districtName": "District Name",
+      "countrySubDivision": "Region",
       "country": "EU"
     },
     "merchantCategoryCode": "merchantCategoryCode",
@@ -133,24 +185,37 @@
     "transactionDate": "2020-01-21",
     "transactionAmount": {
       "currency": "EUR",
-      "amount": 30000.00
+      "amount": 30000.0
     },
     "currencyExchange": null,
     "originalAmount": {
       "currency": "EUR",
-      "amount": 30000.00
+      "amount": 30000.0
     },
     "markupFee": {
       "currency": "EUR",
-      "amount": 30000.00
+      "amount": 30000.0
     },
     "markupFeePercentage": "markupFeePercentage",
     "cardAcceptorId": null,
     "cardAcceptorAddress": {
+      "addressLines": [
+        "Address Line 1",
+        "Address Line 2"
+      ],
+      "department": "IT Department",
+      "subDepartment": "Development",
       "streetName": "street",
       "buildingNumber": "buildNum",
-      "townName": "town",
+      "buildingName": "Building Name",
+      "floor": "3rd Floor",
+      "postBox": "PO Box 123",
+      "room": "Room 301",
       "postCode": "post",
+      "townName": "town",
+      "townLocationName": "Town Location",
+      "districtName": "District Name",
+      "countrySubDivision": "Region",
       "country": "EU"
     },
     "merchantCategoryCode": "merchantCategoryCode",
@@ -166,24 +231,37 @@
     "bookingDate": "2020-01-17",
     "transactionAmount": {
       "currency": "EUR",
-      "amount": 30000.00
+      "amount": 30000.0
     },
     "currencyExchange": null,
     "originalAmount": {
       "currency": "EUR",
-      "amount": 30000.00
+      "amount": 30000.0
     },
     "markupFee": {
       "currency": "EUR",
-      "amount": 30000.00
+      "amount": 30000.0
     },
     "markupFeePercentage": "markupFeePercentage",
     "cardAcceptorId": null,
     "cardAcceptorAddress": {
+      "addressLines": [
+        "Address Line 1",
+        "Address Line 2"
+      ],
+      "department": "IT Department",
+      "subDepartment": "Development",
       "streetName": "street",
       "buildingNumber": "buildNum",
-      "townName": "town",
+      "buildingName": "Building Name",
+      "floor": "3rd Floor",
+      "postBox": "PO Box 123",
+      "room": "Room 301",
       "postCode": "post",
+      "townName": "town",
+      "townLocationName": "Town Location",
+      "districtName": "District Name",
+      "countrySubDivision": "Region",
       "country": "EU"
     },
     "merchantCategoryCode": "merchantCategoryCode",
@@ -199,24 +277,37 @@
     "bookingDate": "2020-01-15",
     "transactionAmount": {
       "currency": "EUR",
-      "amount": 30000.00
+      "amount": 30000.0
     },
     "currencyExchange": null,
     "originalAmount": {
       "currency": "EUR",
-      "amount": 30000.00
+      "amount": 30000.0
     },
     "markupFee": {
       "currency": "EUR",
-      "amount": 30000.00
+      "amount": 30000.0
     },
     "markupFeePercentage": "markupFeePercentage",
     "cardAcceptorId": null,
     "cardAcceptorAddress": {
+      "addressLines": [
+        "Address Line 1",
+        "Address Line 2"
+      ],
+      "department": "IT Department",
+      "subDepartment": "Development",
       "streetName": "street",
       "buildingNumber": "buildNum",
-      "townName": "town",
+      "buildingName": "Building Name",
+      "floor": "3rd Floor",
+      "postBox": "PO Box 123",
+      "room": "Room 301",
       "postCode": "post",
+      "townName": "town",
+      "townLocationName": "Town Location",
+      "districtName": "District Name",
+      "countrySubDivision": "Region",
       "country": "EU"
     },
     "merchantCategoryCode": "merchantCategoryCode",
@@ -246,10 +337,23 @@
     "markupFeePercentage": "markupFeePercentage",
     "cardAcceptorId": null,
     "cardAcceptorAddress": {
+      "addressLines": [
+        "Address Line 1",
+        "Address Line 2"
+      ],
+      "department": "IT Department",
+      "subDepartment": "Development",
       "streetName": "street",
       "buildingNumber": "buildNum",
-      "townName": "town",
+      "buildingName": "Building Name",
+      "floor": "3rd Floor",
+      "postBox": "PO Box 123",
+      "room": "Room 301",
       "postCode": "post",
+      "townName": "town",
+      "townLocationName": "Town Location",
+      "districtName": "District Name",
+      "countrySubDivision": "Region",
       "country": "EU"
     },
     "merchantCategoryCode": "merchantCategoryCode",
@@ -279,10 +383,23 @@
     "markupFeePercentage": "markupFeePercentage",
     "cardAcceptorId": null,
     "cardAcceptorAddress": {
+      "addressLines": [
+        "Address Line 1",
+        "Address Line 2"
+      ],
+      "department": "IT Department",
+      "subDepartment": "Development",
       "streetName": "street",
       "buildingNumber": "buildNum",
-      "townName": "town",
+      "buildingName": "Building Name",
+      "floor": "3rd Floor",
+      "postBox": "PO Box 123",
+      "room": "Room 301",
       "postCode": "post",
+      "townName": "town",
+      "townLocationName": "Town Location",
+      "districtName": "District Name",
+      "countrySubDivision": "Region",
       "country": "EU"
     },
     "merchantCategoryCode": "merchantCategoryCode",
@@ -312,10 +429,23 @@
     "markupFeePercentage": "markupFeePercentage",
     "cardAcceptorId": null,
     "cardAcceptorAddress": {
+      "addressLines": [
+        "Address Line 1",
+        "Address Line 2"
+      ],
+      "department": "IT Department",
+      "subDepartment": "Development",
       "streetName": "street",
       "buildingNumber": "buildNum",
-      "townName": "town",
+      "buildingName": "Building Name",
+      "floor": "3rd Floor",
+      "postBox": "PO Box 123",
+      "room": "Room 301",
       "postCode": "post",
+      "townName": "town",
+      "townLocationName": "Town Location",
+      "districtName": "District Name",
+      "countrySubDivision": "Region",
       "country": "EU"
     },
     "merchantCategoryCode": "merchantCategoryCode",
@@ -345,10 +475,23 @@
     "markupFeePercentage": "markupFeePercentage",
     "cardAcceptorId": null,
     "cardAcceptorAddress": {
+      "addressLines": [
+        "Address Line 1",
+        "Address Line 2"
+      ],
+      "department": "IT Department",
+      "subDepartment": "Development",
       "streetName": "street",
       "buildingNumber": "buildNum",
-      "townName": "town",
+      "buildingName": "Building Name",
+      "floor": "3rd Floor",
+      "postBox": "PO Box 123",
+      "room": "Room 301",
       "postCode": "post",
+      "townName": "town",
+      "townLocationName": "Town Location",
+      "districtName": "District Name",
+      "countrySubDivision": "Region",
       "country": "EU"
     },
     "merchantCategoryCode": "merchantCategoryCode",
@@ -378,10 +521,23 @@
     "markupFeePercentage": "markupFeePercentage",
     "cardAcceptorId": null,
     "cardAcceptorAddress": {
+      "addressLines": [
+        "Address Line 1",
+        "Address Line 2"
+      ],
+      "department": "IT Department",
+      "subDepartment": "Development",
       "streetName": "street",
       "buildingNumber": "buildNum",
-      "townName": "town",
+      "buildingName": "Building Name",
+      "floor": "3rd Floor",
+      "postBox": "PO Box 123",
+      "room": "Room 301",
       "postCode": "post",
+      "townName": "town",
+      "townLocationName": "Town Location",
+      "districtName": "District Name",
+      "countrySubDivision": "Region",
       "country": "EU"
     },
     "merchantCategoryCode": "merchantCategoryCode",
@@ -411,10 +567,23 @@
     "markupFeePercentage": "markupFeePercentage",
     "cardAcceptorId": null,
     "cardAcceptorAddress": {
+      "addressLines": [
+        "Address Line 1",
+        "Address Line 2"
+      ],
+      "department": "IT Department",
+      "subDepartment": "Development",
       "streetName": "street",
       "buildingNumber": "buildNum",
-      "townName": "town",
+      "buildingName": "Building Name",
+      "floor": "3rd Floor",
+      "postBox": "PO Box 123",
+      "room": "Room 301",
       "postCode": "post",
+      "townName": "town",
+      "townLocationName": "Town Location",
+      "districtName": "District Name",
+      "countrySubDivision": "Region",
       "country": "EU"
     },
     "merchantCategoryCode": "merchantCategoryCode",
@@ -444,10 +613,23 @@
     "markupFeePercentage": "markupFeePercentage",
     "cardAcceptorId": null,
     "cardAcceptorAddress": {
+      "addressLines": [
+        "Address Line 1",
+        "Address Line 2"
+      ],
+      "department": "IT Department",
+      "subDepartment": "Development",
       "streetName": "street",
       "buildingNumber": "buildNum",
-      "townName": "town",
+      "buildingName": "Building Name",
+      "floor": "3rd Floor",
+      "postBox": "PO Box 123",
+      "room": "Room 301",
       "postCode": "post",
+      "townName": "town",
+      "townLocationName": "Town Location",
+      "districtName": "District Name",
+      "countrySubDivision": "Region",
       "country": "EU"
     },
     "merchantCategoryCode": "merchantCategoryCode",
@@ -477,10 +659,23 @@
     "markupFeePercentage": "markupFeePercentage",
     "cardAcceptorId": null,
     "cardAcceptorAddress": {
+      "addressLines": [
+        "Address Line 1",
+        "Address Line 2"
+      ],
+      "department": "IT Department",
+      "subDepartment": "Development",
       "streetName": "street",
       "buildingNumber": "buildNum",
-      "townName": "town",
+      "buildingName": "Building Name",
+      "floor": "3rd Floor",
+      "postBox": "PO Box 123",
+      "room": "Room 301",
       "postCode": "post",
+      "townName": "town",
+      "townLocationName": "Town Location",
+      "districtName": "District Name",
+      "countrySubDivision": "Region",
       "country": "EU"
     },
     "merchantCategoryCode": "merchantCategoryCode",
@@ -510,10 +705,23 @@
     "markupFeePercentage": "markupFeePercentage",
     "cardAcceptorId": null,
     "cardAcceptorAddress": {
+      "addressLines": [
+        "Address Line 1",
+        "Address Line 2"
+      ],
+      "department": "IT Department",
+      "subDepartment": "Development",
       "streetName": "street",
       "buildingNumber": "buildNum",
-      "townName": "town",
+      "buildingName": "Building Name",
+      "floor": "3rd Floor",
+      "postBox": "PO Box 123",
+      "room": "Room 301",
       "postCode": "post",
+      "townName": "town",
+      "townLocationName": "Town Location",
+      "districtName": "District Name",
+      "countrySubDivision": "Region",
       "country": "EU"
     },
     "merchantCategoryCode": "merchantCategoryCode",
@@ -543,10 +751,23 @@
     "markupFeePercentage": "markupFeePercentage",
     "cardAcceptorId": null,
     "cardAcceptorAddress": {
+      "addressLines": [
+        "Address Line 1",
+        "Address Line 2"
+      ],
+      "department": "IT Department",
+      "subDepartment": "Development",
       "streetName": "street",
       "buildingNumber": "buildNum",
-      "townName": "town",
+      "buildingName": "Building Name",
+      "floor": "3rd Floor",
+      "postBox": "PO Box 123",
+      "room": "Room 301",
       "postCode": "post",
+      "townName": "town",
+      "townLocationName": "Town Location",
+      "districtName": "District Name",
+      "countrySubDivision": "Region",
       "country": "EU"
     },
     "merchantCategoryCode": "merchantCategoryCode",
@@ -576,10 +797,23 @@
     "markupFeePercentage": "markupFeePercentage",
     "cardAcceptorId": null,
     "cardAcceptorAddress": {
+      "addressLines": [
+        "Address Line 1",
+        "Address Line 2"
+      ],
+      "department": "IT Department",
+      "subDepartment": "Development",
       "streetName": "street",
       "buildingNumber": "buildNum",
-      "townName": "town",
+      "buildingName": "Building Name",
+      "floor": "3rd Floor",
+      "postBox": "PO Box 123",
+      "room": "Room 301",
       "postCode": "post",
+      "townName": "town",
+      "townLocationName": "Town Location",
+      "districtName": "District Name",
+      "countrySubDivision": "Region",
       "country": "EU"
     },
     "merchantCategoryCode": "merchantCategoryCode",
@@ -609,10 +843,23 @@
     "markupFeePercentage": "markupFeePercentage",
     "cardAcceptorId": null,
     "cardAcceptorAddress": {
+      "addressLines": [
+        "Address Line 1",
+        "Address Line 2"
+      ],
+      "department": "IT Department",
+      "subDepartment": "Development",
       "streetName": "street",
       "buildingNumber": "buildNum",
-      "townName": "town",
+      "buildingName": "Building Name",
+      "floor": "3rd Floor",
+      "postBox": "PO Box 123",
+      "room": "Room 301",
       "postCode": "post",
+      "townName": "town",
+      "townLocationName": "Town Location",
+      "districtName": "District Name",
+      "countrySubDivision": "Region",
       "country": "EU"
     },
     "merchantCategoryCode": "merchantCategoryCode",
@@ -642,10 +889,23 @@
     "markupFeePercentage": "markupFeePercentage",
     "cardAcceptorId": null,
     "cardAcceptorAddress": {
+      "addressLines": [
+        "Address Line 1",
+        "Address Line 2"
+      ],
+      "department": "IT Department",
+      "subDepartment": "Development",
       "streetName": "street",
       "buildingNumber": "buildNum",
-      "townName": "town",
+      "buildingName": "Building Name",
+      "floor": "3rd Floor",
+      "postBox": "PO Box 123",
+      "room": "Room 301",
       "postCode": "post",
+      "townName": "town",
+      "townLocationName": "Town Location",
+      "districtName": "District Name",
+      "countrySubDivision": "Region",
       "country": "EU"
     },
     "merchantCategoryCode": "merchantCategoryCode",
@@ -675,10 +935,23 @@
     "markupFeePercentage": "markupFeePercentage",
     "cardAcceptorId": null,
     "cardAcceptorAddress": {
+      "addressLines": [
+        "Address Line 1",
+        "Address Line 2"
+      ],
+      "department": "IT Department",
+      "subDepartment": "Development",
       "streetName": "street",
       "buildingNumber": "buildNum",
-      "townName": "town",
+      "buildingName": "Building Name",
+      "floor": "3rd Floor",
+      "postBox": "PO Box 123",
+      "room": "Room 301",
       "postCode": "post",
+      "townName": "town",
+      "townLocationName": "Town Location",
+      "districtName": "District Name",
+      "countrySubDivision": "Region",
       "country": "EU"
     },
     "merchantCategoryCode": "merchantCategoryCode",
@@ -708,10 +981,23 @@
     "markupFeePercentage": "markupFeePercentage",
     "cardAcceptorId": null,
     "cardAcceptorAddress": {
+      "addressLines": [
+        "Address Line 1",
+        "Address Line 2"
+      ],
+      "department": "IT Department",
+      "subDepartment": "Development",
       "streetName": "street",
       "buildingNumber": "buildNum",
-      "townName": "town",
+      "buildingName": "Building Name",
+      "floor": "3rd Floor",
+      "postBox": "PO Box 123",
+      "room": "Room 301",
       "postCode": "post",
+      "townName": "town",
+      "townLocationName": "Town Location",
+      "districtName": "District Name",
+      "countrySubDivision": "Region",
       "country": "EU"
     },
     "merchantCategoryCode": "merchantCategoryCode",
@@ -741,10 +1027,23 @@
     "markupFeePercentage": "markupFeePercentage",
     "cardAcceptorId": null,
     "cardAcceptorAddress": {
+      "addressLines": [
+        "Address Line 1",
+        "Address Line 2"
+      ],
+      "department": "IT Department",
+      "subDepartment": "Development",
       "streetName": "street",
       "buildingNumber": "buildNum",
-      "townName": "town",
+      "buildingName": "Building Name",
+      "floor": "3rd Floor",
+      "postBox": "PO Box 123",
+      "room": "Room 301",
       "postCode": "post",
+      "townName": "town",
+      "townLocationName": "Town Location",
+      "districtName": "District Name",
+      "countrySubDivision": "Region",
       "country": "EU"
     },
     "merchantCategoryCode": "merchantCategoryCode",
@@ -760,24 +1059,37 @@
     "bookingDate": "2020-01-14",
     "transactionAmount": {
       "currency": "EUR",
-      "amount": 30000.00
+      "amount": 30000.0
     },
     "currencyExchange": null,
     "originalAmount": {
       "currency": "EUR",
-      "amount": 30000.00
+      "amount": 30000.0
     },
     "markupFee": {
       "currency": "EUR",
-      "amount": 30000.00
+      "amount": 30000.0
     },
     "markupFeePercentage": "markupFeePercentage",
     "cardAcceptorId": null,
     "cardAcceptorAddress": {
+      "addressLines": [
+        "Address Line 1",
+        "Address Line 2"
+      ],
+      "department": "IT Department",
+      "subDepartment": "Development",
       "streetName": "street",
       "buildingNumber": "buildNum",
-      "townName": "town",
+      "buildingName": "Building Name",
+      "floor": "3rd Floor",
+      "postBox": "PO Box 123",
+      "room": "Room 301",
       "postCode": "post",
+      "townName": "town",
+      "townLocationName": "Town Location",
+      "districtName": "District Name",
+      "countrySubDivision": "Region",
       "country": "EU"
     },
     "merchantCategoryCode": "merchantCategoryCode",
@@ -793,24 +1105,37 @@
     "bookingDate": "2020-01-11",
     "transactionAmount": {
       "currency": "EUR",
-      "amount": 30000.00
+      "amount": 30000.0
     },
     "currencyExchange": null,
     "originalAmount": {
       "currency": "EUR",
-      "amount": 30000.00
+      "amount": 30000.0
     },
     "markupFee": {
       "currency": "EUR",
-      "amount": 30000.00
+      "amount": 30000.0
     },
     "markupFeePercentage": "markupFeePercentage",
     "cardAcceptorId": null,
     "cardAcceptorAddress": {
+      "addressLines": [
+        "Address Line 1",
+        "Address Line 2"
+      ],
+      "department": "IT Department",
+      "subDepartment": "Development",
       "streetName": "street",
       "buildingNumber": "buildNum",
-      "townName": "town",
+      "buildingName": "Building Name",
+      "floor": "3rd Floor",
+      "postBox": "PO Box 123",
+      "room": "Room 301",
       "postCode": "post",
+      "townName": "town",
+      "townLocationName": "Town Location",
+      "districtName": "District Name",
+      "countrySubDivision": "Region",
       "country": "EU"
     },
     "merchantCategoryCode": "merchantCategoryCode",
@@ -826,24 +1151,37 @@
     "bookingDate": "2020-01-11",
     "transactionAmount": {
       "currency": "EUR",
-      "amount": 30000.00
+      "amount": 30000.0
     },
     "currencyExchange": null,
     "originalAmount": {
       "currency": "EUR",
-      "amount": 30000.00
+      "amount": 30000.0
     },
     "markupFee": {
       "currency": "EUR",
-      "amount": 30000.00
+      "amount": 30000.0
     },
     "markupFeePercentage": "markupFeePercentage",
     "cardAcceptorId": null,
     "cardAcceptorAddress": {
+      "addressLines": [
+        "Address Line 1",
+        "Address Line 2"
+      ],
+      "department": "IT Department",
+      "subDepartment": "Development",
       "streetName": "street",
       "buildingNumber": "buildNum",
-      "townName": "town",
+      "buildingName": "Building Name",
+      "floor": "3rd Floor",
+      "postBox": "PO Box 123",
+      "room": "Room 301",
       "postCode": "post",
+      "townName": "town",
+      "townLocationName": "Town Location",
+      "districtName": "District Name",
+      "countrySubDivision": "Region",
       "country": "EU"
     },
     "merchantCategoryCode": "merchantCategoryCode",
@@ -859,24 +1197,37 @@
     "bookingDate": "2020-01-09",
     "transactionAmount": {
       "currency": "EUR",
-      "amount": -150.00
+      "amount": -150.0
     },
     "currencyExchange": null,
     "originalAmount": {
       "currency": "EUR",
-      "amount": -150.00
+      "amount": -150.0
     },
     "markupFee": {
       "currency": "EUR",
-      "amount": -150.00
+      "amount": -150.0
     },
     "markupFeePercentage": "markupFeePercentage",
     "cardAcceptorId": null,
     "cardAcceptorAddress": {
+      "addressLines": [
+        "Address Line 1",
+        "Address Line 2"
+      ],
+      "department": "IT Department",
+      "subDepartment": "Development",
       "streetName": "street",
       "buildingNumber": "buildNum",
-      "townName": "town",
+      "buildingName": "Building Name",
+      "floor": "3rd Floor",
+      "postBox": "PO Box 123",
+      "room": "Room 301",
       "postCode": "post",
+      "townName": "town",
+      "townLocationName": "Town Location",
+      "districtName": "District Name",
+      "countrySubDivision": "Region",
       "country": "EU"
     },
     "merchantCategoryCode": "merchantCategoryCode",
@@ -892,24 +1243,37 @@
     "bookingDate": "2020-01-09",
     "transactionAmount": {
       "currency": "EUR",
-      "amount": -100.00
+      "amount": -100.0
     },
     "currencyExchange": null,
     "originalAmount": {
       "currency": "EUR",
-      "amount": -100.00
+      "amount": -100.0
     },
     "markupFee": {
       "currency": "EUR",
-      "amount": -100.00
+      "amount": -100.0
     },
     "markupFeePercentage": "markupFeePercentage",
     "cardAcceptorId": null,
     "cardAcceptorAddress": {
+      "addressLines": [
+        "Address Line 1",
+        "Address Line 2"
+      ],
+      "department": "IT Department",
+      "subDepartment": "Development",
       "streetName": "street",
       "buildingNumber": "buildNum",
-      "townName": "town",
+      "buildingName": "Building Name",
+      "floor": "3rd Floor",
+      "postBox": "PO Box 123",
+      "room": "Room 301",
       "postCode": "post",
+      "townName": "town",
+      "townLocationName": "Town Location",
+      "districtName": "District Name",
+      "countrySubDivision": "Region",
       "country": "EU"
     },
     "merchantCategoryCode": "merchantCategoryCode",
@@ -925,26 +1289,39 @@
     "bookingDate": "2020-01-09",
     "transactionAmount": {
       "currency": "EUR",
-      "amount": -2300.00
+      "amount": -2300.0
     },
     "currencyExchange": [
       null
     ],
     "originalAmount": {
       "currency": "EUR",
-      "amount": -2300.00
+      "amount": -2300.0
     },
     "markupFee": {
       "currency": "EUR",
-      "amount": -2300.00
+      "amount": -2300.0
     },
     "markupFeePercentage": "markupFeePercentage",
     "cardAcceptorId": null,
     "cardAcceptorAddress": {
+      "addressLines": [
+        "Address Line 1",
+        "Address Line 2"
+      ],
+      "department": "IT Department",
+      "subDepartment": "Development",
       "streetName": "street",
       "buildingNumber": "buildNum",
-      "townName": "town",
+      "buildingName": "Building Name",
+      "floor": "3rd Floor",
+      "postBox": "PO Box 123",
+      "room": "Room 301",
       "postCode": "post",
+      "townName": "town",
+      "townLocationName": "Town Location",
+      "districtName": "District Name",
+      "countrySubDivision": "Region",
       "country": "EU"
     },
     "merchantCategoryCode": "merchantCategoryCode",
@@ -960,7 +1337,7 @@
     "bookingDate": "2020-01-09",
     "transactionAmount": {
       "currency": "EUR",
-      "amount": -250.00
+      "amount": -250.0
     },
     "currencyExchange": [
       null,
@@ -968,19 +1345,32 @@
     ],
     "originalAmount": {
       "currency": "EUR",
-      "amount": -250.00
+      "amount": -250.0
     },
     "markupFee": {
       "currency": "EUR",
-      "amount": -250.00
+      "amount": -250.0
     },
     "markupFeePercentage": "markupFeePercentage",
     "cardAcceptorId": null,
     "cardAcceptorAddress": {
+      "addressLines": [
+        "Address Line 1",
+        "Address Line 2"
+      ],
+      "department": "IT Department",
+      "subDepartment": "Development",
       "streetName": "street",
       "buildingNumber": "buildNum",
-      "townName": "town",
+      "buildingName": "Building Name",
+      "floor": "3rd Floor",
+      "postBox": "PO Box 123",
+      "room": "Room 301",
       "postCode": "post",
+      "townName": "town",
+      "townLocationName": "Town Location",
+      "districtName": "District Name",
+      "countrySubDivision": "Region",
       "country": "EU"
     },
     "merchantCategoryCode": "merchantCategoryCode",
@@ -996,24 +1386,37 @@
     "bookingDate": "2020-01-09",
     "transactionAmount": {
       "currency": "EUR",
-      "amount": 2300.00
+      "amount": 2300.0
     },
     "currencyExchange": null,
     "originalAmount": {
       "currency": "EUR",
-      "amount": 2300.00
+      "amount": 2300.0
     },
     "markupFee": {
       "currency": "EUR",
-      "amount": 2300.00
+      "amount": 2300.0
     },
     "markupFeePercentage": "markupFeePercentage",
     "cardAcceptorId": null,
     "cardAcceptorAddress": {
+      "addressLines": [
+        "Address Line 1",
+        "Address Line 2"
+      ],
+      "department": "IT Department",
+      "subDepartment": "Development",
       "streetName": "street",
       "buildingNumber": "buildNum",
-      "townName": "town",
+      "buildingName": "Building Name",
+      "floor": "3rd Floor",
+      "postBox": "PO Box 123",
+      "room": "Room 301",
       "postCode": "post",
+      "townName": "town",
+      "townLocationName": "Town Location",
+      "districtName": "District Name",
+      "countrySubDivision": "Region",
       "country": "EU"
     },
     "merchantCategoryCode": "merchantCategoryCode",
@@ -1029,24 +1432,37 @@
     "bookingDate": "2020-01-09",
     "transactionAmount": {
       "currency": "EUR",
-      "amount": -900.00
+      "amount": -900.0
     },
     "currencyExchange": null,
     "originalAmount": {
       "currency": "EUR",
-      "amount": -900.00
+      "amount": -900.0
     },
     "markupFee": {
       "currency": "EUR",
-      "amount": -900.00
+      "amount": -900.0
     },
     "markupFeePercentage": "markupFeePercentage",
     "cardAcceptorId": null,
     "cardAcceptorAddress": {
+      "addressLines": [
+        "Address Line 1",
+        "Address Line 2"
+      ],
+      "department": "IT Department",
+      "subDepartment": "Development",
       "streetName": "street",
       "buildingNumber": "buildNum",
-      "townName": "town",
+      "buildingName": "Building Name",
+      "floor": "3rd Floor",
+      "postBox": "PO Box 123",
+      "room": "Room 301",
       "postCode": "post",
+      "townName": "town",
+      "townLocationName": "Town Location",
+      "districtName": "District Name",
+      "countrySubDivision": "Region",
       "country": "EU"
     },
     "merchantCategoryCode": "merchantCategoryCode",
@@ -1062,24 +1478,37 @@
     "bookingDate": "2020-01-09",
     "transactionAmount": {
       "currency": "EUR",
-      "amount": -700.00
+      "amount": -700.0
     },
     "currencyExchange": null,
     "originalAmount": {
       "currency": "EUR",
-      "amount": -700.00
+      "amount": -700.0
     },
     "markupFee": {
       "currency": "EUR",
-      "amount": -700.00
+      "amount": -700.0
     },
     "markupFeePercentage": "markupFeePercentage",
     "cardAcceptorId": null,
     "cardAcceptorAddress": {
+      "addressLines": [
+        "Address Line 1",
+        "Address Line 2"
+      ],
+      "department": "IT Department",
+      "subDepartment": "Development",
       "streetName": "street",
       "buildingNumber": "buildNum",
-      "townName": "town",
+      "buildingName": "Building Name",
+      "floor": "3rd Floor",
+      "postBox": "PO Box 123",
+      "room": "Room 301",
       "postCode": "post",
+      "townName": "town",
+      "townLocationName": "Town Location",
+      "districtName": "District Name",
+      "countrySubDivision": "Region",
       "country": "EU"
     },
     "merchantCategoryCode": "merchantCategoryCode",
@@ -1095,24 +1524,37 @@
     "bookingDate": "2020-01-09",
     "transactionAmount": {
       "currency": "EUR",
-      "amount": 30000.00
+      "amount": 30000.0
     },
     "currencyExchange": null,
     "originalAmount": {
       "currency": "EUR",
-      "amount": 30000.00
+      "amount": 30000.0
     },
     "markupFee": {
       "currency": "EUR",
-      "amount": 30000.00
+      "amount": 30000.0
     },
     "markupFeePercentage": "markupFeePercentage",
     "cardAcceptorId": null,
     "cardAcceptorAddress": {
+      "addressLines": [
+        "Address Line 1",
+        "Address Line 2"
+      ],
+      "department": "IT Department",
+      "subDepartment": "Development",
       "streetName": "street",
       "buildingNumber": "buildNum",
-      "townName": "town",
+      "buildingName": "Building Name",
+      "floor": "3rd Floor",
+      "postBox": "PO Box 123",
+      "room": "Room 301",
       "postCode": "post",
+      "townName": "town",
+      "townLocationName": "Town Location",
+      "districtName": "District Name",
+      "countrySubDivision": "Region",
       "country": "EU"
     },
     "merchantCategoryCode": "merchantCategoryCode",

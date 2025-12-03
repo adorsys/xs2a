@@ -21,6 +21,9 @@ package de.adorsys.psd2.consent.service;
 import de.adorsys.psd2.aspsp.profile.domain.AspspSettings;
 import de.adorsys.psd2.aspsp.profile.domain.ais.AisAspspProfileSetting;
 import de.adorsys.psd2.aspsp.profile.domain.ais.ConsentTypeSetting;
+import de.adorsys.psd2.aspsp.profile.domain.vop.VopAspspProfileSetting;
+import de.adorsys.psd2.aspsp.profile.domain.vop.VopxReference;
+import de.adorsys.psd2.aspsp.profile.domain.security.SecurityAspspProfileSetting;
 import de.adorsys.psd2.aspsp.profile.service.AspspProfileService;
 import de.adorsys.psd2.consent.domain.consent.ConsentEntity;
 import de.adorsys.psd2.consent.repository.AuthorisationRepository;
@@ -48,7 +51,7 @@ import static org.mockito.Mockito.*;
 class AisConsentConfirmationExpirationServiceTest {
     private static final LocalDate TOMORROW = LocalDate.now().plusDays(1);
     private static final LocalDate TODAY = LocalDate.now();
-    private final List<String> EXTERNAL_IDS = List.of("first id","second id","third id");
+    private final List<String> EXTERNAL_IDS = List.of("first id", "second id", "third id");
 
     @InjectMocks
     private AisConsentConfirmationExpirationServiceImpl expirationService;
@@ -139,20 +142,20 @@ class AisConsentConfirmationExpirationServiceTest {
 
     @Test
     void updateConsentListOnConfirmationExpirationByExternalIds() {
-        //When
+        // When
         expirationService.updateConsentListOnConfirmationExpirationByExternalIds(EXTERNAL_IDS);
 
-        //Then
+        // Then
         verify(consentJpaRepository, times(1)).expireConsentsByIds(EXTERNAL_IDS);
         verify(authorisationRepository, times(1)).updateAuthorisationByConsentIds(EXTERNAL_IDS);
     }
 
     @Test
     void isConfirmationExpired_nullInput() {
-        //When
+        // When
         boolean actual = expirationService.isConfirmationExpired(null);
 
-        //Then
+        // Then
         assertFalse(actual);
     }
 
@@ -164,6 +167,12 @@ class AisConsentConfirmationExpirationServiceTest {
     }
 
     private AspspSettings buildAspspSettings(Long notConfirmedConsentExpirationTimeMs) {
-        return new AspspSettings(new AisAspspProfileSetting(new ConsentTypeSetting(false, false, false, 0, notConfirmedConsentExpirationTimeMs, 0, false, false), null, null, null, null), null, null, null, null);
+        VopxReference vopxReference = new VopxReference("VOP API", "VOP Documentation", "1.0");
+        VopAspspProfileSetting vop = new VopAspspProfileSetting(vopxReference, List.of("DEDICATED", "INTEGRATED"), null);
+        SecurityAspspProfileSetting security = new SecurityAspspProfileSetting(true, true);
+        return new AspspSettings(
+                new AisAspspProfileSetting(new ConsentTypeSetting(false, false, false, 0,
+                        notConfirmedConsentExpirationTimeMs, 0, false, false), null, null, null, null),
+                null, null, vop, security, null, null);
     }
 }

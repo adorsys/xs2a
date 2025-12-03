@@ -28,5 +28,13 @@ import de.adorsys.psd2.xs2a.domain.pis.PaymentInitiationResponse;
  * @param <T> type of the payment initiated by this service
  */
 public interface PaymentInitiationService<T extends CommonPayment> {
+    /**
+     * Initiates a payment at the SPI layer.
+     *
+     * @param payment the payment to initiate
+     * @param paymentProduct the payment product
+     * @param psuIdData the PSU identification data
+     * @return payment initiation response
+     */
     PaymentInitiationResponse initiatePayment(T payment, String paymentProduct, PsuIdData psuIdData);
 }

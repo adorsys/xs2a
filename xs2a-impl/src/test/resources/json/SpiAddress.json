@@ -1,7 +1,20 @@
 {
+  "addressLines": [
+    "Herrnstraße 123-34",
+    "Additional Address Line"
+  ],
+  "department": "IT Department",
+  "subDepartment": "Development",
   "streetName": "Herrnstraße",
   "buildingNumber": "123-34",
-  "townName": "Nürnberg",
+  "buildingName": "Tech Center",
+  "floor": "3rd Floor",
+  "postBox": "PO Box 456",
+  "room": "Room 301",
   "postCode": "90431",
+  "townName": "Nürnberg",
+  "townLocationName": "Nürnberg City",
+  "districtName": "Mitte",
+  "countrySubDivision": "Bavaria",
   "country": "DE"
 }

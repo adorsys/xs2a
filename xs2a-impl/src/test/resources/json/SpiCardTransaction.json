@@ -5,16 +5,16 @@
   "bookingDate": "2020-01-27",
   "transactionAmount": {
     "currency": "EUR",
-    "amount": 30000.00
+    "amount": "30000.00"
   },
   "currencyExchange": null,
   "originalAmount": {
     "currency": "EUR",
-    "amount": 30000.00
+    "amount": "30000.00"
   },
   "markupFee": {
     "currency": "EUR",
-    "amount": 30000.00
+    "amount": "30000.00"
   },
   "markupFeePercentage": "markupFeePercentage",
   "cardAcceptorId": null,

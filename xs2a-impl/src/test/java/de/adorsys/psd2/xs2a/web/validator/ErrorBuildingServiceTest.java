@@ -23,10 +23,14 @@ import de.adorsys.psd2.xs2a.core.error.ErrorType;
 import de.adorsys.psd2.xs2a.core.error.MessageError;
 import de.adorsys.psd2.xs2a.core.error.MessageErrorCode;
 import de.adorsys.psd2.xs2a.core.mapper.ServiceType;
+import de.adorsys.psd2.xs2a.core.profile.NotificationSupportedMode;
 import de.adorsys.psd2.xs2a.core.service.validator.ValidationResult;
+import de.adorsys.psd2.xs2a.domain.RequestData;
+import de.adorsys.psd2.xs2a.service.RequestProviderService;
 import de.adorsys.psd2.xs2a.service.discovery.ServiceTypeDiscoveryService;
 import de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorMapperContainer;
 import de.adorsys.psd2.xs2a.service.mapper.psd2.ServiceTypeToErrorTypeMapper;
+import de.adorsys.psd2.xs2a.service.profile.AspspProfileServiceWrapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -39,6 +43,8 @@ import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpServletResponse;
 
 import java.io.IOException;
+import java.util.Collections;
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.any;
@@ -64,6 +70,10 @@ class ErrorBuildingServiceTest {
     private ErrorMapperContainer errorMapperContainer;
     @Mock
     private Xs2aObjectMapper xs2aObjectMapper;
+    @Mock
+    private AspspProfileServiceWrapper aspspProfileServiceWrapper;
+    @Mock
+    private RequestProviderService requestProviderService;
     private MockHttpServletResponse response;
 
     @Captor
@@ -77,6 +87,16 @@ class ErrorBuildingServiceTest {
         when(errorTypeMapper.mapToErrorType(any(), any(Integer.class))).thenReturn(ERROR_PIS_400);
         when(xs2aObjectMapper.writeValueAsString(any())).thenReturn(RESPONSE_TEXT);
         when(errorMapperContainer.getErrorBody(messageErrorCaptor.capture())).thenReturn(null);
+
+        // Configure mocks for new dependencies
+        when(requestProviderService.getRequestIdString()).thenReturn("test-request-id");
+        when(requestProviderService.getRequestData()).thenReturn(
+            new RequestData("/v1/test", UUID.randomUUID(), UUID.randomUUID(), "127.0.0.1", Collections.emptyMap(), null)
+        );
+        when(aspspProfileServiceWrapper.getXReferenceApiName()).thenReturn("Test API");
+        when(aspspProfileServiceWrapper.getXReferenceApiDocument()).thenReturn("https://test.com/doc");
+        when(aspspProfileServiceWrapper.getXReferenceApiVersion()).thenReturn("1.0");
+        when(aspspProfileServiceWrapper.getNotificationSupportedModes()).thenReturn(Collections.singletonList(NotificationSupportedMode.NONE));
     }
 
     @Test

@@ -28,6 +28,7 @@ import java.util.List;
 
 @Data
 public class CardTransaction {
+    private String cardAcceptorName;
     private String cardTransactionId;
     private String terminalId;
     private LocalDate transactionDate;

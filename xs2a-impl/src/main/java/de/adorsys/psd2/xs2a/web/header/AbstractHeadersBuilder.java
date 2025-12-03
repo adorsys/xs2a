@@ -23,8 +23,15 @@ import de.adorsys.psd2.xs2a.service.ScaApproachResolver;
 import lombok.AllArgsConstructor;
 import org.jetbrains.annotations.NotNull;
 
+/**
+ * Abstract base class for building response headers.
+ * Provides common functionality for creating HTTP response headers for various operations.
+ */
 @AllArgsConstructor
 public abstract class AbstractHeadersBuilder {
+    /**
+     * Resolver for determining the SCA approach.
+     */
     protected ScaApproachResolver scaApproachResolver;
 
     /**

@@ -33,6 +33,10 @@ import jakarta.servlet.http.HttpServletRequest;
 import java.util.*;
 import java.util.stream.Collectors;
 
+/**
+ * Abstract base class for method validators.
+ * Provides common validation functionality for HTTP requests.
+ */
 @RequiredArgsConstructor(access = AccessLevel.PROTECTED)
 public abstract class AbstractMethodValidator implements MethodValidator {
 

@@ -19,6 +19,7 @@
 package de.adorsys.psd2.consent.domain;
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 import jakarta.persistence.Column;
@@ -27,6 +28,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Lob;
 
 @Data
+@EqualsAndHashCode(callSuper = false)
 @Entity(name = "aspsp_consent_data")
 @NoArgsConstructor
 public class AspspConsentDataEntity extends InstanceDependableEntity {

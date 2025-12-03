@@ -633,6 +633,32 @@ class AspspProfileServiceWrapperTest {
         assertThat(actual).isEqualTo(86400000);
     }
 
+    @Test
+    void isSecuringBodyMessageSupported() {
+        // Given
+        mockProfile();
+        Boolean expected = true;
+
+        // When
+        Boolean actual = aspspProfileServiceWrapper.isSecuringBodyMessageSupported();
+
+        // Then
+        assertThat(actual).isEqualTo(expected);
+    }
+
+    @Test
+    void isSigningHttpMessageSupported() {
+        // Given
+        mockProfile();
+        Boolean expected = true;
+
+        // When
+        Boolean actual = aspspProfileServiceWrapper.isSigningHttpMessageSupported();
+
+        // Then
+        assertThat(actual).isEqualTo(expected);
+    }
+
     private void mockProfile() {
         when(aspspProfileService.getAspspSettings(INSTANCE_ID)).thenReturn(PROFILE);
     }

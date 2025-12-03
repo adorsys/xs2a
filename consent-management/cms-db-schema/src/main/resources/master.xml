@@ -161,4 +161,6 @@
     <include relativeToChangelogFile="true" file="migration/0131-change-column-date-to-datetime-in-consent-table.xml"/>
     <include relativeToChangelogFile="true" file="migration/0132-change-column-date-to-datetime-in-consent-table.xml"/>
     <include relativeToChangelogFile="true" file="migration/0133-increase-length-of-tppNtfcUri-column.xml"/>
+    <include relativeToChangelogFile="true" file="migration/0134-extend-address.xml"/>
+    <include relativeToChangelogFile="true" file="migration/0135-add-date-time-periodic-payments.xml"/>
 </databaseChangeLog>

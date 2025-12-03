@@ -20,21 +20,52 @@ package de.adorsys.psd2.consent.api;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
+import java.util.List;
 
 @Data
 @Schema(description = "Address", name = "CmsAddress")
 public class CmsAddress {
+    @Schema(description = "Address lines")
+    private List<String> addressLines;
+
+    @Schema(description = "Department")
+    private String department;
+
+    @Schema(description = "Sub department")
+    private String subDepartment;
+
     @Schema(description = "Street name", example = "Herrnstraße")
     private String streetName;
 
     @Schema(description = "Building number", example = "123-34")
     private String buildingNumber;
 
-    @Schema(description = "Town name", example = "Nürnberg")
-    private String townName;
+    @Schema(description = "Building name")
+    private String buildingName;
+
+    @Schema(description = "Floor")
+    private String floor;
+
+    @Schema(description = "Post box")
+    private String postBox;
+
+    @Schema(description = "Room")
+    private String room;
 
     @Schema(description = "Post code", example = "90431")
     private String postCode;
+
+    @Schema(description = "Town name", example = "Nürnberg")
+    private String townName;
+
+    @Schema(description = "Town location name")
+    private String townLocationName;
+
+    @Schema(description = "District name")
+    private String districtName;
+
+    @Schema(description = "Country sub division")
+    private String countrySubDivision;
 
     @Schema(description = "Country", example = "Germany")
     private String country;

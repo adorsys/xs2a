@@ -25,6 +25,9 @@ import de.adorsys.psd2.aspsp.profile.domain.piis.PiisAspspProfileBankSetting;
 import de.adorsys.psd2.aspsp.profile.domain.piis.PiisRedirectLinkBankSetting;
 import de.adorsys.psd2.aspsp.profile.domain.pis.PisRedirectLinkBankSetting;
 import de.adorsys.psd2.aspsp.profile.domain.sb.SbAspspProfileBankSetting;
+import de.adorsys.psd2.aspsp.profile.domain.security.SecurityAspspProfileBankSetting;
+import de.adorsys.psd2.aspsp.profile.domain.vop.VopAspspProfileBankSetting;
+import de.adorsys.psd2.aspsp.profile.domain.vop.VopxReference;
 import de.adorsys.psd2.xs2a.core.profile.NotificationSupportedMode;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import de.adorsys.psd2.xs2a.core.profile.PiisConsentSupported;
@@ -33,6 +36,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -49,64 +53,81 @@ public class NewProfileConfigurationMapper {
         OldBankProfileSetting setting = oldProfileConfiguration.getSetting();
 
         ConsentTypeBankSetting consentTypes = new ConsentTypeBankSetting(setting.isBankOfferedConsentSupport(),
-                                                                         setting.isAllPsd2Support(),
-                                                                         setting.isAvailableAccountsConsentSupported(),
-                                                                         setting.getFrequencyPerDay(),
-                                                                         setting.getNotConfirmedConsentExpirationPeriodMs(),
-                                                                         setting.getConsentLifetime(),
-                                                                         false,
-                                                                         false);
-        AisRedirectLinkBankSetting aisRedirectLinkToOnlineBanking = new AisRedirectLinkBankSetting(setting.getAisRedirectUrlToAspsp());
-        AisTransactionBankSetting transactionParameters = new AisTransactionBankSetting(setting.getAvailableBookingStatuses(),
-                                                                                        setting.isTransactionsWithoutBalancesSupported(),
-                                                                                        Optional.ofNullable(setting.getSupportedTransactionApplicationTypes()).orElse(Collections.emptyList()));
+                setting.isAllPsd2Support(),
+                setting.isAvailableAccountsConsentSupported(),
+                setting.getFrequencyPerDay(),
+                setting.getNotConfirmedConsentExpirationPeriodMs(),
+                setting.getConsentLifetime(),
+                false,
+                false);
+        AisRedirectLinkBankSetting aisRedirectLinkToOnlineBanking = new AisRedirectLinkBankSetting(
+                setting.getAisRedirectUrlToAspsp());
+        AisTransactionBankSetting transactionParameters = new AisTransactionBankSetting(
+                setting.getAvailableBookingStatuses(),
+                setting.isTransactionsWithoutBalancesSupported(),
+                Optional.ofNullable(setting.getSupportedTransactionApplicationTypes()).orElse(Collections.emptyList()));
         DeltaReportBankSetting deltaReportSettings = new DeltaReportBankSetting(setting.isEntryReferenceFromSupported(),
-                                                                                setting.isDeltaListSupported());
-        OneTimeConsentScaBankSetting scaRequirementsForOneTimeConsents = new OneTimeConsentScaBankSetting(setting.isScaByOneTimeAvailableAccountsConsentRequired(), DEFAULT_SCA_BY_ONE_TIME_GLOBAL_CONSENT_REQUIRED);
-        AisAspspProfileBankSetting ais = new AisAspspProfileBankSetting(consentTypes, aisRedirectLinkToOnlineBanking, transactionParameters, deltaReportSettings, scaRequirementsForOneTimeConsents);
-        PisRedirectLinkBankSetting pisRedirectLinkToOnlineBanking = new PisRedirectLinkBankSetting(setting.getPisRedirectUrlToAspsp(),
-                                                                                                   setting.getPisPaymentCancellationRedirectUrlToAspsp(),
-                                                                                                   setting.getPaymentCancellationRedirectUrlExpirationTimeMs());
-        NewPisAspspProfileBankSetting pis = new NewPisAspspProfileBankSetting(setting.getSupportedPaymentTypeAndProductMatrix()
-                                                                                  .entrySet().stream()
-                                                                                  .collect(Collectors.toMap(e -> PaymentType.valueOf(e.getKey()),
-                                                                                                            e -> new ArrayList<>(e.getValue()))),
-                                                                              setting.getTransactionLifetime(),
-                                                                              setting.getNotConfirmedPaymentExpirationPeriodMs(),
-                                                                              setting.isPaymentCancellationAuthorizationMandated(),
-                                                                              pisRedirectLinkToOnlineBanking,
-                                                                              false);
-        PiisAspspProfileBankSetting piis = new PiisAspspProfileBankSetting(setting.isPiisConsentSupported() ? PiisConsentSupported.ASPSP_CONSENT_SUPPORTED : PiisConsentSupported.NOT_SUPPORTED, new PiisRedirectLinkBankSetting(DEFAULT_PIIS_REDIRECT_URL));
+                setting.isDeltaListSupported());
+        OneTimeConsentScaBankSetting scaRequirementsForOneTimeConsents = new OneTimeConsentScaBankSetting(
+                setting.isScaByOneTimeAvailableAccountsConsentRequired(),
+                DEFAULT_SCA_BY_ONE_TIME_GLOBAL_CONSENT_REQUIRED);
+        AisAspspProfileBankSetting ais = new AisAspspProfileBankSetting(consentTypes, aisRedirectLinkToOnlineBanking,
+                transactionParameters, deltaReportSettings, scaRequirementsForOneTimeConsents);
+        PisRedirectLinkBankSetting pisRedirectLinkToOnlineBanking = new PisRedirectLinkBankSetting(
+                setting.getPisRedirectUrlToAspsp(),
+                setting.getPisPaymentCancellationRedirectUrlToAspsp(),
+                setting.getPaymentCancellationRedirectUrlExpirationTimeMs());
+        NewPisAspspProfileBankSetting pis = new NewPisAspspProfileBankSetting(
+                setting.getSupportedPaymentTypeAndProductMatrix()
+                        .entrySet().stream()
+                        .collect(Collectors.toMap(e -> PaymentType.valueOf(e.getKey()),
+                                e -> new ArrayList<>(e.getValue()))),
+                setting.getTransactionLifetime(),
+                setting.getNotConfirmedPaymentExpirationPeriodMs(),
+                setting.isPaymentCancellationAuthorizationMandated(),
+                pisRedirectLinkToOnlineBanking,
+                false);
+        PiisAspspProfileBankSetting piis = new PiisAspspProfileBankSetting(
+                setting.isPiisConsentSupported() ? PiisConsentSupported.ASPSP_CONSENT_SUPPORTED
+                        : PiisConsentSupported.NOT_SUPPORTED,
+                new PiisRedirectLinkBankSetting(DEFAULT_PIIS_REDIRECT_URL));
 
         SbAspspProfileBankSetting sb = new SbAspspProfileBankSetting(setting.isSigningBasketSupported(),
-                                                                     DEFAULT_SIGNING_BASKET_MAX_ENTRIES,
-                                                                     DEFAULT_NOT_CONFIRMED_SB_EXPIRATION_TIME_MS,
-                                                                     DEFAULT_SB_REDIRECT_LINK);
+                DEFAULT_SIGNING_BASKET_MAX_ENTRIES,
+                DEFAULT_NOT_CONFIRMED_SB_EXPIRATION_TIME_MS,
+                DEFAULT_SB_REDIRECT_LINK);
+
+        VopxReference vopxReference = new VopxReference("NextGenPSD2 XS2A Framework",
+                "https://www.berlin-group.org/nextgenpsd2-downloads", "1.3.15_2025-06-25");
+        VopAspspProfileBankSetting vop = new VopAspspProfileBankSetting(vopxReference,
+                List.of("DEDICATED", "INTEGRATED"),
+                List.of("synchronous-mode", "asynchronous-mode"));
+        SecurityAspspProfileBankSetting security = new SecurityAspspProfileBankSetting(true, true);
 
         CommonAspspProfileBankSetting common = new CommonAspspProfileBankSetting(setting.getScaApproaches(),
-                                                                                 setting.getScaRedirectFlow(),
-                                                                                 DEFAULT_OAUTH_CONFIGURATION_URL,
-                                                                                 setting.getStartAuthorisationMode(),
-                                                                                 setting.isTppSignatureRequired(),
-                                                                                 setting.isPsuInInitialRequestMandated(),
-                                                                                 setting.getRedirectUrlExpirationTimeMs(),
-                                                                                 setting.getAuthorisationExpirationTimeMs(),
-                                                                                 setting.isForceXs2aBaseUrl(),
-                                                                                 setting.getXs2aBaseUrl(),
-                                                                                 setting.getSupportedAccountReferenceFields(),
-                                                                                 setting.getMulticurrencyAccountLevel(),
-                                                                                 setting.isCombinedServiceIndicator(),
-                                                                                 true,
-                                                                                 Collections.singletonList(NotificationSupportedMode.NONE),
-                                                                                 false,
-                                                                                 false,
-                                                                                 false,
-                                                                                 TppUriCompliance.WARNING,
-                                                                                 false,
-                                                                                 false);
+                setting.getScaRedirectFlow(),
+                DEFAULT_OAUTH_CONFIGURATION_URL,
+                setting.getStartAuthorisationMode(),
+                setting.isTppSignatureRequired(),
+                setting.isPsuInInitialRequestMandated(),
+                setting.getRedirectUrlExpirationTimeMs(),
+                setting.getAuthorisationExpirationTimeMs(),
+                setting.isForceXs2aBaseUrl(),
+                setting.getXs2aBaseUrl(),
+                setting.getSupportedAccountReferenceFields(),
+                setting.getMulticurrencyAccountLevel(),
+                setting.isCombinedServiceIndicator(),
+                true,
+                Collections.singletonList(NotificationSupportedMode.NONE),
+                false,
+                false,
+                false,
+                TppUriCompliance.WARNING,
+                false,
+                false);
 
         NewProfileConfiguration result = new NewProfileConfiguration();
-        result.setSetting(new NewBankProfileSetting(ais, pis, piis, sb, common));
+        result.setSetting(new NewBankProfileSetting(ais, pis, piis, vop, security, sb, common));
         return result;
     }
 }

@@ -24,6 +24,7 @@ import de.adorsys.psd2.xs2a.service.mapper.psd2.ais.*;
 import de.adorsys.psd2.xs2a.service.mapper.psd2.piis.*;
 import de.adorsys.psd2.xs2a.service.mapper.psd2.pis.*;
 import de.adorsys.psd2.xs2a.service.mapper.psd2.sb.*;
+import de.adorsys.psd2.xs2a.service.mapper.psd2.vop.*;
 import lombok.RequiredArgsConstructor;
 import lombok.Value;
 import org.springframework.http.HttpStatus;
@@ -89,6 +90,13 @@ public class ErrorMapperContainer {
     private final AIS409ErrorMapper ais409ErrorMapper;
     private final AIS429ErrorMapper ais429ErrorMapper;
 
+    private final VOP400ErrorMapper vop400ErrorMapper;
+    private final VOP401ErrorMapper vop401ErrorMapper;
+    private final VOP403ErrorMapper vop403ErrorMapper;
+    private final VOP404ErrorMapper vop404ErrorMapper;
+    private final VOP405ErrorMapper vop405ErrorMapper;
+    private final VOP409ErrorMapper vop409ErrorMapper;
+
     @PostConstruct
     public void fillErrorMapperContainer() {
         mapperContainer.put(PIS_400, pis400ErrorMapper);
@@ -137,6 +145,13 @@ public class ErrorMapperContainer {
         mapperContainer.put(SB_415, sb415ErrorMapper);
         mapperContainer.put(SB_500, sb500ErrorMapper);
         mapperContainer.put(SB_503, sb503ErrorMapper);
+
+        mapperContainer.put(VOP_400, vop400ErrorMapper);
+        mapperContainer.put(VOP_401, vop401ErrorMapper);
+        mapperContainer.put(VOP_403, vop403ErrorMapper);
+        mapperContainer.put(VOP_404, vop404ErrorMapper);
+        mapperContainer.put(VOP_405, vop405ErrorMapper);
+        mapperContainer.put(VOP_409, vop409ErrorMapper);
     }
 
     @SuppressWarnings("unchecked")

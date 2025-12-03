@@ -52,4 +52,49 @@ class ServiceTypeDiscoveryServiceTest {
 
         assertEquals("AIS", result.name());
     }
+
+    @Test
+    void getServiceType_vopPayeeVerifications() {
+        request = new MockHttpServletRequest("POST", "/v1/payee-verifications");
+        cut = new ServiceTypeDiscoveryService(request);
+        ServiceType result = cut.getServiceType();
+
+        assertEquals("VOP", result.name());
+    }
+
+    @Test
+    void getServiceType_vopPayerVerifications() {
+        request = new MockHttpServletRequest("POST", "/v1/payer-verifications");
+        cut = new ServiceTypeDiscoveryService(request);
+        ServiceType result = cut.getServiceType();
+
+        assertEquals("VOP", result.name());
+    }
+
+    @Test
+    void getServiceType_vopPartyVerifications() {
+        request = new MockHttpServletRequest("POST", "/v1/party-verifications");
+        cut = new ServiceTypeDiscoveryService(request);
+        ServiceType result = cut.getServiceType();
+
+        assertEquals("VOP", result.name());
+    }
+
+    @Test
+    void getServiceType_vopBulkPayeeVerifications() {
+        request = new MockHttpServletRequest("POST", "/v1/bulk-payee-verifications");
+        cut = new ServiceTypeDiscoveryService(request);
+        ServiceType result = cut.getServiceType();
+
+        assertEquals("VOP", result.name());
+    }
+
+    @Test
+    void getServiceType_vopCreditorConfirmation() {
+        request = new MockHttpServletRequest("PUT", "/v1/payments/sepa-credit-transfers/123/creditor-confirmation");
+        cut = new ServiceTypeDiscoveryService(request);
+        ServiceType result = cut.getServiceType();
+
+        assertEquals("VOP", result.name());
+    }
 }

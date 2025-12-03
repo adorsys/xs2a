@@ -42,7 +42,7 @@
         <module>xs2a-payment-support</module>
         <module>xs2a-logger</module>
         <module>xs2a-core-consents</module>
-        <module>certificate-generator</module>
+        <module>xs2a-vop-api</module>
     </modules>
     <packaging>pom</packaging>
 
@@ -847,6 +847,7 @@ Use it manually to generate javadocs. Don't commit it
                     <printFailingErrors>true</printFailingErrors>
                     <excludes>
                         <exclude>**/*MapperImpl.java</exclude>
+                        <exclude>**/*VopModelMapperPsd2Impl.java</exclude>
                     </excludes>
                     <excludeRoots>
                         <excludeRoot>target/generated-sources/delombok</excludeRoot>

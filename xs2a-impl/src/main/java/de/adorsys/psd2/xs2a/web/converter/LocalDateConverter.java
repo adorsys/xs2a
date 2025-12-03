@@ -22,10 +22,13 @@ import org.springframework.core.convert.converter.Converter;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
+import java.time.OffsetDateTime;
 import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 
 /**
  * Converter, responsible for properly mapping incoming String in request parameters into LocalDate instance.
+ * Supports plain ISO dates (yyyy-MM-dd) and ISO offset date-times (e.g. 2023-10-05T12:34:56+02:00 or with Z).
  * Applied globally for all controllers.
  * Used primarily in {@link de.adorsys.psd2.api.AccountApi#getTransactionList} and
  * {@link de.adorsys.psd2.api.CardAccountsApi#getCardAccountTransactionList}
@@ -34,10 +37,11 @@ import java.time.format.DateTimeFormatter;
 public class LocalDateConverter implements Converter<String, LocalDate> {
     @Override
     public LocalDate convert(String source) {
-        return convert(source, DateTimeFormatter.ISO_DATE);
-    }
-
-    public LocalDate convert(String source, DateTimeFormatter formatter) {
-        return LocalDate.parse(source, formatter);
+        try {
+            OffsetDateTime odt = OffsetDateTime.parse(source, DateTimeFormatter.ISO_OFFSET_DATE_TIME);
+            return odt.toLocalDate();
+        } catch (DateTimeParseException e) {
+            return LocalDate.parse(source, DateTimeFormatter.ISO_LOCAL_DATE);
+        }
     }
 }

@@ -25,6 +25,7 @@ import jakarta.validation.constraints.NotNull;
 import org.springframework.validation.annotation.Validated;
 
 import java.time.LocalDate;
+import java.time.OffsetDateTime;
 import java.util.Objects;
 
 /**
@@ -39,11 +40,17 @@ public class StandingOrderDetails   {
   @JsonProperty("startDate")
   private LocalDate startDate = null;
 
+  @JsonProperty("startDateTime")
+  private OffsetDateTime startDateTime = null;
+
   @JsonProperty("frequency")
   private FrequencyCode frequency = null;
 
   @JsonProperty("endDate")
   private LocalDate endDate = null;
+
+  @JsonProperty("endDateTime")
+  private OffsetDateTime endDateTime = null;
 
   @JsonProperty("executionRule")
   private ExecutionRule executionRule = null;
@@ -83,6 +90,26 @@ public class StandingOrderDetails   {
 
   public void setStartDate(LocalDate startDate) {
     this.startDate = startDate;
+  }
+
+  public StandingOrderDetails startDateTime(OffsetDateTime startDateTime) {
+      this.startDateTime = startDateTime;
+      return this;
+  }
+
+  /**
+   * The first applicable day and time of execution starting from this timestamp. This attribute is only applicable to instant payments.
+   * @return startDateTime
+   **/
+  @Schema(description = "The first applicable day and time of execution starting from this timestamp. This attribute is only applicable to instant payments.  ")
+  @JsonProperty("startDateTime")
+
+  public OffsetDateTime getStartDateTime() {
+        return startDateTime;
+    }
+
+  public void setStartDateTime(OffsetDateTime startDateTime) {
+      this.startDateTime = startDateTime;
   }
 
   public StandingOrderDetails frequency(FrequencyCode frequency) {
@@ -127,6 +154,27 @@ public class StandingOrderDetails   {
   public void setEndDate(LocalDate endDate) {
     this.endDate = endDate;
   }
+
+  public StandingOrderDetails endDateTime(OffsetDateTime endDateTime) {
+      this.endDateTime = endDateTime;
+      return this;
+  }
+
+  /**
+   * The last applicable day and time of requested execution. This attribute is only applicable to instant payments. If none of the attributes is given, it is an infinite standing order.
+   * @return endDateTime
+   **/
+  @Schema(description = "The last applicable day and time of requested execution. This attribute is only applicable to instant payments. If none of the attributes is given, it is an infinite standing order. ")
+  @JsonProperty("endDateTime")
+
+  public OffsetDateTime getEndDateTime() {
+        return endDateTime;
+    }
+
+  public void setEndDateTime(OffsetDateTime endDateTime) {
+        this.endDateTime = endDateTime;
+    }
+
 
   public StandingOrderDetails executionRule(ExecutionRule executionRule) {
     this.executionRule = executionRule;
@@ -263,8 +311,10 @@ public class StandingOrderDetails   {
     }
     StandingOrderDetails standingOrderDetails = (StandingOrderDetails) o;
     return Objects.equals(this.startDate, standingOrderDetails.startDate) &&
+        Objects.equals(this.startDateTime, standingOrderDetails.startDateTime) &&
         Objects.equals(this.frequency, standingOrderDetails.frequency) &&
         Objects.equals(this.endDate, standingOrderDetails.endDate) &&
+        Objects.equals(this.endDateTime, standingOrderDetails.endDateTime) &&
         Objects.equals(this.executionRule, standingOrderDetails.executionRule) &&
         Objects.equals(this.withinAMonthFlag, standingOrderDetails.withinAMonthFlag) &&
         Objects.equals(this.monthsOfExecution, standingOrderDetails.monthsOfExecution) &&
@@ -275,7 +325,7 @@ public class StandingOrderDetails   {
 
   @Override
   public int hashCode() {
-    return Objects.hash(startDate, frequency, endDate, executionRule, withinAMonthFlag, monthsOfExecution, multiplicator, dayOfExecution, limitAmount);
+    return Objects.hash(startDate, startDateTime, frequency, endDate, endDateTime, executionRule, withinAMonthFlag, monthsOfExecution, multiplicator, dayOfExecution, limitAmount);
   }
 
   @Override
@@ -284,8 +334,10 @@ public class StandingOrderDetails   {
     sb.append("class StandingOrderDetails {\n");
 
     sb.append("    startDate: ").append(toIndentedString(startDate)).append("\n");
-    sb.append("    frequency: ").append(toIndentedString(frequency)).append("\n");
+    sb.append("    startDateTime: ").append(toIndentedString(startDateTime)).append("\n");
     sb.append("    endDate: ").append(toIndentedString(endDate)).append("\n");
+    sb.append("    endDateTime: ").append(toIndentedString(endDateTime)).append("\n");
+    sb.append("    frequency: ").append(toIndentedString(frequency)).append("\n");
     sb.append("    executionRule: ").append(toIndentedString(executionRule)).append("\n");
     sb.append("    withinAMonthFlag: ").append(toIndentedString(withinAMonthFlag)).append("\n");
     sb.append("    monthsOfExecution: ").append(toIndentedString(monthsOfExecution)).append("\n");

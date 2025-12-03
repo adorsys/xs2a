@@ -39,6 +39,9 @@ import java.util.Optional;
  */
 @RequiredArgsConstructor
 public abstract class AbstractQueryParameterValidatorImpl implements QueryParameterValidator {
+    /**
+     * Service for building error messages.
+     */
     protected final ErrorBuildingService errorBuildingService;
 
     /**
@@ -104,6 +107,13 @@ public abstract class AbstractQueryParameterValidatorImpl implements QueryParame
         return queryParameterValues.size() > 1;
     }
 
+    /**
+     * Returns the value of a specific query parameter.
+     *
+     * @param queryParameterMap query parameters from the request
+     * @param parameter the name of the parameter to retrieve
+     * @return the first value of the query parameter if found, null otherwise
+     */
     protected String getQueryParameterValue(Map<String, List<String>> queryParameterMap, String parameter) {
         return Optional.of(parameter)
                    .map(queryParameterMap::get)

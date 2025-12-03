@@ -18,14 +18,26 @@
 
 package de.adorsys.psd2.xs2a.core.domain.address;
 
-
+import de.adorsys.psd2.xs2a.core.domain.address.validation.ValidXs2aAddress;
 import lombok.Data;
+import java.util.List;
 
 @Data
+@ValidXs2aAddress
 public class Xs2aAddress {
+    private List<String> addressLines;
+    private String department;
+    private String subDepartment;
     private String streetName;
     private String buildingNumber;
-    private String townName;
+    private String buildingName;
+    private String floor;
+    private String postBox;
+    private String room;
     private String postCode;
+    private String townName;
+    private String townLocationName;
+    private String districtName;
+    private String countrySubDivision;
     private Xs2aCountryCode country;
 }

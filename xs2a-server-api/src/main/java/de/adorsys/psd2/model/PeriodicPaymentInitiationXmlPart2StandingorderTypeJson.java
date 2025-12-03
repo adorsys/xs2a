@@ -25,6 +25,7 @@ import jakarta.validation.constraints.NotNull;
 import org.springframework.validation.annotation.Validated;
 
 import java.time.LocalDate;
+import java.time.OffsetDateTime;
 import java.util.Objects;
 
 /**
@@ -39,8 +40,14 @@ public class PeriodicPaymentInitiationXmlPart2StandingorderTypeJson   {
   @JsonProperty("startDate")
   private LocalDate startDate = null;
 
+  @JsonProperty("startDateTime")
+  private OffsetDateTime startDateTime = null;
+
   @JsonProperty("endDate")
   private LocalDate endDate = null;
+
+  @JsonProperty("endDateTime")
+  private OffsetDateTime endDateTime = null;
 
   @JsonProperty("executionRule")
   private ExecutionRule executionRule = null;
@@ -76,6 +83,26 @@ public class PeriodicPaymentInitiationXmlPart2StandingorderTypeJson   {
     this.startDate = startDate;
   }
 
+  public PeriodicPaymentInitiationXmlPart2StandingorderTypeJson startDateTime(OffsetDateTime startDateTime) {
+      this.startDateTime = startDateTime;
+      return this;
+  }
+
+  /**
+   * The first applicable day and time of execution starting from this timestamp. This attribute is only applicable to instant payments. Seconds and milli seconds might be ignored by the ASPSP. The ASPSP might restrict the implementation to startDate. This restriction will be part of the ASPSP documentation.
+   * @return startDateTime
+   **/
+  @Schema(description = "The first applicable day and time of execution starting from this timestamp. This attribute is only applicable to instant payments. Seconds and milli seconds might be ignored by the ASPSP. The ASPSP might restrict the implementation to startDate. This restriction will be part of the ASPSP documentation. ")
+  @JsonProperty("startDateTime")
+
+  public OffsetDateTime getStartDateTime() {
+      return startDateTime;
+  }
+
+  public void setStartDateTime(OffsetDateTime startDateTime) {
+      this.startDateTime = startDateTime;
+  }
+
   public PeriodicPaymentInitiationXmlPart2StandingorderTypeJson endDate(LocalDate endDate) {
     this.endDate = endDate;
     return this;
@@ -95,6 +122,26 @@ public class PeriodicPaymentInitiationXmlPart2StandingorderTypeJson   {
 
   public void setEndDate(LocalDate endDate) {
     this.endDate = endDate;
+  }
+
+  public PeriodicPaymentInitiationXmlPart2StandingorderTypeJson endDateTime(OffsetDateTime endDateTime) {
+      this.endDateTime = endDateTime;
+      return this;
+  }
+
+  /**
+   * The last applicable day and time of requested execution. This attribute is only applicable to instant payments. If none of the attributes is given, it is an infinite standing order. The ASPSP might restrict the implementation to endDate. This restriction will be part of the ASPSP documentation.
+   * @return endDateTime
+   **/
+  @Schema(description = "The last applicable day and time of requested execution. This attribute is only applicable to instant payments. If none of the attributes is given, it is an infinite standing order. The ASPSP might restrict the implementation to endDate. This restriction will be part of the ASPSP documentation. ")
+  @JsonProperty("endDateTime")
+
+  public OffsetDateTime getEndDateTime() {
+      return endDateTime;
+  }
+
+  public void setEndDateTime(OffsetDateTime endDateTime) {
+      this.endDateTime = endDateTime;
   }
 
   public PeriodicPaymentInitiationXmlPart2StandingorderTypeJson executionRule(ExecutionRule executionRule) {
@@ -193,7 +240,9 @@ public class PeriodicPaymentInitiationXmlPart2StandingorderTypeJson   {
     }
     PeriodicPaymentInitiationXmlPart2StandingorderTypeJson periodicPaymentInitiationXmlPart2StandingorderTypeJson = (PeriodicPaymentInitiationXmlPart2StandingorderTypeJson) o;
     return Objects.equals(this.startDate, periodicPaymentInitiationXmlPart2StandingorderTypeJson.startDate) &&
+        Objects.equals(this.startDateTime, periodicPaymentInitiationXmlPart2StandingorderTypeJson.startDateTime) &&
         Objects.equals(this.endDate, periodicPaymentInitiationXmlPart2StandingorderTypeJson.endDate) &&
+        Objects.equals(this.endDateTime, periodicPaymentInitiationXmlPart2StandingorderTypeJson.endDateTime) &&
         Objects.equals(this.executionRule, periodicPaymentInitiationXmlPart2StandingorderTypeJson.executionRule) &&
         Objects.equals(this.frequency, periodicPaymentInitiationXmlPart2StandingorderTypeJson.frequency) &&
         Objects.equals(this.dayOfExecution, periodicPaymentInitiationXmlPart2StandingorderTypeJson.dayOfExecution) &&
@@ -202,7 +251,7 @@ public class PeriodicPaymentInitiationXmlPart2StandingorderTypeJson   {
 
   @Override
   public int hashCode() {
-    return Objects.hash(startDate, endDate, executionRule, frequency, dayOfExecution, monthsOfExecution);
+    return Objects.hash(startDate, startDateTime, endDate, endDateTime, executionRule, frequency, dayOfExecution, monthsOfExecution);
   }
 
   @Override
@@ -211,7 +260,9 @@ public class PeriodicPaymentInitiationXmlPart2StandingorderTypeJson   {
     sb.append("class PeriodicPaymentInitiationXmlPart2StandingorderTypeJson {\n");
 
     sb.append("    startDate: ").append(toIndentedString(startDate)).append("\n");
+    sb.append("    startDateTime: ").append(toIndentedString(startDateTime)).append("\n");
     sb.append("    endDate: ").append(toIndentedString(endDate)).append("\n");
+    sb.append("    endDateTime: ").append(toIndentedString(endDateTime)).append("\n");
     sb.append("    executionRule: ").append(toIndentedString(executionRule)).append("\n");
     sb.append("    frequency: ").append(toIndentedString(frequency)).append("\n");
     sb.append("    dayOfExecution: ").append(toIndentedString(dayOfExecution)).append("\n");

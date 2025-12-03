@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!--
+  ~ Copyright 2018-2025 adorsys GmbH & Co KG
+  ~
+  ~ This program is free software: you can redistribute it and/or modify it
+  ~ under the terms of the GNU Affero General Public License as published
+  ~ by the Free Software Foundation, either version 3 of the License, or (at
+  ~ your option) any later version. This program is distributed in the hope that
+  ~ it will be useful, but WITHOUT ANY WARRANTY; without even the implied
+  ~ warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+  ~ See the GNU Affero General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU Affero General Public License
+  ~ along with this program. If not, see https://www.gnu.org/licenses/.
+  ~
+  ~ This project is also available under a separate commercial license. You can
+  ~ contact us at sales@adorsys.com.
+  -->
+
+<databaseChangeLog logicalFilePath="db.changelog-1.0.xml" xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.4.xsd">
+
+    <changeSet author="ebr@adorsys.com.ua" id="2025-12-01-1">
+        <comment>Add columns into table pis_address.</comment>
+
+        <addColumn tableName="pis_address">
+            <column name="department" type="VARCHAR(70)"/>
+            <column name="sub_department" type="VARCHAR(70)"/>
+            <column name="building_name" type="VARCHAR(35)"/>
+            <column name="floor" type="VARCHAR(70)"/>
+            <column name="post_box" type="VARCHAR(16)"/>
+            <column name="room" type="VARCHAR(70)"/>
+            <column name="town_location_name" type="VARCHAR(35)"/>
+            <column name="district_name" type="VARCHAR(35)"/>
+            <column name="country_sub_division" type="VARCHAR(35)"/>
+        </addColumn>
+    </changeSet>
+
+    <changeSet author="ebr@adorsys.com.ua" id="2025-12-01-2">
+        <comment>Create table pis_address_lines for storing multiple address lines.</comment>
+
+        <createTable tableName="pis_address_lines">
+            <column name="id" type="BIGINT" autoIncrement="true">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="address_id" type="BIGINT">
+                <constraints nullable="false"
+                             foreignKeyName="fk_pis_address_lines_address"
+                             references="pis_address(address_id)"/>
+            </column>
+            <column name="address_line" type="VARCHAR(200)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="line_order" type="INTEGER">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <addUniqueConstraint columnNames="address_id, line_order" constraintName="uk_pis_address_lines_order"
+                             tableName="pis_address_lines"/>
+    </changeSet>
+
+</databaseChangeLog>

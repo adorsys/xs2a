@@ -30,10 +30,21 @@ public interface PaymentValidationConfig {
     ValidationObject getDebtorName();
 
     //address
+    ValidationObject getAddressLines();
+    ValidationObject getDepartment();
+    ValidationObject getSubDepartment();
     ValidationObject getStreetName();
     ValidationObject getBuildingNumber();
-    ValidationObject getTownName();
+    ValidationObject getBuildingName();
+    ValidationObject getFloor();
+    ValidationObject getPostBox();
+    ValidationObject getRoom();
     ValidationObject getPostCode();
+    ValidationObject getTownName();
+    ValidationObject getTownLocationName();
+    ValidationObject getDistrictName();
+    ValidationObject getCountrySubDivision();
+    ValidationObject getCountry();
 
     //account reference
     ValidationObject getPan();

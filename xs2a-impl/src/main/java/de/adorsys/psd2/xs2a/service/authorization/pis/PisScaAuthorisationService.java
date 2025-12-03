@@ -47,8 +47,20 @@ public interface PisScaAuthorisationService extends ScaApproachServiceTypeProvid
      */
     Xs2aUpdatePisCommonPaymentPsuDataResponse updateCommonPaymentPsuData(PaymentAuthorisationParameters request);
 
+    /**
+     * Updates the payment authorisation.
+     *
+     * @param request the authorisation parameters
+     * @param response the authorisation processor response
+     */
     void updateAuthorisation(CommonAuthorisationParameters request, AuthorisationProcessorResponse response);
 
+    /**
+     * Updates the payment cancellation authorisation.
+     *
+     * @param request the authorisation parameters
+     * @param response the authorisation processor response
+     */
     void updateCancellationAuthorisation(CommonAuthorisationParameters request, AuthorisationProcessorResponse response);
 
     /**

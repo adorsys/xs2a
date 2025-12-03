@@ -31,6 +31,7 @@ import de.adorsys.psd2.xs2a.spi.domain.payment.SpiBulkPayment;
 import de.adorsys.psd2.xs2a.spi.domain.payment.SpiSinglePayment;
 import de.adorsys.psd2.xs2a.spi.domain.payment.SpiTransactionStatus;
 import de.adorsys.psd2.xs2a.spi.domain.payment.response.SpiBulkPaymentInitiationResponse;
+import de.adorsys.psd2.xs2a.spi.domain.payment.response.SpiBulkPaymentExtendedStatusResponse;
 import de.adorsys.psd2.xs2a.spi.domain.payment.response.SpiGetPaymentStatusResponse;
 import de.adorsys.psd2.xs2a.spi.domain.payment.response.SpiPaymentConfirmationCodeValidationResponse;
 import de.adorsys.psd2.xs2a.spi.domain.payment.response.SpiPaymentExecutionResponse;
@@ -61,8 +62,10 @@ public class BulkPaymentSpiMockImpl implements BulkPaymentSpi {
 
     @Override
     @NotNull
-    public SpiResponse<SpiBulkPaymentInitiationResponse> initiatePayment(@NotNull SpiContextData contextData, @NotNull SpiBulkPayment payment, @NotNull SpiAspspConsentDataProvider aspspConsentDataProvider) {
-        log.info("BulkPaymentSpi#initiatePayment: contextData {}, spiBulkPayment {}, aspspConsentData {}", contextData, payment, aspspConsentDataProvider.loadAspspConsentData());
+    public SpiResponse<SpiBulkPaymentInitiationResponse> initiatePayment(@NotNull SpiContextData contextData,
+            @NotNull SpiBulkPayment payment, @NotNull SpiAspspConsentDataProvider aspspConsentDataProvider) {
+        log.info("BulkPaymentSpi#initiatePayment: contextData {}, spiBulkPayment {}, aspspConsentData {}", contextData,
+                payment, aspspConsentDataProvider.loadAspspConsentData());
         SpiBulkPaymentInitiationResponse response = new SpiBulkPaymentInitiationResponse();
         response.setTransactionStatus(SpiTransactionStatus.RCVD);
         response.setPaymentId(UUID.randomUUID().toString());
@@ -76,77 +79,132 @@ public class BulkPaymentSpiMockImpl implements BulkPaymentSpi {
 
         response.setCurrencyConversionFee(new SpiAmount(Currency.getInstance("EUR"), new BigDecimal(1000)));
         response.setEstimatedTotalAmount(new SpiAmount(Currency.getInstance("EUR"), new BigDecimal(2000)));
-        response.setEstimatedInterbankSettlementAmount(new SpiAmount(Currency.getInstance("EUR"), new BigDecimal(1300)));
+        response.setEstimatedInterbankSettlementAmount(
+                new SpiAmount(Currency.getInstance("EUR"), new BigDecimal(1300)));
 
         response.setPsuMessage(SpiMockData.PSU_MESSAGE);
         response.setTppMessages(SpiMockData.TPP_MESSAGES);
         response.setScaMethods(SpiMockData.SCA_METHODS);
 
         return SpiResponse.<SpiBulkPaymentInitiationResponse>builder()
-                   .payload(response)
-                   .build();
+                .payload(response)
+                .build();
     }
 
     @Override
     @NotNull
-    public SpiResponse<SpiBulkPayment> getPaymentById(@NotNull SpiContextData contextData, @NotNull String acceptMediaType, @NotNull SpiBulkPayment payment, @NotNull SpiAspspConsentDataProvider aspspConsentDataProvider) {
+    public SpiResponse<SpiBulkPayment> getPaymentById(@NotNull SpiContextData contextData,
+            @NotNull String acceptMediaType, @NotNull SpiBulkPayment payment,
+            @NotNull SpiAspspConsentDataProvider aspspConsentDataProvider) {
 
         if (payment.getDebtorName() == null) {
             payment.setDebtorName(DEBTOR_NAME);
         }
 
-        log.info("BulkPaymentSpi#getPaymentById: contextData {}, spiBulkPayment {}, aspspConsentData {}", contextData, payment, aspspConsentDataProvider.loadAspspConsentData());
+        log.info("BulkPaymentSpi#getPaymentById: contextData {}, spiBulkPayment {}, aspspConsentData {}", contextData,
+                payment, aspspConsentDataProvider.loadAspspConsentData());
 
         return SpiResponse.<SpiBulkPayment>builder()
-                   .payload(payment)
-                   .build();
+                .payload(payment)
+                .build();
     }
 
     @Override
     @NotNull
-    public SpiResponse<SpiGetPaymentStatusResponse> getPaymentStatusById(@NotNull SpiContextData contextData, @NotNull String acceptMediaType, @NotNull SpiBulkPayment payment, @NotNull SpiAspspConsentDataProvider aspspConsentDataProvider) {
-        log.info("BulkPaymentSpi#getPaymentStatusById: contextData {}, spiBulkPayment {}, aspspConsentData {}", contextData, payment, aspspConsentDataProvider.loadAspspConsentData());
+    public SpiResponse<SpiGetPaymentStatusResponse> getPaymentStatusById(@NotNull SpiContextData contextData,
+            @NotNull String acceptMediaType, @NotNull SpiBulkPayment payment,
+            @NotNull SpiAspspConsentDataProvider aspspConsentDataProvider) {
+        log.info("BulkPaymentSpi#getPaymentStatusById: contextData {}, spiBulkPayment {}, aspspConsentData {}",
+                contextData, payment, aspspConsentDataProvider.loadAspspConsentData());
 
         return SpiResponse.<SpiGetPaymentStatusResponse>builder()
-                   .payload(new SpiGetPaymentStatusResponse(payment.getPaymentStatus(), true, SpiGetPaymentStatusResponse.RESPONSE_TYPE_JSON, null, PSU_MESSAGE,
-                                                            SpiMockData.SPI_LINKS,
-                                                            SpiMockData.TPP_MESSAGES))
-                   .build();
+                .payload(new SpiGetPaymentStatusResponse(payment.getPaymentStatus(), true,
+                        SpiGetPaymentStatusResponse.RESPONSE_TYPE_JSON, null, PSU_MESSAGE,
+                        SpiMockData.SPI_LINKS,
+                        SpiMockData.TPP_MESSAGES))
+                .build();
     }
 
     @Override
     @NotNull
-    public SpiResponse<SpiPaymentExecutionResponse> executePaymentWithoutSca(@NotNull SpiContextData contextData, @NotNull SpiBulkPayment payment, @NotNull SpiAspspConsentDataProvider aspspConsentDataProvider) {
-        log.info("BulkPaymentSpi#executePaymentWithoutSca: contextData {}, spiBulkPayment {}, aspspConsentData {}", contextData, payment, aspspConsentDataProvider.loadAspspConsentData());
+    public SpiResponse<SpiBulkPaymentExtendedStatusResponse> getBulkPaymentExtendedStatusById(
+            @NotNull SpiContextData contextData, @NotNull String acceptMediaType, @NotNull SpiBulkPayment payment,
+            @NotNull SpiAspspConsentDataProvider aspspConsentDataProvider) {
+        log.info(
+                "BulkPaymentSpi#getBulkPaymentExtendedStatusById: contextData {}, acceptMediaType {}, spiBulkPayment {}, aspspConsentData {}",
+                contextData, acceptMediaType, payment, aspspConsentDataProvider.loadAspspConsentData());
 
-        return SpiResponse.<SpiPaymentExecutionResponse>builder()
-                   .payload(new SpiPaymentExecutionResponse(SpiTransactionStatus.ACCP))
-                   .build();
+        SpiBulkPaymentExtendedStatusResponse response = new SpiBulkPaymentExtendedStatusResponse(
+                "ACTC", // groupStatus - AccepTed Customer Credit Transfer
+                null, // reasonCode - no specific reason for this status
+                null, // reasonProprietary
+                true, // fundsAvailable
+                null, // originalTransactionInformationAndStatus
+                "10.00 EUR", // transactionFees
+                "2.50 EUR", // currencyConversionFees
+                "1512.50 EUR", // estimatedTotalAmount
+                "1500.00 EUR", // estimatedInterbankSettlementAmount
+                PSU_MESSAGE, // psuMessage
+                DEBTOR_NAME, // ownerNames
+                null, // paymentStatusRaw
+                SpiMockData.TPP_MESSAGES // tppMessageInformation
+        );
+
+        return SpiResponse.<SpiBulkPaymentExtendedStatusResponse>builder()
+                .payload(response)
+                .build();
     }
 
     @Override
     @NotNull
-    public SpiResponse<SpiPaymentExecutionResponse> verifyScaAuthorisationAndExecutePaymentWithPaymentResponse(@NotNull SpiContextData contextData, @NotNull SpiScaConfirmation spiScaConfirmation, @NotNull SpiBulkPayment payment, @NotNull SpiAspspConsentDataProvider aspspConsentDataProvider) {
-        log.info("BulkPaymentSpi#verifyScaAuthorisationAndExecutePayment: contextData {}, spiScaConfirmation{}, spiBulkPayment {}, aspspConsentData {}", contextData, spiScaConfirmation, payment, aspspConsentDataProvider.loadAspspConsentData());
+    public SpiResponse<SpiPaymentExecutionResponse> executePaymentWithoutSca(@NotNull SpiContextData contextData,
+            @NotNull SpiBulkPayment payment, @NotNull SpiAspspConsentDataProvider aspspConsentDataProvider) {
+        log.info("BulkPaymentSpi#executePaymentWithoutSca: contextData {}, spiBulkPayment {}, aspspConsentData {}",
+                contextData, payment, aspspConsentDataProvider.loadAspspConsentData());
 
         return SpiResponse.<SpiPaymentExecutionResponse>builder()
-                   .payload(new SpiPaymentExecutionResponse(SpiTransactionStatus.ACCP))
-                   .build();
+                .payload(new SpiPaymentExecutionResponse(SpiTransactionStatus.ACCP))
+                .build();
     }
 
     @Override
-    public @NotNull SpiResponse<SpiPaymentConfirmationCodeValidationResponse> checkConfirmationCode(@NotNull SpiContextData contextData, @NotNull SpiCheckConfirmationCodeRequest spiCheckConfirmationCodeRequest, @NotNull SpiAspspConsentDataProvider aspspConsentDataProvider) {
-        log.info("BulkPaymentSpi#checkConfirmationCode: contextData {}, spiCheckConfirmationCodeRequest{}, authorisationId {}, aspspConsentData {}", contextData, spiCheckConfirmationCodeRequest.getConfirmationCode(), spiCheckConfirmationCodeRequest.getAuthorisationId(), aspspConsentDataProvider.loadAspspConsentData());
+    @NotNull
+    public SpiResponse<SpiPaymentExecutionResponse> verifyScaAuthorisationAndExecutePaymentWithPaymentResponse(
+            @NotNull SpiContextData contextData, @NotNull SpiScaConfirmation spiScaConfirmation,
+            @NotNull SpiBulkPayment payment, @NotNull SpiAspspConsentDataProvider aspspConsentDataProvider) {
+        log.info(
+                "BulkPaymentSpi#verifyScaAuthorisationAndExecutePayment: contextData {}, spiScaConfirmation{}, spiBulkPayment {}, aspspConsentData {}",
+                contextData, spiScaConfirmation, payment, aspspConsentDataProvider.loadAspspConsentData());
+
+        return SpiResponse.<SpiPaymentExecutionResponse>builder()
+                .payload(new SpiPaymentExecutionResponse(SpiTransactionStatus.ACCP))
+                .build();
+    }
+
+    @Override
+    public @NotNull SpiResponse<SpiPaymentConfirmationCodeValidationResponse> checkConfirmationCode(
+            @NotNull SpiContextData contextData,
+            @NotNull SpiCheckConfirmationCodeRequest spiCheckConfirmationCodeRequest,
+            @NotNull SpiAspspConsentDataProvider aspspConsentDataProvider) {
+        log.info(
+                "BulkPaymentSpi#checkConfirmationCode: contextData {}, spiCheckConfirmationCodeRequest{}, authorisationId {}, aspspConsentData {}",
+                contextData, spiCheckConfirmationCodeRequest.getConfirmationCode(),
+                spiCheckConfirmationCodeRequest.getAuthorisationId(), aspspConsentDataProvider.loadAspspConsentData());
 
         return SpiResponse.<SpiPaymentConfirmationCodeValidationResponse>builder()
-                   .payload(new SpiPaymentConfirmationCodeValidationResponse(SpiScaStatus.FINALISED, SpiTransactionStatus.ACSP))
-                   .build();
+                .payload(new SpiPaymentConfirmationCodeValidationResponse(SpiScaStatus.FINALISED,
+                        SpiTransactionStatus.ACSP))
+                .build();
     }
 
     @Override
     @NotNull
-    public SpiResponse<SpiPaymentConfirmationCodeValidationResponse> notifyConfirmationCodeValidation(@NotNull SpiContextData contextData, boolean confirmationCodeValidationResult, @NotNull SpiBulkPayment payment, boolean isCancellation, @NotNull SpiAspspConsentDataProvider aspspConsentDataProvider) {
-        return paymentService.notifyConfirmationCodeValidation(confirmationCodeValidationResult, payment, isCancellation);
+    public SpiResponse<SpiPaymentConfirmationCodeValidationResponse> notifyConfirmationCodeValidation(
+            @NotNull SpiContextData contextData, boolean confirmationCodeValidationResult,
+            @NotNull SpiBulkPayment payment, boolean isCancellation,
+            @NotNull SpiAspspConsentDataProvider aspspConsentDataProvider) {
+        return paymentService.notifyConfirmationCodeValidation(confirmationCodeValidationResult, payment,
+                isCancellation);
     }
 
     private SpiSinglePayment buildSpiSinglePayment(String paymentId) {
@@ -154,17 +212,17 @@ public class BulkPaymentSpiMockImpl implements BulkPaymentSpi {
         payment.setPaymentId(paymentId);
         payment.setEndToEndIdentification("WBG-123456789");
         payment.setDebtorAccount(SpiAccountReference.builder()
-                                     .iban("DE89370400440532013000")
-                                     .currency(Currency.getInstance("EUR"))
-                                     .build());
+                .iban("DE89370400440532013000")
+                .currency(Currency.getInstance("EUR"))
+                .build());
         payment.setInstructedAmount(new SpiAmount(Currency.getInstance("EUR"), new BigDecimal(50)));
         payment.setCreditorAccount(SpiAccountReference.builder()
-                                       .iban("DE52500105173911841934")
-                                       .currency(Currency.getInstance("EUR"))
-                                       .build());
+                .iban("DE52500105173911841934")
+                .currency(Currency.getInstance("EUR"))
+                .build());
         payment.setCreditorAgent("FSDFSASGSGF");
         payment.setCreditorName("WBG");
-        payment.setCreditorAddress(new SpiAddress("Herrnstraße", "123-34", "Nürnberg", "90431", "DE"));
+        payment.setCreditorAddress(new SpiAddress(null,null,null,null,null,null,null,null,null,null,"Herrnstraße", "123-34", "Nürnberg", "90431", "DE"));
         payment.setRemittanceInformationUnstructuredArray(Collections.singletonList("Ref. Number WBG-1234"));
         payment.setRequestedExecutionDate(LocalDate.of(2020, Month.JANUARY, 1));
         payment.setRequestedExecutionTime(OffsetDateTime.of(2020, 1, 1, 12, 0, 0, 0, ZoneOffset.UTC));

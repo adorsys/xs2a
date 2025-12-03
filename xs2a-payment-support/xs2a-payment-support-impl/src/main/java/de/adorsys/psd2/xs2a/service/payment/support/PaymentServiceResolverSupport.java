@@ -35,6 +35,8 @@ import de.adorsys.psd2.xs2a.service.payment.read.ReadCommonPaymentService;
 import de.adorsys.psd2.xs2a.service.payment.read.ReadPaymentService;
 import de.adorsys.psd2.xs2a.service.payment.status.ReadCommonPaymentStatusService;
 import de.adorsys.psd2.xs2a.service.payment.status.ReadPaymentStatusService;
+import de.adorsys.psd2.xs2a.service.payment.status.ReadBulkPaymentExtendedStatusService;
+import de.adorsys.psd2.xs2a.service.payment.status.ReadCommonBulkPaymentExtendedStatusService;
 import de.adorsys.psd2.xs2a.service.payment.support.cancel.CancelCertainPaymentService;
 import de.adorsys.psd2.xs2a.service.payment.support.create.CreateBulkPaymentService;
 import de.adorsys.psd2.xs2a.service.payment.support.create.CreatePeriodicPaymentService;
@@ -60,6 +62,8 @@ public class PaymentServiceResolverSupport implements PaymentServiceResolver {
 
     private final ReadCommonPaymentStatusService readCommonPaymentStatusService;
     private final ReadPaymentStatusFactory readPaymentStatusFactory;
+
+    private final ReadCommonBulkPaymentExtendedStatusService readCommonBulkPaymentExtendedStatusService;
 
     private final CancelCommonPaymentService cancelCommonPaymentService;
     private final CancelCertainPaymentService cancelCertainPaymentService;
@@ -113,6 +117,18 @@ public class PaymentServiceResolverSupport implements PaymentServiceResolver {
         }
 
         return readPaymentStatusFactory.getService(Prefixes.SERVICE_PREFIX.getValue() + pisCommonPaymentResponse.getPaymentType().getValue());
+    }
+
+    /**
+     * Returns definite service for reading bulk payment extended status.
+     *
+     * @param pisCommonPaymentResponse {@link PisCommonPaymentResponse} object
+     * @return definite implementation of
+     *         {@link ReadBulkPaymentExtendedStatusService}
+     */
+    @Override
+    public ReadBulkPaymentExtendedStatusService getReadBulkPaymentExtendedStatusService(PisCommonPaymentResponse pisCommonPaymentResponse) {
+        return readCommonBulkPaymentExtendedStatusService;
     }
 
     /**

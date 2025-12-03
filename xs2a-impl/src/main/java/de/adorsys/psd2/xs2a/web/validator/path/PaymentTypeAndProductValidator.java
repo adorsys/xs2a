@@ -37,7 +37,6 @@ import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.PRODUCT_UNKNOWN_W
 @RequiredArgsConstructor
 public class PaymentTypeAndProductValidator {
     private final AspspProfileServiceWrapper aspspProfileServiceWrapper;
-
     /**
      * Validates payment type and payment product by checking whether it's supported by the ASPSP profile
      *

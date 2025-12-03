@@ -44,4 +44,5 @@ public class EventConsentEntity implements EventPsuDataList, Serializable {
         joinColumns = @JoinColumn(name = "consent_id"),
         inverseJoinColumns = @JoinColumn(name = "psu_data_id"))
     private List<EventPsuData> psuDataList = new ArrayList<>();
+
 }

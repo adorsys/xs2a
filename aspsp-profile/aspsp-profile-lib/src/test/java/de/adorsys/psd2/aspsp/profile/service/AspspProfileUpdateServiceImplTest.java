@@ -19,8 +19,10 @@
 package de.adorsys.psd2.aspsp.profile.service;
 
 import de.adorsys.psd2.aspsp.profile.config.BankProfileSetting;
+import de.adorsys.psd2.aspsp.profile.domain.security.SecurityAspspProfileBankSetting;
 import de.adorsys.psd2.aspsp.profile.config.ProfileConfigurations;
 import de.adorsys.psd2.aspsp.profile.domain.AspspSettings;
+import de.adorsys.psd2.aspsp.profile.domain.security.SecurityAspspProfileSetting;
 import de.adorsys.psd2.aspsp.profile.domain.MulticurrencyAccountLevel;
 import de.adorsys.psd2.aspsp.profile.domain.SupportedAccountReferenceField;
 import de.adorsys.psd2.aspsp.profile.domain.ais.*;
@@ -35,6 +37,9 @@ import de.adorsys.psd2.aspsp.profile.domain.pis.PisRedirectLinkBankSetting;
 import de.adorsys.psd2.aspsp.profile.domain.pis.PisRedirectLinkSetting;
 import de.adorsys.psd2.aspsp.profile.domain.sb.SbAspspProfileBankSetting;
 import de.adorsys.psd2.aspsp.profile.domain.sb.SbAspspProfileSetting;
+import de.adorsys.psd2.aspsp.profile.domain.vop.VopAspspProfileSetting;
+import de.adorsys.psd2.aspsp.profile.domain.vop.VopAspspProfileBankSetting;
+import de.adorsys.psd2.aspsp.profile.domain.vop.VopxReference;
 import de.adorsys.psd2.aspsp.profile.mapper.AspspSettingsToBankProfileSettingMapper;
 import de.adorsys.psd2.xs2a.core.ais.BookingStatus;
 import de.adorsys.psd2.xs2a.core.profile.*;
@@ -66,6 +71,9 @@ class AspspProfileUpdateServiceImplTest {
     private static final String AIS_REDIRECT_LINK = "https://aspsp-mock-integ.cloud.adorsys.de/view/account/";
     private static final String PIIS_REDIRECT_LINK = "https://aspsp-mock-integ.cloud.adorsys.de/piis/account/";
     private static final String SB_REDIRECT_LINK = "http://localhost:4200/signing-basket/{redirect-id}/{encrypted-basket-id}";
+    private static final String VOP_X_REFERENCE_API_NAME = "VOP API";
+    private static final String VOP_X_REFERENCE_API_DOCUMENT = "VOP Documentation";
+    private static final String VOP_X_REFERENCE_API_VERSION = "1.0";
     private static final MulticurrencyAccountLevel MULTICURRENCY_ACCOUNT_LEVEL_SUPPORTED = MulticurrencyAccountLevel.SUBACCOUNT;
     private static final List<BookingStatus> AVAILABLE_BOOKING_STATUSES = getBookingStatuses();
     private static final List<SupportedAccountReferenceField> SUPPORTED_ACCOUNT_REFERENCE_FIELDS = getSupportedAccountReferenceFields();
@@ -94,14 +102,17 @@ class AspspProfileUpdateServiceImplTest {
     private static final String XS2A_BASE_LINKS_URL = "http://myhost.com/";
     private static final ScaRedirectFlow SCA_REDIRECT_FLOW = ScaRedirectFlow.REDIRECT;
     private static final boolean ENTRY_REFERENCE_FROM_SUPPORTED = true;
-    private static final List<String> SUPPORTED_TRANSACTION_APPLICATION_TYPES = Arrays.asList("application/json", "application/xml");
+    private static final List<String> SUPPORTED_TRANSACTION_APPLICATION_TYPES = Arrays.asList("application/json",
+            "application/xml");
     private static final StartAuthorisationMode START_AUTHORISATION_MODE = StartAuthorisationMode.AUTO;
     private static final boolean ACCOUNT_OWNER_INFORMATION_SUPPORTED = true;
     private static final boolean TRUSTED_BENEFICIARIES_SUPPORTED = true;
     private static final String COUNTRY_VALIDATION_SUPPORTED = "DE";
-    private static final List<String> SUPPORTED_TRANSACTION_STATUS_FORMATS = Arrays.asList("application/json", "application/xml");
+    private static final List<String> SUPPORTED_TRANSACTION_STATUS_FORMATS = Arrays.asList("application/json",
+            "application/xml");
     private static final boolean IS_CHECK_TPP_ROLES_FROM_CERTIFICATE = true;
-    private static final List<NotificationSupportedMode> ASPSP_NOTIFICATIONS_SUPPORTED = Collections.singletonList(NotificationSupportedMode.NONE);
+    private static final List<NotificationSupportedMode> ASPSP_NOTIFICATIONS_SUPPORTED = Collections
+            .singletonList(NotificationSupportedMode.NONE);
     private static final boolean AUTHORISATION_CONFIRMATION_REQUEST_MANDATED = false;
     private static final boolean AUTHORISATION_CONFIRMATION_CHECK_BY_XS2A = false;
     private static final boolean CHECK_URI_COMPLIANCE_TO_DOMAIN_SUPPORTED = false;
@@ -115,7 +126,8 @@ class AspspProfileUpdateServiceImplTest {
     private ProfileConfigurations profileConfigurations;
 
     @Spy
-    private AspspSettingsToBankProfileSettingMapper profileSettingMapper = Mappers.getMapper(AspspSettingsToBankProfileSettingMapper.class);
+    private AspspSettingsToBankProfileSettingMapper profileSettingMapper = Mappers
+            .getMapper(AspspSettingsToBankProfileSettingMapper.class);
 
     @BeforeEach
     void setUp() {
@@ -124,48 +136,63 @@ class AspspProfileUpdateServiceImplTest {
 
     @Test
     void updateScaApproaches_success() {
-        //When:
+        // When:
         aspspProfileUpdateService.updateScaApproaches(Collections.singletonList(REDIRECT_APPROACH), INSTANCE_ID);
 
-        //Then:
-        assertEquals(Collections.singletonList(REDIRECT_APPROACH), profileConfigurations.getSetting(INSTANCE_ID).getCommon().getScaApproachesSupported());
+        // Then:
+        assertEquals(Collections.singletonList(REDIRECT_APPROACH),
+                profileConfigurations.getSetting(INSTANCE_ID).getCommon().getScaApproachesSupported());
     }
 
     @Test
     void updateAspspSettings_success_ais() {
-        //When:
+        // When:
         aspspProfileUpdateService.updateAspspSettings(buildAspspSettings(), INSTANCE_ID);
 
-        //Then:
+        // Then:
         BankProfileSetting setting = profileConfigurations.getSetting(INSTANCE_ID);
-        assertEquals(ACCOUNT_ACCESS_FREQUENCY_PER_DAY, setting.getAis().getConsentTypes().getAccountAccessFrequencyPerDay());
+        assertEquals(ACCOUNT_ACCESS_FREQUENCY_PER_DAY,
+                setting.getAis().getConsentTypes().getAccountAccessFrequencyPerDay());
         assertEquals(MAX_CONSENT_VALIDITY_DAYS, setting.getAis().getConsentTypes().getMaxConsentValidityDays());
-        assertEquals(BANK_OFFERED_CONSENT_SUPPORTED, setting.getAis().getConsentTypes().isBankOfferedConsentSupported());
-        assertEquals(NOT_CONFIRMED_CONSENT_EXPIRATION_TIME_MS, setting.getAis().getConsentTypes().getNotConfirmedConsentExpirationTimeMs());
-        assertEquals(AVAILABLE_ACCOUNTS_CONSENT_SUPPORTED, setting.getAis().getConsentTypes().isAvailableAccountsConsentSupported());
+        assertEquals(BANK_OFFERED_CONSENT_SUPPORTED,
+                setting.getAis().getConsentTypes().isBankOfferedConsentSupported());
+        assertEquals(NOT_CONFIRMED_CONSENT_EXPIRATION_TIME_MS,
+                setting.getAis().getConsentTypes().getNotConfirmedConsentExpirationTimeMs());
+        assertEquals(AVAILABLE_ACCOUNTS_CONSENT_SUPPORTED,
+                setting.getAis().getConsentTypes().isAvailableAccountsConsentSupported());
         assertEquals(GLOBAL_CONSENT_SUPPORTED, setting.getAis().getConsentTypes().isGlobalConsentSupported());
         assertEquals(AIS_REDIRECT_LINK, setting.getAis().getRedirectLinkToOnlineBanking().getAisRedirectUrlToAspsp());
-        assertEquals(AVAILABLE_BOOKING_STATUSES, setting.getAis().getTransactionParameters().getAvailableBookingStatuses());
-        assertEquals(TRANSACTIONS_WITHOUT_BALANCES_SUPPORTED, setting.getAis().getTransactionParameters().isTransactionsWithoutBalancesSupported());
-        assertEquals(SUPPORTED_TRANSACTION_APPLICATION_TYPES, setting.getAis().getTransactionParameters().getSupportedTransactionApplicationTypes());
+        assertEquals(AVAILABLE_BOOKING_STATUSES,
+                setting.getAis().getTransactionParameters().getAvailableBookingStatuses());
+        assertEquals(TRANSACTIONS_WITHOUT_BALANCES_SUPPORTED,
+                setting.getAis().getTransactionParameters().isTransactionsWithoutBalancesSupported());
+        assertEquals(SUPPORTED_TRANSACTION_APPLICATION_TYPES,
+                setting.getAis().getTransactionParameters().getSupportedTransactionApplicationTypes());
         assertEquals(DELTA_LIST_SUPPORTED, setting.getAis().getDeltaReportSettings().isDeltaListSupported());
-        assertEquals(ENTRY_REFERENCE_FROM_SUPPORTED, setting.getAis().getDeltaReportSettings().isEntryReferenceFromSupported());
-        assertEquals(SCA_BY_ONE_TIME_AVAILABLE_CONSENT_REQUIRED, setting.getAis().getScaRequirementsForOneTimeConsents().isScaByOneTimeAvailableAccountsConsentRequired());
+        assertEquals(ENTRY_REFERENCE_FROM_SUPPORTED,
+                setting.getAis().getDeltaReportSettings().isEntryReferenceFromSupported());
+        assertEquals(SCA_BY_ONE_TIME_AVAILABLE_CONSENT_REQUIRED, setting.getAis().getScaRequirementsForOneTimeConsents()
+                .isScaByOneTimeAvailableAccountsConsentRequired());
     }
 
     @Test
     void updateAspspSettings_success_pis() {
-        //When:
+        // When:
         aspspProfileUpdateService.updateAspspSettings(buildAspspSettings(), INSTANCE_ID);
 
-        //Then:
+        // Then:
         BankProfileSetting setting = profileConfigurations.getSetting(INSTANCE_ID);
         assertEquals(MAX_TRANSACTION_VALIDITY_DAYS, setting.getPis().getMaxTransactionValidityDays());
-        assertEquals(PAYMENT_CANCELLATION_AUTHORISATION_MANDATED, setting.getPis().isPaymentCancellationAuthorisationMandated());
-        assertEquals(NOT_CONFIRMED_PAYMENT_EXPIRATION_TIME_MS, setting.getPis().getNotConfirmedPaymentExpirationTimeMs());
-        assertEquals(SUPPORTED_PAYMENT_TYPE_AND_PRODUCT_MATRIX, setting.getPis().getSupportedPaymentTypeAndProductMatrix());
-        assertEquals(PIS_CANCELLATION_REDIRECT_LINK, setting.getPis().getRedirectLinkToOnlineBanking().getPisPaymentCancellationRedirectUrlToAspsp());
-        assertEquals(PAYMENT_CANCELLATION_REDIRECT_URL_EXPIRATION_TIME_MS, setting.getPis().getRedirectLinkToOnlineBanking().getPaymentCancellationRedirectUrlExpirationTimeMs());
+        assertEquals(PAYMENT_CANCELLATION_AUTHORISATION_MANDATED,
+                setting.getPis().isPaymentCancellationAuthorisationMandated());
+        assertEquals(NOT_CONFIRMED_PAYMENT_EXPIRATION_TIME_MS,
+                setting.getPis().getNotConfirmedPaymentExpirationTimeMs());
+        assertEquals(SUPPORTED_PAYMENT_TYPE_AND_PRODUCT_MATRIX,
+                setting.getPis().getSupportedPaymentTypeAndProductMatrix());
+        assertEquals(PIS_CANCELLATION_REDIRECT_LINK,
+                setting.getPis().getRedirectLinkToOnlineBanking().getPisPaymentCancellationRedirectUrlToAspsp());
+        assertEquals(PAYMENT_CANCELLATION_REDIRECT_URL_EXPIRATION_TIME_MS,
+                setting.getPis().getRedirectLinkToOnlineBanking().getPaymentCancellationRedirectUrlExpirationTimeMs());
         assertEquals(PIS_REDIRECT_LINK, setting.getPis().getRedirectLinkToOnlineBanking().getPisRedirectUrlToAspsp());
         assertEquals(COUNTRY_VALIDATION_SUPPORTED, setting.getPis().getCountryValidationSupported());
         assertEquals(SUPPORTED_TRANSACTION_STATUS_FORMATS, setting.getPis().getSupportedTransactionStatusFormats());
@@ -173,20 +200,20 @@ class AspspProfileUpdateServiceImplTest {
 
     @Test
     void updateAspspSettings_success_piis() {
-        //When:
+        // When:
         aspspProfileUpdateService.updateAspspSettings(buildAspspSettings(), INSTANCE_ID);
 
-        //Then:
+        // Then:
         BankProfileSetting setting = profileConfigurations.getSetting(INSTANCE_ID);
         assertEquals(PIIS_CONSENT_SUPPORTED, setting.getPiis().getPiisConsentSupported());
     }
 
     @Test
     void updateAspspSettings_success_common() {
-        //When:
+        // When:
         aspspProfileUpdateService.updateAspspSettings(buildAspspSettings(), INSTANCE_ID);
 
-        //Then:
+        // Then:
         BankProfileSetting setting = profileConfigurations.getSetting(INSTANCE_ID);
         assertEquals(PSU_IN_INITIAL_REQUEST_MANDATED, setting.getCommon().isPsuInInitialRequestMandated());
         assertEquals(FORCE_XS2A_BASE_LINKS_URL, setting.getCommon().isForceXs2aBaseLinksUrl());
@@ -195,7 +222,8 @@ class AspspProfileUpdateServiceImplTest {
         assertEquals(SIGNING_BASKET_SUPPORTED, setting.getSb().isSigningBasketSupported());
         assertEquals(START_AUTHORISATION_MODE.getValue(), setting.getCommon().getStartAuthorisationMode());
         assertEquals(SUPPORTED_ACCOUNT_REFERENCE_FIELDS, setting.getCommon().getSupportedAccountReferenceFields());
-        assertEquals(MULTICURRENCY_ACCOUNT_LEVEL_SUPPORTED, setting.getCommon().getMulticurrencyAccountLevelSupported());
+        assertEquals(MULTICURRENCY_ACCOUNT_LEVEL_SUPPORTED,
+                setting.getCommon().getMulticurrencyAccountLevelSupported());
         assertEquals(TPP_SIGNATURE_REQUIRED, setting.getCommon().isTppSignatureRequired());
         assertEquals(AIS_PIS_SESSION_SUPPORTED, setting.getCommon().isAisPisSessionsSupported());
         assertEquals(XS2A_BASE_LINKS_URL, setting.getCommon().getXs2aBaseLinksUrl());
@@ -204,59 +232,69 @@ class AspspProfileUpdateServiceImplTest {
 
     private AspspSettings buildAspspSettings() {
         ConsentTypeSetting consentTypes = new ConsentTypeSetting(BANK_OFFERED_CONSENT_SUPPORTED,
-                                                                 GLOBAL_CONSENT_SUPPORTED,
-                                                                 AVAILABLE_ACCOUNTS_CONSENT_SUPPORTED,
-                                                                 ACCOUNT_ACCESS_FREQUENCY_PER_DAY,
-                                                                 NOT_CONFIRMED_CONSENT_EXPIRATION_TIME_MS,
-                                                                 MAX_CONSENT_VALIDITY_DAYS,
-                                                                 ACCOUNT_OWNER_INFORMATION_SUPPORTED,
-                                                                 TRUSTED_BENEFICIARIES_SUPPORTED);
+                GLOBAL_CONSENT_SUPPORTED,
+                AVAILABLE_ACCOUNTS_CONSENT_SUPPORTED,
+                ACCOUNT_ACCESS_FREQUENCY_PER_DAY,
+                NOT_CONFIRMED_CONSENT_EXPIRATION_TIME_MS,
+                MAX_CONSENT_VALIDITY_DAYS,
+                ACCOUNT_OWNER_INFORMATION_SUPPORTED,
+                TRUSTED_BENEFICIARIES_SUPPORTED);
         AisRedirectLinkSetting aisRedirectLinkToOnlineBanking = new AisRedirectLinkSetting(AIS_REDIRECT_LINK);
         AisTransactionSetting transactionParameters = new AisTransactionSetting(AVAILABLE_BOOKING_STATUSES,
-                                                                                TRANSACTIONS_WITHOUT_BALANCES_SUPPORTED,
-                                                                                SUPPORTED_TRANSACTION_APPLICATION_TYPES);
+                TRANSACTIONS_WITHOUT_BALANCES_SUPPORTED,
+                SUPPORTED_TRANSACTION_APPLICATION_TYPES);
         DeltaReportSetting deltaReportSettings = new DeltaReportSetting(ENTRY_REFERENCE_FROM_SUPPORTED,
-                                                                        DELTA_LIST_SUPPORTED);
-        OneTimeConsentScaSetting scaRequirementsForOneTimeConsents = new OneTimeConsentScaSetting(SCA_BY_ONE_TIME_AVAILABLE_CONSENT_REQUIRED, SCA_BY_ONE_TIME_GLOBAL_CONSENT_REQUIRED);
-        AisAspspProfileSetting ais = new AisAspspProfileSetting(consentTypes, aisRedirectLinkToOnlineBanking, transactionParameters, deltaReportSettings, scaRequirementsForOneTimeConsents);
+                DELTA_LIST_SUPPORTED);
+        OneTimeConsentScaSetting scaRequirementsForOneTimeConsents = new OneTimeConsentScaSetting(
+                SCA_BY_ONE_TIME_AVAILABLE_CONSENT_REQUIRED, SCA_BY_ONE_TIME_GLOBAL_CONSENT_REQUIRED);
+        AisAspspProfileSetting ais = new AisAspspProfileSetting(consentTypes, aisRedirectLinkToOnlineBanking,
+                transactionParameters, deltaReportSettings, scaRequirementsForOneTimeConsents);
         PisRedirectLinkSetting pisRedirectLinkToOnlineBanking = new PisRedirectLinkSetting(PIS_REDIRECT_LINK,
-                                                                                           PIS_CANCELLATION_REDIRECT_LINK,
-                                                                                           PAYMENT_CANCELLATION_REDIRECT_URL_EXPIRATION_TIME_MS);
+                PIS_CANCELLATION_REDIRECT_LINK,
+                PAYMENT_CANCELLATION_REDIRECT_URL_EXPIRATION_TIME_MS);
         PisAspspProfileSetting pis = new PisAspspProfileSetting(SUPPORTED_PAYMENT_TYPE_AND_PRODUCT_MATRIX,
-                                                                MAX_TRANSACTION_VALIDITY_DAYS,
-                                                                NOT_CONFIRMED_PAYMENT_EXPIRATION_TIME_MS,
-                                                                PAYMENT_CANCELLATION_AUTHORISATION_MANDATED,
-                                                                pisRedirectLinkToOnlineBanking,
-                                                                COUNTRY_VALIDATION_SUPPORTED,
-                                                                SUPPORTED_TRANSACTION_STATUS_FORMATS,
-                                                                false);
-        PiisAspspProfileSetting piis = new PiisAspspProfileSetting(PIIS_CONSENT_SUPPORTED, new PiisRedirectLinkSetting(PIIS_REDIRECT_LINK));
+                MAX_TRANSACTION_VALIDITY_DAYS,
+                NOT_CONFIRMED_PAYMENT_EXPIRATION_TIME_MS,
+                PAYMENT_CANCELLATION_AUTHORISATION_MANDATED,
+                pisRedirectLinkToOnlineBanking,
+                COUNTRY_VALIDATION_SUPPORTED,
+                SUPPORTED_TRANSACTION_STATUS_FORMATS,
+                false);
+        PiisAspspProfileSetting piis = new PiisAspspProfileSetting(PIIS_CONSENT_SUPPORTED,
+                new PiisRedirectLinkSetting(PIIS_REDIRECT_LINK));
         SbAspspProfileSetting sb = new SbAspspProfileSetting(SIGNING_BASKET_SUPPORTED,
-                                                             SIGNING_BASKET_MAX_ENTRIES,
-                                                             NOT_CONFIRMED_SIGNING_BASKET_EXPIRATION_TIME_MS,
-                                                             SB_REDIRECT_LINK);
+                SIGNING_BASKET_MAX_ENTRIES,
+                NOT_CONFIRMED_SIGNING_BASKET_EXPIRATION_TIME_MS,
+                SB_REDIRECT_LINK);
         CommonAspspProfileSetting common = new CommonAspspProfileSetting(SCA_REDIRECT_FLOW,
-                                                                         OAUTH_CONFIGURATION_URL,
-                                                                         START_AUTHORISATION_MODE,
-                                                                         TPP_SIGNATURE_REQUIRED,
-                                                                         PSU_IN_INITIAL_REQUEST_MANDATED,
-                                                                         REDIRECT_URL_EXPIRATION_TIME_MS,
-                                                                         AUTHORISATION_EXPIRATION_TIME_MS,
-                                                                         FORCE_XS2A_BASE_LINKS_URL,
-                                                                         XS2A_BASE_LINKS_URL,
-                                                                         SUPPORTED_ACCOUNT_REFERENCE_FIELDS,
-                                                                         MULTICURRENCY_ACCOUNT_LEVEL_SUPPORTED,
-                                                                         AIS_PIS_SESSION_SUPPORTED,
-                                                                         IS_CHECK_TPP_ROLES_FROM_CERTIFICATE,
-                                                                         ASPSP_NOTIFICATIONS_SUPPORTED,
-                                                                         AUTHORISATION_CONFIRMATION_REQUEST_MANDATED,
-                                                                         AUTHORISATION_CONFIRMATION_CHECK_BY_XS2A,
-                                                                         CHECK_URI_COMPLIANCE_TO_DOMAIN_SUPPORTED,
-                                                                         TPP_URI_COMPLIANCE_RESPONSE,
-                                                                         false,
-                                                                         false);
+                OAUTH_CONFIGURATION_URL,
+                START_AUTHORISATION_MODE,
+                TPP_SIGNATURE_REQUIRED,
+                PSU_IN_INITIAL_REQUEST_MANDATED,
+                REDIRECT_URL_EXPIRATION_TIME_MS,
+                AUTHORISATION_EXPIRATION_TIME_MS,
+                FORCE_XS2A_BASE_LINKS_URL,
+                XS2A_BASE_LINKS_URL,
+                SUPPORTED_ACCOUNT_REFERENCE_FIELDS,
+                MULTICURRENCY_ACCOUNT_LEVEL_SUPPORTED,
+                AIS_PIS_SESSION_SUPPORTED,
+                IS_CHECK_TPP_ROLES_FROM_CERTIFICATE,
+                ASPSP_NOTIFICATIONS_SUPPORTED,
+                AUTHORISATION_CONFIRMATION_REQUEST_MANDATED,
+                AUTHORISATION_CONFIRMATION_CHECK_BY_XS2A,
+                CHECK_URI_COMPLIANCE_TO_DOMAIN_SUPPORTED,
+                TPP_URI_COMPLIANCE_RESPONSE,
+                false,
+                false);
+        VopxReference vopxReference = new VopxReference(VOP_X_REFERENCE_API_NAME,
+                VOP_X_REFERENCE_API_DOCUMENT,
+                VOP_X_REFERENCE_API_VERSION);
+        VopAspspProfileSetting vop = new VopAspspProfileSetting(vopxReference,
+                null,
+                null);
+        SecurityAspspProfileSetting security = new SecurityAspspProfileSetting(true, true);
 
-        return new AspspSettings(ais, pis, piis, sb, common);
+        return new AspspSettings(ais, pis, piis, vop, security, sb, common);
     }
 
     private BankProfileSetting buildBankProfileSetting() {
@@ -266,16 +304,24 @@ class AspspProfileUpdateServiceImplTest {
         DeltaReportBankSetting deltaReportSettings = new DeltaReportBankSetting();
         OneTimeConsentScaBankSetting scaRequirementsForOneTimeConsents = new OneTimeConsentScaBankSetting();
         AisAspspProfileBankSetting ais = new AisAspspProfileBankSetting(consentTypes,
-                                                                        aisRedirectLinkToOnlineBanking,
-                                                                        transactionParameters,
-                                                                        deltaReportSettings,
-                                                                        scaRequirementsForOneTimeConsents);
+                aisRedirectLinkToOnlineBanking,
+                transactionParameters,
+                deltaReportSettings,
+                scaRequirementsForOneTimeConsents);
         PisRedirectLinkBankSetting pisRedirectLinkToOnlineBanking = new PisRedirectLinkBankSetting();
-        PisAspspProfileBankSetting pis = new PisAspspProfileBankSetting(null, 0, 0, false, pisRedirectLinkToOnlineBanking, COUNTRY_VALIDATION_SUPPORTED, new ArrayList<>(), false);
+        PisAspspProfileBankSetting pis = new PisAspspProfileBankSetting(null, 0, 0, false,
+                pisRedirectLinkToOnlineBanking, COUNTRY_VALIDATION_SUPPORTED, new ArrayList<>(), false);
         PiisAspspProfileBankSetting piis = new PiisAspspProfileBankSetting();
         SbAspspProfileBankSetting sb = new SbAspspProfileBankSetting();
         CommonAspspProfileBankSetting common = new CommonAspspProfileBankSetting();
-        return new BankProfileSetting(ais, pis, piis, sb, common);
+        VopxReference vopxReferenceBankSetting = new VopxReference(VOP_X_REFERENCE_API_NAME,
+                VOP_X_REFERENCE_API_DOCUMENT,
+                VOP_X_REFERENCE_API_VERSION);
+        VopAspspProfileBankSetting vop = new VopAspspProfileBankSetting(vopxReferenceBankSetting,
+                null,
+                null);
+        SecurityAspspProfileBankSetting security = new SecurityAspspProfileBankSetting(true, true);
+        return new BankProfileSetting(ais, pis, piis, vop, security, sb, common);
     }
 
     private static List<SupportedAccountReferenceField> getSupportedAccountReferenceFields() {
@@ -284,10 +330,9 @@ class AspspProfileUpdateServiceImplTest {
 
     private static List<BookingStatus> getBookingStatuses() {
         return Arrays.asList(
-            BOOKED,
-            PENDING,
-            BOTH
-        );
+                BOOKED,
+                PENDING,
+                BOTH);
     }
 
     private static Map<PaymentType, Set<String>> buildSupportedPaymentTypeAndProductMatrix() {

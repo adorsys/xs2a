@@ -100,7 +100,6 @@ public class PaymentController implements PaymentApi {
         }
     }
 
-
     @Override
     public ResponseEntity getPaymentInformation(String paymentService, String paymentProduct, String paymentId, UUID xRequestID, String digest,
                                                 String signature, byte[] tpPSignatureCertificate, String psUIPAddress, String psUIPPort,
@@ -410,6 +409,24 @@ public class PaymentController implements PaymentApi {
         return updatePisAuthorisation(psuData, authorisationId, paymentService, paymentProduct, paymentId, body);
     }
 
+    @Override
+    public ResponseEntity getBulkPaymentExtendedStatus(String paymentProduct, String paymentId, UUID xRequestID,
+                                                        String digest, String signature, byte[] tpPSignatureCertificate,
+                                                       String psUIPAddress, String psUIPPort, String psUAccept,
+                                                       String psUAcceptCharset, String psUAcceptEncoding, String psUAcceptLanguage,
+                                                       String psUUserAgent,String psUHttpMethod, UUID psUDeviceID, String psUGeoLocation) {
+
+        ResponseObject<GetBulkPaymentExtendedStatusResponse> serviceResponse = xs2aPaymentService
+                .getBulkPaymentExtendedStatus(PaymentType.BULK, paymentProduct, paymentId);
+
+        if (serviceResponse.hasError()) {
+            return responseErrorMapper.generateErrorResponse(serviceResponse.getError());
+        }
+
+        return responseMapper.ok(serviceResponse, paymentModelMapperPsd2::mapToBulkPaymentExtendedStatusResponse);
+    }
+
+
     private ResponseEntity<Object> updatePisAuthorisation(PsuIdData psuData, String authorisationId, String paymentService, String paymentProduct, String paymentId, Object body) {
         PaymentAuthorisationParameters request = consentModelMapper.mapToPisUpdatePsuData(psuData, paymentId, authorisationId, getPaymentType(paymentService), paymentProduct, (Map) body);
 
@@ -428,14 +445,14 @@ public class PaymentController implements PaymentApi {
         NotificationModeResponseHeaders notificationHeaders = notificationSupportedModeService.resolveNotificationHeaders(paymentInitiationResponse.getTppNotificationContentPreferred());
 
         String selfLink = Optional.ofNullable(paymentInitiationResponse.getLinks().getSelf())
-                              .map(HrefType::getHref)
-                              .orElseThrow(() -> new IllegalArgumentException("Wrong href type in self link"));
+                .map(HrefType::getHref)
+                .orElseThrow(() -> new IllegalArgumentException("Wrong href type in self link"));
 
         return paymentInitiationHeadersBuilder.buildInitiatePaymentHeaders(paymentInitiationResponse.getAuthorizationId(), selfLink, notificationHeaders);
     }
 
     private PaymentType getPaymentType(String paymentService) {
         return PaymentType.getByValue(paymentService)
-                   .orElseThrow(() -> new WrongPaymentTypeException(paymentService));
+                .orElseThrow(() -> new WrongPaymentTypeException(paymentService));
     }
 }

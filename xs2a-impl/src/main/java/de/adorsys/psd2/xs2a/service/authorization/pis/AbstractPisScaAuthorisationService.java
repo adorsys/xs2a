@@ -30,6 +30,10 @@ import lombok.AllArgsConstructor;
 
 import java.util.Optional;
 
+/**
+ * Abstract base class for PIS (Payment Initiation Service) SCA authorisation services.
+ * Provides common SCA authorisation functionality for payment services.
+ */
 @AllArgsConstructor
 public abstract class AbstractPisScaAuthorisationService implements PisScaAuthorisationService {
     private final PisAuthorisationService authorisationService;

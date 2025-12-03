@@ -400,8 +400,8 @@ class ConfirmationOfFundsControllerTest {
         ResponseHeaders responseHeaders = buildScaApproachHeader();
         when(consentHeadersBuilder.buildUpdatePsuDataHeaders(AUTHORISATION_ID)).thenReturn(responseHeaders);
 
-        doReturn(new ResponseEntity<>(updateConsentPsuDataServiceResponse.getBody(), HttpStatus.OK))
-            .when(responseMapper).ok(any(), any(), any());
+        when(responseMapper.ok(any(ResponseObject.class), any(Function.class), any(ResponseHeaders.class)))
+            .thenReturn(new ResponseEntity<>(updateConsentPsuDataResponse, HttpStatus.OK));
 
         // When
         ResponseEntity responseEntity = confirmationOfFundsController.updateConsentsPsuData(null, CONSENT_ID, AUTHORISATION_ID, body, null, null, null, CORRECT_PSU_ID,

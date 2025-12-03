@@ -97,5 +97,14 @@ public abstract class AbstractReadPaymentStatusService implements ReadPaymentSta
         );
     }
 
+    /**
+     * Retrieves the SPI payment status by ID from the SPI layer.
+     *
+     * @param spiContextData the SPI context data
+     * @param acceptMediaType the accept media type
+     * @param spiPayment the SPI payment object
+     * @param aspspConsentDataProvider the ASPSP consent data provider
+     * @return SPI response containing the payment status
+     */
     protected abstract SpiResponse<SpiGetPaymentStatusResponse> getSpiPaymentStatusById(SpiContextData spiContextData, String acceptMediaType, Object spiPayment, SpiAspspConsentDataProvider aspspConsentDataProvider);
 }

@@ -39,6 +39,9 @@ import java.util.Objects;
 
 
 public class CardTransaction   {
+  @JsonProperty("cardAcceptorName")
+  private String cardAcceptorName = null;
+
   @JsonProperty("cardTransactionId")
   private String cardTransactionId = null;
 
@@ -98,6 +101,24 @@ public class CardTransaction   {
 
   @JsonProperty("proprietaryBankTransactionCode")
   private String proprietaryBankTransactionCode = null;
+
+  public CardTransaction cardAcceptorName(String cardAcceptorName) {
+      this.cardAcceptorName = cardAcceptorName;
+      return this;
+  }
+
+  /**
+   * Get cardAcceptorName
+   * @return cardAcceptorName
+   * **/
+    @Schema(description = "")
+    @JsonProperty("cardAcceptorName")
+    public String getCardAcceptorName() {return cardAcceptorName;}
+
+    public  void setCardAcceptorName(String cardAcceptorName) {
+        this.cardAcceptorName = cardAcceptorName;
+    }
+
 
   public CardTransaction cardTransactionId(String cardTransactionId) {
     this.cardTransactionId = cardTransactionId;
@@ -520,7 +541,8 @@ public class CardTransaction   {
       return false;
     }
     CardTransaction cardTransaction = (CardTransaction) o;
-    return Objects.equals(this.cardTransactionId, cardTransaction.cardTransactionId) &&
+    return Objects.equals(this.cardAcceptorName, cardTransaction.cardAcceptorName) &&
+        Objects.equals(this.cardTransactionId, cardTransaction.cardTransactionId) &&
         Objects.equals(this.terminalId, cardTransaction.terminalId) &&
         Objects.equals(this.transactionDate, cardTransaction.transactionDate) &&
         Objects.equals(this.acceptorTransactionDateTime, cardTransaction.acceptorTransactionDateTime) &&
@@ -544,7 +566,7 @@ public class CardTransaction   {
 
   @Override
   public int hashCode() {
-    return Objects.hash(cardTransactionId, terminalId, transactionDate, acceptorTransactionDateTime, bookingDate, valueDate, transactionAmount, grandTotalAmount, currencyExchange, originalAmount, markupFee, markupFeePercentage, cardAcceptorId, cardAcceptorAddress, cardAcceptorPhone, merchantCategoryCode, maskedPAN, transactionDetails, invoiced, proprietaryBankTransactionCode);
+    return Objects.hash( cardAcceptorName,cardTransactionId, terminalId, transactionDate, acceptorTransactionDateTime, bookingDate, valueDate, transactionAmount, grandTotalAmount, currencyExchange, originalAmount, markupFee, markupFeePercentage, cardAcceptorId, cardAcceptorAddress, cardAcceptorPhone, merchantCategoryCode, maskedPAN, transactionDetails, invoiced, proprietaryBankTransactionCode);
   }
 
   @Override
@@ -552,6 +574,7 @@ public class CardTransaction   {
     StringBuilder sb = new StringBuilder();
     sb.append("class CardTransaction {\n");
 
+    sb.append("    cardAcceptorName: ").append(toIndentedString(cardAcceptorName)).append("\n");
     sb.append("    cardTransactionId: ").append(toIndentedString(cardTransactionId)).append("\n");
     sb.append("    terminalId: ").append(toIndentedString(terminalId)).append("\n");
     sb.append("    transactionDate: ").append(toIndentedString(transactionDate)).append("\n");

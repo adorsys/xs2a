@@ -28,6 +28,7 @@ import java.util.List;
 public class BulkPaymentInitiationJson {
     private Boolean batchBookingPreferred;
     private AccountReference debtorAccount;
+    private CategoryPurposeCode categoryPurposeCode;
     private String debtorName;
     private LocalDate requestedExecutionDate;
     private OffsetDateTime requestedExecutionTime;
