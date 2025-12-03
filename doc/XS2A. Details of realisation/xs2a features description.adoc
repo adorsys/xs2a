@@ -24,3 +24,5 @@ include::Resource Status Notification Service.adoc[Resource Status Notification 
 include::Common features.adoc[Common features]
 
 include::Signing messages at application layer.adoc[Signing messages at application layer (Digest + Signature)]
+
+include::Migration features.adoc[Migration feature]

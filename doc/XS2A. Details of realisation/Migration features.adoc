@@ -1,0 +1,186 @@
+// toc-title definition MUST follow document title without blank line!
+== Migration features
+:toc-title:
+:imagesdir: ../usecases/diagrams
+:toc: left
+
+toc::[]
+
+=== Overview
+
+This document describes the implementation of Migration feature specification requirements in the Xs2a NextGenPSD2 Implementation Guide. The implementation covers major features that were introduced in this version to enhance payment services.
+
+=== Implementation Status
+
+The following features from the Berlin Group specification version 1.3.15 are being implemented:
+
+*  **startDateTime and endDateTime for Standing Orders in Instant Payments**
+*  **Avoid Local Time Without Offsets in Timestamps**
+*  **categoryPurposeCode Attribute at Bulk Level**
+*  **Full Structured Address Support**
+*  **cardAcceptorName and townName Implementation**
+
+Additionally, a new endpoint "Get Bulk Extended Status Request" has been implemented to provide enhanced bulk payment status reporting capabilities.
+
+=== 1. startDateTime and endDateTime for Standing Orders in Instant Payments
+
+==== Specification Reference
+Section 5.3.4.1 and 14.28 of the Berlin Group Implementation Guidelines
+
+==== Implementation Details
+
+The implementation adds `startDateTime` and `endDateTime` fields to periodic payment initiation for instant payments, allowing precise scheduling of standing orders.
+
+**Key Implementation Files:**
+* [`PeriodicPaymentInitiationJson.java`] - Core payment model with LocalDateTime fields
+* [`PeriodicPaymentInitiationXmlPart2.java`] - XML serialization support
+* [`PeriodicPaymentInitiationResponse201Json.java`] - Response model with date fields
+
+**Technical Implementation:**
+- Fields implemented as `LocalDateTime` type for proper timezone handling
+- JSON serialization with `@JsonProperty` annotations
+- XML serialization support for ISO20022 compliance
+- Validation ensures proper date range constraints
+
+
+=== 2. Avoid Local Time Without Offsets in Timestamps
+
+==== Specification Reference
+Section 1.3.13 - Timestamp handling recommendations
+
+==== Implementation Details
+
+The implementation ensures all timestamps are timezone-aware and follow ISO 8601 format with proper offset handling.
+
+**Key Implementation Files:**
+* [`OffsetDateTimeMapper.java`] - Centralized timezone conversion
+* [`LocalDateConverter.java`] - Date conversion with timezone support
+* [`TimestampConverter.java`] - Legacy timestamp handling
+
+**Technical Implementation:**
+- Uses `OffsetDateTime` for API responses with proper timezone offsets
+- Converts `LocalDateTime` to UTC with zone information
+- Maintains backward compatibility with existing timestamp formats
+- ISO 8601 compliant formatting (`yyyy-MM-dd'T'HH:mm:ss.SSSZ`)
+
+
+=== 3. categoryPurposeCode Attribute at Bulk Level
+
+==== Specification Reference
+Section 11.3 - Bulk payment initiation requirements
+
+==== Implementation Details
+
+The implementation adds `categoryPurposeCode` at the bulk payment level to categorize the overall purpose of bulk payment batches.
+
+**Key Implementation Files:**
+* [`BulkPaymentInitiationJson.java`] - Bulk payment model with category purpose
+* [`Xs2aBulkPayment.java`] - Core bulk payment entity
+* [`BulkPaymentInitiationResponse201Json.java`] - Response with category purpose
+
+**Technical Implementation:**
+- Field implemented as `String` type with enumeration validation
+- JSON property mapping with `@JsonProperty("categoryPurposeCode")`
+- XML serialization support for ISO20022 compliance
+- Validation against allowed category purpose codes
+
+
+=== 4. Full Structured Address Support
+
+==== Specification Reference
+Section 14.4 - Structured address requirements
+
+==== Implementation Details
+
+The implementation provides comprehensive structured address support with enhanced validation and all required address components.
+
+**Key Implementation Files:**
+* [`Address.java`] - API-level address model
+* [`Xs2aAddress.java`] - Core address entity
+* [`ValidXs2aAddressValidator.java`] - Address validation logic
+* [`PostalAddress.java`] - Postal address structure
+
+**Technical Implementation:**
+- Multi-layered address models (API, Core, Implementation, SPI)
+- Comprehensive validation ensuring either address lines OR structured address
+- Support for `townName` field as mandatory when address lines are not provided
+- JSON and XML serialization with proper annotations
+- ISO20022 compliant address formatting
+
+
+=== 5. cardAcceptorName and townName Implementation
+
+==== Specification Reference
+Section 1.3.13 - Card transaction reporting requirements
+
+==== Implementation Details
+
+The implementation adds `cardAcceptorName` for card transaction reporting and enhances `townName` support across address structures.
+
+**Key Implementation Files:**
+* [`CardTransaction.java`] - Card transaction model with acceptor name
+* [`Xs2aCardTransaction.java`] - Core card transaction entity
+* [`SpiCardTransaction.java`]- SPI-level card transaction
+
+**cardAcceptorName Implementation:**
+- Field implemented across API, Core, and SPI layers
+- JSON property mapping with `@JsonProperty("cardAcceptorName")`
+- Validation for merchant name formatting
+- Support for card transaction reporting and reconciliation
+
+
+
+=== Validation and Compliance
+
+==== Data Validation
+All new fields include comprehensive validation:
+- Date range validation for `startDateTime` and `endDateTime`
+- Category purpose code enumeration validation
+- Address structure validation ensuring mandatory fields
+- Card acceptor name format validation
+
+=== 6. Get Bulk Extended Status Request
+
+==== Specification Reference
+Section 11.3 - Bulk payment status reporting requirements
+
+==== Overview
+
+A new endpoint has been implemented to provide enhanced bulk payment status reporting capabilities. This endpoint allows checking the overall status of a bulk payment initiation together with reporting rejected transactions, providing comprehensive visibility into bulk payment processing status.
+
+==== Endpoint Details
+
+* **URL**: `GET /v1/bulk-payments/{payment-product}/{paymentId}/extended-status`
+* **HTTP Method**: GET
+* **Purpose**: Check the overall status of a bulk payment initiation together with reporting rejected transactions
+* **Authorization**: Requires proper OAuth2 authentication
+
+==== Implementation Details
+
+The endpoint is implemented across multiple architectural layers:
+
+* **API Layer**: [`PaymentApi`] interface defines the endpoint contract
+* **Controller Layer**: [`BulkPaymentController`] handles HTTP requests
+* **Service Layer**: [`BulkPaymentService`] implements business logic
+* **Validation**: [`BulkPaymentExtendedStatusValidator`] ensures request validity
+
+
+The following sequence diagram illustrates the flow of the Get Bulk Extended Status Request:
+
+image::../images/get_bulk_extended_status_sequence.png[title='Get Bulk Extended Status Request Sequence',  align='center']
+
+
+All error responses follow the standard XS2A error response format with appropriate error codes and messages.
+
+=== Migration Guidelines
+
+==== Database Schema Updates
+* Add new columns for `startDateTime` and `endDateTime` in payment tables
+* Extend address storage to support structured address components
+* Add `categoryPurposeCode` field to bulk payment records
+* Update transaction tables to store `cardAcceptorName` information
+
+=== Conclusion
+The migration features described in this document represent the planned implementation approach for the Berlin Group NextGenPSD2 Framework version 1.3.15 specification. Once fully implemented, these features will enable ASPSPs to offer enhanced payment services to TPPs while maintaining full backward compatibility with existing integrations.
+
+The comprehensive feature set will support modern payment processing requirements including instant payments, enhanced address validation, and detailed bulk payment status reporting, positioning the system for future regulatory requirements and market demands.
