@@ -384,7 +384,7 @@ Test (IT):
     - mvn -ntp failsafe:integration-test failsafe:verify
   variables:
     TESTCONTAINERS_RYUK_DISABLED: "true"
-    TESTCONTAINERS_HOST_OVERRIDE: "docker"
+    TESTCONTAINERS_HOST_OVERRIDE: "host.testcontainers.internal"
     JAVA_VERSION: "21.0.2-open"
     JAVA_TOOL_OPTIONS: "-Djavax.net.ssl.trustStorePassword=changeit -XX:MaxRAM=3G"
 
