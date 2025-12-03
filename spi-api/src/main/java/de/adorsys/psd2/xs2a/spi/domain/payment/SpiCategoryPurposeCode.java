@@ -25,6 +25,7 @@ import com.fasterxml.jackson.annotation.JsonValue;
  * ExternalCategoryPurpose1Code from ISO 20022.
  * Values from ISO 20022 External Code List ExternalCodeSets_2Q2024 August 2024.
  */
+@SuppressWarnings("PMD")
 public enum SpiCategoryPurposeCode {
     BONU("BONU"),
     CASH("CASH"),

@@ -18,6 +18,7 @@
 
 package de.adorsys.psd2.event.core.model;
 
+@SuppressWarnings("PMD")
 public enum EventType {
     /* Signing basket */
     CREATE_SIGNING_BASKET_REQUEST_RECEIVED,

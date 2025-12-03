@@ -21,6 +21,7 @@ package de.adorsys.psd2.core.payment.model;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
 
+@SuppressWarnings("PMD")
 public enum PurposeCode {
     BKDF("BKDF"),
     BKFE("BKFE"),

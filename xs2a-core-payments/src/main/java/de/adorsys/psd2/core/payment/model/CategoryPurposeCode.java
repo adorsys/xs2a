@@ -24,7 +24,7 @@ package de.adorsys.psd2.core.payment.model;
  */
 import com.fasterxml.jackson.annotation.JsonValue;
 import com.fasterxml.jackson.annotation.JsonCreator;
-
+@SuppressWarnings("PMD")
 public enum CategoryPurposeCode {
     BONU("BONU"),
     CASH("CASH"),

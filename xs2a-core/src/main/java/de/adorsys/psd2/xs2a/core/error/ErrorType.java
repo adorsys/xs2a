@@ -24,6 +24,7 @@ import lombok.Getter;
 import java.util.Arrays;
 import java.util.Optional;
 
+@SuppressWarnings("PMD")
 public enum ErrorType {
     PIS_400(ServiceType.PIS, 400),
     PIS_401(ServiceType.PIS, 401),

@@ -32,6 +32,7 @@ import java.security.cert.X509Certificate;
 import java.util.Optional;
 
 @Slf4j
+@SuppressWarnings("PMD")
 public class PSD2QCStatement {
     private static final ASN1ObjectIdentifier idEtsiPsd2QcStatement = new ASN1ObjectIdentifier("0.4.0.19495.2");
 
