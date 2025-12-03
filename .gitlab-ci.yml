@@ -4,7 +4,14 @@
 # Global settings
 # ------------------------------------------------------------------
 
-image: "adorsys/ci-build:latest"
+#image: "adorsys/ci-build:latest"
+image: "gitlab-registry.adorsys.de/adorsys/xs2a/gitlab-ci:latest"
+
+### Authentication for registry docker image for gitlab ci build
+before_script:
+  - apt-get update && apt-get install -y docker.io
+  - docker --version
+  - echo "${ADORSYS_REGISTRY_PASSWORD}" | docker login -u "${ADORSYS_REGISTRY_USER}" --password-stdin gitlab-registry.adorsys.de
 
 # ------------------------------------------------------------------
 # stages
@@ -45,6 +52,11 @@ variables:
   GITHUB_EMAIL: $GITHUB_EMAIL
   GITHUB_SSH_SERVER_FINGERPRINT: $GITHUB_SSH_SERVER_FINGERPRINT
   GITHUB_DEPLOY_KEY_BASE64: $GITHUB_DEPLOY_KEY_BASE64  # Base64-encoded key
+
+## service for docker
+services:
+  - name: docker:dind
+    alias: docker
 
 # ------------------------------------------------------------------
 # reusable yaml anchors
@@ -243,9 +255,14 @@ Lint (Docker compose):
     - develop
     - master
   script:
-    - apt update && apt install yamllint docker-compose make -yq
-    - echo "Run Docker compose lint"
-    - docker-compose -f docker-compose.yml config  -q
+    - apt update && apt install -yq yamllint curl
+    - echo "Installing Docker Compose (v2)"
+    - curl -L "https://github.com/docker/compose/releases/latest/download/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+    - chmod +x /usr/local/bin/docker-compose
+    - echo "Verify Docker Compose version"
+    - docker-compose --version
+    - echo "Run Docker Compose lint"
+    - docker-compose -f docker-compose.yml config -q
 
 Lint (Ci file):
   image: debian:stable-slim
@@ -397,6 +414,7 @@ Test (ASCII Doc):
   image: adorsys/arc42-tools
   variables:
     JAVA_TOOL_OPTIONS: "-Djavax.net.ssl.trustStorePassword=changeit -XX:MaxRAM=3G"
+  before_script: []
   script:
     - make pages
 
