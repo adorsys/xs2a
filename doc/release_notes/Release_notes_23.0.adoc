@@ -6,6 +6,8 @@
 == Dependency version
 
 == [ list of changes for this release here]
+### Migration from berlin group spec: 1.3.12 to 1.3.14.
+
 * Added regulatory clarifications, including townName usage and timestamp offset guidance.
 * Added missing ISO20022 Status Reason Code
 * Introduced optional extended status endpoint for JSON bulk payments (aligned with pain.002).
