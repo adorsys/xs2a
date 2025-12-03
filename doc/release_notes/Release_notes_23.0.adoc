@@ -1,0 +1,24 @@
+= Release notes v.23.0 [dd.mm.2025]
+
+== Table of Contents.
+*
+
+== Dependency version
+
+== [ list of changes for this release here]
+* Added regulatory clarifications, including townName usage and timestamp offset guidance.
+* Added missing ISO20022 Status Reason Code
+* Introduced optional extended status endpoint for JSON bulk payments (aligned with pain.002).
+* Added categoryPurposeCode at bulk level for JSON payment initiation.
+* Added cardAcceptorName to card transaction reports.
+* Added creditorNameConfirmation attribute and  added new codes: RVCM, RVNC, RCVC .
+* Added  startDateTime and endDateTime attributes for Periodic-payment.
+* Added full structured address support for involved parties.
+* Updated bulk status attributes: transactionStatus → groupStatus, singleTransactionStatus → transactionStatus (single payment).
+* Added Group Payment Status Code list (ISO20022).
+* Added VOP-specific data elements to the data overview.
+* Added originalTransactionInformationAndVopStatus parameter.
+* Documented the impact of VOP services on Payment Initiation requests/responses and extended status flows.
+* Added optional "Cancel-PIS" OAuth2 scope prefix for payment cancellation authorisation.
+
+== Service desk issue fixed.

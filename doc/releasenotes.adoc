@@ -6,6 +6,16 @@ For Versioning policy see xref:version_policy.adoc[Versioning, Release and Suppo
 
 For upcoming versions see our xref:roadmap.adoc[Roadmap].
 
+=== Mainline 23.x (Development. Planned to be released after 24.08.2027 as 22.0 Stable version)
+
+* xref:release_notes/Release_notes_23.0.adoc[Version 23.0 (release date: dd.mm.2025)]
+
+
+=== Mainline 22.x (Stable. Supported minimum till 24.08.2027)
+
+* xref:release_notes/Release_notes_22.0.adoc[Version 22.0 (release date: dd.mm.2025)]
+
+
 === Mainline 19.x (Development. Planned to be released after 24.08.2026 as 20.0 Stable version)
 
 * xref:release_notes/Release_notes_19.3.adoc[Version 19.3 (release date: 15.08.2025)]
