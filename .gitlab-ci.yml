@@ -378,10 +378,15 @@ Test (IT):
     - aws
   except:
     - schedules
-  before_script: []
+  # Ensure Docker client targets DinD over TCP and forks inherit env
+  before_script:
+    - export DOCKER_HOST="tcp://docker:2375"
+    - export DOCKER_TLS_CERTDIR=""
+    - export DOCKER_API_VERSION="1.44"
+    - docker version || true
   script:
     - java -XX:+PrintFlagsFinal -version | grep -Ei "maxheapsize|maxram"
-    - mvn -ntp failsafe:integration-test failsafe:verify
+    - DOCKER_HOST=tcp://docker:2375 DOCKER_TLS_CERTDIR= DOCKER_API_VERSION=1.44 TESTCONTAINERS_HOST_OVERRIDE=host.testcontainers.internal mvn -ntp failsafe:integration-test failsafe:verify
   variables:
     TESTCONTAINERS_RYUK_DISABLED: "true"
     TESTCONTAINERS_HOST_OVERRIDE: "host.testcontainers.internal"
