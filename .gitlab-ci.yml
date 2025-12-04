@@ -80,10 +80,9 @@ variables:
     - java -XX:+PrintFlagsFinal -version | grep -Ei "maxheapsize|maxram"
     - mvn -ntp -DskipITs --fail-at-end clean install -q
 
-.push_dockerhub_images_private: &push_dockerhub_images_private
-  <<: *docker_dind_service
+.push_dockerhub_images_private:
+  extends: .docker_dind_service
   before_script:
-    - apt-get update -qq && apt-get install -y -qq docker-ce-cli
     - echo "${ADORSYS_REGISTRY_PASSWORD}" | docker login -u "${ADORSYS_REGISTRY_USER}" --password-stdin gitlab-registry.adorsys.de
   script:
     - docker build -t "${DOCKERHUB_REGISTRY}/${DOCKERHUB_NAMESPACE}/${DOCKER_IMAGE_NAME_CMS_MANAGEMENT}:${DOCKER_TAG}" consent-management/cms-standalone-service
@@ -95,10 +94,9 @@ variables:
     - docker push "${DOCKERHUB_REGISTRY}/${DOCKERHUB_NAMESPACE}/${DOCKER_IMAGE_NAME_CERTIFICATE_GENERATOR}:${DOCKER_TAG}"
     - docker logout
 
-.push_perf_tests_dockerhub_images_private: &push_perf_tests_dockerhub_images_private
-  <<: *docker_dind_service
+.push_perf_tests_dockerhub_images_private:
+  extends: .docker_dind_service
   before_script:
-    - apt-get update -qq && apt-get install -y -qq docker-ce-cli
     - echo "${ADORSYS_REGISTRY_PASSWORD}" | docker login -u "${ADORSYS_REGISTRY_USER}" --password-stdin gitlab-registry.adorsys.de
   script:
     - docker build -t  "${DOCKERHUB_REGISTRY}/${DOCKERHUB_NAMESPACE}/${DOCKER_IMAGE_NAME_JMETER_TEST}:${DOCKER_TAG}" --build-arg build-date=$(date -u +"%Y-%m-%dT%H:%M:%SZ") performance-test
@@ -450,7 +448,7 @@ Build and push images to private repo (develop):
     DOCKER_TAG: develop
     DOCKERHUB_REGISTRY: gitlab-registry.adorsys.de
     DOCKERHUB_NAMESPACE: "adorsys/xs2a/aspsp-xs2a"
-  <<: *push_dockerhub_images_private
+  extends: .push_dockerhub_images_private
 
 Build and push images to private repo (master):
   stage: "Package"
@@ -462,7 +460,7 @@ Build and push images to private repo (master):
     DOCKER_TAG: latest
     DOCKERHUB_REGISTRY: gitlab-registry.adorsys.de
     DOCKERHUB_NAMESPACE: "adorsys/xs2a/aspsp-xs2a"
-  <<: *push_dockerhub_images_private
+  extends: .push_dockerhub_images_private
 
 Build and push images to private repo (Tags):
   stage: "Package"
@@ -474,7 +472,7 @@ Build and push images to private repo (Tags):
     DOCKER_TAG: $CI_COMMIT_TAG
     DOCKERHUB_REGISTRY: gitlab-registry.adorsys.de
     DOCKERHUB_NAMESPACE: "adorsys/xs2a/aspsp-xs2a"
-  <<: *push_dockerhub_images_private
+  extends: .push_dockerhub_images_private
 
 Build and push image to private repo (perf test):
   stage: "Package"
@@ -489,7 +487,7 @@ Build and push image to private repo (perf test):
     DOCKER_TAG: develop
     DOCKERHUB_REGISTRY: gitlab-registry.adorsys.de
     DOCKERHUB_NAMESPACE: "adorsys/xs2a/aspsp-xs2a"
-  <<: *push_perf_tests_dockerhub_images_private
+  extends: .push_perf_tests_dockerhub_images_private
 
 Release snapshot artifacts (develop):
   stage: "Release"
