@@ -1,0 +1,9 @@
+= Release notes v.22.1 [04.12.2025]
+
+== Table of Contents.
+
+== Dependency version.
+
+== [ list of changes for this release here]
+
+== Service desk issue fixed.
