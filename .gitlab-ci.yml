@@ -61,7 +61,7 @@ variables:
   services:
     - name: docker:dind
       alias: docker
-      command: ["--tls=false"]
+      command: ["--host=tcp://0.0.0.0:2375", "--tls=false"]
   variables:
     DOCKER_HOST: tcp://docker:2375
     DOCKER_TLS_CERTDIR: ""
@@ -385,10 +385,11 @@ Test (IT):
     - export DOCKER_HOST="tcp://docker:2375"
     - export DOCKER_TLS_CERTDIR=""
     - export DOCKER_API_VERSION="1.44"
-    - docker version || true
+    - export TESTCONTAINERS_HOST_OVERRIDE="172.17.0.1"
+    - docker --host "$DOCKER_HOST" version || true
   script:
     - java -XX:+PrintFlagsFinal -version | grep -Ei "maxheapsize|maxram"
-    - DOCKER_HOST=tcp://docker:2375 DOCKER_TLS_CERTDIR= DOCKER_API_VERSION=1.44 TESTCONTAINERS_HOST_OVERRIDE=172.17.0.1 mvn -ntp failsafe:integration-test failsafe:verify
+    - DOCKER_HOST="$DOCKER_HOST" DOCKER_TLS_CERTDIR= DOCKER_API_VERSION="$DOCKER_API_VERSION" TESTCONTAINERS_HOST_OVERRIDE="$TESTCONTAINERS_HOST_OVERRIDE" mvn -ntp failsafe:integration-test failsafe:verify
   variables:
     TESTCONTAINERS_RYUK_DISABLED: "true"
     TESTCONTAINERS_HOST_OVERRIDE: "172.17.0.1"
