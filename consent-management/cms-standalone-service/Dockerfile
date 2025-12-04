@@ -1,4 +1,4 @@
-FROM adorsys/java:21
+FROM eclipse-temurin:21-jre
 
 LABEL maintainer="https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a"
 
