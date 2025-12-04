@@ -59,7 +59,7 @@ variables:
 
 .docker_dind_service: &docker_dind_service
   services:
-    - name: docker:dind
+    - name: docker:27.3.1-dind
       alias: docker
       command: ["--host=tcp://0.0.0.0:2375", "--tls=false"]
   variables:
@@ -373,9 +373,9 @@ Build XS2A:
 
 Test (IT):
   stage: "Test"
-  image: maven:3.9.3-eclipse-temurin-21
+  image: maven:3.9-eclipse-temurin-21
   services:
-    - name: docker:dind
+    - name: docker:27.3.1-dind
       alias: docker
       command: ["--host=tcp://0.0.0.0:2375", "--tls=false"]
   tags:
