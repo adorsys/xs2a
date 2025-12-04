@@ -263,8 +263,8 @@ Lint (Docker compose):
   stage: "Lint"
   except:
     - schedules
-    - support-20.x
-    - master-20.x
+    - support-22.x
+    - master-22.x
   script:
     - apt update && apt install -yq yamllint curl
     - echo "Installing Docker Compose (v2)"
@@ -280,8 +280,8 @@ Lint (Ci file):
   stage: "Lint"
   except:
     - schedules
-    - support-20.x
-    - master-20.x
+    - support-22.x
+    - master-22.x
   script:
     - apt-get update && apt-get install yamllint python3-pkg-resources -yq
     - echo "Run Gitlab ci file lint"
@@ -292,8 +292,8 @@ Lint (YAML, JSON, XML):
   stage: "Lint"
   except:
     - schedules
-    - support-20.x
-    - master-20.x
+    - support-22.x
+    - master-22.x
   script:
     - apt-get update && apt-get install jsonlint yamllint libxml2-utils make curl -yq && ln -s /usr/bin/jsonlint-php /usr/bin/jsonlint
     - echo "Run Xs2A core lint"
@@ -308,8 +308,8 @@ Lint (PMD CPD):
   stage: "Lint"
   except:
     - schedules
-    - support-20.x
-    - master-20.x
+    - support-22.x
+    - master-22.x
   script:
     - apt update && apt install make -yq
     - echo "Test java code for PMD and CPD"
@@ -332,8 +332,8 @@ Lint (dockerfiles):
     - aws
   except:
     - schedules
-    - support-20.x
-    - master-20.x
+    - support-22.x
+    - master-22.x
   script:
     - echo "Run Xs2a core dockerfile check"
     - docker run --rm -i hadolint/hadolint < ./consent-management/cms-standalone-service/Dockerfile
@@ -443,7 +443,7 @@ Build and push images to private repo (develop):
   except:
     - schedules
   only:
-    - support-20.x
+    - support-22.x
   variables:
     DOCKER_TAG: develop
     DOCKERHUB_REGISTRY: gitlab-registry.adorsys.de
@@ -492,7 +492,7 @@ Build and push image to private repo (perf test):
 Release snapshot artifacts (develop):
   stage: "Release"
   only:
-    - support-20.x
+    - support-22.x
   except:
     - schedules
   cache: {}
