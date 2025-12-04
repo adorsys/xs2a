@@ -373,28 +373,25 @@ Build XS2A:
 
 Test (IT):
   stage: "Test"
-  image: maven:3.9-eclipse-temurin-21
-  <<: *docker_dind_service
+  image: maven:3.9.3-eclipse-temurin-21
+  services:
+    - name: docker:dind
+      alias: docker
+      command: ["--host=tcp://0.0.0.0:2375", "--tls=false"]
   tags:
     - aws
   except:
     - schedules
-  # Ensure Docker client targets DinD over TCP and forks inherit env
+  variables:
+    DOCKER_HOST: "tcp://docker:2375"
+    DOCKER_TLS_CERTDIR: ""
+    DOCKER_API_VERSION: "1.44"
+    TESTCONTAINERS_RYUK_DISABLED: "true"
+    JAVA_TOOL_OPTIONS: "-Djavax.net.ssl.trustStorePassword=changeit -XX:MaxRAM=3G"
   before_script:
-    - apt-get update -qq && apt-get install -y -qq docker-ce-cli || apt-get install -y -qq docker.io || true
-    - export DOCKER_HOST="tcp://docker:2375"
-    - export DOCKER_TLS_CERTDIR=""
-    - export DOCKER_API_VERSION="1.44"
-    - export TESTCONTAINERS_HOST_OVERRIDE="172.17.0.1"
     - docker --host "$DOCKER_HOST" version || true
   script:
-    - java -XX:+PrintFlagsFinal -version | grep -Ei "maxheapsize|maxram"
-    - DOCKER_HOST="$DOCKER_HOST" DOCKER_TLS_CERTDIR= DOCKER_API_VERSION="$DOCKER_API_VERSION" TESTCONTAINERS_HOST_OVERRIDE="$TESTCONTAINERS_HOST_OVERRIDE" mvn -ntp failsafe:integration-test failsafe:verify
-  variables:
-    TESTCONTAINERS_RYUK_DISABLED: "true"
-    TESTCONTAINERS_HOST_OVERRIDE: "172.17.0.1"
-    JAVA_VERSION: "21.0.2-open"
-    JAVA_TOOL_OPTIONS: "-Djavax.net.ssl.trustStorePassword=changeit -XX:MaxRAM=3G"
+    - mvn -ntp failsafe:integration-test failsafe:verify
 
 Test (Javadoc):
   stage: "Test"
