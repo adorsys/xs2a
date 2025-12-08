@@ -18,27 +18,28 @@
 
 package de.adorsys.psd2.aspsp.profile.domain.vop;
 
-import lombok.Value;
-
+import lombok.*;
 /**
  * Immutable domain model for VOP API reference information.
  * Contains the reference API details that will be included in VOP response headers.
  */
-@Value
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class VopxReference {
 
     /**
      * X-Reference-API-Name header value for VOP API
      */
-    String apiName;
+   private String apiName;
 
     /**
      * X-Reference-API-Document header value for VOP API
      */
-    String apiDocument;
+   private String apiDocument;
 
     /**
      * X-Reference-API-Version header value for VOP API
      */
-    String apiVersion;
+   private String apiVersion;
 }
