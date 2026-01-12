@@ -333,6 +333,7 @@ Lint (dockerfiles):
   image: docker
   stage: "Lint"
   <<: *docker_dind_service
+  before_script: []
   tags:
     - aws
   except:
