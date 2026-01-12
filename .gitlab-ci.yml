@@ -342,6 +342,52 @@ Lint (dockerfiles):
     - docker run --rm -i hadolint/hadolint < ./certificate-generator/Dockerfile
 
 #-------------------------------------------------------------------
+# Owasp Dependency Check (Scheduled: Monday & Thursday at 1:00 AM UTC)
+#-------------------------------------------------------------------
+
+security-scan:
+  stage: "Vulnerability scan"
+  image: maven:3.9.4-eclipse-temurin-21
+  variables:
+    MAVEN_OPTS: "-Dmaven.repo.local=.m2/repository"
+    JAVA_TOOL_OPTIONS: "-Djavax.net.ssl.trustStorePassword=changeit -XX:MaxRAM=3G"
+  rules:
+    # Run on scheduled pipelines (Monday & Thursday configured in GitLab UI)
+    - if: $CI_PIPELINE_SOURCE == "schedule" && $SECURITY_SCAN == "true"
+      when: always
+    # Allow manual trigger from any branch
+    - if: $CI_PIPELINE_SOURCE == "web"
+      when: manual
+      allow_failure: true
+  script:
+    # Verify NVD_API_KEY is set (without exposing the value)
+    - |
+      if [ -n "$NVD_API_KEY" ]; then
+        echo " NVD_API_KEY is set (length: ${#NVD_API_KEY})"
+      else
+        echo " NVD_API_KEY is EMPTY - vulnerabilities will NOT be detected!"
+        exit 1
+      fi
+    # Build locally first to resolve SNAPSHOT dependencies
+    - mvn -B --settings scripts/mvn-release-settings.xml -DskipTests clean install -q
+    # Run dependency-check with NVD API key passed directly as system property
+    - >-
+      mvn -B --settings scripts/mvn-release-settings.xml
+      org.owasp:dependency-check-maven:12.1.9:aggregate
+      -DnvdApiKey="$NVD_API_KEY"
+      -Dformats=HTML
+      -DfailBuildOnCVSS=11
+    # Debug output
+    - echo "=== Dependency Check Report ==="
+    - ls -la target/dependency-check-report.html 2>/dev/null || echo "Report not in target/"
+  artifacts:
+    when: always
+    paths:
+      - target/dependency-check-report.html
+      - target/dependency-check-report.json
+    expire_in: "10 days"
+
+#-------------------------------------------------------------------
 # Compile
 #-------------------------------------------------------------------
 
