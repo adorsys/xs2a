@@ -349,6 +349,8 @@ Lint (dockerfiles):
 security-scan:
   stage: "Vulnerability scan"
   image: maven:3.9.4-eclipse-temurin-21
+  # Override global before_script - this job doesn't need Docker
+  before_script: []
   variables:
     MAVEN_OPTS: "-Dmaven.repo.local=.m2/repository"
     JAVA_TOOL_OPTIONS: "-Djavax.net.ssl.trustStorePassword=changeit -XX:MaxRAM=3G"
