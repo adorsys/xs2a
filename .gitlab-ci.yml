@@ -20,6 +20,7 @@ before_script:
 stages:
   # - "Validate"
   - "Lint"    # Lint files and configuration
+  - "Vulnerability scan"  # Security scanning (scheduled)
   - "Compile" # build jar and provide as artifact
   - "Test"    # run tests and code quality checks
   - "Package" # dockerize jar and push to docker registry
