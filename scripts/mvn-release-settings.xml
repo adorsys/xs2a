@@ -22,14 +22,14 @@
   http://maven.apache.org/xsd/settings-1.0.0.xsd">
     <servers>
         <server>
-            <!-- private artifact repository-->
+            <!-- GitLab Maven registry using CI Job Token (auto-available in all CI jobs) -->
             <id>gitlab-maven</id>
             <configuration>
                 <httpHeaders>
-                <property>
-                    <name>Deploy-Token</name>
-                    <value>${GITLAB_MAVEN_DEPLOY_TOKEN}</value>
-                </property>
+                    <property>
+                        <name>Job-Token</name>
+                        <value>${env.CI_JOB_TOKEN}</value>
+                    </property>
                 </httpHeaders>
             </configuration>
         </server>
