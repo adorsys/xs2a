@@ -401,6 +401,7 @@ security-scan:
 
 Build XS2A:
   stage: "Compile"
+  before_script: []
   except:
     - schedules
   variables:
@@ -447,6 +448,7 @@ Test (IT):
 
 Test (Javadoc):
   stage: "Test"
+  before_script: []
   except:
     - schedules
   variables:
@@ -459,6 +461,7 @@ Test (Javadoc):
 
 Test (Unit Tests):
   stage: "Test"
+  before_script: []
   except:
     - schedules
   <<: *java_tests
@@ -545,6 +548,7 @@ Build and push image to private repo (perf test):
 
 Release snapshot artifacts (develop):
   stage: "Release"
+  before_script: []
   only:
     - support-22.x
   except:
@@ -557,6 +561,7 @@ Release snapshot artifacts (develop):
 
 Release artifacts (tags):
   stage: "Release"
+  before_script: []
   only:
     - tags
   except:
