@@ -356,6 +356,15 @@ security-scan:
   image: maven:3.9.4-eclipse-temurin-21
   # Override global before_script - this job doesn't need Docker
   before_script: []
+  # Increase job timeout since initial NVD sync may take long
+  timeout: 2h
+  # Cache maven repo and dependency-check data to avoid re-downloading NVD DB and artifacts
+  cache:
+    key: "dependency-check-${CI_COMMIT_REF_SLUG}"
+    paths:
+      - .m2/repository
+      - target/dependency-check-data/
+    policy: pull-push
   variables:
     MAVEN_OPTS: "-Dmaven.repo.local=.m2/repository"
     JAVA_TOOL_OPTIONS: "-Djavax.net.ssl.trustStorePassword=changeit -XX:MaxRAM=3G"
@@ -376,13 +385,15 @@ security-scan:
         echo " NVD_API_KEY is EMPTY - vulnerabilities will NOT be detected!"
         exit 1
       fi
-    # Build locally first to resolve SNAPSHOT dependencies
-    - mvn -B --settings scripts/mvn-release-settings.xml -DskipTests clean install -q
-    # Run dependency-check with NVD API key passed directly as system property
+    # Build locally first to resolve SNAPSHOT dependencies. Use a dedicated
+    # dependency-check data directory so we can cache the NVD DB between runs.
+    - mvn -B -T 1C --settings scripts/mvn-release-settings.xml -DskipTests -Ddependency-check.data.directory=target/dependency-check-data clean install -q
+    # Run dependency-check aggregate and point it to the cached data directory.
     - >-
-      mvn -B --settings scripts/mvn-release-settings.xml
+      mvn -B -T 1C --settings scripts/mvn-release-settings.xml
       org.owasp:dependency-check-maven:12.1.9:aggregate
       -DnvdApiKey="$NVD_API_KEY"
+      -Ddependency-check.data.directory=target/dependency-check-data
       -Dformats=HTML
       -DfailBuildOnCVSS=11
     # Debug output
