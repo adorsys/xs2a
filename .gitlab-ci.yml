@@ -262,6 +262,7 @@ variables:
 Lint (Docker compose):
   image: maven:3.9-eclipse-temurin-21
   stage: "Lint"
+  before_script: []
   except:
     - schedules
     - support-22.x
@@ -279,6 +280,7 @@ Lint (Docker compose):
 Lint (Ci file):
   image: debian:stable-slim
   stage: "Lint"
+  before_script: []
   except:
     - schedules
     - support-22.x
@@ -291,6 +293,7 @@ Lint (Ci file):
 Lint (YAML, JSON, XML):
   image: debian:stable-slim
   stage: "Lint"
+  before_script: []
   except:
     - schedules
     - support-22.x
@@ -307,6 +310,7 @@ Lint (YAML, JSON, XML):
 Lint (PMD CPD):
   image: maven:3.9-eclipse-temurin-21
   stage: "Lint"
+  before_script: []
   except:
     - schedules
     - support-22.x
