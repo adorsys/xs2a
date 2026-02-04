@@ -217,8 +217,8 @@
         <maven-compiler-plugin.version>3.12.1</maven-compiler-plugin.version>
         <maven-source-plugin.version>3.3.0</maven-source-plugin.version>
         <maven-gpg-plugin.version>3.0.1</maven-gpg-plugin.version>
-        <jacoco-maven-plugin.version>0.8.11</jacoco-maven-plugin.version>
-        <sonar-maven-plugin.version>3.7.0.1746</sonar-maven-plugin.version>
+        <jacoco-maven-plugin.version>0.8.14</jacoco-maven-plugin.version>
+        <sonar-maven-plugin.version>5.5.0.6356</sonar-maven-plugin.version>
         <maven-javadoc-plugin.version>3.6.0</maven-javadoc-plugin.version>
         <lombok-maven-plugin.version>1.18.4.0</lombok-maven-plugin.version>
 
@@ -248,7 +248,7 @@
         <sonar.core.coveragePlugin>jacoco</sonar.core.coveragePlugin>
         <sonar.java.coveragePlugin>jacoco</sonar.java.coveragePlugin>
         <sonar.dynamicAnalysis>reuseReports</sonar.dynamicAnalysis>
-        <sonar.jacoco.reportPath>${project.basedir}/../target/jacoco.exec</sonar.jacoco.reportPath>
+        <sonar.coverage.jacoco.xmlReportPaths>target/site/jacoco/jacoco.xml</sonar.coverage.jacoco.xmlReportPaths>
         <sonar.moduleName>${project.artifactId}</sonar.moduleName>
         <sonar.language>java</sonar.language>
         <sonar.exclusions>
@@ -283,6 +283,18 @@
             **/event-service-persist-api/**/*
             **/event-service-xs2a-api/**/*
         </sonar.coverage.exclusions>
+        <sonar.projectKey>aspsp-xs2a-support</sonar.projectKey>
+        <sonar.projectName>aspsp-xs2a-support</sonar.projectName>
+        <sonar.qualitygate.wait>true</sonar.qualitygate.wait>
+
+        <sonar.java.pmd.reportPaths>target/pmd.xml</sonar.java.pmd.reportPaths>
+
+        <sonar.dependencyCheck.jsonReportPath>target/dependency-check-report.json</sonar.dependencyCheck.jsonReportPath>
+        <sonar.dependencyCheck.htmlReportPath>target/dependency-check-report.html</sonar.dependencyCheck.htmlReportPath>
+        <sonar.dependencyCheck.summarize>true</sonar.dependencyCheck.summarize>
+        <sonar.dependencyCheck.securityHotspot>true</sonar.dependencyCheck.securityHotspot>
+
+        <dependency-check-maven.version>12.2.0</dependency-check-maven.version>
 
         <!--Javadoc-->
         <javadoc.sourcepath>src/main/java</javadoc.sourcepath>
@@ -736,6 +748,19 @@
                     <artifactId>maven-gpg-plugin</artifactId>
                     <version>${maven-gpg-plugin.version}</version>
                 </plugin>
+
+                <plugin>
+                    <groupId>org.owasp</groupId>
+                    <artifactId>dependency-check-maven</artifactId>
+                    <version>${dependency-check-maven.version}</version>
+                    <configuration>
+                        <formats>
+                            <format>JSON</format>
+                            <format>HTML</format>
+                        </formats>
+                        <failBuildOnCVSS>7</failBuildOnCVSS>
+                    </configuration>
+                </plugin>
             </plugins>
         </pluginManagement>
 <!--
@@ -861,8 +886,6 @@ Use it manually to generate javadocs. Don't commit it
                 <artifactId>jacoco-maven-plugin</artifactId>
                 <version>${jacoco-maven-plugin.version}</version>
                 <configuration>
-                    <destFile>${sonar.jacoco.reportPath}</destFile>
-                    <dataFile>${sonar.jacoco.reportPath}</dataFile>
                     <append>true</append>
                     <excludes>
                         <exclude>**/generated-sources/**</exclude>
