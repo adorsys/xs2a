@@ -7,11 +7,6 @@
 #image: "adorsys/ci-build:latest"
 image: "gitlab-registry.adorsys.de/adorsys/xs2a/gitlab-ci:latest"
 
-### Authentication for registry docker image for gitlab ci build
-before_script:
-  - apt-get update && apt-get install -y docker.io
-  - docker --version
-  - echo "${ADORSYS_REGISTRY_PASSWORD}" | docker login -u "${ADORSYS_REGISTRY_USER}" --password-stdin gitlab-registry.adorsys.de
 
 # ------------------------------------------------------------------
 # stages
@@ -20,7 +15,6 @@ before_script:
 stages:
   # - "Validate"
   - "Lint"    # Lint files and configuration
-  - "Vulnerability scan"  # Security scanning (scheduled)
   - "Compile" # build jar and provide as artifact
   - "Test"    # run tests and code quality checks
   - "Package" # dockerize jar and push to docker registry
@@ -41,8 +35,9 @@ variables:
   # Build variables         #
   ###########################
 
-  JAVA_TOOL_OPTIONS: "-XX:+UnlockExperimentalVMOptions -XX:MaxRAM=3G -XX:MaxRAMFraction=3"
-  MAVEN_OPTS: "-Dmaven.repo.local=.m2/repository"
+  MAVEN_REPO_PATH: ".m2/repository"
+  JAVA_TOOL_OPTIONS: "-XX:+UnlockExperimentalVMOptions -XX:MaxRAM=3G -XX:MaxRAMPercentage=33.0"
+  MAVEN_OPTS: "-Dmaven.repo.local=${CI_PROJECT_DIR}/${MAVEN_REPO_PATH}"
 
   ###########################
   # Github variables         #
@@ -58,7 +53,10 @@ variables:
 # reusable yaml anchors
 # ------------------------------------------------------------------
 
-.docker_dind_service: &docker_dind_service
+.docker_login: &docker_login
+  - echo "${ADORSYS_REGISTRY_PASSWORD}" | docker login -u "${ADORSYS_REGISTRY_USER}" --password-stdin gitlab-registry.adorsys.de
+
+.docker_dind_service:
   services:
     - name: docker:27.3.1-dind
       alias: docker
@@ -68,7 +66,15 @@ variables:
     DOCKER_TLS_CERTDIR: ""
     DOCKER_DRIVER: overlay2
 
+.maven_cache: &maven_cache
+  cache:
+    key: "maven-cache-$CI_COMMIT_REF_SLUG"
+    paths:
+      - "${MAVEN_REPO_PATH}"
+    policy: pull-push
+
 .build_java: &build_java
+  <<: *maven_cache
   script:
     - sdk use java ${JAVA_VERSION}
     - env BUILD_NUMBER=$CI_PIPELINE_IID ./scripts/set_xs2a_connector_version_in_swagger.sh
@@ -76,16 +82,17 @@ variables:
     - mvn -ntp -DskipITs -DskipTests -Dci.build.number=Build\:${CI_PIPELINE_ID} clean install
 
 .java_tests: &java_tests
+  <<: *maven_cache
   script:
     - sdk use java $JAVA_VERSION
     - java -XX:+PrintFlagsFinal -version | grep -Ei "maxheapsize|maxram"
     - mvn -ntp -DskipITs --fail-at-end clean install -q
 
 .push_dockerhub_images_private:
-  extends: .docker_dind_service
-  before_script:
-    - echo "${ADORSYS_REGISTRY_PASSWORD}" | docker login -u "${ADORSYS_REGISTRY_USER}" --password-stdin gitlab-registry.adorsys.de
+  extends:
+    - .docker_dind_service
   script:
+    - *docker_login
     - docker build -t "${DOCKERHUB_REGISTRY}/${DOCKERHUB_NAMESPACE}/${DOCKER_IMAGE_NAME_CMS_MANAGEMENT}:${DOCKER_TAG}" consent-management/cms-standalone-service
     - docker build -t "${DOCKERHUB_REGISTRY}/${DOCKERHUB_NAMESPACE}/${DOCKER_IMAGE_NAME_ASPSP_PROFILE}:${DOCKER_TAG}" aspsp-profile/aspsp-profile-server
     - docker build -t "${DOCKERHUB_REGISTRY}/${DOCKERHUB_NAMESPACE}/${DOCKER_IMAGE_NAME_CERTIFICATE_GENERATOR}:${DOCKER_TAG}" certificate-generator
@@ -96,10 +103,10 @@ variables:
     - docker logout $CI_REGISTRY
 
 .push_perf_tests_dockerhub_images_private:
-  extends: .docker_dind_service
-  before_script:
-    - echo "${ADORSYS_REGISTRY_PASSWORD}" | docker login -u "${ADORSYS_REGISTRY_USER}" --password-stdin gitlab-registry.adorsys.de
+  extends:
+    - .docker_dind_service
   script:
+    - *docker_login
     - docker build -t  "${DOCKERHUB_REGISTRY}/${DOCKERHUB_NAMESPACE}/${DOCKER_IMAGE_NAME_JMETER_TEST}:${DOCKER_TAG}" --build-arg build-date=$(date -u +"%Y-%m-%dT%H:%M:%SZ") performance-test
     - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
     - docker push "${DOCKERHUB_REGISTRY}/${DOCKERHUB_NAMESPACE}/${DOCKER_IMAGE_NAME_JMETER_TEST}:${DOCKER_TAG}"
@@ -107,14 +114,11 @@ variables:
 
 .release_java_private: &release_java_private
   stage: "Release"
+  <<: *maven_cache
   script:
     - sdk use java $BUILD_JAVA_VERSION
     - java -XX:+PrintFlagsFinal -version | grep -Ei "maxheapsize|maxram"
     - mvn -ntp --settings scripts/mvn-release-settings.xml -Pgitlab-maven -DskipTests -U deploy
-  cache:
-    key: "Java_${CI_COMMIT_REF_SLUG}"
-    paths:
-      - /builds/adorsys/xs2a/xs2a-conector-examples/.m2/repository
 
 .sync_changes_github: &sync_changes_github
   image: alpine/git
@@ -155,114 +159,12 @@ variables:
 # ------------------------------------------------------------------
 
 #-------------------------------------------------------------------
-# Validation of commit messages and branch names
-#-------------------------------------------------------------------
-
-# validate_commits_branche_name:
-#   stage: "Validate"
-#   image:
-#     name: alpine:latest
-#     entrypoint: [""]
-#   except:
-#     - tags
-#     - merge_requests
-#   before_script:
-#     - apk update
-#     - apk add --no-cache git bash curl jq
-#     - git --version
-#   script:
-#     - |
-#       cat > validate.sh << 'EOF'
-#       #!/bin/bash
-
-#       # Function to output error messages
-#       print_error() {
-#           echo -e "\nERROR: $1" >&2
-#           exit 1
-#       }
-
-#       # Function to output debug messages (if debug mode is enabled)
-#       print_debug() {
-#           if [ "$DEBUG" == "true" ]; then
-#               echo -e "DEBUG: $1" >&2
-#           fi
-#       }
-
-#       # Debug flag (can be set externally or internally)
-#       DEBUG=false
-
-#       # Get the current branch name
-#       BRANCH_NAME=${CI_COMMIT_REF_NAME:?"CI_COMMIT_REF_NAME is not set"}
-#       echo "Checking branch: $BRANCH_NAME"
-
-#       # Check branch name format
-#       check_branch_name() {
-#           local branch_name="$1"
-#           print_debug "Checking branch name: '$branch_name'"
-
-#           # Branch name patterns
-#           if [[ "$branch_name" =~ ^(master|v2master|develop|v2develop|support-([0-9]+)\.[0-9]+|v2support-([0-9]+)\.[0-9]+|release-([0-9]+(\.[0-9]+){1,2})|v2release-([0-9]+(\.[0-9]+){1,2})|hotfix-([0-9]+\.[0-9]+\.[0-9]+)|v2hotfix-([0-9]+\.[0-9]+\.[0-9]+)|release-([0-9]+\.[0-9]+)-[a-zA-Z0-9_-]+|release-([0-9]+\.[0-9]+\.[0-9]+)-[a-zA-Z0-9_-]+|v2/(feature|setup|bugfix|infra|ci|test|docs|deploy|security|perf|refactor|upgrade)/issue-([0-9]+)-([a-zA-Z0-9_-]+)|v2/PASD/[0-9]+/issue-([0-9]+)-([a-zA-Z0-9_-]+)|(feature|setup|bugfix|infra|ci|test|docs|deploy|security|perf|refactor|upgrade)/issue-([0-9]+)-([a-zA-Z0-9_-]+)|PASD/[0-9]+/issue-([0-9]+)-([a-zA-Z0-9_-]+))$ ]]; then
-#               return 0
-#           fi
-
-#           print_error "Branch name '$branch_name' format is INCORRECT."
-#       }
-
-#       # Check commit message format
-#       check_commit_message() {
-#           local commit_msg="$1"
-#           print_debug "Checking commit message: '$commit_msg'"
-
-#           # Commit message regex
-#           if ! [[ $commit_msg =~ ^(feat|fix|docs|doc|style|refactor|perf|test|chore|upgrade|ci|scan|release)(\([a-zA-Z0-9_-]*\))?:\ [a-zA-Z0-9_-]{3}#[0-9]+\ .+ || $commit_msg =~ ^(feat|fix|docs|doc|style|refactor|perf|test|chore|upgrade|ci|scan|release):\ [a-zA-Z0-9_-]{3}#[0-9]+\ .+ ]]; then
-#               print_error "Commit message format is INCORRECT. Expected format: <type>(<scope>): <developer gitlab username (3 chars)>#<issue-number> <message> OR <type>: <developer gitlab username (3 chars)>#<issue-number> <message>"
-#           fi
-#       }
-
-#       # Ensure no direct pushes to blocked branches
-#       is_blocked_branch() {
-#           local branch="$1"
-#           if [[ "$branch" =~ ^(develop|master|master-[0-9]+(\.[0-9]+){1,2}|release-[0-9]+(\.[0-9]+){1,2}|v2/develop|v2/master|v2/master-[0-9]+(\.[0-9]+){1,2}|v2/release-[0-9]+(\.[0-9]+){1,2})$ ]]; then
-#               return 0 # Blocked branch
-#           else
-#               return 1 # Not blocked
-#           fi
-#       }
-
-#       # Validate branch name
-#       check_branch_name "$BRANCH_NAME"
-
-#       # Get the latest commit hash and validate each commit
-#       COMMITS=$(git log --format="%H" -n 1)
-#       if [ -z "$COMMITS" ]; then
-#           print_error "No commits found to validate"
-#       fi
-
-#       # Loop through each commit to check its message
-#       for commit in $COMMITS; do
-#           COMMIT_MSG=$(git log --format=%s -n 1 $commit)
-#           check_commit_message "$COMMIT_MSG"
-#       done
-
-#       # Ensure no direct pushes to blocked branches
-#       if is_blocked_branch "$BRANCH_NAME"; then
-#           print_error "Direct push to the '$BRANCH_NAME' branch is not allowed."
-#       fi
-
-#       echo "Branch and commit validations passed. Proceeding..."
-#       EOF
-
-#     - chmod +x validate.sh
-#     - ./validate.sh
-
-#-------------------------------------------------------------------
 # lint
 #-------------------------------------------------------------------
 
 Lint (Docker compose):
   image: maven:3.9-eclipse-temurin-21
   stage: "Lint"
-  before_script: []
   except:
     - schedules
     - support-22.x
@@ -280,7 +182,6 @@ Lint (Docker compose):
 Lint (Ci file):
   image: debian:stable-slim
   stage: "Lint"
-  before_script: []
   except:
     - schedules
     - support-22.x
@@ -293,7 +194,6 @@ Lint (Ci file):
 Lint (YAML, JSON, XML):
   image: debian:stable-slim
   stage: "Lint"
-  before_script: []
   except:
     - schedules
     - support-22.x
@@ -310,7 +210,7 @@ Lint (YAML, JSON, XML):
 Lint (PMD CPD):
   image: maven:3.9-eclipse-temurin-21
   stage: "Lint"
-  before_script: []
+  <<: *maven_cache
   except:
     - schedules
     - support-22.x
@@ -320,7 +220,6 @@ Lint (PMD CPD):
     - echo "Test java code for PMD and CPD"
     - echo "DOCKER_HOST=$DOCKER_HOST"
     - mvn -ntp -Dmaven.test.skip=true package pmd:check # commented cause many duplications pmd:cpd-check
-  cache: {}
   artifacts:
     paths:
       - "qa/pmd/pmd-ruleset.xml"
@@ -332,8 +231,8 @@ Lint (PMD CPD):
 Lint (dockerfiles):
   image: docker
   stage: "Lint"
-  <<: *docker_dind_service
-  before_script: []
+  extends:
+    - .docker_dind_service
   tags:
     - aws
   except:
@@ -341,70 +240,37 @@ Lint (dockerfiles):
     - support-22.x
     - master-22.x
   script:
+    - *docker_login
     - echo "Run Xs2a core dockerfile check"
     - docker run --rm -i hadolint/hadolint < ./consent-management/cms-standalone-service/Dockerfile
     - docker run --rm -i hadolint/hadolint < ./aspsp-profile/aspsp-profile-server/Dockerfile
     - docker run --rm -i hadolint/hadolint < ./xs2a-standalone-starter/Dockerfile
     - docker run --rm -i hadolint/hadolint < ./certificate-generator/Dockerfile
 
-#-------------------------------------------------------------------
-# Owasp Dependency Check (Scheduled: Monday & Thursday at 1:00 AM UTC)
-#-------------------------------------------------------------------
-
-security-scan:
-  stage: "Vulnerability scan"
-  image: maven:3.9.4-eclipse-temurin-21
-  # Override global before_script - this job doesn't need Docker
-  before_script: []
-  # Increase job timeout since initial NVD sync may take long
-  timeout: 2h
-  # Cache maven repo and dependency-check data to avoid re-downloading NVD DB and artifacts
-  cache:
-    key: "dependency-check-${CI_COMMIT_REF_SLUG}"
-    paths:
-      - .m2/repository
-      - target/dependency-check-data/
-    policy: pull-push
+Lint (owasp-dep-check):
+  stage: "Lint"
   variables:
-    MAVEN_OPTS: "-Dmaven.repo.local=.m2/repository"
-    JAVA_TOOL_OPTIONS: "-Djavax.net.ssl.trustStorePassword=changeit -XX:MaxRAM=3G"
-  rules:
-    # Run on scheduled pipelines (Monday & Thursday configured in GitLab UI)
-    - if: $CI_PIPELINE_SOURCE == "schedule" && $SECURITY_SCAN == "true"
-      when: always
-    # Allow manual trigger from any branch
-    - if: $CI_PIPELINE_SOURCE == "web"
-      when: manual
-      allow_failure: true
+    JAVA_TOOL_OPTIONS: "-XX:+UnlockExperimentalVMOptions -Xmx2048m"
   script:
-    # Verify NVD_API_KEY is set (without exposing the value)
-    - |
-      if [ -n "$NVD_API_KEY" ]; then
-        echo " NVD_API_KEY is set (length: ${#NVD_API_KEY})"
-      else
-        echo " NVD_API_KEY is EMPTY - vulnerabilities will NOT be detected!"
-        exit 1
-      fi
-    # Build locally first to resolve SNAPSHOT dependencies. Use a dedicated
-    # dependency-check data directory so we can cache the NVD DB between runs.
-    - mvn -B -T 1C --settings scripts/mvn-release-settings.xml -DskipTests -Ddependency-check.data.directory=target/dependency-check-data clean install -q
-    # Run dependency-check aggregate and point it to the cached data directory.
-    - >-
-      mvn -B -T 1C --settings scripts/mvn-release-settings.xml
-      org.owasp:dependency-check-maven:12.1.9:aggregate
-      -DnvdApiKey="$NVD_API_KEY"
-      -Ddependency-check.data.directory=target/dependency-check-data
-      -Dformats=HTML
-      -DfailBuildOnCVSS=11
-    # Debug output
-    - echo "=== Dependency Check Report ==="
-    - ls -la target/dependency-check-report.html 2>/dev/null || echo "Report not in target/"
+    - mvn -B -U -DnvdApiKey=$NVD_API_KEY -DdataDirectory=dependency-check-data org.owasp:dependency-check-maven:aggregate
+  timeout: 4h # downloading NVD records for the first time might take a long time
+  allow_failure: true
   artifacts:
     when: always
     paths:
       - target/dependency-check-report.html
       - target/dependency-check-report.json
     expire_in: "10 days"
+  cache:
+    - key: "maven-cache-$CI_COMMIT_REF_SLUG"
+      paths:
+        - "${MAVEN_REPO_PATH}"
+      policy: pull-push
+    - key: dependency-check
+      paths:
+        - dependency-check-data
+      policy: pull-push
+      when: always
 
 #-------------------------------------------------------------------
 # Compile
@@ -412,7 +278,6 @@ security-scan:
 
 Build XS2A:
   stage: "Compile"
-  before_script: []
   except:
     - schedules
   variables:
@@ -437,7 +302,7 @@ Build XS2A:
 
 Test (IT):
   stage: "Test"
-  image: maven:3.9-eclipse-temurin-21
+  <<: *maven_cache
   services:
     - name: docker:27.3.1-dind
       alias: docker
@@ -452,14 +317,17 @@ Test (IT):
     DOCKER_API_VERSION: "1.44"
     TESTCONTAINERS_RYUK_DISABLED: "true"
     JAVA_TOOL_OPTIONS: "-Djavax.net.ssl.trustStorePassword=changeit -XX:MaxRAM=3G"
-  before_script:
-    - docker --host "$DOCKER_HOST" version || true
   script:
+    - docker --host "$DOCKER_HOST" version || true
     - mvn -ntp failsafe:integration-test failsafe:verify
+  artifacts:
+    paths:
+      - "**/target/site/jacoco/jacoco.xml"
+    expire_in: "1 day"
 
 Test (Javadoc):
   stage: "Test"
-  before_script: []
+  <<: *maven_cache
   except:
     - schedules
   variables:
@@ -472,13 +340,16 @@ Test (Javadoc):
 
 Test (Unit Tests):
   stage: "Test"
-  before_script: []
   except:
     - schedules
-  <<: *java_tests
   variables:
     JAVA_VERSION: "21.0.2-open"
     JAVA_TOOL_OPTIONS: "-Djavax.net.ssl.trustStorePassword=changeit -XX:MaxRAM=3G"
+  <<: *java_tests
+  artifacts:
+    paths:
+      - "**/target/site/jacoco/jacoco.xml"
+    expire_in: "1 day"
 
 Test (ASCII Doc):
   stage: "Test"
@@ -494,7 +365,7 @@ Test (ASCII Doc):
 # Test:Performance:
 #   stage: "Test"
 #   only:
-#     - develop
+#     - support-22.x
 #   image:
 #     name: gitlab-registry.adorsys.de/adorsys/xs2a/aspsp-xs2a/xs2a-performance-test:develop
 #     entrypoint: [""]
@@ -503,6 +374,33 @@ Test (ASCII Doc):
 #   artifacts:
 #     paths:
 #       - "./performance-test/jmeter-test/report"
+
+Upload to SonarQube:
+  stage: Package
+  variables:
+    SONAR_USER_HOME: "${CI_PROJECT_DIR}/.sonar"  # Defines the location of the analysis task cache
+    GIT_DEPTH: "0"  # Tells git to fetch all the branches of the project, required by the analysis task
+  before_script: []
+  cache:
+    - key: "sonar-cache-$CI_COMMIT_REF_SLUG"
+      paths:
+        - "${SONAR_USER_HOME}/cache"
+      policy: pull-push
+    - key: "maven-cache-$CI_COMMIT_REF_SLUG"
+      paths:
+        - "${MAVEN_REPO_PATH}"
+      policy: pull-push
+  dependencies:
+    - "Build XS2A"
+    - "Test (Unit Tests)"
+    - "Test (IT)"
+    - "Lint (owasp-dep-check)"
+    - "Lint (PMD CPD)"
+  script:
+    - mvn -Dmaven.repo.local=${CI_PROJECT_DIR}/${MAVEN_REPO_PATH} sonar:sonar -Dsonar.qualitygate.wait=true
+  allow_failure: true
+  rules:
+    - if: $CI_COMMIT_BRANCH == 'support-22.x'
 
 Build and push images to private repo (develop):
   stage: "Package"
@@ -523,7 +421,7 @@ Build and push images to private repo (master):
   tags:
     - aws
   only:
-    - master
+    - master-22.x
   variables:
     DOCKER_TAG: latest
     DOCKERHUB_REGISTRY: gitlab-registry.adorsys.de
@@ -548,7 +446,7 @@ Build and push image to private repo (perf test):
     - aws
   only:
     refs:
-      - develop
+      - support-22.x
     changes:
       - performance-test/**/*
   variables:
@@ -559,25 +457,23 @@ Build and push image to private repo (perf test):
 
 Release snapshot artifacts (develop):
   stage: "Release"
-  before_script: []
+  <<: *maven_cache
   only:
     - support-22.x
   except:
     - schedules
-  cache: {}
   variables:
     BUILD_JAVA_VERSION: "21.0.2-open"
     JAVA_TOOL_OPTIONS: "-Djavax.net.ssl.trustStorePassword=changeit -XX:MaxRAM=3G"
   <<: *release_java_private
 
-Release artifacts (tags):
+Release snapshot artifacts (tags):
   stage: "Release"
-  before_script: []
+  <<: *maven_cache
   only:
     - tags
   except:
     - schedules
-  cache: {}
   variables:
     BUILD_JAVA_VERSION: "21.0.2-open"
     JAVA_TOOL_OPTIONS: "-Djavax.net.ssl.trustStorePassword=changeit -XX:MaxRAM=3G"
