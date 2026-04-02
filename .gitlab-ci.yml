@@ -53,9 +53,6 @@ variables:
 # reusable yaml anchors
 # ------------------------------------------------------------------
 
-.docker_login: &docker_login
-  - echo "${ADORSYS_REGISTRY_PASSWORD}" | docker login -u "${ADORSYS_REGISTRY_USER}" --password-stdin gitlab-registry.adorsys.de
-
 .docker_dind_service:
   services:
     - name: docker:27.3.1-dind
@@ -65,6 +62,7 @@ variables:
     DOCKER_HOST: tcp://docker:2375
     DOCKER_TLS_CERTDIR: ""
     DOCKER_DRIVER: overlay2
+    DOCKER_AUTH_CONFIG: $DOCKER_AUTH_CONFIG
 
 .maven_cache: &maven_cache
   cache:
@@ -92,25 +90,19 @@ variables:
   extends:
     - .docker_dind_service
   script:
-    - *docker_login
     - docker build -t "${DOCKERHUB_REGISTRY}/${DOCKERHUB_NAMESPACE}/${DOCKER_IMAGE_NAME_CMS_MANAGEMENT}:${DOCKER_TAG}" consent-management/cms-standalone-service
     - docker build -t "${DOCKERHUB_REGISTRY}/${DOCKERHUB_NAMESPACE}/${DOCKER_IMAGE_NAME_ASPSP_PROFILE}:${DOCKER_TAG}" aspsp-profile/aspsp-profile-server
     - docker build -t "${DOCKERHUB_REGISTRY}/${DOCKERHUB_NAMESPACE}/${DOCKER_IMAGE_NAME_CERTIFICATE_GENERATOR}:${DOCKER_TAG}" certificate-generator
-    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
     - docker push "${DOCKERHUB_REGISTRY}/${DOCKERHUB_NAMESPACE}/${DOCKER_IMAGE_NAME_CMS_MANAGEMENT}:${DOCKER_TAG}"
     - docker push "${DOCKERHUB_REGISTRY}/${DOCKERHUB_NAMESPACE}/${DOCKER_IMAGE_NAME_ASPSP_PROFILE}:${DOCKER_TAG}"
     - docker push "${DOCKERHUB_REGISTRY}/${DOCKERHUB_NAMESPACE}/${DOCKER_IMAGE_NAME_CERTIFICATE_GENERATOR}:${DOCKER_TAG}"
-    - docker logout $CI_REGISTRY
 
 .push_perf_tests_dockerhub_images_private:
   extends:
     - .docker_dind_service
   script:
-    - *docker_login
     - docker build -t  "${DOCKERHUB_REGISTRY}/${DOCKERHUB_NAMESPACE}/${DOCKER_IMAGE_NAME_JMETER_TEST}:${DOCKER_TAG}" --build-arg build-date=$(date -u +"%Y-%m-%dT%H:%M:%SZ") performance-test
-    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
     - docker push "${DOCKERHUB_REGISTRY}/${DOCKERHUB_NAMESPACE}/${DOCKER_IMAGE_NAME_JMETER_TEST}:${DOCKER_TAG}"
-    - docker logout $CI_REGISTRY
 
 .release_java_private: &release_java_private
   stage: "Release"
@@ -240,7 +232,6 @@ Lint (dockerfiles):
     - support-22.x
     - master-22.x
   script:
-    - *docker_login
     - echo "Run Xs2a core dockerfile check"
     - docker run --rm -i hadolint/hadolint < ./consent-management/cms-standalone-service/Dockerfile
     - docker run --rm -i hadolint/hadolint < ./aspsp-profile/aspsp-profile-server/Dockerfile
@@ -457,7 +448,7 @@ Build and push image to private repo (perf test):
 
 Release snapshot artifacts (develop):
   stage: "Release"
-  <<: *maven_cache
+  <<: [*maven_cache, *release_java_private]
   only:
     - support-22.x
   except:
@@ -465,11 +456,10 @@ Release snapshot artifacts (develop):
   variables:
     BUILD_JAVA_VERSION: "21.0.2-open"
     JAVA_TOOL_OPTIONS: "-Djavax.net.ssl.trustStorePassword=changeit -XX:MaxRAM=3G"
-  <<: *release_java_private
 
 Release snapshot artifacts (tags):
   stage: "Release"
-  <<: *maven_cache
+  <<: [*maven_cache, *release_java_private]
   only:
     - tags
   except:
@@ -477,7 +467,6 @@ Release snapshot artifacts (tags):
   variables:
     BUILD_JAVA_VERSION: "21.0.2-open"
     JAVA_TOOL_OPTIONS: "-Djavax.net.ssl.trustStorePassword=changeit -XX:MaxRAM=3G"
-  <<: *release_java_private
 
 clone_to_github:
   #  <<: *sync_changes_github
