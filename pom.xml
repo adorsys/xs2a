@@ -190,7 +190,7 @@
         <commons-validator.version>1.10.1</commons-validator.version>
         <jetbrains.annotations.version>15.0</jetbrains.annotations.version>
         <aspectj.version>1.9.2</aspectj.version>
-        <postgresql.version>42.3.10</postgresql.version>
+        <postgresql.version>42.7.11</postgresql.version>
         <mariadb.version>2.3.0</mariadb.version>
         <h2.version>2.2.220</h2.version>
         <ojdbc11.version>23.2.0.0</ojdbc11.version>
@@ -234,7 +234,9 @@
         <spring-data-jpa.version>3.4.13</spring-data-jpa.version>
         <spring-boot.version>3.5.14</spring-boot.version>
         <spring-boot-starter-web.version>3.5.14</spring-boot-starter-web.version>
-        <tomcat-embed-core.version>11.0.21</tomcat-embed-core.version>
+        <tomcat-embed-core.version>10.1.55</tomcat-embed-core.version>
+        <tomcat-embed-websocket.version>10.1.55</tomcat-embed-websocket.version>
+        <tomcat-embed-el.version>10.1.55</tomcat-embed-el.version>
 
         <junit-jupiter.version>6.0.1</junit-jupiter.version>
         <mockito.version>5.20.0</mockito.version>
@@ -413,9 +415,27 @@
             </dependency>
 
             <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-autoconfigure</artifactId>
+                <version>${spring-boot.version}</version>
+            </dependency>
+
+            <dependency>
                 <groupId>org.apache.tomcat.embed</groupId>
                 <artifactId>tomcat-embed-core</artifactId>
                 <version>${tomcat-embed-core.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.apache.tomcat.embed</groupId>
+                <artifactId>tomcat-embed-websocket</artifactId>
+                <version>${tomcat-embed-websocket.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.apache.tomcat.embed</groupId>
+                <artifactId>tomcat-embed-el</artifactId>
+                <version>${tomcat-embed-el.version}</version>
             </dependency>
 
             <dependency>
