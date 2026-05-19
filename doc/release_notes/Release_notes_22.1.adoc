@@ -1,4 +1,4 @@
-= Release notes v.22.1 [dd.mm.2026]
+= Release notes v.22.1 [19.05.2026]
 
 == Table of Contents.
 
