@@ -1,283 +1,128 @@
----
-# yamllint disable rule:line-length
-# ------------------------------------------------------------------
-# Global settings
-# ------------------------------------------------------------------
+include:
+  - project: 'adorsys/xs2a/gitlab-ci-templates'
+    ref: 'v1.4.12'
+    file:
+      - 'templates/jobs/notify/slack-notify.yml'
+      - 'templates/jobs/notify/slack-renovate-notify.yml'
+      - 'templates/jobs/lint/ci-file-lint.yml'
+      - 'templates/jobs/lint/docker-compose-lint.yml'
+      - 'templates/jobs/lint/dockerfile-lint.yml'
+      - 'templates/jobs/lint/pmd-cpd.yml'
+      - 'templates/jobs/security/owasp-dependency-check.yml'
+      - 'templates/jobs/security/trivy.yml'
+      - 'templates/jobs/security/cyclonedx-owasp.yml'
+      - 'templates/jobs/security/renovate.yml'
+      - 'templates/jobs/security/unified-remediation.yml'
+      - 'templates/jobs/security/unified-remediation-scheduled.yml'
+      - 'templates/jobs/notify/slack-remediation-notify.yml'
+      - 'templates/jobs/lint/yaml-json-xml-lint.yml'
+      - 'templates/jobs/build/java-maven.yml'
+      - 'templates/jobs/test/java-tests.yml'
+      - 'templates/jobs/package/sonarqube.yml'
+      - 'templates/jobs/package/docker-build-push.yml'
+      - 'templates/jobs/release/maven-release.yml'
+      - 'templates/jobs/release/github-sync.yml'
+      - 'templates/jobs/security/secret-detection.yml'
+      - 'templates/jobs/notify/slack-security-failure-notify.yml'
 
-#image: "adorsys/ci-build:latest"
 image: "gitlab-registry.adorsys.de/adorsys/xs2a/gitlab-ci:latest"
 
-
-# ------------------------------------------------------------------
-# stages
-# ------------------------------------------------------------------
+# Prevent duplicate pipelines: when a branch push has an open MR, suppress
+# the branch push pipeline and let the MR pipeline run exclusively.
+workflow:
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "schedule"'
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
+    - if: '$CI_COMMIT_BRANCH && $CI_OPEN_MERGE_REQUESTS'
+      when: never
+    - if: '$CI_COMMIT_BRANCH'
+    - if: '$CI_COMMIT_TAG'
 
 stages:
-  # - "Validate"
-  - "Lint"    # Lint files and configuration
-  - "Compile" # build jar and provide as artifact
-  - "Test"    # run tests and code quality checks
-  - "Package" # dockerize jar and push to docker registry
-  - "Release" # release
+  - "Lint"
+  - "Compile"
+  - "Test"
+  - "Security"
+  - "security-scan"
+  - "Package"
+  - "Release"
   - "Clone to github"
-
-# ------------------------------------------------------------------
-# variables
-# ------------------------------------------------------------------
+  - "Notify"
 
 variables:
+  DOCKER_AUTH_CONFIG: $DOCKER_AUTH_CONFIG
   DOCKER_IMAGE_NAME_CMS_MANAGEMENT: "xs2a-consent-management"
   DOCKER_IMAGE_NAME_ASPSP_PROFILE: "xs2a-aspsp-profile"
   DOCKER_IMAGE_NAME_CERTIFICATE_GENERATOR: "xs2a-certificate-generator"
   DOCKER_IMAGE_NAME_JMETER_TEST: "xs2a-performance-tests"
-
-  ###########################
-  # Build variables         #
-  ###########################
-
+  DOCKERHUB_REGISTRY: "gitlab-registry.adorsys.de"
+  DOCKERHUB_NAMESPACE: "adorsys/xs2a/aspsp-xs2a"
+  JAVA_VERSION: "21.0.2-open"
+  JAVA_TOOL_OPTIONS: "-Djavax.net.ssl.trustStorePassword=changeit -XX:MaxRAM=3G"
   MAVEN_REPO_PATH: ".m2/repository"
-  JAVA_TOOL_OPTIONS: "-XX:+UnlockExperimentalVMOptions -XX:MaxRAM=3G -XX:MaxRAMPercentage=33.0"
   MAVEN_OPTS: "-Dmaven.repo.local=${CI_PROJECT_DIR}/${MAVEN_REPO_PATH}"
-
-  ###########################
-  # Github variables         #
-  ###########################
-
   GITHUB_REPOSITORY: "adorsys/xs2a"
-  GITHUB_USERNAME: $GITHUB_USERNAME
-  GITHUB_EMAIL: $GITHUB_EMAIL
-  GITHUB_SSH_SERVER_FINGERPRINT: $GITHUB_SSH_SERVER_FINGERPRINT
-  GITHUB_DEPLOY_KEY_BASE64: $GITHUB_DEPLOY_KEY_BASE64  # Base64-encoded key
 
-# ------------------------------------------------------------------
-# reusable yaml anchors
-# ------------------------------------------------------------------
-
-.docker_dind_service:
-  services:
-    - name: docker:27.3.1-dind
-      alias: docker
-      command: ["--host=tcp://0.0.0.0:2375", "--tls=false"]
-  variables:
-    DOCKER_HOST: tcp://docker:2375
-    DOCKER_TLS_CERTDIR: ""
-    DOCKER_DRIVER: overlay2
-
-.maven_cache: &maven_cache
-  cache:
-    key: "maven-cache-$CI_COMMIT_REF_SLUG"
-    paths:
-      - "${MAVEN_REPO_PATH}"
-    policy: pull-push
-
-.build_java: &build_java
-  <<: *maven_cache
-  script:
-    - sdk use java ${JAVA_VERSION}
-    - env BUILD_NUMBER=$CI_PIPELINE_IID ./scripts/set_xs2a_connector_version_in_swagger.sh
-    - java -XX:+PrintFlagsFinal -version | grep -Ei "maxheapsize|maxram"
-    - mvn -ntp -DskipITs -DskipTests -Dci.build.number=Build\:${CI_PIPELINE_ID} clean install
-
-.java_tests: &java_tests
-  <<: *maven_cache
-  script:
-    - sdk use java $JAVA_VERSION
-    - java -XX:+PrintFlagsFinal -version | grep -Ei "maxheapsize|maxram"
-    - mvn -ntp -DskipITs --fail-at-end clean install -q
-
-.push_dockerhub_images_private:
-  extends:
-    - .docker_dind_service
-  script:
-    - echo "$CI_REGISTRY_PASSWORD" | docker login "$CI_REGISTRY" -u "$CI_REGISTRY_USER" --password-stdin
-    - docker build -t "${DOCKERHUB_REGISTRY}/${DOCKERHUB_NAMESPACE}/${DOCKER_IMAGE_NAME_CMS_MANAGEMENT}:${DOCKER_TAG}" consent-management/cms-standalone-service
-    - docker build -t "${DOCKERHUB_REGISTRY}/${DOCKERHUB_NAMESPACE}/${DOCKER_IMAGE_NAME_ASPSP_PROFILE}:${DOCKER_TAG}" aspsp-profile/aspsp-profile-server
-    - docker build -t "${DOCKERHUB_REGISTRY}/${DOCKERHUB_NAMESPACE}/${DOCKER_IMAGE_NAME_CERTIFICATE_GENERATOR}:${DOCKER_TAG}" certificate-generator
-    - docker push "${DOCKERHUB_REGISTRY}/${DOCKERHUB_NAMESPACE}/${DOCKER_IMAGE_NAME_CMS_MANAGEMENT}:${DOCKER_TAG}"
-    - docker push "${DOCKERHUB_REGISTRY}/${DOCKERHUB_NAMESPACE}/${DOCKER_IMAGE_NAME_ASPSP_PROFILE}:${DOCKER_TAG}"
-    - docker push "${DOCKERHUB_REGISTRY}/${DOCKERHUB_NAMESPACE}/${DOCKER_IMAGE_NAME_CERTIFICATE_GENERATOR}:${DOCKER_TAG}"
-    - docker logout "$CI_REGISTRY"
-
-.push_perf_tests_dockerhub_images_private:
-  extends:
-    - .docker_dind_service
-  script:
-    - echo "$CI_REGISTRY_PASSWORD" | docker login "$CI_REGISTRY" -u "$CI_REGISTRY_USER" --password-stdin
-    - docker build -t "${DOCKERHUB_REGISTRY}/${DOCKERHUB_NAMESPACE}/${DOCKER_IMAGE_NAME_JMETER_TEST}:${DOCKER_TAG}" --build-arg build-date=$(date -u +"%Y-%m-%dT%H:%M:%SZ") performance-test
-    - docker push "${DOCKERHUB_REGISTRY}/${DOCKERHUB_NAMESPACE}/${DOCKER_IMAGE_NAME_JMETER_TEST}:${DOCKER_TAG}"
-    - docker logout "$CI_REGISTRY"
-
-.release_java_private: &release_java_private
-  stage: "Release"
-  <<: *maven_cache
-  script:
-    - sdk use java $BUILD_JAVA_VERSION
-    - java -XX:+PrintFlagsFinal -version | grep -Ei "maxheapsize|maxram"
-    - mvn -ntp --settings scripts/mvn-release-settings.xml -Pgitlab-maven -DskipTests -U deploy
-
-.sync_changes_github: &sync_changes_github
-  image: alpine/git
-  before_script:
-    - apk add --no-cache openssh-client
-    - mkdir -p ~/.ssh
-    - chmod 700 ~/.ssh
-    # Decode Base64 to SSH key
-    - echo "$GITHUB_DEPLOY_KEY_BASE64" | base64 -d > ~/.ssh/id_ed25519
-    - chmod 600 ~/.ssh/id_ed25519
-    # Configure SSH
-    - eval $(ssh-agent -s)
-    - ssh-add ~/.ssh/id_ed25519
-    - echo "$GITHUB_SSH_SERVER_FINGERPRINT" >> ~/.ssh/known_hosts
-  script:
-    - git config --global user.name "$GITHUB_USERNAME"
-    - git config --global user.email "$GITHUB_EMAIL"
-    - git remote add github git@github.com:$GITHUB_REPOSITORY.git || true
-    - |
-      # Get existing GitHub branches
-      git fetch github --prune
-      GITHUB_BRANCHES=$(git ls-remote --heads github | awk -F'/' '{print $3}')
-      # Process all support/v2support branches
-      for branch in $(git branch -r | grep -E "origin/(v2)?support-.*\.x"); do
-        branch=${branch#origin/}
-        # Check if branch exists on GitHub
-        if ! echo "$GITHUB_BRANCHES" | grep -qxF "$branch"; then
-          echo "Pushing new branch: $branch to GitHub"
-          git checkout -b "$branch" "origin/$branch"
-          git push -u github "$branch"
-        else
-          echo "Branch $branch already exists on GitHub - skipping"
-        fi
-      done
-
-# ------------------------------------------------------------------
-# jobs
-# ------------------------------------------------------------------
-
-#-------------------------------------------------------------------
-# lint
-#-------------------------------------------------------------------
+# Override GitLab Secret Detection job to use our template instead
+secret_detection:
+  extends: .secret-detection
 
 Lint (Docker compose):
-  image: maven:3.9-eclipse-temurin-21
-  stage: "Lint"
-  except:
-    - schedules
-    - support-22.x
-    - master-22.x
-  script:
-    - apt update && apt install -yq yamllint curl
-    - echo "Installing Docker Compose (v2)"
-    - curl -L "https://github.com/docker/compose/releases/latest/download/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
-    - chmod +x /usr/local/bin/docker-compose
-    - echo "Verify Docker Compose version"
-    - docker-compose --version
-    - echo "Run Docker Compose lint"
-    - docker-compose -f docker-compose.yml config -q
+  extends: .lint-docker-compose
+  rules: !reference [.pipeline-feature-branches-only, rules]
 
 Lint (Ci file):
-  image: debian:stable-slim
-  stage: "Lint"
-  except:
-    - schedules
-    - support-22.x
-    - master-22.x
-  script:
-    - apt-get update && apt-get install yamllint python3-pkg-resources -yq
-    - echo "Run Gitlab ci file lint"
-    - yamllint -d relaxed .gitlab-ci.yml
+  extends: .lint-ci-file
+  rules: !reference [.pipeline-feature-branches-only, rules]
 
 Lint (YAML, JSON, XML):
-  image: debian:stable-slim
-  stage: "Lint"
-  except:
-    - schedules
-    - support-22.x
-    - master-22.x
-  script:
-    - apt-get update && apt-get install jsonlint yamllint libxml2-utils make curl -yq && ln -s /usr/bin/jsonlint-php /usr/bin/jsonlint
-    - echo "Run Xs2A core lint"
-    - find ./ -type f -name "*.json" -exec jsonlint -q {} \; # lint all json
-  # commented cause get many small errors for yaml with spaces empty lines and etc
-  #   - find ./ -type f \( -name "*.yml" -o -name "*.yaml" \) -exec yamllint -d "{extends: relaxed, rules: {line-length: {max: 160}}}" {} \;
-  # commented cause get error Unsupported version '1.1'
-  #     - find ./ -type f \( -iname "*.xml" ! -iname pom.xml \) -exec xmllint --noout {} \;
-
-Lint (PMD CPD):
-  image: maven:3.9-eclipse-temurin-21
-  stage: "Lint"
-  <<: *maven_cache
-  except:
-    - schedules
-    - support-22.x
-    - master-22.x
-  script:
-    - apt update && apt install make -yq
-    - echo "Test java code for PMD and CPD"
-    - echo "DOCKER_HOST=$DOCKER_HOST"
-    - mvn -ntp -Dmaven.test.skip=true package pmd:check # commented cause many duplications pmd:cpd-check
-  artifacts:
-    paths:
-      - "qa/pmd/pmd-ruleset.xml"
-      - "**/**/*/pmd.html"
-      - "**/*/pmd.xml"
-    name: "${CI_PROJECT_NAME}-${CI_BUILD_REF_NAME#*v}-pmd"
-    expire_in: "10 day"
+  extends: .lint-yaml-json-xml
+  rules: !reference [.pipeline-feature-branches-only, rules]
 
 Lint (dockerfiles):
-  image: docker
+  extends: .lint-dockerfiles-base
   stage: "Lint"
-  extends:
-    - .docker_dind_service
-  tags:
-    - aws
-  except:
-    - schedules
-    - support-22.x
-    - master-22.x
+  tags: [aws]
+  rules: !reference [.pipeline-feature-branches-only, rules]
   script:
-    - echo "Run Xs2a core dockerfile check"
     - docker run --rm -i hadolint/hadolint < ./consent-management/cms-standalone-service/Dockerfile
     - docker run --rm -i hadolint/hadolint < ./aspsp-profile/aspsp-profile-server/Dockerfile
     - docker run --rm -i hadolint/hadolint < ./xs2a-standalone-starter/Dockerfile
     - docker run --rm -i hadolint/hadolint < ./certificate-generator/Dockerfile
 
-Lint (owasp-dep-check):
-  stage: "Lint"
-  variables:
-    JAVA_TOOL_OPTIONS: "-XX:+UnlockExperimentalVMOptions -Xmx2048m"
-  script:
-    - mvn -B -U -DnvdApiKey=$NVD_API_KEY -DdataDirectory=dependency-check-data org.owasp:dependency-check-maven:aggregate
-  timeout: 4h # downloading NVD records for the first time might take a long time
-  allow_failure: true
-  artifacts:
-    when: always
-    paths:
-      - target/dependency-check-report.html
-      - target/dependency-check-report.json
-    expire_in: "10 days"
-  cache:
-    - key: "maven-cache-$CI_COMMIT_REF_SLUG"
-      paths:
-        - "${MAVEN_REPO_PATH}"
-      policy: pull-push
-    - key: dependency-check
-      paths:
-        - dependency-check-data
-      policy: pull-push
-      when: always
+Lint (PMD CPD):
+  extends: .lint-pmd-only-with-settings
+  rules: !reference [.pipeline-feature-branches-only, rules]
 
-#-------------------------------------------------------------------
-# Compile
-#-------------------------------------------------------------------
+Security (owasp-dep-check):
+  extends: .owasp-dependency-check
+  rules: !reference [.feature-branch-security-only, rules]
+
+Security (owasp-dep-check - gate):
+  extends: .owasp-dependency-check-strict
+  rules: !reference [.pipeline-default-branches-and-security-scan, rules]
+
+Security (cyclonedx - gate):
+  extends: .cyclonedx-owasp-strict
+  rules: !reference [.pipeline-default-branches-and-security-scan, rules]
+
+Trivy Filesystem Scan (gate):
+  extends: .trivy-fs-strict
+  before_script: []
+  rules: !reference [.pipeline-default-branches-and-security-scan, rules]
+
+Trivy Dockerfile Scan (gate):
+  extends: .trivy-dockerfile-strict
+  before_script: []
+  rules: !reference [.pipeline-default-branches-and-security-scan, rules]
 
 Build XS2A:
+  extends: .build-java-maven-base
   stage: "Compile"
-  except:
-    - schedules
-  variables:
-    JAVA_VERSION: "21.0.2-open"
-    JAVA_TOOL_OPTIONS: "-Djavax.net.ssl.trustStorePassword=changeit -XX:MaxRAM=3G"
-  <<: *build_java
+  rules: !reference [.pipeline-always-except-schedules, rules]
+  script:
+    - env BUILD_NUMBER=$CI_PIPELINE_IID ./scripts/set_xs2a_connector_version_in_swagger.sh
+    - mvn -ntp -DskipITs -DskipTests --settings scripts/mvn-release-settings.xml -Dci.build.number=Build\:${CI_PIPELINE_ID} clean install
   artifacts:
     paths:
       - "xs2a-standalone-starter/target/xs2a-standalone-starter-exec.jar"
@@ -285,203 +130,168 @@ Build XS2A:
       - "aspsp-profile/aspsp-profile-server/target/aspsp-profile*jar"
       - "certificate-generator/target/certificate-generator.jar"
       - "**/target/*"
-      - "**/**/target/*"
       - ".m2/repository/de/adorsys/psd2/*/*"
     name: "${CI_PROJECT_NAME}-${CI_BUILD_REF_NAME#*v}"
     expire_in: "1 day"
 
-#-------------------
-# Test
-#-------------------
-
 Test (IT):
-  stage: "Test"
-  <<: *maven_cache
-  services:
-    - name: docker:27.3.1-dind
-      alias: docker
-      command: ["--host=tcp://0.0.0.0:2375", "--tls=false"]
-  tags:
-    - aws
-  except:
-    - schedules
-  variables:
-    DOCKER_HOST: "tcp://docker:2375"
-    DOCKER_TLS_CERTDIR: ""
-    DOCKER_API_VERSION: "1.44"
-    TESTCONTAINERS_RYUK_DISABLED: "true"
-    JAVA_TOOL_OPTIONS: "-Djavax.net.ssl.trustStorePassword=changeit -XX:MaxRAM=3G"
+  extends: .test-java-integration
+  tags: [aws]
+  rules: !reference [.pipeline-always-except-schedules, rules]
   script:
     - docker --host "$DOCKER_HOST" version || true
-    - mvn -ntp failsafe:integration-test failsafe:verify
-  artifacts:
-    paths:
-      - "**/target/site/jacoco/jacoco.xml"
-    expire_in: "1 day"
+    - mvn -ntp --settings scripts/mvn-release-settings.xml failsafe:integration-test failsafe:verify
 
 Test (Javadoc):
-  stage: "Test"
-  <<: *maven_cache
-  except:
-    - schedules
-  variables:
-    JAVA_TOOL_OPTIONS: "-Djavax.net.ssl.trustStorePassword=changeit -XX:MaxRAM=3G"
-    JAVA_VERSION: "21.0.2-open"
-  script:
-    - sdk use java ${JAVA_VERSION}
-    - java -XX:+PrintFlagsFinal -version | grep -Ei "maxheapsize|maxram"
-    - mvn -ntp -Dmaven.test.skip=true -Pjavadoc verify javadoc:javadoc
+  extends: .test-javadoc-with-settings
+  rules: !reference [.pipeline-always-except-schedules, rules]
 
 Test (Unit Tests):
-  stage: "Test"
-  except:
-    - schedules
-  variables:
-    JAVA_VERSION: "21.0.2-open"
-    JAVA_TOOL_OPTIONS: "-Djavax.net.ssl.trustStorePassword=changeit -XX:MaxRAM=3G"
-  <<: *java_tests
-  artifacts:
-    paths:
-      - "**/target/site/jacoco/jacoco.xml"
-    expire_in: "1 day"
+  extends: .test-java-unit-settings
+  rules: !reference [.pipeline-always-except-schedules, rules]
 
 Test (ASCII Doc):
   stage: "Test"
-  except:
-    - schedules
   image: adorsys/arc42-tools
-  variables:
-    JAVA_TOOL_OPTIONS: "-Djavax.net.ssl.trustStorePassword=changeit -XX:MaxRAM=3G"
+  rules: !reference [.pipeline-always-except-schedules, rules]
   before_script: []
   script:
     - make pages
 
-# Test:Performance:
-#   stage: "Test"
-#   only:
-#     - support-22.x
-#   image:
-#     name: gitlab-registry.adorsys.de/adorsys/xs2a/aspsp-xs2a/xs2a-performance-test:develop
-#     entrypoint: [""]
-#   script:
-#     - jmeter -n -t ./performance-test/jmeter-test/test-plan.jmx -l ./performance-test/jmeter-test/resultLog.jtl -e -o ./performance-test/jmeter-test/report
-#   artifacts:
-#     paths:
-#       - "./performance-test/jmeter-test/report"
-
-Upload to SonarQube:
-  stage: Package
-  variables:
-    SONAR_USER_HOME: "${CI_PROJECT_DIR}/.sonar"  # Defines the location of the analysis task cache
-    GIT_DEPTH: "0"  # Tells git to fetch all the branches of the project, required by the analysis task
-  before_script: []
-  cache:
-    - key: "sonar-cache-$CI_COMMIT_REF_SLUG"
-      paths:
-        - "${SONAR_USER_HOME}/cache"
-      policy: pull-push
-    - key: "maven-cache-$CI_COMMIT_REF_SLUG"
-      paths:
-        - "${MAVEN_REPO_PATH}"
-      policy: pull-push
-  dependencies:
-    - "Build XS2A"
-    - "Test (Unit Tests)"
-    - "Test (IT)"
-    - "Lint (owasp-dep-check)"
-    - "Lint (PMD CPD)"
+Test:Performance:
+  stage: "Test"
+  rules: !reference [.pipeline-develop-only, rules]
+  image:
+    name: gitlab-registry.adorsys.de/adorsys/xs2a/aspsp-xs2a/xs2a-performance-test:develop
+    entrypoint: [""]
   script:
-    - mvn -Dmaven.repo.local=${CI_PROJECT_DIR}/${MAVEN_REPO_PATH} sonar:sonar -Dsonar.qualitygate.wait=true
-  allow_failure: true
-  rules:
-    - if: $CI_COMMIT_BRANCH == 'support-22.x'
+    - jmeter -n -t ./performance-test/jmeter-test/test-plan.jmx -l ./performance-test/jmeter-test/resultLog.jtl -e -o ./performance-test/jmeter-test/report
+  artifacts:
+    paths:
+      - "./performance-test/jmeter-test/report"
+
+SonarQube:
+  extends: .sonarqube-security-gate
+  needs:
+    - job: "Security (owasp-dep-check - gate)"
+    - job: "Build XS2A"
+    - job: "Test (Unit Tests)"
+    - job: "Test (IT)"
+    - job: "Lint (PMD CPD)"
 
 Build and push images to private repo (develop):
+  extends: .docker-build-push-base
   stage: "Package"
-  tags:
-    - aws
-  except:
-    - schedules
-  only:
-    - support-22.x
-  variables:
-    DOCKER_TAG: develop
-    DOCKERHUB_REGISTRY: gitlab-registry.adorsys.de
-    DOCKERHUB_NAMESPACE: "adorsys/xs2a/aspsp-xs2a"
-  extends: .push_dockerhub_images_private
+  rules: !reference [.pipeline-develop-only, rules]
+  variables: { DOCKER_TAG: develop }
+  script:
+    - docker build -t "${DOCKERHUB_REGISTRY}/${DOCKERHUB_NAMESPACE}/${DOCKER_IMAGE_NAME_CMS_MANAGEMENT}:${DOCKER_TAG}" consent-management/cms-standalone-service
+    - docker build -t "${DOCKERHUB_REGISTRY}/${DOCKERHUB_NAMESPACE}/${DOCKER_IMAGE_NAME_ASPSP_PROFILE}:${DOCKER_TAG}" aspsp-profile/aspsp-profile-server
+    - docker build -t "${DOCKERHUB_REGISTRY}/${DOCKERHUB_NAMESPACE}/${DOCKER_IMAGE_NAME_CERTIFICATE_GENERATOR}:${DOCKER_TAG}" certificate-generator
+    - docker push "${DOCKERHUB_REGISTRY}/${DOCKERHUB_NAMESPACE}/${DOCKER_IMAGE_NAME_CMS_MANAGEMENT}:${DOCKER_TAG}"
+    - docker push "${DOCKERHUB_REGISTRY}/${DOCKERHUB_NAMESPACE}/${DOCKER_IMAGE_NAME_ASPSP_PROFILE}:${DOCKER_TAG}"
+    - docker push "${DOCKERHUB_REGISTRY}/${DOCKERHUB_NAMESPACE}/${DOCKER_IMAGE_NAME_CERTIFICATE_GENERATOR}:${DOCKER_TAG}"
 
 Build and push images to private repo (master):
+  extends: .docker-build-push-base
   stage: "Package"
-  tags:
-    - aws
-  only:
-    - master-22.x
-  variables:
-    DOCKER_TAG: latest
-    DOCKERHUB_REGISTRY: gitlab-registry.adorsys.de
-    DOCKERHUB_NAMESPACE: "adorsys/xs2a/aspsp-xs2a"
-  extends: .push_dockerhub_images_private
+  rules: !reference [.pipeline-master-only, rules]
+  variables: { DOCKER_TAG: latest }
+  script:
+    - docker build -t "${DOCKERHUB_REGISTRY}/${DOCKERHUB_NAMESPACE}/${DOCKER_IMAGE_NAME_CMS_MANAGEMENT}:${DOCKER_TAG}" consent-management/cms-standalone-service
+    - docker build -t "${DOCKERHUB_REGISTRY}/${DOCKERHUB_NAMESPACE}/${DOCKER_IMAGE_NAME_ASPSP_PROFILE}:${DOCKER_TAG}" aspsp-profile/aspsp-profile-server
+    - docker build -t "${DOCKERHUB_REGISTRY}/${DOCKERHUB_NAMESPACE}/${DOCKER_IMAGE_NAME_CERTIFICATE_GENERATOR}:${DOCKER_TAG}" certificate-generator
+    - docker push "${DOCKERHUB_REGISTRY}/${DOCKERHUB_NAMESPACE}/${DOCKER_IMAGE_NAME_CMS_MANAGEMENT}:${DOCKER_TAG}"
+    - docker push "${DOCKERHUB_REGISTRY}/${DOCKERHUB_NAMESPACE}/${DOCKER_IMAGE_NAME_ASPSP_PROFILE}:${DOCKER_TAG}"
+    - docker push "${DOCKERHUB_REGISTRY}/${DOCKERHUB_NAMESPACE}/${DOCKER_IMAGE_NAME_CERTIFICATE_GENERATOR}:${DOCKER_TAG}"
 
 Build and push images to private repo (Tags):
+  extends: .docker-build-push-base
   stage: "Package"
-  tags:
-    - aws
-  only:
-    - tags
-  variables:
-    DOCKER_TAG: $CI_COMMIT_TAG
-    DOCKERHUB_REGISTRY: gitlab-registry.adorsys.de
-    DOCKERHUB_NAMESPACE: "adorsys/xs2a/aspsp-xs2a"
-  extends: .push_dockerhub_images_private
+  rules: !reference [.pipeline-tags-only, rules]
+  variables: { DOCKER_TAG: "$CI_COMMIT_TAG" }
+  script:
+    - docker build -t "${DOCKERHUB_REGISTRY}/${DOCKERHUB_NAMESPACE}/${DOCKER_IMAGE_NAME_CMS_MANAGEMENT}:${DOCKER_TAG}" consent-management/cms-standalone-service
+    - docker build -t "${DOCKERHUB_REGISTRY}/${DOCKERHUB_NAMESPACE}/${DOCKER_IMAGE_NAME_ASPSP_PROFILE}:${DOCKER_TAG}" aspsp-profile/aspsp-profile-server
+    - docker build -t "${DOCKERHUB_REGISTRY}/${DOCKERHUB_NAMESPACE}/${DOCKER_IMAGE_NAME_CERTIFICATE_GENERATOR}:${DOCKER_TAG}" certificate-generator
+    - docker push "${DOCKERHUB_REGISTRY}/${DOCKERHUB_NAMESPACE}/${DOCKER_IMAGE_NAME_CMS_MANAGEMENT}:${DOCKER_TAG}"
+    - docker push "${DOCKERHUB_REGISTRY}/${DOCKERHUB_NAMESPACE}/${DOCKER_IMAGE_NAME_ASPSP_PROFILE}:${DOCKER_TAG}"
+    - docker push "${DOCKERHUB_REGISTRY}/${DOCKERHUB_NAMESPACE}/${DOCKER_IMAGE_NAME_CERTIFICATE_GENERATOR}:${DOCKER_TAG}"
 
 Build and push image to private repo (perf test):
+  extends: .docker-build-push-base
   stage: "Package"
-  tags:
-    - aws
-  only:
-    refs:
-      - support-22.x
-    changes:
-      - performance-test/**/*
-  variables:
-    DOCKER_TAG: develop
-    DOCKERHUB_REGISTRY: gitlab-registry.adorsys.de
-    DOCKERHUB_NAMESPACE: "adorsys/xs2a/aspsp-xs2a"
-  extends: .push_perf_tests_dockerhub_images_private
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "develop"'
+      changes: [performance-test/**/*]
+      when: on_success
+    - when: never
+  variables: { DOCKER_TAG: develop }
+  script:
+    - docker build -t "${DOCKERHUB_REGISTRY}/${DOCKERHUB_NAMESPACE}/${DOCKER_IMAGE_NAME_JMETER_TEST}:${DOCKER_TAG}" --build-arg build-date=$(date -u +"%Y-%m-%dT%H:%M:%SZ") performance-test
+    - docker push "${DOCKERHUB_REGISTRY}/${DOCKERHUB_NAMESPACE}/${DOCKER_IMAGE_NAME_JMETER_TEST}:${DOCKER_TAG}"
 
 Release snapshot artifacts (develop):
-  stage: "Release"
-  <<: [*maven_cache, *release_java_private]
-  only:
-    - support-22.x
-  except:
-    - schedules
-  variables:
-    BUILD_JAVA_VERSION: "21.0.2-open"
-    JAVA_TOOL_OPTIONS: "-Djavax.net.ssl.trustStorePassword=changeit -XX:MaxRAM=3G"
+  extends: .maven-release-snapshot
 
 Release snapshot artifacts (tags):
-  stage: "Release"
-  <<: [*maven_cache, *release_java_private]
-  only:
-    - tags
-  except:
-    - schedules
-  variables:
-    BUILD_JAVA_VERSION: "21.0.2-open"
-    JAVA_TOOL_OPTIONS: "-Djavax.net.ssl.trustStorePassword=changeit -XX:MaxRAM=3G"
+  extends: .maven-release-tags
 
 clone_to_github:
-  #  <<: *sync_changes_github
-  #  stage: "Clone to github"
-  #  rules:
-  #    - if: '$CI_COMMIT_REF_NAME == "ci/issue-1984-sync-github"'
-  #      when: always
-  <<: *sync_changes_github
+  extends: .github-sync
   stage: "Clone to github"
   rules:
     - if: |
         $CI_PIPELINE_SOURCE == "schedule" &&
+        $SCHEDULE_TYPE != "security-scan" &&
         ($MONTH == "06" || $MONTH == "12") &&
         ($CI_COMMIT_REF_NAME =~ /^(v2)?support-.*\.x$/ || $CI_COMMIT_REF_NAME == "develop")
       when: always
+    - when: never
+
+CycloneDX + OWASP (on push):
+  extends: .cyclonedx-owasp
+  rules: !reference [.feature-branch-security-only, rules]
+
+Trivy Filesystem Scan (on push):
+  extends: .trivy-fs
+  before_script: []
+  rules: !reference [.feature-branch-security-only, rules]
+
+Trivy Dockerfile Scan (on push):
+  extends: .trivy-dockerfile
+  before_script: []
+  rules: !reference [.feature-branch-security-only, rules]
+
+# ── Unified Remediation (creates MR with all fixes) ───────────────────────────
+
+Unified Remediation:
+  extends: .unified-remediation-scheduled
+
+Renovate Update:
+  extends: .renovate-update
+
+Notify Slack (Renovate):
+  extends: .slack_notify_renovate
+  variables:
+    RENOVATE_BRANCH_PREFIX: "bugFix/issue-0001-"
+
+Notify Slack (Remediation):
+  extends: .slack_notify_remediation
+  needs:
+    - job: "Unified Remediation"
+      optional: true
+
+Notify Slack (security failure):
+  extends: .slack-security-failure-notify
+  needs:
+    - job: "Security (owasp-dep-check - gate)"
+      optional: true
+    - job: "Security (cyclonedx - gate)"
+      optional: true
+    - job: "Trivy Filesystem Scan (gate)"
+      optional: true
+    - job: "Trivy Dockerfile Scan (gate)"
+      optional: true
+    - job: "SonarQube"
+      optional: true
