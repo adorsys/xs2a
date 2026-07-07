@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<suppressions xmlns="https://jeremylong.github.io/DependencyCheck/dependency-suppression.1.3.xsd">
+
+    <!--
+        CVE-2026-54399, CVE-2026-54428 — Apache HttpComponents Core (httpcore5) shaded inside
+        docker-java-transport-zerodep.
+
+        Rationale: httpcore5 is bundled (shaded) inside the docker-java-transport-zerodep fat-jar
+        and is used exclusively at TEST scope via the Testcontainers library. It is not part of the
+        deployed application runtime classpath. The application itself has no direct dependency on
+        httpcore5. Suppressing until a patched docker-java version is released and adopted by
+        Testcontainers.
+
+        Reviewed: 2026-07-07
+    -->
+    <suppress>
+        <notes>httpcore5 shaded inside docker-java-transport-zerodep (test scope only)</notes>
+        <packageUrl regex="true">^pkg:maven/org\.apache\.httpcomponents\.core5/httpcore5@.*$</packageUrl>
+        <cve>CVE-2026-54399</cve>
+    </suppress>
+
+    <suppress>
+        <notes>httpcore5 shaded inside docker-java-transport-zerodep (test scope only)</notes>
+        <packageUrl regex="true">^pkg:maven/org\.apache\.httpcomponents\.core5/httpcore5@.*$</packageUrl>
+        <cve>CVE-2026-54428</cve>
+    </suppress>
+
+</suppressions>

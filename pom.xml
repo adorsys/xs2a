@@ -170,7 +170,8 @@
         <lombok.version>1.18.30</lombok.version>
         <org.mapstruct.version>1.5.5.Final</org.mapstruct.version>
         <lombok-mapstruct-binding.version>0.2.0</lombok-mapstruct-binding.version>
-        <springdoc.version>2.8.9</springdoc.version>
+        <springdoc.version>2.8.17</springdoc.version>
+        <swagger-ui.version>5.32.8</swagger-ui.version>
         <swagger.annotations.version>2.2.34</swagger.annotations.version>
         <gson.version>2.10.1</gson.version>
         <apache.commons-lang3.version>3.18.0</apache.commons-lang3.version>
@@ -198,7 +199,8 @@
         <byte-buddy.version>1.15.11</byte-buddy.version>
         <logback-classic.version>1.5.21</logback-classic.version>
         <slf4j-api.version>2.0.16</slf4j-api.version>
-        <jackson.version>2.21.1</jackson.version>
+        <jackson.version>2.21.4</jackson.version>
+        <log4j.version>2.25.4</log4j.version>
         <guava.version>33.3.1-jre</guava.version>
         <commons-compress.version>1.27.1</commons-compress.version>
         <janino.version>3.1.9</janino.version>
@@ -222,7 +224,7 @@
         <maven-javadoc-plugin.version>3.6.0</maven-javadoc-plugin.version>
         <lombok-maven-plugin.version>1.18.4.0</lombok-maven-plugin.version>
 
-        <spring.version>6.2.14</spring.version>
+        <spring.version>6.2.19</spring.version>
         <spring-test.version>${spring.version}</spring-test.version>
         <spring-web.version>${spring.version}</spring-web.version>
         <spring-context.version>${spring.version}</spring-context.version>
@@ -232,11 +234,11 @@
         <spring-webmvc.version>${spring.version}</spring-webmvc.version>
         <spring-core.version>${spring.version}</spring-core.version>
         <spring-data-jpa.version>3.4.13</spring-data-jpa.version>
-        <spring-boot.version>3.5.14</spring-boot.version>
-        <spring-boot-starter-web.version>3.5.14</spring-boot-starter-web.version>
-        <tomcat-embed-core.version>10.1.55</tomcat-embed-core.version>
-        <tomcat-embed-websocket.version>10.1.55</tomcat-embed-websocket.version>
-        <tomcat-embed-el.version>10.1.55</tomcat-embed-el.version>
+        <spring-boot.version>3.5.15</spring-boot.version>
+        <spring-boot-starter-web.version>3.5.15</spring-boot-starter-web.version>
+        <tomcat-embed-core.version>10.1.56</tomcat-embed-core.version>
+        <tomcat-embed-websocket.version>10.1.56</tomcat-embed-websocket.version>
+        <tomcat-embed-el.version>10.1.56</tomcat-embed-el.version>
 
         <junit-jupiter.version>6.0.1</junit-jupiter.version>
         <mockito.version>5.20.0</mockito.version>
@@ -577,6 +579,25 @@
             </dependency>
 
             <dependency>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-aspects</artifactId>
+                <version>${spring.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-tx</artifactId>
+                <version>${spring.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.webjars</groupId>
+                <artifactId>swagger-ui</artifactId>
+                <version>${swagger-ui.version}</version>
+            </dependency>
+
+
+            <dependency>
                 <groupId>org.yaml</groupId>
                 <artifactId>snakeyaml</artifactId>
                 <version>${snakeyaml.version}</version>
@@ -820,6 +841,7 @@
                             <format>HTML</format>
                         </formats>
                         <failBuildOnCVSS>7</failBuildOnCVSS>
+                        <suppressionFile>${maven.multiModuleProjectDirectory}/dependency-check-suppression.xml</suppressionFile>
                     </configuration>
                 </plugin>
             </plugins>
