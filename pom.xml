@@ -301,6 +301,9 @@
 
         <!--Javadoc-->
         <javadoc.sourcepath>src/main/java</javadoc.sourcepath>
+
+        <angus-activation.version>2.0.3</angus-activation.version>
+        <log4j2.version>2.25.3</log4j2.version>
     </properties>
 
     <repositories>
@@ -759,6 +762,24 @@
                 <scope>test</scope>
             </dependency>
 
+            <dependency>
+                <groupId>org.eclipse.angus</groupId>
+                <artifactId>angus-activation</artifactId>
+                <version>${angus-activation.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.apache.logging.log4j</groupId>
+                <artifactId>log4j-api</artifactId>
+                <version>${log4j2.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.apache.logging.log4j</groupId>
+                <artifactId>log4j-to-slf4j</artifactId>
+                <version>${log4j2.version}</version>
+            </dependency>
+
         </dependencies>
     </dependencyManagement>
 
@@ -850,11 +871,6 @@ Use it manually to generate javadocs. Don't commit it
 
                     <annotationProcessorPaths>
                         <path>
-                            <groupId>org.mapstruct</groupId>
-                            <artifactId>mapstruct-processor</artifactId>
-                            <version>${org.mapstruct.version}</version>
-                        </path>
-                        <path>
                             <groupId>org.projectlombok</groupId>
                             <artifactId>lombok</artifactId>
                             <version>${lombok.version}</version>
@@ -863,6 +879,11 @@ Use it manually to generate javadocs. Don't commit it
                             <groupId>org.projectlombok</groupId>
                             <artifactId>lombok-mapstruct-binding</artifactId>
                             <version>${lombok-mapstruct-binding.version}</version>
+                        </path>
+                        <path>
+                            <groupId>org.mapstruct</groupId>
+                            <artifactId>mapstruct-processor</artifactId>
+                            <version>${org.mapstruct.version}</version>
                         </path>
                     </annotationProcessorPaths>
                 </configuration>
