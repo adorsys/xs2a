@@ -25,4 +25,16 @@
         <cve>CVE-2026-54428</cve>
     </suppress>
 
+    <suppress>
+        <notes>httpcore5-h2 (HTTP/2 variant) shaded inside docker-java-transport-zerodep (test scope only)</notes>
+        <packageUrl regex="true">^pkg:maven/org\.apache\.httpcomponents\.core5/httpcore5-h2@.*$</packageUrl>
+        <cve>CVE-2026-54399</cve>
+    </suppress>
+
+    <suppress>
+        <notes>httpcore5-h2 (HTTP/2 variant) shaded inside docker-java-transport-zerodep (test scope only)</notes>
+        <packageUrl regex="true">^pkg:maven/org\.apache\.httpcomponents\.core5/httpcore5-h2@.*$</packageUrl>
+        <cve>CVE-2026-54428</cve>
+    </suppress>
+
 </suppressions>

@@ -305,7 +305,7 @@
         <javadoc.sourcepath>src/main/java</javadoc.sourcepath>
 
         <angus-activation.version>2.0.3</angus-activation.version>
-        <log4j2.version>2.25.3</log4j2.version>
+        <log4j2.version>2.26.1</log4j2.version>
     </properties>
 
     <repositories>
@@ -587,6 +587,12 @@
             <dependency>
                 <groupId>org.springframework</groupId>
                 <artifactId>spring-tx</artifactId>
+                <version>${spring.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-orm</artifactId>
                 <version>${spring.version}</version>
             </dependency>
 
