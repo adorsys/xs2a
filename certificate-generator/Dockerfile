@@ -10,6 +10,8 @@ WORKDIR /opt/certificate-generator
 
 COPY ./target/certificate-generator*jar /opt/certificate-generator/certificate-generator.jar
 
+USER 1001
+
 EXPOSE 8092 8000
 # hadolint ignore=DL3025
 CMD exec $JAVA_HOME/bin/java $JAVA_OPTS -jar /opt/certificate-generator/certificate-generator.jar

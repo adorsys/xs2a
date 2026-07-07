@@ -10,6 +10,8 @@ WORKDIR /opt/consents
 
 COPY ./target/consent-management*jar /opt/consents/consent-management.jar
 
+USER 1001
+
 EXPOSE 8080
 # hadolint ignore=DL3025
 CMD exec $JAVA_HOME/bin/java $JAVA_OPTS -jar /opt/consents/consent-management.jar
