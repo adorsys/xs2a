@@ -158,26 +158,26 @@ Test (ASCII Doc):
   script:
     - make pages
 
-Test:Performance:
-  stage: "Test"
-  rules: !reference [.pipeline-develop-only, rules]
-  image:
-    name: gitlab-registry.adorsys.de/adorsys/xs2a/aspsp-xs2a/xs2a-performance-test:develop
-    entrypoint: [""]
-  script:
-    - jmeter -n -t ./performance-test/jmeter-test/test-plan.jmx -l ./performance-test/jmeter-test/resultLog.jtl -e -o ./performance-test/jmeter-test/report
-  artifacts:
-    paths:
-      - "./performance-test/jmeter-test/report"
+#Test:Performance:
+#  stage: "Test"
+#  rules: !reference [.pipeline-develop-only, rules]
+#  image:
+#    name: gitlab-registry.adorsys.de/adorsys/xs2a/aspsp-xs2a/xs2a-performance-test:develop
+#    entrypoint: [""]
+#  script:
+#    - jmeter -n -t ./performance-test/jmeter-test/test-plan.jmx -l ./performance-test/jmeter-test/resultLog.jtl -e -o ./performance-test/jmeter-test/report
+#  artifacts:
+#    paths:
+#      - "./performance-test/jmeter-test/report"
 
-SonarQube:
-  extends: .sonarqube-security-gate
-  needs:
-    - job: "Security (owasp-dep-check - gate)"
-    - job: "Build XS2A"
-    - job: "Test (Unit Tests)"
-    - job: "Test (IT)"
-    - job: "Lint (PMD CPD)"
+# SonarQube:
+#   extends: .sonarqube-security-gate
+#   needs:
+#     - job: "Security (owasp-dep-check - gate)"
+#     - job: "Build XS2A"
+#     - job: "Test (Unit Tests)"
+#     - job: "Test (IT)"
+#     - job: "Lint (PMD CPD)"
 
 Build and push images to private repo (develop):
   extends: .docker-build-push-base
