@@ -243,6 +243,21 @@ clone_to_github:
   needs: []
   variables:
     MONTH: "01,02,03,04,05,06,07,08,09,10,11,12"
+  script:
+    - apk add --no-cache openssh-client
+    - mkdir -p ~/.ssh
+    - chmod 700 ~/.ssh
+    - echo "$GITHUB_DEPLOY_KEY_BASE64" | base64 -d > ~/.ssh/id_ed25519
+    - chmod 600 ~/.ssh/id_ed25519
+    - eval $(ssh-agent -s)
+    - ssh-add ~/.ssh/id_ed25519
+    - echo "$GITHUB_SSH_SERVER_FINGERPRINT" >> ~/.ssh/known_hosts
+    - git config --global user.name "$GITHUB_USERNAME"
+    - git config --global user.email "$GITHUB_EMAIL"
+    - git remote add github git@github.com:$GITHUB_REPOSITORY.git || true
+    - echo "Pushing branch $CI_COMMIT_REF_NAME to GitHub..."
+    - git push github HEAD:$CI_COMMIT_REF_NAME
+    - echo "Successfully synced $CI_COMMIT_REF_NAME to GitHub."
   rules:
     - if: |
         $CI_PIPELINE_SOURCE == "web" &&
