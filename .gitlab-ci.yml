@@ -240,6 +240,7 @@ Release snapshot artifacts (tags):
 clone_to_github:
   extends: .github-sync
   stage: "Clone to github"
+  needs: []
   rules:
     - if: |
         $CI_PIPELINE_SOURCE == "web" &&
