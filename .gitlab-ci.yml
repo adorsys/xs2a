@@ -249,7 +249,6 @@ clone_to_github:
     - if: |
         $CI_PIPELINE_SOURCE == "schedule" &&
         $SCHEDULE_TYPE != "security-scan" &&
-        ($MONTH == "06" || $MONTH == "12") &&
         ($CI_COMMIT_REF_NAME =~ /^(v2)?support-.*\.x$/ || $CI_COMMIT_REF_NAME == "develop")
       when: always
     - when: never
